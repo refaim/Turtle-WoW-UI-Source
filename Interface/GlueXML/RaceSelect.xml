@@ -1,0 +1,318 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="RaceSelect.lua"/>
+	<Model name="RaceSelect" setAllPoints="true" file="Interface\Glues\Models\UI_RaceSelection\UI_RaceSelection.mdx" hidden="true" parent="GlueParent" enableKeyboard="true">
+		<Frames>
+			<Frame setAllPoints="true">
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="RaceSelectCloud" file="Interface\Glues\RaceSelect\Glues-RaceSelect-Cloud">
+							<Size>
+								<AbsDimension x="256" y="128"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<FontString inherits="GlueFontNormalHuge" text="SELECT_RACE">
+							<Anchors>
+								<Anchor point="TOP" relativeTo="RaceSelectCloud" relativePoint="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-50"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame name="RaceSelectFactionFrame" hidden="true">
+						<Size>
+							<AbsDimension x="300" y="130"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="28" y="-14"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture name="RaceSelectFactionGradient" file="Interface\Glues\Common\Glues-Text-Gradient">
+									<Size>
+										<AbsDimension x="242" y="131"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT">
+											<Offset>
+												<AbsDimension x="0" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="ARTWORK">
+								<FontString name="RaceSelectFactionName" inherits="GlueFontNormalLarge">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectFactionGradient">
+											<Offset>
+												<AbsDimension x="0" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectFactionInfo" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Size>
+										<AbsDimension x="242" y="0"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectFactionName" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-8"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>		
+							</Layer>
+						</Layers>
+					</Frame>
+					<Frame name="RaceSelectInfoFrame" hidden="true">
+						<Size>
+							<AbsDimension x="600" y="192"/>
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="30" y="20"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture name="RaceSelectRaceGradient" file="Interface\Glues\Common\Glues-Text-Gradient">
+									<Size>
+										<AbsDimension x="310" y="192"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT">
+											<Offset>
+												<AbsDimension x="0" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Texture>
+								<Texture name="RaceSelectClassGradient" file="Interface\Glues\Common\Glues-Text-Gradient">
+									<Size>
+										<AbsDimension x="175" y="192"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectRaceGradient" relativePoint="TOPRIGHT">
+											<Offset>
+												<AbsDimension x="28" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Texture>
+								<Texture name="RaceSelectAbilityGradient" file="Interface\Glues\Common\Glues-Text-Gradient">
+									<Size>
+										<AbsDimension x="165" y="192"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClassGradient" relativePoint="TOPRIGHT">
+											<Offset>
+												<AbsDimension x="21" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<FontString name="RaceSelectRaceName" inherits="GlueFontNormalLarge">
+									<Anchors>
+										<Anchor point="TOPLEFT">
+											<Offset>
+												<AbsDimension x="5" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectRaceInfo" inherits="GlueFontHighlightSmall"  justifyV="TOP" justifyH="LEFT" spacing="0.005">
+									<Size>
+										<AbsDimension x="284" y="192"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectRaceName" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-8"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClassList" inherits="GlueFontNormalLarge" text="AVAILABLE_CLASSES">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClassGradient">
+											<Offset>
+												<AbsDimension x="5" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass1" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClassList" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-8"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass2" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass1" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass3" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass2" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass4" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass3" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass5" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass4" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass6" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass5" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass7" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass6" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectClass8" inherits="GlueFontLightYellowSmall" justifyH="LEFT">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectClass7" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectAbilityName" inherits="GlueFontNormalLarge" text="RACIAL_ABILITIES">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectAbilityGradient">
+											<Offset>
+												<AbsDimension x="5" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="RaceSelectAbilityInfo" inherits="GlueFontHighlightSmall" justifyH="LEFT" spacing="0.01">
+									<Size>
+										<AbsDimension x="149" y="0"/>
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="RaceSelectAbilityName" relativePoint="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="0" y="-8"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+					<Button name="RaceSelectBackButton" inherits="GlueButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="10" y="29"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								RaceSelect_Back();
+							</OnClick>
+						</Scripts>
+						<ButtonText text="BACK"/>
+						<NormalFont inherits="GlueFontNormalLarge"/>
+						<HighlightFont inherits="GlueFontHighlightLarge"/>
+					</Button>
+					<Button name="RaceSelectOkButton" inherits="GlueButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativeTo="RaceSelectBackButton" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0" y="-20"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								RaceSelect_OnOk();
+							</OnClick>
+						</Scripts>
+						<ButtonText text="ACCEPT"/>
+						<NormalFont inherits="GlueFontNormalLarge"/>
+						<HighlightFont inherits="GlueFontHighlightLarge"/>
+					</Button>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				RaceSelect_OnLoad();
+			</OnLoad>
+			<OnKeyDown>
+				RaceSelect_OnKeyDown();
+			</OnKeyDown>
+			<OnEvent>
+				RaceSelect_OnEvent();
+			</OnEvent>
+			<OnUpdate>
+				RaceSelect_OnUpdate();
+			</OnUpdate>
+			<OnMouseUp>
+				RaceSelect_OnMouseUp();
+			</OnMouseUp>
+		</Scripts>
+	</Model>
+</Ui>

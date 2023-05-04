@@ -1,0 +1,541 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Script file="InspectTalentsFrame.lua"/>
+
+    <Button name="TWTCharacterFrameTabButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="115" y="32"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentLeftDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentMiddleDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="88" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentRightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.84375" right="1.0" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentLeft" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="88" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentRight" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.84375" right="1.0" top="0" bottom="1.0"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                this:SetFrameLevel(this:GetFrameLevel() + 4);
+            </OnLoad>
+            <OnShow>
+                PanelTemplates_TabResize(0);
+                getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 30);
+            </OnShow>
+        </Scripts>
+        <ButtonText name="$parentText">
+            <Anchors>
+                <Anchor point="CENTER">
+                    <Offset>
+                        <AbsDimension x="0" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </ButtonText>
+        <NormalFont inherits="GameFontNormalSmall"/>
+        <HighlightFont inherits="GameFontHighlightSmall"/>
+        <DisabledFont inherits="GameFontHighlightSmall"/>
+        <HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight"
+                          alphaMode="ADD">
+            <Anchors>
+                <Anchor point="LEFT">
+                    <Offset>
+                        <AbsDimension x="10" y="2"/>
+                    </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                    <Offset>
+                        <AbsDimension x="-10" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </HighlightTexture>
+    </Button>
+    <Button name="TWTalentButtonTemplate" inherits="ItemButtonTemplate" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentSlot" file="Interface\Buttons\UI-EmptySlot-White">
+                    <Size>
+                        <AbsDimension x="64" y="64"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="$parentRankBorder" file="Interface\TalentFrame\TalentFrame-RankBorder">
+                    <Size>
+                        <AbsDimension x="32" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentRank" inherits="GameFontNormalSmall">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeTo="$parentRankBorder">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(TWTalentName(getglobal('TWTalentFrame').selectedTab, this:GetID()), 1,1,1)
+                GameTooltip:AddLine(TWTalentRank(getglobal('TWTalentFrame').selectedTab, this:GetID()), 1,1,1)
+                GameTooltip:AddLine(TWTalentDescription(getglobal('TWTalentFrame').selectedTab, this:GetID()),
+                NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+            <OnClick>
+<!--                TWTalentOnClick(TWTalentName(getglobal('TWTalentFrame').selectedTab, this:GetID()),-->
+<!--                TWTalentRank(getglobal('TWTalentFrame').selectedTab, this:GetID()),-->
+<!--                TWTalentDescription(getglobal('TWTalentFrame').selectedTab, this:GetID()))-->
+                TWTalentOnClick(getglobal('TWTalentFrame').selectedTab, this:GetID())
+            </OnClick>
+        </Scripts>
+    </Button>
+    <Texture name="TWTalentBranchTemplate" file="Interface\TalentFrame\UI-TalentBranches" virtual="true">
+        <Size>
+            <AbsDimension x="32" y="32"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"/>
+        </Anchors>
+    </Texture>
+    <Texture name="TWTalentArrowTemplate" file="Interface\TalentFrame\UI-TalentArrows" virtual="true">
+        <Size>
+            <AbsDimension x="32" y="32"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"/>
+        </Anchors>
+    </Texture>
+
+    <Frame name="InspectTalentsFrame" setAllPoints="true" parent="InspectFrame" hidden="true" id="3">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="2" y="-1"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopRight">
+                    <Size>
+                        <AbsDimension x="128" y="256"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="258" y="-1"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="2" y="-257"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomRight">
+                    <Size>
+                        <AbsDimension x="128" y="256"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="258" y="-257"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="TWTalentFrame" enableMouse="true" toplevel="true" hidden="true">
+                <Size>
+                    <AbsDimension x="384" y="412"/>
+                </Size>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-37"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <HitRectInsets>
+                    <AbsInset left="0" right="30" top="0" bottom="45"/>
+                </HitRectInsets>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="TWTalentFrameBackgroundTopLeft">
+                            <Size>
+                                <AbsDimension x="256" y="256"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="23" y="-40"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="TWTalentFrameBackgroundTopRight">
+                            <Size>
+                                <AbsDimension x="64" y="256"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
+                                        relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="TWTalentFrameBackgroundBottomLeft">
+                            <Size>
+                                <AbsDimension x="256" y="168"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
+                                        relativePoint="BOTTOMLEFT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="TWTalentFrameBackgroundBottomRight">
+                            <Size>
+                                <AbsDimension x="64" y="168"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
+                                        relativePoint="BOTTOMRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+
+                    <Button name="TWTalentFrameTab1" inherits="TabButtonTemplate" id="1">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="70" y="-3"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                TWTalentFrameTab_OnClick();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="TWTalentFrameTab2" inherits="TabButtonTemplate" id="2">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeTo="TWTalentFrameTab1" relativePoint="RIGHT">
+                                <Offset>
+                                    <AbsDimension x="0" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                TWTalentFrameTab_OnClick();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="TWTalentFrameTab3" inherits="TabButtonTemplate" id="3">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeTo="TWTalentFrameTab2" relativePoint="RIGHT">
+                                <Offset>
+                                    <AbsDimension x="0" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                TWTalentFrameTab_OnClick();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <ScrollFrame name="TWTalentFrameScrollFrame" inherits="UIPanelScrollFrameTemplate">
+                        <Size>
+                            <AbsDimension x="296" y="354"/>
+                        </Size>
+<!--                        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
+<!--                                  tile="false">-->
+<!--                        </Backdrop>-->
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-65" y="-40"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                                    <Size>
+                                        <AbsDimension x="31" y="256"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+                                            <Offset>
+                                                <AbsDimension x="-2" y="5"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+                                </Texture>
+                                <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+                                    <Size>
+                                        <AbsDimension x="31" y="106"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+                                            <Offset>
+                                                <AbsDimension x="-2" y="-2"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <ScrollChild>
+                            <Frame name="TWTalentFrameScrollChildFrame">
+                                <Size>
+                                    <AbsDimension x="320" y="50"/>
+                                </Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT"/>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="BACKGROUND">
+                                        <Texture name="TWTalentFrameBranch1" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch2" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch3" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch4" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch5" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch6" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch7" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch8" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch9" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch10" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch11" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch12" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch13" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch14" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch15" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch16" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch17" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch18" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch19" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch20" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch21" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch22" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch23" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch24" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch25" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch26" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch27" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch28" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch29" inherits="TWTalentBranchTemplate"/>
+                                        <Texture name="TWTalentFrameBranch30" inherits="TWTalentBranchTemplate"/>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <Button name="TWTalentFrameTalent1" inherits="TWTalentButtonTemplate" id="1"/>
+                                    <Button name="TWTalentFrameTalent2" inherits="TWTalentButtonTemplate" id="2"/>
+                                    <Button name="TWTalentFrameTalent3" inherits="TWTalentButtonTemplate" id="3"/>
+                                    <Button name="TWTalentFrameTalent4" inherits="TWTalentButtonTemplate" id="4"/>
+                                    <Button name="TWTalentFrameTalent5" inherits="TWTalentButtonTemplate" id="5"/>
+                                    <Button name="TWTalentFrameTalent6" inherits="TWTalentButtonTemplate" id="6"/>
+                                    <Button name="TWTalentFrameTalent7" inherits="TWTalentButtonTemplate" id="7"/>
+                                    <Button name="TWTalentFrameTalent8" inherits="TWTalentButtonTemplate" id="8"/>
+                                    <Button name="TWTalentFrameTalent9" inherits="TWTalentButtonTemplate" id="9"/>
+                                    <Button name="TWTalentFrameTalent10" inherits="TWTalentButtonTemplate" id="10"/>
+                                    <Button name="TWTalentFrameTalent11" inherits="TWTalentButtonTemplate" id="11"/>
+                                    <Button name="TWTalentFrameTalent12" inherits="TWTalentButtonTemplate" id="12"/>
+                                    <Button name="TWTalentFrameTalent13" inherits="TWTalentButtonTemplate" id="13"/>
+                                    <Button name="TWTalentFrameTalent14" inherits="TWTalentButtonTemplate" id="14"/>
+                                    <Button name="TWTalentFrameTalent15" inherits="TWTalentButtonTemplate" id="15"/>
+                                    <Button name="TWTalentFrameTalent16" inherits="TWTalentButtonTemplate" id="16"/>
+                                    <Button name="TWTalentFrameTalent17" inherits="TWTalentButtonTemplate" id="17"/>
+                                    <Button name="TWTalentFrameTalent18" inherits="TWTalentButtonTemplate" id="18"/>
+                                    <Button name="TWTalentFrameTalent19" inherits="TWTalentButtonTemplate" id="19"/>
+                                    <Button name="TWTalentFrameTalent20" inherits="TWTalentButtonTemplate" id="20"/>
+                                    <Frame name="TWTalentFrameArrowFrame" setAllPoints="true">
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <Texture name="TWTalentFrameArrow1" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow2" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow3" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow4" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow5" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow6" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow7" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow8" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow9" inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow10"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow11"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow12"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow13"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow14"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow15"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow16"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow17"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow18"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow19"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow20"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow21"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow22"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow23"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow24"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow25"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow26"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow27"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow28"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow29"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                                <Texture name="TWTalentFrameArrow30"
+                                                         inherits="TWTalentArrowTemplate"/>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                </Frames>
+                            </Frame>
+                        </ScrollChild>
+                    </ScrollFrame>
+                </Frames>
+                <Scripts>
+                    <OnShow>
+                        TWTalentFrame_OnShow();
+                    </OnShow>
+                    <OnHide>
+                        TWTalentFrame_OnHide();
+                    </OnHide>
+                    <OnLoad>
+                        tinsert(UISpecialFrames, this:GetName());
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

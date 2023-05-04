@@ -1,0 +1,1371 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Script file="Turtle_GuildBankUI.lua"/>
+
+    <Button name="TWGuildFrameBottomTabButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="115" y="32"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentLeftDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentMiddleDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="88" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentRightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.84375" right="1.0" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentLeft" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="88" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentRight" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+                    <Size>
+                        <AbsDimension x="20" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.84375" right="1.0" top="0" bottom="1.0"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                this:SetFrameLevel(this:GetFrameLevel() + 4);
+            </OnLoad>
+            <OnClick>
+                GuildBankFrameBottomTab_OnClick(this:GetID());
+            </OnClick>
+            <OnShow>
+                PanelTemplates_TabResize(0);
+                getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 30);
+            </OnShow>
+        </Scripts>
+        <ButtonText name="$parentText">
+            <Anchors>
+                <Anchor point="CENTER">
+                    <Offset>
+                        <AbsDimension x="0" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </ButtonText>
+        <NormalFont inherits="GameFontNormalSmall"/>
+        <HighlightFont inherits="GameFontHighlightSmall"/>
+        <DisabledFont inherits="GameFontHighlightSmall"/>
+        <HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight"
+                          alphaMode="ADD">
+            <Anchors>
+                <Anchor point="LEFT">
+                    <Offset>
+                        <AbsDimension x="10" y="2"/>
+                    </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                    <Offset>
+                        <AbsDimension x="-10" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </HighlightTexture>
+    </Button>
+
+    <CheckButton name="GuildBankFrameTabButtonTemplate" inherits="ItemButtonTemplate" virtual="true" hidden="true">
+        <Size>
+            <AbsDimension x="32" y="32"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\GuildBankFrame\UI-GuildBankFrame-Tab">
+                    <Size>
+                        <AbsDimension x="64" y="64"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="-3" y="11"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(this.tooltip, 1, 1, 1, 1);
+                GameTooltip:AddLine(this.tooltip2);
+                GameTooltip:Show();
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+            <OnShow>
+            </OnShow>
+            <OnClick>
+                GuildBankFrameTab_OnClick(this:GetID())
+            </OnClick>
+            <OnMouseUp>
+                if (arg1 == "RightButton") then
+                GuildBankFrameTab_OnClick(this:GetID())
+                end
+            </OnMouseUp>
+        </Scripts>
+        <NormalTexture/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+        <PushedTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+        <CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD"/>
+    </CheckButton>
+
+    <Button name="GuildBankFrameItemButtonTemplate" virtual="true" hidden="true">
+        <Size>
+            <AbsDimension x="37" y="37"/>
+        </Size>
+        <Layers>
+            <Layer level="BORDER">
+                <Texture name="$parentIconTexture"/>
+                <FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="-5" y="2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentSlot" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="2" y="-2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture name="$parentShine" file="Interface\ComboFrame\ComboPoint" alphaMode="ADD" hidden="true">
+                    <Size>
+                        <AbsDimension x="32" y="32"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="3" y="3"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0.5625" right="1" top="0" bottom="1"/>
+                </Texture>
+            </Layer>
+
+        </Layers>
+        <!--        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
+        <!--                  tile="false">-->
+        <!--        </Backdrop>-->
+        <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
+            <Size>
+                <AbsDimension x="64" y="64"/>
+            </Size>
+            <Anchors>
+                <Anchor point="CENTER">
+                    <Offset>
+                        <AbsDimension x="0" y="-1"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+        <Scripts>
+            <OnLoad>
+                this:RegisterForDrag("LeftButton", "LeftButtonUp");
+                this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+            </OnLoad>
+            <OnClick>
+                BankSlot_OnClick(arg1)
+            </OnClick>
+            <OnDragStart>
+                BankSlot_OnDragStart(arg1)
+            </OnDragStart>
+            <OnReceiveDrag>
+                BankSlot_OnReceiveDrag();
+            </OnReceiveDrag>
+        </Scripts>
+    </Button>
+
+    <Button name="GuildBankFrameTabIconButtonTemplate" virtual="true" hidden="true">
+        <Size>
+            <AbsDimension x="36" y="36"/>
+        </Size>
+        <Layers>
+            <Layer level="BORDER">
+                <Texture name="$parentIconTexture"/>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="$parentSelected" file="Interface\Buttons\UI-Quickslot-Depress" alphaMode="ADD"
+                         hidden="true">
+                    <Size>
+                        <AbsDimension x="36" y="36"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
+            <Size>
+                <AbsDimension x="60" y="60"/>
+            </Size>
+            <Anchors>
+                <Anchor point="CENTER">
+                    <Offset>
+                        <AbsDimension x="0" y="-1"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+        <Scripts>
+            <OnClick>
+                GuildBankFrameWithdrawalsIcon_OnClick()
+            </OnClick>
+        </Scripts>
+    </Button>
+
+    <ScrollingMessageFrame name="TWChatFrameTemplate" toplevel="true" displayDuration="1120.0" maxLines="512"
+                           hidden="true" virtual="true">
+        <Scripts>
+            <OnLoad>
+                getglobal(this:GetName().."BottomButton"):Hide();
+                getglobal(this:GetName().."DownButton"):Hide();
+                getglobal(this:GetName().."UpButton"):Hide();
+            </OnLoad>
+            <OnEvent>
+            </OnEvent>
+            <OnUpdate>
+            </OnUpdate>
+            <OnHyperlinkClick>
+                TWGuildLogHyperlinkClick()
+            </OnHyperlinkClick>
+        </Scripts>
+        <FontString inherits="ChatFontNormal" justifyH="LEFT"/>
+    </ScrollingMessageFrame>
+
+    <ScrollingMessageFrame name="TWFloatingChatFrameTemplate" enableMouse="true" inherits="TWChatFrameTemplate"
+                           hidden="true" virtual="true">
+        <Size>
+            <AbsDimension x="710" y="302"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="33" y="-73"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Frames>
+            <Button name="$parentBottomButton">
+                <Size>
+                    <AbsDimension x="32" y="32"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="-32" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentFlash" file="Interface\ChatFrame\UI-ChatIcon-BlinkHilight" hidden="true"/>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                        PlaySound("igChatBottom");
+                        this:GetParent():ScrollToBottom();
+                    </OnClick>
+                </Scripts>
+                <NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Up"/>
+                <PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Down"/>
+                <DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button name="$parentDownButton">
+                <Size>
+                    <AbsDimension x="32" y="32"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativeTo="$parentBottomButton" relativePoint="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        MessageFrameScrollButton_OnLoad();
+                    </OnLoad>
+                    <OnUpdate>
+                        MessageFrameScrollButton_OnUpdate(arg1);
+                    </OnUpdate>
+                    <OnClick>
+                        if ( this:GetButtonState() == "PUSHED" ) then
+                        this.clickDelay = MESSAGE_SCROLLBUTTON_INITIAL_DELAY;
+                        else
+                        PlaySound("igChatScrollDown");
+                        this:GetParent():ScrollDown();
+                        end
+                    </OnClick>
+                </Scripts>
+                <NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+                <PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down"/>
+                <DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button name="$parentUpButton">
+                <Size>
+                    <AbsDimension x="32" y="32"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativeTo="$parentDownButton" relativePoint="TOP"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        MessageFrameScrollButton_OnLoad();
+                    </OnLoad>
+                    <OnUpdate>
+                        MessageFrameScrollButton_OnUpdate(arg1);
+                    </OnUpdate>
+                    <OnClick>
+                        if ( this:GetButtonState() == "PUSHED" ) then
+                        this.clickDelay = MESSAGE_SCROLLBUTTON_INITIAL_DELAY;
+                        else
+                        PlaySound("igChatScrollUp");
+                        this:GetParent():ScrollUp();
+                        end
+                    </OnClick>
+                </Scripts>
+                <NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Up"/>
+                <PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Down"/>
+                <DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+            </OnLoad>
+            <OnShow>
+            </OnShow>
+            <OnHide>
+            </OnHide>
+            <OnEvent>
+            </OnEvent>
+            <OnMouseWheel>
+                TWGuildLog_OnScroll()
+            </OnMouseWheel>
+        </Scripts>
+    </ScrollingMessageFrame>
+
+    <Frame name="GuildBankFrame" hidden="true" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true"
+           enableMouse="true">
+        <Size>
+            <AbsDimension x="770" y="450"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentLeft" file="Interface\GuildBankFrame\UI-GuildBankFrame-Left">
+                    <Size>
+                        <AbsDimension x="512" y="512"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentLeft" file="Interface\GuildBankFrame\UI-GuildBankFrame-Right">
+                    <Size>
+                        <AbsDimension x="512" y="512"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="512" y="-11"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentHeader" inherits="GameFontNormal">
+                    <Size>
+                        <AbsDimension x="312" y="12"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-18"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <Texture name="$parentTabTitleBackground" file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="250" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset x="6" y="-43"/>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0.0625" right="0.546875" top="0" bottom="0.5625"/>
+                </Texture>
+
+                <Texture name="$parentTabTitleBackgroundLeft"
+                         file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="8" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeTo="$parentTabTitleBackground" relativePoint="LEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.0625" top="0" bottom="0.5625"/>
+                </Texture>
+                <Texture name="$parentTabTitleBackgroundRight"
+                         file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="8" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentTabTitleBackground" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.546875" right="0.609375" top="0" bottom="0.5625"/>
+                </Texture>
+
+                <FontString name="$parentTabTitle" inherits="GameFontNormal" text="">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeTo="$parentTabTitleBackground">
+                            <Offset x="0" y="0"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <Texture name="$parentWithdrawalsTitleBackground"
+                         file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="430" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM">
+                            <Offset x="-50" y="44"/>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0.0625" right="0.546875" top="0" bottom="0.5625"/>
+                </Texture>
+
+                <Texture name="$parentWithdrawalsTitleBackgroundLeft"
+                         file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="8" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeTo="$parentWithdrawalsTitleBackground" relativePoint="LEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.0625" top="0" bottom="0.5625"/>
+                </Texture>
+                <Texture name="$parentWithdrawalsTitleBackgroundRight"
+                         file="Interface\GuildBankFrame\UI-TabNameBorder">
+                    <Size>
+                        <AbsDimension x="8" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentWithdrawalsTitleBackground" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <TexCoords left="0.546875" right="0.609375" top="0" bottom="0.5625"/>
+                </Texture>
+
+                <FontString name="$parentWithdrawalsTitle" inherits="GameFontNormal" text="">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeTo="$parentWithdrawalsTitleBackground">
+                            <Offset x="0" y="0"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+            </Layer>
+        </Layers>
+        <Anchors>
+            <Anchor point="CENTER">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Frames>
+
+            <Frame name="$parentAnchor" toplevel="true" enableMouse="true">
+                <Size>
+                    <AbsDimension x="730" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOP">
+                        <Offset>
+                            <AbsDimension x="-5" y="-13"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Frames>
+                </Frames>
+                <Scripts>
+                    <OnLoad>
+                        this:RegisterForDrag("LeftButton");
+                    </OnLoad>
+                    <OnDragStart>
+                        this:GetParent():StartMoving();
+                        this:GetParent().isMoving = true;
+                    </OnDragStart>
+                    <OnDragStop>
+                        this:GetParent():StopMovingOrSizing();
+                        this:GetParent().isMoving = false;
+                    </OnDragStop>
+                </Scripts>
+            </Frame>
+
+            <Frame name="$parentTabSettings" hidden="true" toplevel="true" enableMouse="true">
+                <Size>
+                    <AbsDimension x="231" y="370"/>
+                </Size>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="$parentBackground"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-TabConfig">
+                            <Size>
+                                <AbsDimension x="256" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentHeader" inherits="GameFontNormal" text="Tab Settings" justifyH="LEFT">
+                            <Size>
+                                <AbsDimension x="190" y="12"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="10" y="-6"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="228" y="-33"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Frames>
+                    <EditBox name="$parentTabNameEditBox" letters="25" historyLines="0">
+                        <Size>
+                            <AbsDimension x="230" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="10" y="-28"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture name="$parentLeft"
+                                         file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                                    <Size>
+                                        <AbsDimension x="12" y="29"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT">
+                                            <Offset>
+                                                <AbsDimension x="-11" y="2"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                    <TexCoords left="0" right="0.09375" top="0" bottom="1.0"/>
+                                </Texture>
+                                <Texture name="$parentMiddle"
+                                         file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                                    <Size>
+                                        <AbsDimension x="195" y="29"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+                                    </Anchors>
+                                    <TexCoords left="0.09375" right="0.90625" top="0" bottom="1.0"/>
+                                </Texture>
+                                <Texture name="$parentRight"
+                                         file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                                    <Size>
+                                        <AbsDimension x="12" y="29"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+                                    </Anchors>
+                                    <TexCoords left="0.90625" right="1.0" top="0" bottom="1.0"/>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnTextChanged>
+                                GuildBankFrameTabSettings_Changed()
+                            </OnTextChanged>
+                            <OnEscapePressed>
+                                GuildBankFrameCloseTabSettings()
+                            </OnEscapePressed>
+                        </Scripts>
+                        <FontString inherits="ChatFontNormal"/>
+                    </EditBox>
+
+                    <Button name="$parentAccessDropdown" inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="5" y="-49"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentContent" justifyH="LEFT" inherits="GameFontNormal"
+                                            text="Required Rank:">
+                                    <Size>
+                                        <AbsDimension x="115" y="15"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="-100" y="3"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                            </OnLoad>
+                            <OnEnter>
+                                GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
+                                GameTooltip:SetText('Rank Access', 1, 1, 1, nil, 1);
+                                GameTooltip:AddLine('Minimum Rank to access this tab.', nil, nil, nil, nil, 1);
+                                GameTooltip:Show();
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide();
+                            </OnLeave>
+                        </Scripts>
+                    </Button>
+
+                    <Button name="$parentWithdrawalsDropdown" inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="5" y="-76"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentContent" justifyH="LEFT" inherits="GameFontNormal"
+                                            text="Weekly Withdrawals:">
+                                    <Size>
+                                        <AbsDimension x="115" y="15"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="-100" y="3"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnLoad>
+                            </OnLoad>
+                            <OnEnter>
+                                GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
+                                GameTooltip:SetText('Weekly Withdrawals', 1, 1, 1, nil, 1);
+                                GameTooltip:AddLine('Maximum stacks a member can withdraw weekly.', nil, nil, nil, nil,
+                                1);
+                                GameTooltip:Show();
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide();
+                            </OnLeave>
+                        </Scripts>
+                    </Button>
+
+                    <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
+                        <Size>
+                            <AbsDimension x="185" y="220"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="6" y="-110"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <ScrollChild>
+                            <Frame name="$parentChildren">
+                                <Size>
+                                    <AbsDimension x="690" y="1"/>
+                                </Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT">
+                                        <Offset>
+                                            <AbsDimension x="0" y="0"/>
+                                        </Offset>
+                                    </Anchor>
+                                </Anchors>
+                                <Frames>
+                                </Frames>
+                            </Frame>
+
+
+                        </ScrollChild>
+                    </ScrollFrame>
+
+                    <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-13" y="-12"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <!--                        <Scripts>-->
+                        <!--                            <OnClick>-->
+                        <!--                            </OnClick>-->
+                        <!--                        </Scripts>-->
+                    </Button>
+
+                    <Button name="$parentSaveButton" inherits="UIPanelButtonTemplate2" text="Accept">
+                        <Size>
+                            <AbsDimension x="110" y="22"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="9"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrameSaveTabSettings()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button name="$parentCancelButton" inherits="UIPanelButtonTemplate2" text="Cancel">
+                        <Size>
+                            <AbsDimension x="110" y="22"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-10" y="9"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrameCloseTabSettings()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                </Frames>
+                <Scripts>
+                    <OnShow>
+                        PlaySound("igCharacterInfoOpen");
+                    </OnShow>
+                    <OnHide>
+                        PlaySound("igCharacterInfoClose");
+                    </OnHide>
+                </Scripts>
+            </Frame>
+
+            <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-15" y="-24"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        GuildBankFrameCloseButton_OnClick()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame name="$parentSlots" id="1" hidden="false">
+                <Size>
+                    <AbsDimension x="600" y="300"/>
+                </Size>
+                <!--                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
+                <!--                          tile="false">-->
+                <!--                </Backdrop>-->
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="36" y="-63"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="$parentBagCol1"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="-7" y="-7"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol2"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol1" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol3"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol2" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol4"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol3" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol5"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol4" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol6"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol5" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentBagCol7"
+                                 file="Interface\GuildBankFrame\UI-GuildBankFrame-Slots">
+                            <Size>
+                                <AbsDimension x="128" y="512"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentBagCol6" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+
+
+                </Frames>
+                <Scripts>
+                </Scripts>
+            </Frame>
+
+            <ScrollingMessageFrame name="GuildBankFrameLog" parent="GuildBankFrame" hidden="true"
+                                   inherits="TWFloatingChatFrameTemplate" id="2">
+                <Scripts>
+                    <OnLoad>
+                        getglobal(this:GetName().."BottomButton"):Hide();
+                        getglobal(this:GetName().."DownButton"):Hide();
+                        getglobal(this:GetName().."UpButton"):Hide();
+                    </OnLoad>
+                    <OnEvent>
+                    </OnEvent>
+                </Scripts>
+            </ScrollingMessageFrame>
+
+            <ScrollingMessageFrame name="GuildBankFrameMoneyLog" hidden="true" inherits="TWFloatingChatFrameTemplate"
+                                   id="3">
+                <Size>
+                    <AbsDimension x="710" y="302"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="33" y="-73"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        getglobal(this:GetName().."BottomButton"):Hide();
+                        getglobal(this:GetName().."DownButton"):Hide();
+                        getglobal(this:GetName().."UpButton"):Hide();
+                    </OnLoad>
+                    <OnEvent>
+                    </OnEvent>
+                </Scripts>
+            </ScrollingMessageFrame>
+
+            <Frame name="$parentCursorItemFrame" frameStrata="DIALOG" hidden="true" enableMouse="true">
+                <Size>
+                    <AbsDimension x="1" y="1"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture name="$parentTexture">
+                            <Size>
+                                <AbsDimension x="37" y="37"/>
+                            </Size>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentArrow"
+                                 file="Interface\GuildBankFrame\UI-Cursor-Arrow-TopLeft.blp">
+                            <Size>
+                                <AbsDimension x="16" y="16"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parentTexture" relativePoint="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+
+                    <Frame name="GuildBankFrameDestroyItemCatcherFrame" frameStrata="LOW" toplevel="true"
+                           enableMouse="true" hidden="true" parent="UIParent">
+                        <Size>
+                            <AbsDimension x="2000" y="2000"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+<!--                        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
+<!--                                  tile="false">-->
+<!--                        </Backdrop>-->
+                        <Scripts>
+                            <OnReceiveDrag>
+                                GuildBankFrame_ShowDeleteDialog()
+                            </OnReceiveDrag>
+                        </Scripts>
+                    </Frame>
+
+                </Frames>
+                <!--                <Scripts>-->
+                <!--                    <OnKeyDown>-->
+                <!--                        GuildBankFrame_CursorItem_OnKeyDown();-->
+                <!--                    </OnKeyDown>-->
+                <!--                </Scripts>-->
+            </Frame>
+
+            <CheckButton name="$parentTab1" inherits="GuildBankFrameTabButtonTemplate" id="1" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="-40"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentTab2" inherits="GuildBankFrameTabButtonTemplate" id="2" hidden="true">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="$parentTab1" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentTab3" inherits="GuildBankFrameTabButtonTemplate" id="3" hidden="true">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="$parentTab2" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentTab4" inherits="GuildBankFrameTabButtonTemplate" id="4" hidden="true">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="$parentTab3" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentTab5" inherits="GuildBankFrameTabButtonTemplate" id="5" hidden="true">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="$parentTab4" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+
+            <Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+                        <Offset x="-4" y="22"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentAvailableMoneyText" inherits="GameFontNormalSmall"
+                                    text="Available Amount:">
+                            <Size x="0" y="13"/>
+                            <Anchors>
+                                <Anchor point="LEFT">
+                                    <Offset x="-95" y="0"/>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        GuildBankFrameMoneyFrame_OnLoad();
+                    </OnLoad>
+                    <OnEvent>
+                    </OnEvent>
+                    <OnShow>
+                    </OnShow>
+                    <OnHide>
+                    </OnHide>
+                </Scripts>
+            </Frame>
+
+            <Button name="$parentDepositButton" inherits="UIPanelButtonTemplate2" text="Deposit">
+                <Size>
+                    <AbsDimension x="100" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+                        <Offset x="-11" y="43"/>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PlaySound("igMainMenuOption");
+                        StaticPopup2_Hide("GUILDBANK_WITHDRAW_MONEY");
+
+                        if(StaticPopup2_Visible("GUILDBANK_DEPOSIT_MONEY")) then
+                        StaticPopup2_Hide("GUILDBANK_DEPOSIT_MONEY");
+                        else
+                        StaticPopup2_Show("GUILDBANK_DEPOSIT_MONEY");
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentFrameWithdrawButton" inherits="UIPanelButtonTemplate2" text="Withdraw">
+                <Size>
+                    <AbsDimension x="100" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parentDepositButton" relativePoint="LEFT">
+                        <Offset x="3" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PlaySound("igMainMenuOption");
+                        StaticPopup2_Hide("GUILDBANK_DEPOSIT_MONEY");
+
+                        if(StaticPopup2_Visible("GUILDBANK_WITHDRAW")) then
+                        StaticPopup2_Hide("GUILDBANK_WITHDRAW_MONEY");
+                        else
+                        StaticPopup2_Show("GUILDBANK_WITHDRAW_MONEY");
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentBottomTab1" inherits="TWGuildFrameBottomTabButtonTemplate" id="1" text="Guild Bank">
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="60" y="15"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentBottomTab2" inherits="TWGuildFrameBottomTabButtonTemplate" id="2" text="Log">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="GuildBankFrameBottomTab1" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-10" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentBottomTab3" inherits="TWGuildFrameBottomTabButtonTemplate" id="3" text="Money Log">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="GuildBankFrameBottomTab2" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-10" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+
+            <Frame name="$parentStackSplitFrame" frameStrata="HIGH" toplevel="true" enableMouse="true"
+                   enableKeyboard="false" hidden="true">
+                <Size>
+                    <AbsDimension x="172" y="96"/>
+                </Size>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\MoneyFrame\UI-MoneyFrame">
+                            <Size>
+                                <AbsDimension x="256" y="32"/>
+                            </Size>
+                            <TexCoords left="0" right="0.671875" top="0" bottom="0.75"/>
+                        </Texture>
+                        <FontString name="$parentSplitText" inherits="GameFontHighlight" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-50" y="18"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button name="$parentLeftButton">
+                        <Size>
+                            <AbsDimension x="16" y="16"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="CENTER">
+                                <Offset>
+                                    <AbsDimension x="-59" y="18"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrame_StackSplitFrameLeft_Click();
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\MoneyFrame\Arrow-Left-Up"/>
+                        <PushedTexture file="Interface\MoneyFrame\Arrow-Left-Down"/>
+                        <DisabledTexture file="Interface\MoneyFrame\Arrow-Left-Disabled"/>
+                    </Button>
+                    <Button name="$parentRightButton">
+                        <Size>
+                            <AbsDimension x="16" y="16"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="CENTER">
+                                <Offset>
+                                    <AbsDimension x="64" y="18"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrame_StackSplitFrameRight_Click();
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\MoneyFrame\Arrow-Right-Up"/>
+                        <PushedTexture file="Interface\MoneyFrame\Arrow-Right-Down"/>
+                        <DisabledTexture file="Interface\MoneyFrame\Arrow-Right-Disabled"/>
+                    </Button>
+                    <Button name="$parentOkayButton" inherits="UIPanelButtonTemplate" text="OKAY">
+                        <Size>
+                            <AbsDimension x="64" y="24"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="BOTTOM">
+                                <Offset>
+                                    <AbsDimension x="-3" y="32"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrame_StackSplitFrameOkay_Click();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="$parentCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
+                        <Size>
+                            <AbsDimension x="64" y="24"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="BOTTOM">
+                                <Offset>
+                                    <AbsDimension x="5" y="32"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                GuildBankFrame_StackSplitFrameCancel_Click();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+                <Scripts>
+                    <OnChar>
+                        GuildBankFrame_StackSplitFrame_OnChar();
+                    </OnChar>
+                    <OnKeyDown>
+                        GuildBankFrame_StackSplitFrame_OnKeyDown();
+                    </OnKeyDown>
+                </Scripts>
+            </Frame>
+
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                this:SetMovable(1);
+                this:SetUserPlaced(true);
+                GuildBankFrame_OnLoad()
+            </OnLoad>
+            <OnShow>
+                GuildBankFrame_OnShow()
+            </OnShow>
+            <OnHide>
+                GuildBankFrame_OnHide()
+            </OnHide>
+        </Scripts>
+    </Frame>
+</Ui>
