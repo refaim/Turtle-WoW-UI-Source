@@ -1,0 +1,177 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script>
+		NORMAL_FONT_COLOR = {r=1.0, g=0.82, b=0};
+		HIGHLIGHT_FONT_COLOR = {r=1.0, g=1.0, b=1.0};
+		GRAY_FONT_COLOR = {r=0.5, g=0.5, b=0.5};
+		GREEN_FONT_COLOR = {r=0.1, g=1.0, b=0.1};
+		RED_FONT_COLOR = {r=1.0, g=0.1, b=0.1};
+		BLUE_FONT_COLOR = {r=0, g=0.749, b=0.953};
+	</Script>
+	<Font name="MasterFont" virtual="true">
+		<Shadow>
+			<Offset>
+				<AbsDimension x="1" y="-1"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+	</Font>
+	<!-- This system font is specially prepared to match the stock system font already loaded -->
+	<Font name="SystemFont" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" virtual="true">
+		<FontHeight>
+			<AbsValue val="15"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="0"/>
+	</Font>
+	<Font name="GlueFontNormal" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="15"/>
+		</FontHeight>
+		<Shadow>
+			<Offset>
+				<AbsDimension x="1" y="-1"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+		<Color r="1.0" g="0.78" b="0"/>
+	</Font>
+	<Font name="GlueFontHighlight" inherits="GlueFontNormal" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="GlueFontDisable" inherits="GlueFontNormal" virtual="true">
+		<Color r="0.5" g="0.5" b="0.5"/>
+	</Font>
+	<Font name="GlueFontGreen" inherits="GlueFontNormal" virtual="true">
+		<Color r="0.1" g="1.0" b="0.1"/>
+	</Font>
+	<Font name="GlueFontRed" inherits="GlueFontNormal" virtual="true">
+		<Color r="1.0" g="0.1" b="0.1"/>
+	</Font>
+	<Font name="GlueFontBlack" font="Fonts\FRIZQT__.TTF" virtual="true">
+		<FontHeight>
+			<AbsValue val="12"/>
+		</FontHeight>
+		<Color r="0" g="0" b="0"/>
+	</Font>
+	<Font name="GlueFontWhite" inherits="GlueFontBlack" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="GlueFontNormalSmall" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="12"/>
+		</FontHeight>
+		<Shadow>
+			<Offset>
+				<AbsDimension x="1" y="-1"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+		<Color r="1.0" g="0.78" b="0"/>
+	</Font>
+	<Font name="GlueFontHighlightSmall" inherits="GlueFontNormalSmall" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="GlueFontCharacterCreate" inherits="GlueFontHighlightSmall" virtual="true" spacing="1.5"/>
+	<Font name="GlueFontDisableSmall" inherits="GlueFontNormalSmall" virtual="true">
+		<Color r="0.5" g="0.5" b="0.5"/>
+	</Font>
+	<Font name="GlueFontGreenSmall" inherits="GlueFontNormalSmall" virtual="true">
+		<Color r="0.1" g="1.0" b="0.1"/>
+	</Font>
+	<Font name="GlueFontRedSmall" inherits="GlueFontNormalSmall" virtual="true">
+		<Color r="1.0" g="0.1" b="0.1"/>
+	</Font>
+	<Font name="GlueFontLightYellowSmall" inherits="GlueFontNormalSmall" virtual="true">
+		<Color r="1.0" g="0.96" b="0.62"/>
+	</Font>
+	<Font name="GlueFontNormalLarge" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" spacing="2" virtual="true">
+		<FontHeight>
+			<AbsValue val="18"/>
+		</FontHeight>
+		<Color r="1.0" g="0.78" b="0"/>
+		<Shadow>
+			<Offset>
+				<AbsDimension x="2" y="-2"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+	</Font>
+	<Font name="GlueFontNormalHuge" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="22"/>
+		</FontHeight>
+		<Color r="1.0" g="0.78" b="0"/>
+		<Shadow>
+			<Offset>
+				<AbsDimension x="2" y="-2"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+	</Font>
+	<Font name="GlueFontHighlightHuge" inherits="GlueFontNormalHuge" outline="NORMAL" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="GlueFontDisableHuge" inherits="GlueFontNormalHuge" virtual="true">
+		<Color r="0.5" g="0.5" b="0.5"/>
+	</Font>
+	<Font name="GlueFontHighlightLarge" inherits="GlueFontNormalLarge" outline="THICK" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="GlueFontDisableLarge" inherits="GlueFontNormalLarge" virtual="true">
+		<Color r="0.5" g="0.5" b="0.5"/>
+	</Font>
+	<Font name="GlueFontGreenLarge" inherits="GlueFontNormalLarge" virtual="true">
+		<Color r="0.1" g="1.0" b="0.1"/>
+	</Font>
+	<Font name="GlueFontRedLarge" inherits="GlueFontNormalLarge" virtual="true">
+		<Color r="1.0" g="0.1" b="0.1"/>
+	</Font>
+	<Font name="GlueEditBoxFont" font="Fonts\ARIALN.TTF" virtual="true">
+		<FontHeight>
+			<AbsValue val="18"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="NumberFontNormal" font="Fonts\ARIALN.TTF" outline="THICK" virtual="true">
+		<FontHeight>
+			<AbsValue val="14"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="NumberFontNormalSmall" font="Fonts\ARIALN.TTF" outline="THICK" virtual="true">
+		<FontHeight>
+			<AbsValue val="12"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="NumberFontNormalSmallGray" inherits="NumberFontNormalSmall" outline="THICK" virtual="true">
+		<Color r="0.6" g="0.6" b="0.6"/>
+	</Font>
+	<Font name="NumberFontNormalLarge" font="Fonts\ARIALN.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="16"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="NumberFontNormalHuge" font="Fonts\skurri.ttf" outline="THICK" virtual="true">
+		<FontHeight>
+			<AbsValue val="30"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="DialogButtonNormalText" font="Fonts\FRIZQT__.TTF" virtual="true">
+		<FontHeight>
+			<AbsValue val="16"/>
+		</FontHeight>
+		<Color r="1.0" g="0.82" b="0.0"/>
+	</Font>
+	<Font name="DialogButtonHighlightText" inherits="DialogButtonNormalText" virtual="true">
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+	<Font name="TOSFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="12"/>
+		</FontHeight>
+		<Color r="1.0" g="1.0" b="1.0"/>
+	</Font>
+</Ui>
