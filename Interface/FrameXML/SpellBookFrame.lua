@@ -1,3 +1,4 @@
+
 MAX_SPELLS = 1024;
 MAX_SKILLLINE_TABS = 8;
 SPELLS_PER_PAGE = 12;
@@ -125,15 +126,19 @@ function SpellBookFrame_Update(showing)
 			name, texture, offset, numSpells = GetSpellTabInfo(i);
 			skillLineTab:SetNormalTexture(texture);
 			skillLineTab.tooltip = name;
-			-- hack for visual
-			if (name == "ZCompanions") then
+			-- if (i == 1) then
+				-- skillLineTab:SetNormalTexture("Interface\\Icons\\BTNLeatherHood");
+			-- end
+			if (name == "ZzCompanions") then
 				skillLineTab.tooltip = "Companions";
 			end
 			if (name == "ZMounts") then
 				skillLineTab.tooltip = "Mounts";
 			end
+			if (name == "ZzzGlyphs") then
+				skillLineTab.tooltip = "Glyphs";
+			end
 			skillLineTab:Show();
-
 			-- Set the selected tab
 			if ( SpellBookFrame.selectedSkillLine == i ) then
 				skillLineTab:SetChecked(1);

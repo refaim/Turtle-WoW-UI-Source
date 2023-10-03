@@ -2358,8 +2358,15 @@ function OutfitsDropDown_Initialize()
             if itemID == 0 then
                 --descText = descText .. FONT_COLOR_CODE_CLOSE ..  slot .. ": None \n"
             else
+				Transmog:cacheItem(itemID)
                 local n, link, quality, _, _, _, _, equip_slot = GetItemInfo(itemID)
-
+				
+				--dirty fix
+                if quality == nil then quality = 0 end
+				
+				--dirty fix
+                if n == nil then n = "error" end
+				
                 local _, _, _, color = GetItemQualityColor(quality)
 
                 --descText = descText .. FONT_COLOR_CODE_CLOSE .. getglobal(equip_slot) .. ": " .. color .. n .. "\n"

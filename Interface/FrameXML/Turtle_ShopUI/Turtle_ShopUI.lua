@@ -43,7 +43,6 @@ tws.startDelayer:SetScript("OnUpdate", function()
 end)
 
 function ShopFrame_OnLoad()
-    ShopFrameDescText:SetText("Browse among numerous rewards available to our supporters.");
     tws.startDelayer:Show()
 end
 
@@ -113,6 +112,16 @@ end
 
 function tws.processCategories(arg)
 
+	arg = string.gsub(arg,"8","9")
+	arg = string.gsub(arg,"7","8")
+	arg = string.gsub(arg,"6","7")
+	arg = string.gsub(arg,"5","6")
+	arg = string.gsub(arg,"4","5")
+	arg = string.gsub(arg,"3","4")
+	arg = string.gsub(arg,"2","3")
+	arg = string.gsub(arg,"1","2")
+	arg = string.gsub(arg, ":", ":1=About=about;")
+
     for index in tws.categoryFrames do
         tws.categoryFrames[index]:Hide()
     end
@@ -160,13 +169,42 @@ end
 
 function ShopFrameCategoryButton_OnClick(id)
 
-    ShopFrameEntryFrame:Hide()
+	ShopFrameEntryFrame:Hide()
 
     for _, data in tws.categoryFrames do
         getglobal('TWSCategoryFrame' .. data.id .. 'ButtonSelected'):Hide()
     end
     getglobal('TWSCategoryFrame' .. id .. 'ButtonSelected'):Show()
+	
+	if id == 1 then
+		for index in tws.entryFrames do
+			tws.entryFrames[index]:Hide()
+		end
+		ShopFrameFramePageText:Hide()
+		ShopFrameLeftArrow:Hide()
+		ShopFrameLeftArrow:Disable()
+		ShopFrameRightArrow:Hide()
+		ShopFrameRightArrow:Disable()
 
+		ShopFrameAboutFrameLongText:SetText([[
+Please be aware of the following: 
+
+• All donation rewards are soulbound, not account-bound. 
+
+• Non-hardcore characters have a 48-hour grace period to request refunds on donation rewards. 
+
+• Tokens will automatically be returned upon Hardcore death. Please create a Hardcore character to preview donation rewards. 
+
+• Deleting a non-hardcore character will not refund tokens.
+
+For any issues, open a GM ticket using /gm.
+]])
+		ShopFrameAboutFrame:Show()
+		return
+	end
+	ShopFrameAboutFrame:Hide()
+
+	id = id - 1
     SendAddonMessage(tws.prefix, "Entries:" .. id, "GUILD")
 
     tws.currentCategory = id
@@ -360,7 +398,7 @@ function ShopFrameEntryButton_OnClick(id)
     ShopFrameEntryFrameBuyButton:SetID(tws.entries[id].id)
 
     if tws.balance < tws.entries[id].price then
-        tws.AddButtonOnEnterTextTooltip(ShopFrameEntryFrameBuyButton, "You don't have enough tokens to buy this!", "You can buy tokens via PayPal: info.turtlewow@gmail.com.\nPlease include your account name. 1 euro gives you 10 tokens.")
+        tws.AddButtonOnEnterTextTooltip(ShopFrameEntryFrameBuyButton, "You don't have enough tokens to buy this!", "You can buy tokens our website.")
     end
 
     ShopFrameEntryFrameBuyButton:Enable()
@@ -508,10 +546,14 @@ function tws_build_minimap_menu()
 end
 
 
-SLASH_TWSHOP1 = "/twshop"
+SLASH_TWSHOP1, SLASH_TWSHOP2 = "/twshop", "/shop"
 SlashCmdList["TWSHOP"] = function(cmd)
-    if cmd and string.find(cmd, 'showbutton', 1, true) then
-        TWS_HIDE_MINIMAP_BUTTON = 0
-        TWMinimapShopFrame:Show()
-    end
+    if cmd then
+		if string.find(cmd, 'showbutton', 1, true) or string.find(cmd, 'button', 1, true) or string.find(cmd, 'show', 1, true) then
+			TWS_HIDE_MINIMAP_BUTTON = 0
+			TWMinimapShopFrame:Show()
+		else
+			tws_toggle()
+		end
+	end
 end

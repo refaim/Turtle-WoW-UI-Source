@@ -74,6 +74,10 @@ function CharacterCreate_OnLoad()
 	local backdropColor = FACTION_BACKDROP_COLOR_TABLE["Alliance"];
 	CharacterCreateNameEdit:SetBackdropBorderColor(backdropColor[1], backdropColor[2], backdropColor[3]);
 	CharacterCreateNameEdit:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6]);
+
+	local fontName, _, fontFlags = GlueFontNormal:GetFont()
+	CharacterCreateAllianceText:SetFont(fontName, 12, fontFlags)
+	CharacterCreateHordeText:SetFont(fontName, 12, fontFlags)
 end
 
 function CharacterCreate_OnShow()

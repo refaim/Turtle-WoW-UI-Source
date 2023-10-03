@@ -1,0 +1,107 @@
+<Ui
+	xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Script file="EverlookBroadcastingCo.lua"/>
+	<Script file="localization.en.lua"/>
+	<Script file="localization.cn.lua"/>
+	<Frame name="EBCMain" hidden="true" toplevel="true" parent="UIParent" movable="true" enableMouse="true" resizable="false">
+		<Size>
+			<AbsDimension x="1" y="1"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-104"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Frame name="EBCFrame" hidden="false" toplevel="true" enableMouse="true">
+				<Size>
+					<AbsDimension x="1" y="1"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button name="EBC_Minimap" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
+						<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+						<Size x="33" y="33"/>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="-20" y="-36"/>
+                                </Offset>
+                            </Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture file="Interface\Icons\INV_Gizmo_GoblinBoomBox_01">
+									<Size x="18" y="18"/>
+									<Anchors>
+										<Anchor point="TOPLEFT">
+											<Offset x="6" y="-5"/>
+										</Anchor>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+									<Size x="52" y="52"/>
+									<Anchors>
+										<Anchor point="TOPLEFT"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+								this:RegisterForDrag("LeftButton");
+								this:SetClampedToScreen(true);
+							</OnLoad>
+							<OnDragStart>
+                                if ( IsControlKeyDown() ) then
+                                this:LockHighlight();
+                                this:StartMoving();
+                                end
+                            </OnDragStart>
+                            <OnDragStop>
+                                this:UnlockHighlight();
+                                this:StopMovingOrSizing();
+                                this:SetParent("UIParent");
+                            </OnDragStop>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_LEFT");
+								GameTooltip:SetText(EBC_TITLE);
+								GameTooltip:AddLine(EBC_LINE1, 1, 1, 1);
+								GameTooltip:AddLine(EBC_LINE2, 1, 1, 1);
+								GameTooltip:AddLine(EBC_LINE3, 1, 1, 1);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide();
+							</OnLeave>
+							<OnMouseUp>
+								if ( arg1 == "LeftButton" ) then
+                                	ShowEBCMinimapDropdown();
+                                elseif ( arg1 == "RightButton" ) then
+									if ( IsControlKeyDown() ) then
+										this:SetUserPlaced(0);
+										this:ClearAllPoints();
+										this:SetParent("Minimap");
+										this:SetPoint("TOPLEFT", Minimap, -20, -36);
+									end
+                                end
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

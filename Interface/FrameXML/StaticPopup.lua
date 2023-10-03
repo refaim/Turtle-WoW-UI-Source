@@ -32,6 +32,30 @@ StaticPopupDialogs["CONFIRM_RESET_INSTANCES"] = {
 	hideOnEscape = 1,
 };
 
+StaticPopupDialogs["CONFIRM_TOGGLE_XP_ON"] = {
+	text = TEXT(CONFIRM_TOGGLE_XP_ON),
+	button1 = TEXT(YES),
+	button2 = TEXT(NO),
+	OnAccept = function()
+		SendChatMessage(".xp on");
+	end,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = 1,
+};
+
+StaticPopupDialogs["CONFIRM_TOGGLE_XP_OFF"] = {
+	text = TEXT(CONFIRM_TOGGLE_XP_OFF),
+	button1 = TEXT(YES),
+	button2 = TEXT(NO),
+	OnAccept = function()
+		SendChatMessage(".xp off");
+	end,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = 1,
+};
+
 StaticPopupDialogs["CONFIRM_GUILD_DISBAND"] = {
 	text = TEXT(CONFIRM_GUILD_DISBAND),
 	button1 = TEXT(YES),

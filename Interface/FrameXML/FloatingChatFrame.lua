@@ -500,6 +500,7 @@ function FCFDropDown_LoadChatTypes(menuChatTypeGroups)
 		checked = nil;
 		if ( messageTypeList ) then
 			for joinedIndex, joinedValue in messageTypeList do
+				-- DEFAULT_CHAT_FRAME:AddMessage(joinedValue);
 				if ( value == joinedValue ) then
 					checked = 1;
 				end
@@ -635,6 +636,7 @@ function FCF_OpenNewWindow(name)
 			ChatFrame_AddMessageGroup(chatFrame, "GUILD");
 			ChatFrame_AddMessageGroup(chatFrame, "WHISPER");
 			ChatFrame_AddMessageGroup(chatFrame, "PARTY");
+			ChatFrame_AddMessageGroup(chatFrame, "HARDCORE");
 			ChatFrame_AddMessageGroup(chatFrame, "CHANNEL");
 
 			-- Show the frame and tab

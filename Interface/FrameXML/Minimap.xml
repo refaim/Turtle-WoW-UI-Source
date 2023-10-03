@@ -404,22 +404,21 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="TWMiniMapBattlefieldFrame" movable="true" parent="UIParent" enableMouse="true"
-                            toplevel="true" frameStrata="LOW">
-                        <HighlightTexture alphaMode="ADD" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight"/>
+                    <Button name="TWMiniMapBattlefieldFrame" movable="true" toplevel="true" frameStrata="LOW">
+                        <HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
                         <Size>
                             <AbsDimension x="33" y="33"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeTo="Minimap" relativePoint="LEFT">
+                            <Anchor point="BOTTOMLEFT">
                                 <Offset>
-                                    <AbsDimension x="-10" y="10"/>
+                                    <AbsDimension x="-11" y="10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="ARTWORK">
-                                <Texture name="MiniMapBattlefieldIcon" file="Interface\Icons\ability_dualwield">
+                                <Texture name="TWMiniMapBattlefieldFrameIcon" file="Interface\Icons\ability_dualwield">
                                     <Size>
                                         <AbsDimension x="18" y="18"/>
                                     </Size>
@@ -433,7 +432,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <Texture name="MiniMapBattlefieldBorder"
+                                <Texture name="TWMiniMapBattlefieldFrameBorder"
                                          file="Interface\Minimap\MiniMap-TrackingBorder">
                                     <Size>
                                         <AbsDimension x="52" y="52"/>
@@ -448,24 +447,27 @@
                         </Frames>
                         <Scripts>
                             <OnLoad>
-                                this:RegisterForClicks("RightButtonUp")
-                                this:RegisterForDrag("LeftButton")
-                                this:SetClampedToScreen(true)
                                 this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+                                this:RegisterForDrag("LeftButton");
+                                this:SetClampedToScreen(true);
                             </OnLoad>
                             <OnDragStart>
+                                if ( IsControlKeyDown() ) then
                                 this:LockHighlight();
                                 this:StartMoving();
+                                end
                             </OnDragStart>
                             <OnDragStop>
                                 this:UnlockHighlight();
                                 this:StopMovingOrSizing();
+                                this:SetParent("UIParent");
                             </OnDragStop>
                             <OnEnter>
                                 GameTooltip:SetOwner(this, "ANCHOR_LEFT");
                                 GameTooltip:SetText("Battleground Finder");
-                                GameTooltip:AddLine('Left-click to open menu.', 1, 1, 1)
-                                GameTooltip:AddLine('Drag to move.', 1, 1, 1);
+                                GameTooltip:AddLine('Left-click to open menu.', 1, 1, 1);
+                                GameTooltip:AddLine('Hold control and drag to move.', 1, 1, 1);
+                                GameTooltip:AddLine('Hold control and right-click to reset position.', 1, 1, 1);
                                 GameTooltip:Show();
                             </OnEnter>
                             <OnLeave>
@@ -473,21 +475,27 @@
                             </OnLeave>
                             <OnClick>
                                 if ( arg1 == "LeftButton" ) then
-                                ShowTWBGQueueMenu()
+                                    ShowTWBGQueueMenu();
+                                elseif ( arg1 == "RightButton" ) then
+                                    if ( IsControlKeyDown() ) then
+                                        this:SetUserPlaced(0);
+                                        this:ClearAllPoints();
+                                        this:SetParent("Minimap");
+                                        this:SetPoint("BOTTOMLEFT", Minimap, -11, 10);
+                                    end
                                 end
                             </OnClick>
                         </Scripts>
                     </Button>
-                    <Button name="TWMinimapShopFrame" movable="true" parent="UIParent" enableMouse="true"
-                            toplevel="true" frameStrata="LOW">
-                        <HighlightTexture alphaMode="ADD" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight"/>
+                    <Button name="TWMinimapShopFrame" movable="true" toplevel="true" frameStrata="LOW">
+                        <HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
                         <Size>
                             <AbsDimension x="33" y="33"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeTo="Minimap" relativePoint="LEFT">
+                            <Anchor point="BOTTOM">
                                 <Offset>
-                                    <AbsDimension x="-2" y="-5"/>
+                                    <AbsDimension x="12" y="-24"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -495,7 +503,7 @@
                             <Layer level="ARTWORK">
                                 <Texture name="TWMinimapShopFrameIcon" file="Interface\Icons\inv_crate_03">
                                     <Size>
-                                        <AbsDimension x="19" y="19"/>
+                                        <AbsDimension x="18" y="18"/>
                                     </Size>
                                     <Anchors>
                                         <Anchor point="CENTER">
@@ -522,24 +530,28 @@
                         </Frames>
                         <Scripts>
                             <OnLoad>
-                                this:RegisterForClicks("RightButtonUp")
-                                this:RegisterForDrag("LeftButton")
-                                this:SetClampedToScreen(true)
                                 this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+                                this:RegisterForDrag("LeftButton");
+                                this:SetClampedToScreen(true);
                             </OnLoad>
                             <OnDragStart>
+                                if ( IsControlKeyDown() ) then
                                 this:LockHighlight();
                                 this:StartMoving();
+                                end
                             </OnDragStart>
                             <OnDragStop>
                                 this:UnlockHighlight();
                                 this:StopMovingOrSizing();
+                                this:SetParent("UIParent");
                             </OnDragStop>
                             <OnEnter>
                                 GameTooltip:SetOwner(this, "ANCHOR_LEFT");
                                 GameTooltip:SetText("Turtle WoW Donation Rewards");
-                                GameTooltip:AddLine('Left-click to open shop.', 1, 1, 1);
-                                GameTooltip:AddLine('Drag to move.', 1, 1, 1);
+                                GameTooltip:AddLine('Left-click to open the shop.', 1, 1, 1);
+                                GameTooltip:AddLine('Right-click to hide this button.', 1, 1, 1);
+                                GameTooltip:AddLine('Hold control and drag to move.', 1, 1, 1);
+                                GameTooltip:AddLine('Hold control and right-click to reset position.', 1, 1, 1);
                                 GameTooltip:Show();
                             </OnEnter>
                             <OnLeave>
@@ -547,9 +559,16 @@
                             </OnLeave>
                             <OnClick>
                                 if ( arg1 == "LeftButton" ) then
-                                    tws_toggle()
-                                elseif (arg1 == "RightButton") then
-                                    tws_minimap_hide()
+                                    tws_toggle();
+                                elseif ( arg1 == "RightButton" ) then
+                                    if ( IsControlKeyDown() ) then
+                                        this:SetUserPlaced(0);
+                                        this:ClearAllPoints();
+                                        this:SetParent("Minimap");
+                                        this:SetPoint("BOTTOMLEFT", Minimap, -11, 10);
+                                    else
+                                        tws_minimap_hide();
+                                    end
                                 end
                             </OnClick>
                         </Scripts>

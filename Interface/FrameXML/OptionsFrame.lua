@@ -55,6 +55,8 @@ function OptionsFrame_OnEvent()
 end
 
 function OptionsFrame_Load()
+	local bmLoaded, bmReason = LoadAddOn("Blizzard_BattlefieldMinimap")
+	if not BattlefieldMinimapOptions.farclip then BattlefieldMinimapOptions.farclip = OPTIONS_FARCLIP_MAX end
 	local shadersEnabled = GetCVar("pixelShaders");
 	local hasAnisotropic, hasPixelShaders, hasVertexShaders, hasTrilinear, hasTripleBuffering, maxAnisotropy, hasHardwareCursor = GetVideoCaps();
 	for index, value in OptionsFrameCheckButtons do
@@ -110,7 +112,7 @@ function OptionsFrame_Load()
 		local getvalue = getglobal("Get"..value.func);
 		slider.disabled = nil;
 		if ( getvalue ) then
-			getvalue = getvalue();	
+			getvalue = getvalue();
 		elseif ( value.func == "anisotropic" ) then
 			if ( hasAnisotropic ) then
 				-- Map cvar to a slider value from 1 - 4, since sliders can't move up by geometric increments
@@ -139,6 +141,16 @@ function OptionsFrame_Load()
 			OptionsFrame_DisableSlider(slider);
 		else
 			OptionsFrame_EnableSlider(slider);
+		end
+		
+		if ( value.func == "farclip" ) then
+			local cvarFarclip  = tonumber(GetCVar("farclip"))
+			if ( cvarFarclip > OPTIONS_FARCLIP_MAX ) or ( cvarFarclip > BattlefieldMinimapOptions.farclip ) then
+				value.maxValue = cvarFarclip
+				if ( cvarFarclip > BattlefieldMinimapOptions.farclip ) then
+					BattlefieldMinimapOptions.farclip = cvarFarclip
+				end
+			end
 		end
 
 		slider:SetMinMaxValues(value.minValue, value.maxValue);

@@ -329,7 +329,7 @@
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT">
                             <Offset>
-                                <AbsDimension x="-25" y="16"/>
+                                <AbsDimension x="-25" y="18"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -505,6 +505,50 @@
                         </Scripts>
                     </Button>
                 </Frames>
+            </Frame>
+			<Frame name="$parentAboutFrame" hidden="true">
+                <Size>
+                    <AbsDimension x="450" y="360"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="-75"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER">
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString name="$parentName" inherits="GameFontNormal" text="Thank you for supporting the Turtle WoW project!">
+                            <Size>
+                                <AbsDimension x="512" y="14"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-18"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString name="$parentLongText" hidden="false" inherits="GameFontHighlight" text=""
+                                    justifyH="LEFT" justifyV="TOP">
+                            <Size>
+                                <AbsDimension x="410" y="276"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="25" y="-50"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
         </Frames>

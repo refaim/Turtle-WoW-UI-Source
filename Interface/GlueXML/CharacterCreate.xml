@@ -43,11 +43,12 @@
 		<NormalTexture name="$parentNormalTexture" file="Interface\Glues\CharacterCreate\UI-CharacterCreate-Races"/>
 	</CheckButton>
 	<CheckButton name="CharacterCreateClassButtonTemplate" inherits="CharacterCreateIconButtonTemplate" virtual="true">
+		<Size x="40" y="40"/>
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture file="Interface\Glues\CharacterCreate\UI-CharacterCreate-IconShadow">
 					<Size>
-						<AbsDimension x="64" y="64"/>
+						<AbsDimension x="55" y="55"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER">
@@ -693,7 +694,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.875" top="0" bottom="0.9375"/>
+									<TexCoords left="0" right="0.875" top="1.0" bottom="0.1796875"/>
 								</Texture>
 								<Texture name="CharacterCreateOuterBorder2" file="Interface\Glues\CharacterCreate\UI-CharacterCreate-OuterBorder">
 									<Size>
@@ -706,7 +707,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.875" top="0" bottom="0.9375"/>
+									<TexCoords left="0" right="0.875" top="0.9375" bottom="0.9375"/>
 								</Texture>
 								<Texture name="CharacterCreateOuterBorder3" file="Interface\Glues\CharacterCreate\UI-CharacterCreate-OuterBorder">
 									<Size>
@@ -733,16 +734,16 @@
 										</Anchor>
 									</Anchors>
 								</Texture>
-								<FontString inherits="GlueFontNormal" text="ALLIANCE">
+								<FontString name="CharacterCreateAllianceText" inherits="GlueFontNormal" text="ALLIANCE">
 									<Anchors>
 										<Anchor point="BOTTOM" relativeTo="CharacterCreateBanners" relativePoint="TOP">
 											<Offset>
-												<AbsDimension x="-50" y="3"/>
+												<AbsDimension x="-44" y="3"/>
 											</Offset>
 										</Anchor>
 									</Anchors>
 								</FontString>
-								<FontString inherits="GlueFontNormal" text="HORDE">
+								<FontString name="CharacterCreateHordeText" inherits="GlueFontNormal" text="HORDE">
 									<Anchors>
 										<Anchor point="BOTTOM" relativeTo="CharacterCreateBanners" relativePoint="TOP">
 											<Offset>
@@ -760,7 +761,7 @@
 									<Anchors>
 										<Anchor point="TOPLEFT" relativeTo="CharacterCreateOuterBorder1">
 											<Offset>
-												<AbsDimension x="6" y="0"/>
+												<AbsDimension x="6" y="-6"/>
 											</Offset>
 										</Anchor>
 										<Anchor point="BOTTOMLEFT" relativeTo="CharacterCreateOuterBorder3">
@@ -780,7 +781,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="CharacterCreateFrame">
 										<Offset>
-											<AbsDimension x="3" y="10"/>
+											<AbsDimension x="3" y="7"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -895,7 +896,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="CharacterCreateRaceButton5" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="23" y="-25"/>
+											<AbsDimension x="27" y="-25"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -945,7 +946,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="CharacterCreateGenderButtonMale" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="-20" y="-15"/>
+											<AbsDimension x="-44" y="-15"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -954,7 +955,7 @@
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton1" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="4" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -963,25 +964,25 @@
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton2" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="4" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
 							</CheckButton>
 							<CheckButton name="CharacterCreateClassButton4" inherits="CharacterCreateClassButtonTemplate" id="4">
 								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="CharacterCreateClassButton1" relativePoint="BOTTOMLEFT">
+									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton3" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="0" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
 							</CheckButton>
 							<CheckButton name="CharacterCreateClassButton5" inherits="CharacterCreateClassButtonTemplate" id="5">
 								<Anchors>
-									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton4" relativePoint="RIGHT">
+									<Anchor point="TOPLEFT" relativeTo="CharacterCreateClassButton1" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="4" y="0"/>
+											<AbsDimension x="0" y="-3"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -990,16 +991,16 @@
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton5" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="4" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
 							</CheckButton>
 							<CheckButton name="CharacterCreateClassButton7" inherits="CharacterCreateClassButtonTemplate" id="7">
 								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="CharacterCreateClassButton4" relativePoint="BOTTOMLEFT">
+									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton6" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="0" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -1008,16 +1009,16 @@
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="CharacterCreateClassButton7" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="4" y="0"/>
+											<AbsDimension x="5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
 							</CheckButton>
 							<Frame name="CharacterCustomizationButtonFrame1" inherits="CharacterCustomizationFrameTemplate" id="1">
 								<Anchors>
-									<Anchor point="TOP" relativeTo="CharacterCreateClassButton5" relativePoint="BOTTOM">
+									<Anchor point="TOP" relativeTo="CharacterCreateClassButton6" relativePoint="BOTTOM">
 										<Offset>
-											<AbsDimension x="0" y="-15"/>
+											<AbsDimension x="20" y="-15"/>
 										</Offset>
 									</Anchor>
 								</Anchors>

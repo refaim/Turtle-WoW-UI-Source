@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="WorldMapFrame.lua"/>
 	<Include file="WorldMapFrameTemplates.xml"/>
-	<Frame name="WorldMapFrame" setAllPoints="true" frameStrata="FULLSCREEN" hidden="true" enableKeyboard="true">
+	<Frame name="WorldMapFrame" setAllPoints="true" frameStrata="FULLSCREEN" hidden="true" enableMouse="true" enableKeyboard="true">
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="BlackoutWorld">
@@ -16,7 +16,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<Texture file="Interface\WorldMap\UI-WorldMap-Top1">
+				<Texture name="$parentTexture1" file="Interface\WorldMap\UI-WorldMap-Top1">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Top2">
+				<Texture name="$parentTexture2" file="Interface\WorldMap\UI-WorldMap-Top2">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -40,7 +40,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Top3">
+				<Texture name="$parentTexture3" file="Interface\WorldMap\UI-WorldMap-Top3">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -52,7 +52,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Top4">
+				<Texture name="$parentTexture4" file="Interface\WorldMap\UI-WorldMap-Top4">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -64,7 +64,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Middle1">
+				<Texture name="$parentTexture5" file="Interface\WorldMap\UI-WorldMap-Middle1">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -76,7 +76,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Middle2">
+				<Texture name="$parentTexture6" file="Interface\WorldMap\UI-WorldMap-Middle2">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -88,7 +88,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Middle3">
+				<Texture name="$parentTexture7" file="Interface\WorldMap\UI-WorldMap-Middle3">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -100,7 +100,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Middle4">
+				<Texture name="$parentTexture8" file="Interface\WorldMap\UI-WorldMap-Middle4">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -112,7 +112,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Bottom1">
+				<Texture name="$parentTexture9" file="Interface\WorldMap\UI-WorldMap-Bottom1">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -124,7 +124,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Bottom2">
+				<Texture name="$parentTexture10" file="Interface\WorldMap\UI-WorldMap-Bottom2">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -136,7 +136,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Bottom3">
+				<Texture name="$parentTexture11" file="Interface\WorldMap\UI-WorldMap-Bottom3">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -148,7 +148,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture file="Interface\WorldMap\UI-WorldMap-Bottom4">
+				<Texture name="$parentTexture12" file="Interface\WorldMap\UI-WorldMap-Bottom4">
 					<Size>
 						<AbsDimension x="256" y="256"/>
 					</Size>
@@ -160,27 +160,98 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="WORLD_MAP">
+				<Texture name="$parentMinimizedTexture1" file="Interface\WorldMap\UI-WorldMapMinimized-TopLeft" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="32"/>
+					</Size>
 					<Anchors>
-						<Anchor point="CENTER">
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture2" file="Interface\WorldMap\UI-WorldMapMinimized-BottomLeft" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture3" file="Interface\WorldMap\UI-WorldMapMinimized-Left" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="512"/>
+					</Size>
+					<TexCoords left="0" right="1" top="0" bottom="0.6708"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentMinimizedTexture1" relativePoint="BOTTOMLEFT"/>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentMinimizedTexture2" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture4" file="Interface\WorldMap\UI-WorldMapMinimized-TopRight" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture5" file="Interface\WorldMap\UI-WorldMapMinimized-BottomRight" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture6" file="Interface\WorldMap\UI-WorldMapMinimized-Right" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="512"/>
+					</Size>
+					<TexCoords left="0" right="1" top="0" bottom="0.6708"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parentMinimizedTexture4" relativePoint="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentMinimizedTexture5" relativePoint="TOPRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture7" file="Interface\WorldMap\UI-WorldMapMinimized-Top" hidden="true">
+					<Size>
+						<AbsDimension x="512" y="32"/>
+					</Size>
+					<TexCoords left="0" right="0.9628" top="0" bottom="1"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentMinimizedTexture1" relativePoint="TOPRIGHT"/>
+						<Anchor point="TOPRIGHT" relativeTo="$parentMinimizedTexture4" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMinimizedTexture8" file="Interface\WorldMap\UI-WorldMapMinimized-Bottom" hidden="true">
+					<Size>
+						<AbsDimension x="512" y="64"/>
+					</Size>
+					<TexCoords left="0" right="0.9628" top="0" bottom="1"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentMinimizedTexture2" relativePoint="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentMinimizedTexture5" relativePoint="BOTTOMLEFT"/>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentTitle" inherits="GameFontNormal" text="WORLD_MAP">
+					<Anchors>
+						<Anchor point="TOP">
 							<Offset>
-								<AbsDimension x="0" y="372"/>
+								<AbsDimension x="0" y="-5"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-
 			</Layer>
 		</Layers>
 		<Frames>
 			<Frame name="WorldMapPositioningGuide">
 				<Size>
-					<AbsDimension x="1024" y="768" />
+					<AbsDimension x="1024" y="768"/>
 				</Size>
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="CENTER">
 						<Offset>
-							<AbsDimension x="0" y="0" />
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -320,14 +391,54 @@
 				</ButtonText>
 				<NormalFont inherits="GameFontHighlightSmall"/>
 			</Button>
-			<Button name="WorldMapFrameCloseButton" inherits="UIPanelCloseButton">
+			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOP" relativeTo="WorldMapPositioningGuide">
+					<Anchor point="TOPRIGHT" relativeTo="WorldMapPositioningGuide">
 						<Offset>
-							<AbsDimension x="516" y="4"/>
+							<AbsDimension x="4" y="4"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
+			</Button>
+			<Button name="$parentMinimizeButton">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="WorldMapPositioningGuide">
+						<Offset>
+							<AbsDimension x="-16" y="4"/>
+						</Offset>
+					</Anchor>
+				</Anchors>        
+				<Scripts>
+					<OnClick>
+						WorldMapFrame_Minimize()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeMapButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeMapButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MapButton-Highlight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parentMaximizeButton" hidden="true">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="WorldMapPositioningGuide">
+						<Offset>
+							<AbsDimension x="-18" y="4"/>
+						</Offset>
+					</Anchor>
+				</Anchors>        
+				<Scripts>
+					<OnClick>
+						WorldMapFrame_Maximize()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MaximizeMapButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MaximizeMapButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MapButton-Highlight" alphaMode="ADD"/>
 			</Button>
 			<Frame name="WorldMapDetailFrame" hidden="false">
 				<Size>
@@ -601,6 +712,7 @@
 				PlaySound("igQuestLogOpen");
 				CloseDropDownMenus();
 				WorldMapFrame_PingPlayerPosition();
+				WorldMapFrame_SetMapName();
 			</OnShow>
 			<OnHide>
 				UpdateMicroButtons();

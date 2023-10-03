@@ -112,6 +112,7 @@ ChatTypeInfo["RAID_BOSS_EMOTE"]							= { sticky = 0 };
 ChatTypeInfo["FILTERED"]								= { sticky = 0 };
 ChatTypeInfo["BATTLEGROUND"]                            = { sticky = 1 };
 ChatTypeInfo["BATTLEGROUND_LEADER"]                     = { sticky = 0 };
+ChatTypeInfo["HARDCORE"]					    		= { sticky = 1 };
 ChatTypeGroup = {};
 ChatTypeGroup["SYSTEM"] = {
 	"CHAT_MSG_SYSTEM",
@@ -346,6 +347,9 @@ ChatTypeGroup["SPELL_FAILED_LOCALPLAYER"] = {
 ChatTypeGroup["COMBAT_FACTION_CHANGE"] = {
 	"CHAT_MSG_COMBAT_FACTION_CHANGE";
 };
+ChatTypeGroup["HARDCORE"] = {
+	"CHAT_MSG_HARDCORE",
+};
 
 ChannelMenuChatTypeGroups = {};
 ChannelMenuChatTypeGroups[1] = "SAY";
@@ -353,7 +357,8 @@ ChannelMenuChatTypeGroups[2] = "YELL";
 ChannelMenuChatTypeGroups[3] = "GUILD";
 ChannelMenuChatTypeGroups[4] = "WHISPER";
 ChannelMenuChatTypeGroups[5] = "PARTY";
-
+ChannelMenuChatTypeGroups[6] = "HARDCORE";
+ 
 CombatLogMenuChatTypeGroups = {};
 CombatLogMenuChatTypeGroups[1]  = "COMBAT_MISC_INFO";
 CombatLogMenuChatTypeGroups[2]  = "COMBAT_SELF_HITS";
@@ -1143,6 +1148,10 @@ SlashCmdList["READYCHECK"] = function(msg)
 	end
 end
 
+SlashCmdList["GM"] = function(msg)
+	ToggleHelpFrame();
+end
+
 -- ChatFrame functions
 function ChatFrame_OnLoad()
 	this.flashTimer = 0;
@@ -1178,6 +1187,9 @@ function ChatFrame_RegisterForMessages(...)
 			index = index + 1;
 		end
 	end
+	-- custom chat register
+	this.messageTypeList[index] = "HARDCORE";
+	this:RegisterEvent("CHAT_MSG_HARDCORE");
 end
 
 function ChatFrame_RegisterForChannels(...)
@@ -1363,6 +1375,16 @@ function ChatFrame_OnEvent(event)
 					this:UpdateColorByID(info.id, info.r, info.g, info.b);
 				end
 			end
+			
+			if ( strupper(arg1) == "SAY" ) then
+				info = ChatTypeInfo["HARDCORE"];
+				if ( info ) then
+					info.r = 230 / 255;
+					info.g = 204 / 255;
+					info.b = 128 / 255;
+					this:UpdateColorByID(info.id, info.r, info.g, info.b);
+				end
+			end			
 		end
 		return;
 	end
@@ -1381,7 +1403,7 @@ function ChatFrame_OnEvent(event)
 						info = ChatTypeInfo["CHANNEL"..arg8];
 						if ( (type == "CHANNEL_NOTICE") and (arg1 == "YOU_LEFT") ) then
 							this.channelList[index] = nil;
-							this.zoneChannelList[index] = nil;
+							this.zoneChannelList[index] = nil;							
 						end
 						break;
 					end
@@ -1458,13 +1480,12 @@ function ChatFrame_OnEvent(event)
 					end
 				end
 			end
-
 			-- Add Channel
 			arg4 = gsub(arg4, "%s%-%s.*", "");
 			if(channelLength > 0) then
-				body = "["..arg4.."] "..body;
+				body = "["..arg4.."] "..body;				
 			end
-			this:AddMessage(body, info.r, info.g, info.b, info.id);
+				this:AddMessage(body, info.r, info.g, info.b, info.id);
 		end
  
 		if ( type == "WHISPER" ) then
@@ -1907,8 +1928,7 @@ function ChatEdit_UpdateHeader(editBox)
 		header:SetText(TEXT(getglobal("CHAT_"..type.."_SEND")));
 	end
 
-	header:SetTextColor(info.r, info.g, info.b);
-
+	header:SetTextColor(info.r, info.g, info.b);	
 	editBox:SetTextInsets(15 + header:GetWidth(), 13, 0, 0);
 	editBox:SetTextColor(info.r, info.g, info.b);
 end
@@ -2266,6 +2286,10 @@ function ChatMenu_Yell()
 	ChatMenu_SetChatType(this:GetParent().chatFrame, "YELL");
 end
 
+function ChatMenu_Hardcore()
+	ChatMenu_SetChatType(this:GetParent().chatFrame, "HARDCORE");
+end
+
 function ChatMenu_Whisper()
 	local chatFrame = this:GetParent().chatFrame;
 	if ( not chatFrame.editBox:IsVisible() ) then
@@ -2292,6 +2316,7 @@ function ChatMenu_OnLoad()
 	UIMenu_AddButton(TEXT(SAY_MESSAGE), TEXT(SLASH_SAY1), ChatMenu_Say);
 	UIMenu_AddButton(TEXT(PARTY_MESSAGE), TEXT(SLASH_PARTY1), ChatMenu_Party);
 	UIMenu_AddButton(TEXT(GUILD_MESSAGE), TEXT(SLASH_GUILD1), ChatMenu_Guild);
+	UIMenu_AddButton(TEXT(HARDCORE_MESSAGE), TEXT(SLASH_HARDCORE1), ChatMenu_Hardcore);
 	UIMenu_AddButton(TEXT(YELL_MESSAGE), TEXT(SLASH_YELL1), ChatMenu_Yell);
 	UIMenu_AddButton(TEXT(WHISPER_MESSAGE), TEXT(SLASH_WHISPER1), ChatMenu_Whisper);
 	UIMenu_AddButton(TEXT(EMOTE_MESSAGE), TEXT(SLASH_EMOTE1), ChatMenu_Emote, "EmoteMenu");

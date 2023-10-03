@@ -10,26 +10,18 @@ end
 local dungeonEntranceMaps = Set {
   'Gates of Ahn\'Qiraj', 'Blackrock Mountain', 'Gnomeregan',
   'Scarlet Monastery', 'The Deadmines', 'Uldaman', 'Maraudon',
-  'Wailing Caverns',
+  'Wailing Caverns', 'Caverns of Time',
 }
 
 local _GetMapContinents = GetMapContinents
 function GetMapContinents() return unpack(continents) end
 
 function GetCustomMapZones(continentId)
-  local continents = { _GetMapContinents() }
   local zones = { GetMapZones(continentId) }
 
   local filtered = {};
-
-  if (continentId > continentsLength) then
-    table.insert(filtered, continents[continentId])
-  end
-
   for i, v in ipairs(zones) do
-    if (continentId > continentsLength or not dungeonEntranceMaps[v]) then
-      table.insert(filtered, v)
-    end
+    if (not dungeonEntranceMaps[v]) then table.insert(filtered, v) end
   end
   return unpack(filtered);
 end

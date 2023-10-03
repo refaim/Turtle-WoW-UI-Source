@@ -5,7 +5,11 @@ WORLDMAP_POI_TEXTURE_WIDTH = 128;
 NUM_WORLDMAP_OVERLAYS = 0;
 NUM_WORLDMAP_FLAGS = 2;
 
+WORLDMAP_WINDOWED = WORLDMAP_WINDOWED or 0;
+WORLDMAP_WINDOWED_SCALE = 0.7
+
 function WorldMapFrame_OnLoad()
+  this:RegisterEvent("VARIABLES_LOADED");
   this:RegisterEvent("PLAYER_ENTERING_WORLD");
   this:RegisterEvent("WORLD_MAP_UPDATE");
   this:RegisterEvent("CLOSE_WORLD_MAP");
@@ -14,6 +18,8 @@ function WorldMapFrame_OnLoad()
   this.areaName = nil;
   CreateWorldMapArrowFrame(WorldMapFrame);
   WorldMapFrame_Update();
+
+  RegisterForSave("WORLDMAP_WINDOWED");
 
   -- Hide the world behind the map when we're in widescreen mode
   local width = GetScreenWidth();
@@ -30,6 +36,9 @@ end
 
 function WorldMapFrame_OnEvent()
   -- FIX ME FOR 1.13
+  if (event == "VARIABLES_LOADED") then
+    if (WORLDMAP_WINDOWED == 1) then WorldMapFrame_Minimize(); end
+  end
   if (event == "PLAYER_ENTERING_WORLD") then
     if (this:IsVisible()) then HideUIPanel(WorldMapFrame); end
   end
@@ -147,6 +156,163 @@ function WorldMapFrame_Update()
   for i = textureCount + 1, NUM_WORLDMAP_OVERLAYS do
     getglobal("WorldMapOverlay" .. i):Hide();
   end
+
+  WorldMapFrame_SetMapName();
+end
+
+function WorldMapFrame_Minimize()
+  -- close frame only if the minimize button was clicked
+  if WORLDMAP_WINDOWED == 0 then ToggleWorldMap(); end
+
+  -- update frame attributes
+  UIPanelWindows["WorldMapFrame"].area = "center";
+
+  table.insert(UISpecialFrames, "WorldMapFrame");
+
+  -- adjust main frame
+  WorldMapFrame:SetParent(UIParent);
+  WorldMapFrame:EnableKeyboard(false);
+  WorldMapFrame:SetHeight(521);
+  WorldMapFrame:SetWidth(720);
+  WorldMapFrame:SetFrameLevel(0);
+
+  -- enable world map frame movement
+  WorldMapFrame:SetMovable(true);
+  WorldMapFrame:RegisterForDrag("LeftButton");
+  WorldMapFrame:SetScript("OnDragStart",
+                          function() WorldMapFrame:StartMoving(); end);
+  WorldMapFrame:SetScript("OnDragStop",
+                          function() WorldMapFrame:StopMovingOrSizing(); end);
+  WorldMapFrame:SetClampedToScreen(true);
+
+  -- adjust children frames
+  WorldMapPositioningGuide:ClearAllPoints();
+  WorldMapPositioningGuide:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 0, 1);
+  WorldMapPositioningGuide:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT",
+                                    1, 0);
+
+  WorldMapDetailFrame:SetScale(WORLDMAP_WINDOWED_SCALE);
+  WorldMapDetailFrame:SetPoint("TOPLEFT", 15, -33);
+
+  WorldMapButton:SetScale(WORLDMAP_WINDOWED_SCALE);
+
+  WorldMapTooltip:SetFrameStrata("TOOLTIP");
+
+  WorldMapFrameTitle:ClearAllPoints();
+  WorldMapFrameTitle:SetPoint("TOP", WorldMapFrame, 15, -5);
+
+  -- hide textures and frames
+  BlackoutWorld:Hide();
+
+  for i = 1, 12 do
+    local texture = getglobal('WorldMapFrameTexture' .. i);
+    if texture then texture:Hide(); end
+  end
+
+  WorldMapContinentDropDown:SetAlpha(0);
+  WorldMapContinentDropDownButton:EnableMouse(0);
+  WorldMapZoneDropDown:SetAlpha(0);
+  WorldMapZoneDropDownButton:EnableMouse(0);
+  WorldMapZoomOutButton:Hide();
+  WorldMapMagnifyingGlassButton:Hide();
+  WorldMapFrameMinimizeButton:Hide();
+
+  -- show textures and frames
+  for i = 1, 8 do
+    local texture = getglobal('WorldMapFrameMinimizedTexture' .. i);
+    if texture then texture:Show(); end
+  end
+
+  WorldMapFrameMaximizeButton:Show();
+
+  -- open frame only if the minimize button was clicked
+  if WORLDMAP_WINDOWED == 0 then ToggleWorldMap(); end
+
+  WORLDMAP_WINDOWED = 1;
+
+  -- reposition world map frame
+  WorldMapFrame:ClearAllPoints();
+  WorldMapFrame:SetPoint("CENTER", UIParent, 0, 20);
+
+  WorldMapFrame_Update();
+end
+
+function WorldMapFrame_Maximize()
+  ToggleWorldMap();
+
+  -- update frame attributes
+  UIPanelWindows["WorldMapFrame"].area = "full";
+
+  -- adjust main frame
+  WorldMapFrame:SetParent(nil);
+  WorldMapFrame:EnableKeyboard(true);
+  WorldMapFrame:ClearAllPoints();
+  WorldMapFrame:SetAllPoints();
+
+  -- disable world map frame movement
+  WorldMapFrame:SetMovable(false);
+  WorldMapFrame:SetScript("OnDragStart", nil);
+  WorldMapFrame:SetScript("OnDragStop", nil);
+  WorldMapFrame:SetClampedToScreen(false);
+
+  -- adjust children frames
+  WorldMapPositioningGuide:ClearAllPoints();
+  WorldMapPositioningGuide:SetPoint("CENTER", WorldMapFrame);
+
+  WorldMapDetailFrame:SetScale(1);
+  WorldMapDetailFrame:SetPoint("TOPLEFT", WorldMapPositioningGuide, "TOP", -502,
+                               -69);
+
+  WorldMapButton:SetScale(1);
+
+  WorldMapTooltip:SetFrameStrata("TOOLTIP");
+
+  WorldMapFrameTitle:ClearAllPoints();
+  WorldMapFrameTitle:SetPoint("TOP", WorldMapFrame, 0, -5);
+
+  -- show textures and frames
+  BlackoutWorld:Show();
+
+  for i = 1, 12 do
+    local texture = getglobal('WorldMapFrameTexture' .. i);
+    if texture then texture:Show(); end
+  end
+
+  WorldMapContinentDropDown:SetAlpha(1);
+  WorldMapContinentDropDownButton:EnableMouse(1);
+  WorldMapZoneDropDown:SetAlpha(1);
+  WorldMapZoneDropDownButton:EnableMouse(1);
+  WorldMapZoomOutButton:Show();
+  WorldMapMagnifyingGlassButton:Show();
+  WorldMapFrameMinimizeButton:Show();
+
+  -- hide textures and frames
+  for i = 1, 8 do
+    local texture = getglobal('WorldMapFrameMinimizedTexture' .. i);
+    if texture then texture:Hide(); end
+  end
+
+  WorldMapFrameMaximizeButton:Hide();
+
+  WORLDMAP_WINDOWED = 0;
+
+  ToggleWorldMap();
+  WorldMapFrame_Update();
+end
+
+function WorldMapFrame_SetMapName()
+  local name = WORLD_MAP;
+  if (WORLDMAP_WINDOWED == 1) then
+    local zone = UIDropDownMenu_GetSelectedID(WorldMapZoneDropDown);
+    if (zone) then
+      if (zone > 0) then
+        name = UIDropDownMenu_GetText(WorldMapZoneDropDown);
+      elseif (UIDropDownMenu_GetSelectedID(WorldMapContinentDropDown) > 0) then
+        name = UIDropDownMenu_GetText(WorldMapContinentDropDown);
+      end
+    end
+  end
+  WorldMapFrameTitle:SetText(name);
 end
 
 function WorldMapPOI_OnEnter()
@@ -246,50 +412,35 @@ function WorldMapZoneButton_OnClick()
   local continentId = GetCurrentMapContinent()
   local id = this:GetID()
   UIDropDownMenu_SetSelectedID(WorldMapZoneDropDown, id);
-  if (continentId > continentsLength) then
-    if (id == 1) then
-      SetMapZoom(continentId);
-    else
-      SetMapZoom(continentId, id - 1);
-    end
-  else
-    SetMapZoom(continentId, GetFullListZoneId());
-  end
+  SetMapZoom(continentId, GetFullListZoneId());
 end
 
+-- Custom
 function WorldMapZoomOutButton_OnClick()
-  if (GetCurrentMapZone() ~= 0) then
-    SetMapZoom(GetCurrentMapContinent());
-  else
+  local zoneId = GetCurrentMapZone();
+  local continentId = GetCurrentMapContinent();
+  if (continentId > continentsLength or zoneId == 0) then
     SetMapZoom(0);
+  else
+    SetMapZoom(continentId);
   end
 end
 
 -- Custom
 function WorldMap_UpdateZoneDropDownText()
-  local continentId = GetCurrentMapContinent()
-  local zoneId = GetCurrentMapZone()
-  if (continentId > continentsLength) then
-    if (zoneId == 0) then
-      UIDropDownMenu_SetSelectedID(WorldMapZoneDropDown, 1);
-    else
-      UIDropDownMenu_SetSelectedID(WorldMapZoneDropDown, zoneId + 1);
-    end
+  local zoneId = GetListUpdateZoneId();
+  if (zoneId == 0) then
+    UIDropDownMenu_ClearAll(WorldMapZoneDropDown);
   else
-    zoneId = GetListUpdateZoneId();
-    if (zoneId == 0) then
-      UIDropDownMenu_ClearAll(WorldMapZoneDropDown);
-    else
-      UIDropDownMenu_SetSelectedID(WorldMapZoneDropDown, zoneId);
-    end
+    UIDropDownMenu_SetSelectedID(WorldMapZoneDropDown, zoneId);
   end
 end
 
 -- Custom
 function WorldMap_UpdateContinentDropDownText()
-  local continentId = GetCurrentMapContinent()
-  if (continentId == 0 or continentId > continentsLength) then
-    UIDropDownMenu_ClearAll(WorldMapContinentDropDown);
+  local continentId = GetCurrentMapContinent();
+  if (continentId >= continentsLength) then
+    UIDropDownMenu_SetSelectedID(WorldMapContinentDropDown, 0);
   else
     UIDropDownMenu_SetSelectedID(WorldMapContinentDropDown, continentId);
   end
@@ -361,7 +512,8 @@ function WorldMapButton_OnUpdate(elapsed)
     playerX = playerX * WorldMapDetailFrame:GetWidth();
     playerY = -playerY * WorldMapDetailFrame:GetHeight();
     PositionWorldMapArrowFrame("CENTER", "WorldMapDetailFrame", "TOPLEFT",
-                               playerX, playerY);
+                               playerX * WorldMapDetailFrame:GetScale(),
+                               playerY * WorldMapDetailFrame:GetScale());
     ShowWorldMapArrowFrame(1);
 
     -- Position clear button to detect mouseovers
@@ -539,9 +691,17 @@ function WorldMapFrame_PingPlayerPosition()
 end
 
 function ToggleWorldMap()
-  if (WorldMapFrame:IsVisible()) then
-    HideUIPanel(WorldMapFrame);
+  if (WORLDMAP_WINDOWED == 1) then
+    if (WorldMapFrame:IsShown()) then
+      WorldMapFrame:Hide();
+    else
+      WorldMapFrame:Show();
+    end
   else
-    ShowUIPanel(WorldMapFrame);
+    if (WorldMapFrame:IsVisible()) then
+      HideUIPanel(WorldMapFrame);
+    else
+      ShowUIPanel(WorldMapFrame);
+    end
   end
 end

@@ -1,6 +1,6 @@
 UnitPopupButtons = { };
 
-UnitPopupButtons["XP"] = { text = "Experience: Enabled", dist = 0 };
+UnitPopupButtons["XP"] = { text = "|cffff0000Experience: Enabled", dist = 0 };
 
 UnitPopupButtons["MOVE"] = { text = "Unlock Frame", dist = 0 };
 UnitPopupButtons["MOVE_RESET"] = { text = "Reset Position", dist = 0 };
@@ -13,11 +13,11 @@ TW_XPFrameData:SetScript("OnEvent", function()
 		if event == "CHAT_MSG_SYSTEM" then
 			if arg1 == "XP gain is ON" or arg1 == "XP gain is now ON" then
 				TW_XPFrameData.xp = true
-				UnitPopupButtons["XP"] = { text = "Experience: Enabled", dist = 0 };
+				UnitPopupButtons["XP"] = { text = "|cff1EFF0CExperience: Enabled", dist = 0 };
 			end
 			if arg1 == "XP gain is OFF" or arg1 == "XP gain is now OFF" then
 				TW_XPFrameData.xp = false
-				UnitPopupButtons["XP"] = { text = "Experience: Disabled", dist = 0 };
+				UnitPopupButtons["XP"] = { text = "|cffff0000Experience: Disabled", dist = 0 };
 			end
 		end
 	end
@@ -75,6 +75,7 @@ UnitPopupButtons["PET_DISMISS"] = { text = TEXT(PET_DISMISS), dist = 0 };
 UnitPopupButtons["PET_ABANDON"] = { text = TEXT(PET_ABANDON), dist = 0 };
 UnitPopupButtons["PET_PAPERDOLL"] = { text = TEXT(PET_PAPERDOLL), dist = 0 };
 UnitPopupButtons["PET_RENAME"] = { text = TEXT(PET_RENAME), dist = 0 };
+UnitPopupButtons["REPORT"] = { text = TEXT(REPORT), dist = 0 };
 
 UnitPopupButtons["LOOT_METHOD"] = { text = TEXT(LOOT_METHOD), dist = 0, nested = 1 };
 UnitPopupButtons["FREE_FOR_ALL"] = { text = TEXT(LOOT_FREE_FOR_ALL), dist = 0 };
@@ -110,10 +111,10 @@ UnitPopupButtons["RAID_TARGET_NONE"] = { text = TEXT(NONE), dist = 0, checkable 
 UnitPopupMenus = { };
 UnitPopupMenus["SELF"] = { "LOOT_METHOD", "LOOT_THRESHOLD", "LOOT_PROMOTE", "LEAVE", "RESET_INSTANCES", "RAID_TARGET_ICON", "XP", "MOVE", "MOVE_RESET", "CANCEL" };
 UnitPopupMenus["PET"] = { "PET_PAPERDOLL", "PET_RENAME", "PET_ABANDON", "PET_DISMISS", "CANCEL" };
-UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "CANCEL" };
-UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "CANCEL" };
-UnitPopupMenus["RAID"] = { "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "CANCEL" };
-UnitPopupMenus["FRIEND"] = { "WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "CANCEL" };
+UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "CANCEL" };
+UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "CANCEL" };
+UnitPopupMenus["RAID"] = { "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "REPORT", "CANCEL" };
+UnitPopupMenus["FRIEND"] = { "WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "REPORT", "CANCEL" };
 UnitPopupMenus["RAID_TARGET_ICON"] = { "RAID_TARGET_1", "RAID_TARGET_2", "RAID_TARGET_3", "RAID_TARGET_4", "RAID_TARGET_5", "RAID_TARGET_6", "RAID_TARGET_7", "RAID_TARGET_8", "RAID_TARGET_NONE" };
 
 -- Second level menus
@@ -331,33 +332,19 @@ function UnitPopup_HideButtons()
 	for index, value in UnitPopupMenus[dropdownMenu.which] do
 		UnitPopupShown[index] = 1;
 
-		if ( value == "TRADE" ) then
-			if ( canCoop == 0 ) then
+		if ( value == "INVITE" ) then
+			if ( dropdownMenu.name == UnitName("party1") or
+				dropdownMenu.name == UnitName("party2") or
+				dropdownMenu.name == UnitName("party3") or
+				dropdownMenu.name == UnitName("party4") or
+				dropdownMenu.name == UnitName("player")) then
 				UnitPopupShown[index] = 0;
 			end
-		elseif ( value == "INVITE" ) then
-			if ( dropdownMenu.unit ) then
-				if ( canCoop == 0 ) then
-					UnitPopupShown[index] = 0;
-				end
-			else
-				if ( dropdownMenu.name == UnitName("party1") or
-					 dropdownMenu.name == UnitName("party2") or
-					 dropdownMenu.name == UnitName("party3") or
-					 dropdownMenu.name == UnitName("party4") or
-					 dropdownMenu.name == UnitName("player")) then
-					UnitPopupShown[index] = 0;
-				end
+		elseif ( value == "REPORT" ) then
+			if ( dropdownMenu.name == UnitName("player") ) then
+				UnitPopupShown[index] = 0;
 			end
 		elseif ( value == "FOLLOW" ) then
-			if ( canCoop == 0 ) then
-				UnitPopupShown[index] = 0;
-			end
-		elseif ( value == "WHISPER" ) then
-			if ( dropdownMenu.unit and canCoop == 0 ) then
-				UnitPopupShown[index] = 0;
-			end
-		elseif ( value == "DUEL" ) then
 			if ( canCoop == 0 ) then
 				UnitPopupShown[index] = 0;
 			end
@@ -422,10 +409,6 @@ function UnitPopup_HideButtons()
 			end
 		elseif ( value == "LOOT_METHOD" ) then
 			if ( inParty == 0 ) then
-				UnitPopupShown[index] = 0;
-			end
-		elseif ( value == "RESET_INSTANCES" ) then
-			if ( not CanShowResetInstances() or ((inParty == 1) and (isLeader == 0)) ) then
 				UnitPopupShown[index] = 0;
 			end
 		elseif ( value == "RAID_LEADER" ) then
@@ -622,10 +605,12 @@ function UnitPopup_OnClick()
 		LeaveParty();
 	elseif ( button == "XP" ) then
 		if TW_XPFrameData.xp then
-			SendChatMessage(".xp off")
+			StaticPopup_Show("CONFIRM_TOGGLE_XP_OFF");
 		else
-			SendChatMessage(".xp on")
+		StaticPopup_Show("CONFIRM_TOGGLE_XP_ON");
 		end
+	elseif ( button == "REPORT" ) then
+		ToggleHelpFrame()
 	elseif ( button == "MOVE" ) then
 		if ( unit == 'player' )  then
 			PlayerFrame.movable = PlayerFrame.movable and 0 or 1
