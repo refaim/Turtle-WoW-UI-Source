@@ -241,7 +241,7 @@ function QuestLog_Update()
 			if ( isHeader ) then
 				color = QuestDifficultyColor["header"];
 			else
-				color = GetDifficultyColor(level);
+				color = GetDifficultyColor(level,"quest");
 			end
 			questTitleTag:SetTextColor(color.r, color.g, color.b);
 			questLogTitle:SetTextColor(color.r, color.g, color.b);
@@ -585,15 +585,19 @@ function QuestLog_SetFirstValidSelection()
 end
 
 -- Used for quests and enemy coloration
-function GetDifficultyColor(level)
+function GetDifficultyColor(level,quest)
 	local levelDiff = level - UnitLevel("player");
+	local QuestGreenRange = GetQuestGreenRange();
+	if quest then
+		QuestGreenRange = 25;
+	end
 	if ( levelDiff >= 5 ) then
 		color = QuestDifficultyColor["impossible"];
 	elseif ( levelDiff >= 3 ) then
 		color = QuestDifficultyColor["verydifficult"];
 	elseif ( levelDiff >= -2 ) then
 		color = QuestDifficultyColor["difficult"];
-	elseif ( -levelDiff <= GetQuestGreenRange() ) then
+	elseif ( -levelDiff <= QuestGreenRange ) then
 		color = QuestDifficultyColor["standard"];
 	else
 		color = QuestDifficultyColor["trivial"];

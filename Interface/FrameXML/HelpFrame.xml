@@ -248,7 +248,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="HelpFrameHomeText1" inherits="GameFontHighlight" text="HELPFRAME_HOME_TEXT1" justifyH="LEFT">
+						<FontString name="HelpFrameHomeText1" inherits="GameFontHighlight" text="HELPFRAME_HOME_ISSUE1" justifyH="LEFT">
 							<Size>
 								<AbsDimension x="550" y="0"/>
 							</Size>
@@ -260,98 +260,14 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="HelpFrameHomeIssue1Header" inherits="GameFontNormal" text="HELPFRAME_HOME_ISSUE1_HEADER" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeText1" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="10" y="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeIssue1" inherits="GameFontHighlightSmall" text="HELPFRAME_HOME_ISSUE1" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeIssue1Header" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeIssue2Header" inherits="GameFontNormal" text="HELPFRAME_HOME_ISSUE2_HEADER" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeIssue1" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="0" y="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeIssue2" inherits="GameFontHighlightSmall" text="HELPFRAME_HOME_ISSUE2" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeIssue2Header" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeIssue3Header" inherits="GameFontNormal" text="HELPFRAME_HOME_ISSUE3_HEADER" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeIssue2" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="0" y="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeIssue3" inherits="GameFontHighlightSmall" text="HELPFRAME_HOME_ISSUE3" justifyH="LEFT">
-							<Size>
-								<AbsDimension x="540" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeIssue3Header" relativePoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomePvpPolicyUrl" inherits="GameFontNormal" text="PVP_POLICY_URL">
-							<Size>
-								<AbsDimension x="550" y="-5"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativeTo="HelpFrameHomeIssue3" relativePoint="BOTTOM">
-									<Offset>
-										<AbsDimension x="0" y="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-						<FontString name="HelpFrameHomeText2" inherits="GameFontHighlight" text="HELPFRAME_HOME_TEXT2" justifyH="LEFT">
+						<FontString name="HelpFrameHomeText1" inherits="GameFontHighlight" text="HELPFRAME_HOME_ISSUE2" justifyH="LEFT">
 							<Size>
 								<AbsDimension x="550" y="0"/>
 							</Size>
 							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomePvpPolicyUrl" relativePoint="BOTTOMLEFT">
+								<Anchor point="TOPLEFT" relativeTo="HelpFrameHomeTitle" relativePoint="BOTTOMLEFT">
 									<Offset>
-										<AbsDimension x="0" y="-25"/>
+										<AbsDimension x="0" y="-80"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -364,9 +280,9 @@
 							<AbsDimension x="250" y="22"/>
 						</Size>
 						<Anchors>
-							<Anchor point="TOP" relativeTo="HelpFrameHomeText2" relativePoint="BOTTOM">
+							<Anchor point="TOP" relativeTo="HelpFrameHomeTitle" relativePoint="BOTTOM">
 								<Offset>
-									<AbsDimension x="0" y="-40"/>
+									<AbsDimension x="0" y="-160"/>
 								</Offset>
 							</Anchor>
 						</Anchors>

@@ -108,3 +108,19 @@ Turtle_ShopUI\Turtle_ShopUI.xml
 # Guild Bank
 StaticPopup2\StaticPopup2.xml
 Turtle_GuildBankUI\Turtle_GuildBankUI.xml
+
+# EverlookBroadcastingCo
+# Author: Lexie
+# Version: 1
+EverlookBroadcastingCo\EverlookBroadcastingCo.xml
+
+# Hooks
+# Author: Lexie
+# Version: 1
+Hooks.lua
+
+# LFT
+# Author: Xerron/Er
+# Version: 0.0.4.0
+LFT\ChatThrottleLib\ChatThrottleLib.lua
+LFT\LFT.xml
