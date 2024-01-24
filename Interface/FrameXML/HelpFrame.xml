@@ -1318,6 +1318,7 @@
 				HelpFrame_OnEvent();
 			</OnEvent>
 			<OnHide>
+				TWReportName = nil
 				PlaySound("igCharacterInfoClose");
 				UpdateMicroButtons();
 			</OnHide>
