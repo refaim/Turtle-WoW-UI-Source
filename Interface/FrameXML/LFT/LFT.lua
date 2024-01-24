@@ -525,6 +525,7 @@ LFTChannelJoinDelay:SetScript("OnUpdate", function()
 	local st = (this.startTime + plus) * 1000
 	if gt >= st then
 		LFTChannelJoinDelay:Hide()
+		
 	end
 end)
 
@@ -670,16 +671,18 @@ LFTGroupReadyFrameCloser:SetScript("OnUpdate", function()
 	end
 	if gt >= st2 then
 		_G['LFTReadyStatus']:Hide()
-		lfprint('A member of your group has not accepted the invitation. You are rejoining the queue.')
-		if LFT.isLeader then
-			leaveQueue('LFTGroupReadyFrameCloser isleader = true')
-			LFT.fillAvailableDungeons('queueAgain' == 'queueAgain')
-		end
-		if LFTGroupReadyFrameCloser.response == 'notReady' then
-			--doesnt trigger for leader, cause it leaves queue
-			--which resets response to ''
-			--LeaveParty()
-			LFTGroupReadyFrameCloser.response = ''
+		if GetNumPartyMembers() ~= 4 then --No point in displaying all this if the group is full?
+			lfprint('A member of your group has not accepted the invitation. You are rejoining the queue.')
+			if LFT.isLeader then
+				leaveQueue('LFTGroupReadyFrameCloser isleader = true')
+				LFT.fillAvailableDungeons('queueAgain' == 'queueAgain')
+			end
+			if LFTGroupReadyFrameCloser.response == 'notReady' then
+				--doesnt trigger for leader, cause it leaves queue
+				--which resets response to ''
+				--LeaveParty()
+				LFTGroupReadyFrameCloser.response = ''
+			end
 		end
 		LFTGroupReadyFrameCloser:Hide()
 	end
@@ -1630,6 +1633,8 @@ local hookChatFrame = function(frame)
 		lferror("Tried to hook non-chat frame.")
 	end
 	SendChatMessage('.server info')
+	ToggleCharacter("PaperDollFrame")
+	ToggleCharacter("PaperDollFrame")
 end
 
 LFT:SetScript("OnEvent", function()
@@ -3829,6 +3834,12 @@ end
 function sayReady()
 	if LFT.inGroup and GetNumPartyMembers() + 1 == LFT.groupSizeMax then
 		_G['LFTGroupReady']:Hide()
+
+		if not LFT.groupFullCode then 
+			--There was an error with sayReady(), attempting to exit.
+			return
+		end
+		
 		local myRole = LFT.dungeons[LFT.dungeonNameFromCode(LFT.groupFullCode)].myRole
 		SendAddonMessage(LFT_ADDON_CHANNEL, "readyAs:" .. myRole, "PARTY")
 		LFT.SetSingleRole(myRole)
@@ -3844,6 +3855,12 @@ end
 function sayNotReady()
 	if LFT.inGroup and GetNumPartyMembers() + 1 == LFT.groupSizeMax then
 		_G['LFTGroupReady']:Hide()
+
+		if not LFT.groupFullCode then 
+			--There was an error with sayReady(), attempting to exit.
+			return
+		end
+		
 		local myRole = LFT.dungeons[LFT.dungeonNameFromCode(LFT.groupFullCode)].myRole
 		SendAddonMessage(LFT_ADDON_CHANNEL, "notReadyAs:" .. myRole, "PARTY")
 		LFT.SetSingleRole(myRole)

@@ -1,4 +1,5 @@
 UnitPopupButtons = { };
+TWReportName = nil
 
 UnitPopupButtons["XP"] = { text = "|cffff0000Experience: Enabled", dist = 0 };
 
@@ -610,6 +611,7 @@ function UnitPopup_OnClick()
 		StaticPopup_Show("CONFIRM_TOGGLE_XP_ON");
 		end
 	elseif ( button == "REPORT" ) then
+		TWReportName = name
 		ToggleHelpFrame()
 	elseif ( button == "MOVE" ) then
 		if ( unit == 'player' )  then

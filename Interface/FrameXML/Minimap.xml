@@ -547,8 +547,8 @@
                             </OnDragStop>
                             <OnEnter>
                                 GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-                                GameTooltip:SetText("Turtle WoW Donation Rewards");
-                                GameTooltip:AddLine('Left-click to open the shop.', 1, 1, 1);
+                                GameTooltip:SetText("Donation Rewards");
+                                GameTooltip:AddLine('Left-click to open.', 1, 1, 1);
                                 GameTooltip:AddLine('Right-click to hide this button.', 1, 1, 1);
                                 GameTooltip:AddLine('Hold control and drag to move.', 1, 1, 1);
                                 GameTooltip:AddLine('Hold control and right-click to reset position.', 1, 1, 1);

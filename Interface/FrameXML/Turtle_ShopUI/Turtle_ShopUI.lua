@@ -370,7 +370,7 @@ function tws.processBuyResult(arg)
             twsprint("Can't process payment.")
         end
         if rEx[2] == 'notenoughtokens' then
-            twsprint("You don't have enough tokens to buy this!")
+            twsprint("You don't have enough tokens to claim this!")
         end
         --if rEx[2] == 'ok' then
         --    twsprint("Purchase was successful. Check your bags.")
@@ -398,7 +398,7 @@ function ShopFrameEntryButton_OnClick(id)
     ShopFrameEntryFrameBuyButton:SetID(tws.entries[id].id)
 
     if tws.balance < tws.entries[id].price then
-        tws.AddButtonOnEnterTextTooltip(ShopFrameEntryFrameBuyButton, "You don't have enough tokens to buy this!", "You can buy tokens our website.")
+        tws.AddButtonOnEnterTextTooltip(ShopFrameEntryFrameBuyButton, "You don't have enough tokens to claim this!", "You can get tokens via our website.")
     end
 
     ShopFrameEntryFrameBuyButton:Enable()

@@ -691,17 +691,9 @@ function WorldMapFrame_PingPlayerPosition()
 end
 
 function ToggleWorldMap()
-  if (WORLDMAP_WINDOWED == 1) then
-    if (WorldMapFrame:IsShown()) then
-      WorldMapFrame:Hide();
-    else
-      WorldMapFrame:Show();
-    end
+  if (WorldMapFrame:IsVisible()) then
+    HideUIPanel(WorldMapFrame);
   else
-    if (WorldMapFrame:IsVisible()) then
-      HideUIPanel(WorldMapFrame);
-    else
-      ShowUIPanel(WorldMapFrame);
-    end
+    ShowUIPanel(WorldMapFrame);
   end
 end

@@ -480,8 +480,10 @@ function HelpFrameOpenTicketSubmit_OnClick()
 		UpdateGMTicket(HelpFrameOpenTicket.ticketType, HelpFrameOpenTicketText:GetText());
 		HideUIPanel(HelpFrame);
 	else
-		NewGMTicket(HelpFrameOpenTicket.ticketType, HelpFrameOpenTicketText:GetText());
+		if TWReportName then TWReportName = "Player Name: "..TWReportName.."\n\n" else TWReportName = '' end
+		NewGMTicket(HelpFrameOpenTicket.ticketType, TWReportName..HelpFrameOpenTicketText:GetText());
 		HideUIPanel(HelpFrame);
+		TWReportName = nil
 	end
 end
 
