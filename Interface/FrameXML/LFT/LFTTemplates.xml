@@ -1,0 +1,114 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <!-- LFT instance item template -->
+    <Button name="LFTRoleButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="64" y="64" />
+        </Size>
+        <Layers>
+            <Layer level="BORDER">
+                <Texture name="$parentIcon" setAllPoints="true" />
+            </Layer>
+        </Layers>
+        <Frames>
+            <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate" enabled="false" checked="false" hidden="true" toplevel="true">
+                <HitRectInsets>
+                    <AbsInset left="0" right="0" top="0" bottom="0" />
+                </HitRectInsets>
+                <Size>
+                    <AbsDimension x="24" y="24" />
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="2" y="-4" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        LFT_QueueAs(this:GetParent().role)
+
+                        if this:GetChecked() == 1 then
+                            PlaySound("igMainMenuOptionCheckBoxOff")
+                        else
+                            PlaySound("igMainMenuOptionCheckBoxOn")
+                        end
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+        </Frames>
+        <Scripts>
+            <OnClick>
+                getglobal(this:GetName() .. "CheckButton"):Click()
+            </OnClick>
+            <OnEnter>
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+                GameTooltip:SetText(this.tooltip)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+    <Frame name="LFTInstanceEntryTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="300" y="20" />
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" />
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size>
+                        <AbsDimension x="200" y="20" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="20" y="0" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentLevels" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size>
+                        <AbsDimension x="72" y="20" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="230" y="0" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <CheckButton name="$parentCheckButton" inherits="OptionsCheckButtonTemplate">
+                <HitRectInsets>
+                    <AbsInset left="0" right="-280" top="0" bottom="0" />
+                </HitRectInsets>
+                <Size>
+                    <AbsDimension x="20" y="20" />
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        LFT_QueueFor(this:GetParent().instance)
+
+                        if this:GetChecked() == 1 then
+                            PlaySound("igMainMenuOptionCheckBoxOff")
+                        else
+                            PlaySound("igMainMenuOptionCheckBoxOn")
+                        end
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+        </Frames>
+    </Frame>
+</Ui>

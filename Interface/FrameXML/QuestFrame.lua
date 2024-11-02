@@ -249,6 +249,7 @@ function QuestFrameGreetingPanel_OnShow()
 			if ( i > 1 ) then
 				questTitleButton:SetPoint("TOPLEFT", "QuestTitleButton"..(i-1),"BOTTOMLEFT", 0, 0)
 			end
+			getglobal(questTitleButton:GetName() .. "Icon"):SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
 		end
 	end
 	if ( numAvailableQuests == 0 ) then
@@ -274,6 +275,7 @@ function QuestFrameGreetingPanel_OnShow()
 			if ( i > numActiveQuests + 1 ) then
 				questTitleButton:SetPoint("TOPLEFT", "QuestTitleButton"..(i-1),"BOTTOMLEFT", 0, 0)
 			end
+			getglobal(questTitleButton:GetName() .. "Icon"):SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
 		end
 	end
 	for i=(numActiveQuests + numAvailableQuests + 1), MAX_NUM_QUESTS, 1 do

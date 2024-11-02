@@ -286,7 +286,7 @@
 			ActionButtonUp(12, 1);
 		end
 	</Binding>
-	
+
 	<Binding name="SHAPESHIFTBUTTON1">
 		ShapeshiftBar_ChangeForm(1)
 	</Binding>
@@ -553,7 +553,7 @@
 	</Binding>
 	<Binding name="PETATTACK">
 		PetAttack();
-	</Binding>	
+	</Binding>
 	<!-- UI Panels -->
 	<Binding name="TOGGLECHARACTER0" header="INTERFACE">
 		ToggleCharacter("PaperDollFrame");
@@ -633,6 +633,9 @@
 	<Binding name="TOGGLEBATTLEFIELDMINIMAP">
 		ToggleBattlefieldMinimap();
 	</Binding>
+	<Binding name="TOGGLEGROUPFINDER">
+		LFT_Toggle();
+	</Binding>
 	<!-- Misc -->
 	<Binding name="MINIMAPZOOMIN" header="MISC">
 		Minimap_ZoomIn();
@@ -709,7 +712,7 @@
 	<Binding name="CAMERAZOOMOUT">
 			CameraZoomOut(1.0);
 	</Binding>
-	<!-- 
+	<!--
 	<Binding name="MOVEVIEWIN" runOnUp="true">
 		if ( keystate == "down" ) then
 			MoveViewInStart();

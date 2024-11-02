@@ -171,7 +171,7 @@
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
 							<Offset>
-								<AbsDimension x="74" y="110"/>
+								<AbsDimension x="70" y="110"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -282,7 +282,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="95" y="150"/>
+							<AbsDimension x="38" y="150"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -310,11 +310,11 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<FontString inherits="GameFontNormalSmall" text="STABLED_PETS">
+						<FontString name="PetStableStabledPetsText" inherits="GameFontNormalSmall" text="STABLED_PETS">
 							<Anchors>
-								<Anchor point="BOTTOM" relativePoint="TOP">
+								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="24" y="6"/>
+										<AbsDimension x="80" y="16"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -331,6 +331,24 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
+			<CheckButton name="PetStableStabledPet3" inherits="PetStableSlotTemplate" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="PetStableStabledPet2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="PetStableStabledPet4" inherits="PetStableSlotTemplate" id="4">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="PetStableStabledPet3" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
 			<Button name="PetStablePurchaseButton" inherits="UIPanelButtonTemplate" text="PURCHASE">
 				<Size>
 					<AbsDimension x="80" y="22"/>
@@ -338,7 +356,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="-110" y="105"/>
+							<AbsDimension x="-90" y="105"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

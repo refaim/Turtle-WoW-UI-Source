@@ -1,15 +1,14 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">
-	<Script file="Blizzard_AuctionUI.lua"/>
-	<Include file="Blizzard_AuctionUITemplates.xml"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+	<Script file="Blizzard_AuctionUI.lua" />
+	<Include file="Blizzard_AuctionUITemplates.xml" />
 	<Frame name="AuctionFrame" toplevel="true" parent="UIParent" enableMouse="true" hidden="true">
 		<Size>
-			<AbsDimension x="832" y="447"/>
+			<AbsDimension x="832" y="447" />
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="0" y="-104"/>
+					<AbsDimension x="0" y="-104" />
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -17,12 +16,12 @@
 			<Layer level="BACKGROUND">
 				<Texture name="AuctionPortraitTexture">
 					<Size>
-						<AbsDimension x="58" y="58"/>
+						<AbsDimension x="58" y="58" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
-								<AbsDimension x="12" y="-8"/>
+								<AbsDimension x="12" y="-8" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -31,68 +30,68 @@
 			<Layer level="ARTWORK">
 				<Texture name="$parentTopLeft" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-TopLeft">
 					<Size>
-						<AbsDimension x="256" y="256"/>
+						<AbsDimension x="256" y="256" />
 					</Size>
 					<Anchors>
-						<Anchor point="TOPLEFT"/>
+						<Anchor point="TOPLEFT" />
 					</Anchors>
 				</Texture>
 				<Texture name="$parentTop" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-Top">
 					<Size>
-						<AbsDimension x="320" y="256"/>
+						<AbsDimension x="320" y="256" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
-								<AbsDimension x="256" y="0"/>
+								<AbsDimension x="256" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentTopRight" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-TopRight">
 					<Size>
-						<AbsDimension x="256" y="256"/>
+						<AbsDimension x="256" y="256" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentTop" relativePoint="TOPRIGHT">
 							<Offset>
-								<AbsDimension x="0" y="0"/>
+								<AbsDimension x="0" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentBotLeft" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-BotLeft">
 					<Size>
-						<AbsDimension x="256" y="256"/>
+						<AbsDimension x="256" y="256" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
-								<AbsDimension x="0" y="-256"/>
+								<AbsDimension x="0" y="-256" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentBot" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-Bot">
 					<Size>
-						<AbsDimension x="320" y="256"/>
+						<AbsDimension x="320" y="256" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
-								<AbsDimension x="256" y="-256"/>
+								<AbsDimension x="256" y="-256" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentBotRight" file="Interface\AuctionFrame\UI-AuctionFrame-Browse-BotRight">
 					<Size>
-						<AbsDimension x="256" y="256"/>
+						<AbsDimension x="256" y="256" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentBot" relativePoint="TOPRIGHT">
 							<Offset>
-								<AbsDimension x="0" y="0"/>
+								<AbsDimension x="0" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -104,7 +103,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="15" y="11"/>
+							<AbsDimension x="15" y="11" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -113,7 +112,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="AuctionFrameTab1" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="-8" y="0"/>
+							<AbsDimension x="-8" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -122,7 +121,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="AuctionFrameTab2" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="-8" y="0"/>
+							<AbsDimension x="-8" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -131,7 +130,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="181" y="18"/>
+							<AbsDimension x="181" y="18" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -140,7 +139,7 @@
 				<Anchors>
 					<Anchor point="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="3" y="-8"/>
+							<AbsDimension x="3" y="-8" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -148,10 +147,10 @@
 			<!-- Browse Tab -->
 			<Frame name="AuctionFrameBrowse" hidden="true">
 				<Size>
-					<AbsDimension x="758" y="447"/>
+					<AbsDimension x="758" y="447" />
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT"/>
+					<Anchor point="TOPLEFT" />
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
@@ -159,7 +158,7 @@
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="0" y="-18"/>
+										<AbsDimension x="0" y="-18" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -170,7 +169,7 @@
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOPLEFT">
 									<Offset>
-										<AbsDimension x="85" y="-85"/>
+										<AbsDimension x="85" y="-85" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -179,7 +178,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset>
-										<AbsDimension x="80" y="-41"/>
+										<AbsDimension x="80" y="-41" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -188,7 +187,7 @@
 							<Anchors>
 								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
 									<Offset>
-										<AbsDimension x="230" y="-47"/>
+										<AbsDimension x="230" y="-47" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -197,7 +196,7 @@
 							<Anchors>
 								<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 									<Offset>
-										<AbsDimension x="-75" y="21"/>
+										<AbsDimension x="-75" y="21" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -206,7 +205,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset>
-										<AbsDimension x="485" y="-56"/>
+										<AbsDimension x="485" y="-56" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -215,7 +214,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset>
-										<AbsDimension x="685" y="-56"/>
+										<AbsDimension x="685" y="-56" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -224,16 +223,16 @@
 							<Anchors>
 								<Anchor point="BOTTOM">
 									<Offset>
-										<AbsDimension x="80" y="53"/>
+										<AbsDimension x="80" y="53" />
 									</Offset>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="BrowseNoResultsText" inherits="GameFontNormal" text="BROWSE_SEARCH_TEXT"  hidden="true">
+						<FontString name="BrowseNoResultsText" inherits="GameFontNormal" text="BROWSE_SEARCH_TEXT" hidden="true">
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="115" y="-120"/>
+										<AbsDimension x="115" y="-120" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -242,7 +241,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="BrowseNoResultsText" relativePoint="RIGHT">
 									<Offset>
-										<AbsDimension x="0" y="0"/>
+										<AbsDimension x="0" y="0" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -254,7 +253,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="23" y="-105"/>
+									<AbsDimension x="23" y="-105" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -263,7 +262,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -272,7 +271,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton2" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -281,7 +280,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton3" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -290,7 +289,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton4" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -299,7 +298,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton5" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -308,7 +307,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton6" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -317,7 +316,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton7" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -326,7 +325,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton8" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -335,7 +334,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton9" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -344,7 +343,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton10" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -353,7 +352,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton11" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -362,7 +361,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton12" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -371,7 +370,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton13" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -380,19 +379,19 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionFilterButton14" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 					<ScrollFrame name="BrowseFilterScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="160" y="305"/>
+							<AbsDimension x="160" y="305" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
 								<Offset>
-									<AbsDimension x="158" y="-105"/>
+									<AbsDimension x="158" y="-105" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -400,29 +399,29 @@
 							<Layer level="ARTWORK">
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="256"/>
+										<AbsDimension x="31" y="256" />
 									</Size>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="5"/>
+												<AbsDimension x="-2" y="5" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0" />
 								</Texture>
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="106"/>
+										<AbsDimension x="31" y="106" />
 									</Size>
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="-2"/>
+												<AbsDimension x="-2" y="-2" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625" />
 								</Texture>
 							</Layer>
 						</Layers>
@@ -434,12 +433,12 @@
 					</ScrollFrame>
 					<ScrollFrame name="BrowseScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="465" y="306"/>
+							<AbsDimension x="465" y="306" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="39" y="-105"/>
+									<AbsDimension x="39" y="-105" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -447,29 +446,29 @@
 							<Layer level="ARTWORK">
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="256"/>
+										<AbsDimension x="31" y="256" />
 									</Size>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="5"/>
+												<AbsDimension x="-2" y="5" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0" />
 								</Texture>
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="106"/>
+										<AbsDimension x="31" y="106" />
 									</Size>
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="-2"/>
+												<AbsDimension x="-2" y="-2" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625" />
 								</Texture>
 							</Layer>
 						</Layers>
@@ -481,12 +480,12 @@
 					</ScrollFrame>
 					<Button name="BrowseQualitySort" inherits="AuctionSortButtonTemplate" text="RARITY">
 						<Size>
-							<AbsDimension x="214" y="19"/>
+							<AbsDimension x="214" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="186" y="-82"/>
+									<AbsDimension x="186" y="-82" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -498,12 +497,12 @@
 					</Button>
 					<Button name="BrowseLevelSort" inherits="AuctionSortButtonTemplate" text="LEVEL_ABBR">
 						<Size>
-							<AbsDimension x="57" y="19"/>
+							<AbsDimension x="57" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseQualitySort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -515,12 +514,12 @@
 					</Button>
 					<Button name="BrowseDurationSort" inherits="AuctionSortButtonTemplate" text="CLOSES_IN">
 						<Size>
-							<AbsDimension x="91" y="19"/>
+							<AbsDimension x="91" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseLevelSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -532,12 +531,12 @@
 					</Button>
 					<Button name="BrowseHighBidderSort" inherits="AuctionSortButtonTemplate" text="AUCTION_CREATOR">
 						<Size>
-							<AbsDimension x="76" y="19"/>
+							<AbsDimension x="76" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseDurationSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -549,12 +548,12 @@
 					</Button>
 					<Button name="BrowseCurrentBidSort" inherits="AuctionSortButtonTemplate" text="CURRENT_BID">
 						<Size>
-							<AbsDimension x="163" y="19"/>
+							<AbsDimension x="163" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseHighBidderSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -568,7 +567,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="195" y="-110"/>
+									<AbsDimension x="195" y="-110" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -577,7 +576,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -586,7 +585,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton2" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -595,7 +594,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton3" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -604,7 +603,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton4" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -613,7 +612,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton5" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -622,7 +621,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton6" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -631,19 +630,19 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseButton7" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 					<Button name="BrowsePrevPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseButton8">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="5" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -651,7 +650,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="LEFT" text="PREV">
 									<Anchors>
-										<Anchor point="LEFT" relativePoint="RIGHT"/>
+										<Anchor point="LEFT" relativePoint="RIGHT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -665,19 +664,19 @@
 								AuctionFrameBrowse_Search(AuctionFrameBrowse.page);
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<Button name="BrowseNextPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BrowseButton8">
 								<Offset>
-									<AbsDimension x="2" y="0"/>
+									<AbsDimension x="2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -685,7 +684,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="RIGHT" text="NEXT">
 									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT"/>
+										<Anchor point="RIGHT" relativePoint="LEFT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -699,40 +698,40 @@
 								AuctionFrameBrowse_Search(AuctionFrameBrowse.page);
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<CheckButton name="IsUsableCheckButton" inherits="UICheckButtonTemplate" id="1">
 						<Size>
-							<AbsDimension x="24" y="24"/>
+							<AbsDimension x="24" y="24" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseIsUsableText" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="2" y="0"/>
+									<AbsDimension x="2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</CheckButton>
 					<EditBox name="BrowseName" autoFocus="false" inherits="InputBoxTemplate">
 						<Size>
-							<AbsDimension x="140" y="16"/>
+							<AbsDimension x="140" y="16" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseNameText" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="3" y="-2"/>
+									<AbsDimension x="3" y="-2" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnTabPressed>
 								if ( IsShiftKeyDown() ) then
-									BrowseBidPriceCopper:SetFocus();
+								BrowseBidPriceCopper:SetFocus();
 								else
-									BrowseMinLevel:SetFocus();
+								BrowseMinLevel:SetFocus();
 								end
 							</OnTabPressed>
 							<OnEnterPressed>
@@ -740,16 +739,16 @@
 								this:ClearFocus();
 							</OnEnterPressed>
 						</Scripts>
-						<FontString inherits="ChatFontNormal" bytes="64"/>
+						<FontString inherits="ChatFontNormal" bytes="64" />
 					</EditBox>
 					<EditBox name="BrowseMinLevel" letters="2" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
 						<Size>
-							<AbsDimension x="25" y="16"/>
+							<AbsDimension x="25" y="16" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseLevelText" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="3" y="-6"/>
+									<AbsDimension x="3" y="-6" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -759,7 +758,7 @@
 									<Anchors>
 										<Anchor point="LEFT" relativeTo="BrowseMinLevel" relativePoint="RIGHT">
 											<Offset>
-												<AbsDimension x="0" y="1"/>
+												<AbsDimension x="0" y="1" />
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -769,9 +768,9 @@
 						<Scripts>
 							<OnTabPressed>
 								if ( IsShiftKeyDown() ) then
-									BrowseName:SetFocus();
+								BrowseName:SetFocus();
 								else
-									BrowseMaxLevel:SetFocus();
+								BrowseMaxLevel:SetFocus();
 								end
 							</OnTabPressed>
 							<OnEnterPressed>
@@ -781,21 +780,21 @@
 					</EditBox>
 					<EditBox name="BrowseMaxLevel" letters="2" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
 						<Size>
-							<AbsDimension x="25" y="16"/>
+							<AbsDimension x="25" y="16" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseMinLevel" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="12" y="0"/>
+									<AbsDimension x="12" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnTabPressed>
 								if ( IsShiftKeyDown() ) then
-									BrowseMinLevel:SetFocus();
+								BrowseMinLevel:SetFocus();
 								else
-									BrowseBidPriceGold:SetFocus();
+								BrowseBidPriceGold:SetFocus();
 								end
 							</OnTabPressed>
 							<OnEnterPressed>
@@ -807,7 +806,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BrowseLevelText" relativePoint="BOTTOMRIGHT">
 								<Offset>
-									<AbsDimension x="-5" y="-1"/>
+									<AbsDimension x="-5" y="-1" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -817,7 +816,7 @@
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
 											<Offset>
-												<AbsDimension x="20" y="0"/>
+												<AbsDimension x="20" y="0" />
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -837,19 +836,19 @@
 						<Anchors>
 							<Anchor point="BOTTOM">
 								<Offset>
-									<AbsDimension x="25" y="18"/>
+									<AbsDimension x="25" y="18" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Frame>
 					<Button name="BrowseCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
 								<Offset>
-									<AbsDimension x="66" y="14"/>
+									<AbsDimension x="66" y="14" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -861,12 +860,12 @@
 					</Button>
 					<Button name="BrowseBuyoutButton" inherits="UIPanelButtonTemplate" text="BUYOUT">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BrowseCloseButton" relativePoint="LEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -879,12 +878,12 @@
 					</Button>
 					<Button name="BrowseBidButton" inherits="UIPanelButtonTemplate" text="BID">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BrowseBuyoutButton" relativePoint="LEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -897,12 +896,12 @@
 					</Button>
 					<Button name="BrowseSearchButton" inherits="UIPanelButtonTemplate" text="SEARCH">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="IsUsableCheckButton" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="10" y="0"/>
+									<AbsDimension x="10" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -917,21 +916,21 @@
 					</Button>
 					<CheckButton name="ShowOnPlayerCheckButton" inherits="UICheckButtonTemplate" id="1">
 						<Size>
-							<AbsDimension x="24" y="24"/>
+							<AbsDimension x="24" y="24" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BrowseShowOnCharacterText" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="2" y="0"/>
+									<AbsDimension x="2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnClick>
 								if ( this:GetChecked() ) then
-									AUCTION_DISPLAY_ON_CHARACTER = "1";
+								AUCTION_DISPLAY_ON_CHARACTER = "1";
 								else
-									AUCTION_DISPLAY_ON_CHARACTER = "0";
+								AUCTION_DISPLAY_ON_CHARACTER = "0";
 								end
 							</OnClick>
 							<OnEnter>
@@ -959,10 +958,10 @@
 			<!-- Bid Tab -->
 			<Frame name="AuctionFrameBid" hidden="false">
 				<Size>
-					<AbsDimension x="758" y="447"/>
+					<AbsDimension x="758" y="447" />
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT"/>
+					<Anchor point="TOPLEFT" />
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
@@ -970,7 +969,7 @@
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="0" y="-18"/>
+										<AbsDimension x="0" y="-18" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -981,7 +980,7 @@
 							<Anchors>
 								<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 									<Offset>
-										<AbsDimension x="-115" y="21"/>
+										<AbsDimension x="-115" y="21" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -990,7 +989,7 @@
 							<Anchors>
 								<Anchor point="BOTTOM">
 									<Offset>
-										<AbsDimension x="-10" y="53"/>
+										<AbsDimension x="-10" y="53" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1000,12 +999,12 @@
 				<Frames>
 					<Button name="BidQualitySort" inherits="AuctionSortButtonTemplate" text="RARITY">
 						<Size>
-							<AbsDimension x="195" y="19"/>
+							<AbsDimension x="195" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="65" y="-52"/>
+									<AbsDimension x="65" y="-52" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1017,12 +1016,12 @@
 					</Button>
 					<Button name="BidLevelSort" inherits="AuctionSortButtonTemplate" text="LEVEL_ABBR">
 						<Size>
-							<AbsDimension x="65" y="19"/>
+							<AbsDimension x="65" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidQualitySort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1034,12 +1033,12 @@
 					</Button>
 					<Button name="BidDurationSort" inherits="AuctionSortButtonTemplate" text="CLOSES_IN">
 						<Size>
-							<AbsDimension x="79" y="19"/>
+							<AbsDimension x="79" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidLevelSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1051,12 +1050,12 @@
 					</Button>
 					<Button name="BidBuyoutSort" inherits="AuctionSortButtonTemplate" text="BUYOUT_PRICE">
 						<Size>
-							<AbsDimension x="162" y="19"/>
+							<AbsDimension x="162" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidDurationSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1068,12 +1067,12 @@
 					</Button>
 					<Button name="BidStatusSort" inherits="AuctionSortButtonTemplate" text="BID_STATUS">
 						<Size>
-							<AbsDimension x="94" y="19"/>
+							<AbsDimension x="94" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidBuyoutSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1085,12 +1084,12 @@
 					</Button>
 					<Button name="BidBidSort" inherits="AuctionSortButtonTemplate" text="CURRENT_BID">
 						<Size>
-							<AbsDimension x="169" y="19"/>
+							<AbsDimension x="169" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidStatusSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1102,12 +1101,12 @@
 					</Button>
 					<ScrollFrame name="BidScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="625" y="335"/>
+							<AbsDimension x="625" y="335" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="40" y="-74"/>
+									<AbsDimension x="40" y="-74" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1115,29 +1114,29 @@
 							<Layer level="ARTWORK">
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="256"/>
+										<AbsDimension x="31" y="256" />
 									</Size>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="5"/>
+												<AbsDimension x="-2" y="5" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0" />
 								</Texture>
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="106"/>
+										<AbsDimension x="31" y="106" />
 									</Size>
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="-2"/>
+												<AbsDimension x="-2" y="-2" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625" />
 								</Texture>
 							</Layer>
 						</Layers>
@@ -1151,7 +1150,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="27" y="-76"/>
+									<AbsDimension x="27" y="-76" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1160,7 +1159,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1169,7 +1168,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton2" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1178,7 +1177,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton3" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1187,7 +1186,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton4" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1196,7 +1195,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton5" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1205,7 +1204,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton6" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1214,7 +1213,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton7" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1223,19 +1222,19 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="BidButton8" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 					<Button name="BidPrevPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="BidButton9">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="5" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1243,7 +1242,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="LEFT" text="PREV">
 									<Anchors>
-										<Anchor point="LEFT" relativePoint="RIGHT"/>
+										<Anchor point="LEFT" relativePoint="RIGHT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -1256,19 +1255,19 @@
 								this:Disable();
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<Button name="BidNextPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BidButton9">
 								<Offset>
-									<AbsDimension x="-13" y="0"/>
+									<AbsDimension x="-13" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1276,7 +1275,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="RIGHT" text="NEXT">
 									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT"/>
+										<Anchor point="RIGHT" relativePoint="LEFT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -1289,28 +1288,28 @@
 								this:Disable();
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<Frame name="BidBidPrice" inherits="MoneyInputFrameTemplate">
 						<Anchors>
 							<Anchor point="BOTTOM">
 								<Offset>
-									<AbsDimension x="-15" y="18"/>
+									<AbsDimension x="-15" y="18" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Frame>
 					<Button name="BidCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
 								<Offset>
-									<AbsDimension x="66" y="14"/>
+									<AbsDimension x="66" y="14" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1322,12 +1321,12 @@
 					</Button>
 					<Button name="BidBuyoutButton" inherits="UIPanelButtonTemplate" text="BUYOUT">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BidCloseButton" relativePoint="LEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1340,12 +1339,12 @@
 					</Button>
 					<Button name="BidBidButton" inherits="UIPanelButtonTemplate" text="BID">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="BidBuyoutButton" relativePoint="LEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1372,10 +1371,10 @@
 			<!-- Auctions Tab -->
 			<Frame name="AuctionFrameAuctions" hidden="true">
 				<Size>
-					<AbsDimension x="758" y="447"/>
+					<AbsDimension x="758" y="447" />
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT"/>
+					<Anchor point="TOPLEFT" />
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
@@ -1383,7 +1382,7 @@
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="0" y="-18"/>
+										<AbsDimension x="0" y="-18" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1394,7 +1393,7 @@
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOPLEFT">
 									<Offset>
-										<AbsDimension x="121" y="-55"/>
+										<AbsDimension x="121" y="-55" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1403,7 +1402,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset>
-										<AbsDimension x="28" y="-83"/>
+										<AbsDimension x="28" y="-83" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1412,7 +1411,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="AuctionsItemText">
 									<Offset>
-										<AbsDimension x="0" y="-70"/>
+										<AbsDimension x="0" y="-70" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1421,7 +1420,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="AuctionsPriceText">
 									<Offset>
-										<AbsDimension x="0" y="-50"/>
+										<AbsDimension x="0" y="-50" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1430,7 +1429,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="AuctionsPriceText">
 									<Offset>
-										<AbsDimension x="0" y="-144"/>
+										<AbsDimension x="0" y="-144" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1439,7 +1438,7 @@
 							<Anchors>
 								<Anchor point="BOTTOMLEFT" relativeTo="AuctionsBuyoutText" relativePoint="TOPLEFT">
 									<Offset>
-										<AbsDimension x="0" y="3"/>
+										<AbsDimension x="0" y="3" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1448,7 +1447,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="AuctionsBuyoutText">
 									<Offset>
-										<AbsDimension x="0" y="-67"/>
+										<AbsDimension x="0" y="-67" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1457,7 +1456,7 @@
 							<Anchors>
 								<Anchor point="BOTTOM">
 									<Offset>
-										<AbsDimension x="90" y="53"/>
+										<AbsDimension x="90" y="53" />
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -1467,12 +1466,12 @@
 				<Frames>
 					<Button name="AuctionsQualitySort" inherits="AuctionSortButtonTemplate" text="RARITY">
 						<Size>
-							<AbsDimension x="185" y="19"/>
+							<AbsDimension x="185" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="219" y="-51"/>
+									<AbsDimension x="219" y="-51" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1484,12 +1483,12 @@
 					</Button>
 					<Button name="AuctionsDurationSort" inherits="AuctionSortButtonTemplate" text="CLOSES_IN">
 						<Size>
-							<AbsDimension x="100" y="19"/>
+							<AbsDimension x="100" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="AuctionsQualitySort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1501,12 +1500,12 @@
 					</Button>
 					<Button name="AuctionsHighBidderSort" inherits="AuctionSortButtonTemplate" text="HIGH_BIDDER">
 						<Size>
-							<AbsDimension x="108" y="19"/>
+							<AbsDimension x="108" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="AuctionsDurationSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1518,12 +1517,12 @@
 					</Button>
 					<Button name="AuctionsBidSort" inherits="AuctionSortButtonTemplate" text="CURRENT_BID">
 						<Size>
-							<AbsDimension x="193" y="19"/>
+							<AbsDimension x="193" y="19" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="AuctionsHighBidderSort" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="-2" y="0"/>
+									<AbsDimension x="-2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1535,12 +1534,12 @@
 					</Button>
 					<ScrollFrame name="AuctionsScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="435" y="339"/>
+							<AbsDimension x="435" y="339" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="40" y="-72"/>
+									<AbsDimension x="40" y="-72" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1548,29 +1547,29 @@
 							<Layer level="ARTWORK">
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="256"/>
+										<AbsDimension x="31" y="256" />
 									</Size>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="5"/>
+												<AbsDimension x="-2" y="5" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0" />
 								</Texture>
 								<Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
 									<Size>
-										<AbsDimension x="31" y="106"/>
+										<AbsDimension x="31" y="106" />
 									</Size>
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
 											<Offset>
-												<AbsDimension x="-2" y="-2"/>
+												<AbsDimension x="-2" y="-2" />
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625" />
 								</Texture>
 							</Layer>
 						</Layers>
@@ -1584,7 +1583,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="219" y="-76"/>
+									<AbsDimension x="219" y="-76" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1593,7 +1592,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1602,7 +1601,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton2" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1611,7 +1610,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton3" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1620,7 +1619,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton4" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1629,7 +1628,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton5" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1638,7 +1637,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton6" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1647,7 +1646,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton7" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1656,19 +1655,19 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsButton8" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 					<Button name="AuctionsPrevPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="AuctionsButton9">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="5" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1676,7 +1675,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="LEFT" text="PREV">
 									<Anchors>
-										<Anchor point="LEFT" relativePoint="RIGHT"/>
+										<Anchor point="LEFT" relativePoint="RIGHT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -1689,19 +1688,19 @@
 								this:Disable();
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<Button name="AuctionsNextPageButton" hidden="true">
 						<Size>
-							<AbsDimension x="32" y="32"/>
+							<AbsDimension x="32" y="32" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="AuctionsButton9">
 								<Offset>
-									<AbsDimension x="2" y="0"/>
+									<AbsDimension x="2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1709,7 +1708,7 @@
 							<Layer level="BACKGROUND">
 								<FontString inherits="GameFontNormal" justifyH="RIGHT" text="NEXT">
 									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT"/>
+										<Anchor point="RIGHT" relativePoint="LEFT" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -1722,19 +1721,19 @@
 								this:Disable();
 							</OnClick>
 						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 					</Button>
 					<Button name="AuctionsItemButton">
 						<Size>
-							<AbsDimension x="37" y="37"/>
+							<AbsDimension x="37" y="37" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="28" y="-98"/>
+									<AbsDimension x="28" y="-98" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1742,12 +1741,12 @@
 							<Layer level="BACKGROUND">
 								<FontString name="$parentName" inherits="GameFontNormal">
 									<Size>
-										<AbsDimension x="124" y="30"/>
+										<AbsDimension x="124" y="30" />
 									</Size>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 											<Offset>
-												<AbsDimension x="5" y="0"/>
+												<AbsDimension x="5" y="0" />
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -1758,7 +1757,7 @@
 									<Anchors>
 										<Anchor point="BOTTOMRIGHT">
 											<Offset>
-												<AbsDimension x="-5" y="2"/>
+												<AbsDimension x="-5" y="2" />
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -1788,22 +1787,22 @@
 							<OnEnter>
 								GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
 								if ( GetAuctionSellItemInfo() ) then
-									GameTooltip:SetAuctionSellItem();
+								GameTooltip:SetAuctionSellItem();
 								else
-									GameTooltip:SetText(AUCTION_ITEM_TEXT, 1.0, 1.0, 1.0);
+								GameTooltip:SetText(AUCTION_ITEM_TEXT, 1.0, 1.0, 1.0);
 								end
 							</OnEnter>
 							<OnLeave>
 								GameTooltip:Hide();
 							</OnLeave>
 						</Scripts>
-						<HighlightTexture alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square"/>
+						<HighlightTexture alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square" />
 					</Button>
 					<Frame name="StartPrice" inherits="MoneyInputFrameTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsPriceText" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="3" y="-2"/>
+									<AbsDimension x="3" y="-2" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1818,13 +1817,13 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsDurationText" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="3" y="-2"/>
+									<AbsDimension x="3" y="-2" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("2 "..GetText("HOURS", nil, 2));
+								getglobal(this:GetName().."Text"):SetText("6 "..GetText("HOURS", nil, 2));
 							</OnLoad>
 							<OnClick>
 								AuctionsRadioButton_OnClick(this:GetID())
@@ -1835,13 +1834,13 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsShortAuctionButton" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("8 "..GetText("HOURS", nil, 8));
+								getglobal(this:GetName().."Text"):SetText("24 "..GetText("HOURS", nil, 8));
 							</OnLoad>
 							<OnClick>
 								AuctionsRadioButton_OnClick(this:GetID())
@@ -1852,13 +1851,13 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsMediumAuctionButton" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="0"/>
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText("24 "..GetText("HOURS", nil, 24));
+								getglobal(this:GetName().."Text"):SetText("72 "..GetText("HOURS", nil, 24));
 							</OnLoad>
 							<OnClick>
 								AuctionsRadioButton_OnClick(this:GetID())
@@ -1869,7 +1868,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AuctionsBuyoutText" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="2" y="-2"/>
+									<AbsDimension x="2" y="-2" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1883,7 +1882,7 @@
 						<Anchors>
 							<Anchor point="LEFT" relativeTo="AuctionsDepositText" relativePoint="RIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="5" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1896,12 +1895,12 @@
 					</Frame>
 					<Button name="AuctionsCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
 						<Size>
-							<AbsDimension x="80" y="22"/>
+							<AbsDimension x="80" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
 								<Offset>
-									<AbsDimension x="66" y="14"/>
+									<AbsDimension x="66" y="14" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1913,31 +1912,31 @@
 					</Button>
 					<Button name="AuctionsCancelAuctionButton" inherits="UIPanelButtonTemplate" text="CANCEL_AUCTION">
 						<Size>
-							<AbsDimension x="126" y="22"/>
+							<AbsDimension x="126" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="AuctionsCloseButton" relativePoint="LEFT">
 								<Offset>
-									<AbsDimension x="2" y="0"/>
+									<AbsDimension x="2" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>
 						<Scripts>
 							<OnClick>
 								if ( GetSelectedAuctionItem("owner") and (GetSelectedAuctionItem("owner") > 0) ) then
-									StaticPopup_Show("CANCEL_AUCTION");
+								StaticPopup_Show("CANCEL_AUCTION");
 								end
 							</OnClick>
 						</Scripts>
 					</Button>
 					<Button name="AuctionsCreateAuctionButton" inherits="UIPanelButtonTemplate" text="CREATE_AUCTION">
 						<Size>
-							<AbsDimension x="191" y="20"/>
+							<AbsDimension x="191" y="20" />
 						</Size>
 						<Anchors>
 							<Anchor point="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="18" y="39"/>
+									<AbsDimension x="18" y="39" />
 								</Offset>
 							</Anchor>
 						</Anchors>

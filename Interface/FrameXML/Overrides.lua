@@ -30,8 +30,13 @@ function GetFullListZoneId()
   local id = this:GetID();
   local zones = { GetMapZones(GetCurrentMapContinent()) }
 
-  local diff = 0;
-  for i = 1, id do if (hiddenMaps[zones[i + diff]]) then diff = diff + 1 end end
+  local diff = 0
+  for i = 1, id do
+    while hiddenMaps[zones[i + diff]] do
+        diff = diff + 1
+    end
+  end
+
   return id + diff
 end
 

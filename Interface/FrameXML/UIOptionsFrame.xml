@@ -178,6 +178,15 @@
 									</Anchor>
 								</Anchors>
 							</CheckButton>
+							<CheckButton name="UIOptionsFrameCheckButton70" inherits="UIOptionsCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="UIOptionsFrameCheckButton61" relativePoint="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="0"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</CheckButton>
 							<Frame name="UIOptionsFrameClickCameraDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="UIOptionsFrameCheckButton6">

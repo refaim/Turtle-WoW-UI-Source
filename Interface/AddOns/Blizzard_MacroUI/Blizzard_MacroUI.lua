@@ -4,7 +4,9 @@ NUM_ICONS_PER_ROW = 5;
 NUM_ICON_ROWS = 4;
 MACRO_ICON_ROW_HEIGHT = 36;
 
-UIPanelWindows["MacroFrame"] = { area = "left", pushable = 5, whileDead = 1 };
+UIPanelWindows["MacroFrame"] = { area = "left", pushable = 1, whileDead = 1 };
+
+local found = {}
 
 function MacroFrame_Show()
 	ShowUIPanel(MacroFrame);
@@ -230,10 +232,20 @@ function MacroPopupFrame_Update()
 	for i=1, NUM_MACRO_ICONS_SHOWN do
 		macroPopupIcon = getglobal("MacroPopupButton"..i.."Icon");
 		macroPopupButton = getglobal("MacroPopupButton"..i);
-		index = (macroPopupOffset * NUM_ICONS_PER_ROW) + i;
+		if table.getn(found) > 0 then
+			if found[macroPopupOffset * NUM_ICONS_PER_ROW + i] then
+				index = found[macroPopupOffset * NUM_ICONS_PER_ROW + i]
+			else
+				index = numMacroIcons + 1
+			end
+		else
+			index = (macroPopupOffset * NUM_ICONS_PER_ROW) + i;
+		end
+
 		if ( index <= numMacroIcons ) then
 			macroPopupIcon:SetTexture(GetMacroIconInfo(index));
 			macroPopupButton:Show();
+			macroPopupButton:SetID(index);
 		else
 			macroPopupIcon:SetTexture("");
 			macroPopupButton:Hide();
@@ -261,7 +273,7 @@ function MacroPopupOkayButton_Update()
 end
 
 function MacroPopupButton_OnClick()
-	MacroPopupFrame.selectedIcon = this:GetID() + (FauxScrollFrame_GetOffset(MacroPopupScrollFrame) * NUM_ICONS_PER_ROW);
+	MacroPopupFrame.selectedIcon = this:GetID();
 	MacroFrameSelectedMacroButtonIcon:SetTexture(GetMacroIconInfo(MacroPopupFrame.selectedIcon));
 	MacroPopupOkayButton_Update();
 	MacroPopupFrame_Update();
@@ -277,6 +289,9 @@ function MacroPopupOkayButton_OnClick()
 	MacroPopupFrame:Hide();
 	MacroFrame_SelectMacro(index);
 	MacroFrame_Update();
+
+	MacroPopupFrameSearchBox:SetText("Search")
+	MacroPopupFrameSearchBox:SetTextColor(0.5, 0.5, 0.5, 1);
 end
 
 function MacroFrame_SaveMacro()
@@ -284,4 +299,21 @@ function MacroFrame_SaveMacro()
 		EditMacro(MacroFrame.selectedMacro, nil, nil, MacroFrameText:GetText());
 		MacroFrame.textChanged = nil;
 	end
+end
+
+function MacroPopupFrameSearchBox_OnTextChanged()
+	found = {}
+
+	local query = strlower(this:GetText())
+
+	for i = 1, GetNumMacroIcons() do
+		local texture = GetMacroIconInfo(i)
+		if string.find(strlower(texture), query) then
+			table.insert(found, i)
+		end
+	end
+
+	MacroPopupScrollFrame:SetVerticalScroll(1)
+
+	MacroPopupFrame_Update()
 end

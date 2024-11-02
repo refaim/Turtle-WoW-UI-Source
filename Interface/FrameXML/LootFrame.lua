@@ -16,8 +16,18 @@ function LootFrame_OnEvent(event)
 		ShowUIPanel(this);
 		if ( not this:IsVisible() ) then
 			CloseLoot(1);	-- The parameter tells code that we were unable to open the UI
+			return;
 		end
-		return;
+
+		if ( LOOT_WINDOW_AT_CURSOR == "1" ) then
+			local x, y = GetCursorPosition()
+			local scale = this:GetEffectiveScale()
+			x = (x / scale) - 48
+			y = (y / scale) + 106
+
+			this:ClearAllPoints()
+			this:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", x, y)
+		end
 	end
 	if ( event == "LOOT_SLOT_CLEARED" ) then
 		if ( not this:IsVisible() ) then
@@ -76,14 +86,14 @@ function LootFrame_Update()
 	for index = 1, LOOTFRAME_NUMBUTTONS do
 		button = getglobal("LootButton"..index);
 		local slot = (numLootToShow * (LootFrame.page - 1)) + index;
-		if ( slot <= numLootItems ) then	
+		if ( slot <= numLootItems ) then
 			if ( (LootSlotIsItem(slot) or LootSlotIsCoin(slot)) and index <= numLootToShow ) then
 				texture, item, quantity, quality = GetLootSlotInfo(slot);
 				color = ITEM_QUALITY_COLORS[quality];
 				getglobal("LootButton"..index.."IconTexture"):SetTexture(texture);
 				getglobal("LootButton"..index.."Text"):SetText(item);
 				getglobal("LootButton"..index.."Text"):SetVertexColor(color.r, color.g, color.b);
-				
+
 				countString = getglobal("LootButton"..index.."Count");
 				if ( quantity > 1 ) then
 					countString:SetText(quantity);
@@ -154,7 +164,7 @@ function LootFrameItem_OnClick(button)
 	end
 	-- Close any loot distribution confirmation windows
 	StaticPopup_Hide("CONFIRM_LOOT_DISTRIBUTION");
-	
+
 	LootFrame.selectedLootButton = this:GetName();
 	LootFrame.selectedSlot = this.slot;
 	LootFrame.selectedQuality = this.quality;
@@ -167,7 +177,7 @@ end
 
 function GroupLootDropDown_Initialize()
 	local candidate, info;
-	
+
 	if ( UIDROPDOWNMENU_MENU_LEVEL == 2 ) then
 		local lastIndex = UIDROPDOWNMENU_MENU_VALUE + 5 - 1;
 		for i=UIDROPDOWNMENU_MENU_VALUE, lastIndex do
@@ -185,7 +195,7 @@ function GroupLootDropDown_Initialize()
 		end
 		return;
 	end
-	
+
 	if ( GetNumRaidMembers() > 0 ) then
 		-- In a raid
 		info = {};
@@ -213,7 +223,7 @@ function GroupLootDropDown_Initialize()
 		end
 	else
 		-- In a party
-		
+
 		for i=1, MAX_PARTY_MEMBERS+1, 1 do
 			candidate = GetMasterLootCandidate(i);
 			if ( candidate ) then
@@ -259,17 +269,17 @@ end
 
 function GroupLootFrame_OnShow()
 	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo(this.rollID);
-	
+
 	if ( bindOnPickUp ) then
 		this:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
 		getglobal(this:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Gold-Corner");
 		getglobal(this:GetName().."Decoration"):Show();
-	else 
+	else
 		this:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
 		getglobal(this:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner");
 		getglobal(this:GetName().."Decoration"):Hide();
 	end
-	
+
 	getglobal("GroupLootFrame"..this:GetID().."IconFrameIcon"):SetTexture(texture);
 	getglobal("GroupLootFrame"..this:GetID().."Name"):SetText(name);
 	local color = ITEM_QUALITY_COLORS[quality];

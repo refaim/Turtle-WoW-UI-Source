@@ -201,10 +201,13 @@
 						</TextInsets>
 					</EditBox>
 					<Button name="AccountLoginLoginButton" inherits="GlueButtonTemplate" text="LOGIN">
+						<Size>
+							<AbsDimension x="173" y="45"/>
+						</Size>
 						<Anchors>
 							<Anchor point="TOP">
 								<Offset>
-									<AbsDimension x="8" y="-519"/>
+									<AbsDimension x="11" y="-519"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -499,7 +502,7 @@
 					</Frame>
 					<Frame name="VirtualKeypadFrame" hidden="true" frameStrata="DIALOG" enableMouse="true">
 						<Size>
-							<AbsDimension x="155" y="175"/>
+							<AbsDimension x="140" y="70"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AccountLoginAccountEdit" relativePoint="TOPRIGHT">
@@ -533,195 +536,55 @@
 							</BackgroundInsets>
 						</Backdrop>
 						<Frames>
-							<Frame name="VirtualKeypadPINFrame">
-								<Size x="130" y="20"/>
+							<EditBox name="VirtualKeypadText" numeric="true" letters="6">
+								<Size>
+									<AbsDimension x="80" y="37"/>
+								</Size>
 								<Anchors>
-									<Anchor point="TOP">
+									<Anchor point="TOPLEFT">
 										<Offset>
-											<AbsDimension x="7" y="-31"/>
+											<AbsDimension x="7" y="-26"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
-								<Layers>
-									<Layer level="BACKGROUND">
-										<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
-											<Size>
-												<AbsDimension x="8" y="20"/>
-											</Size>
-											<Anchors>
-												<Anchor point="TOPLEFT">
-													<Offset>
-														<AbsDimension x="-5" y="0"/>
-													</Offset>
-												</Anchor>
-											</Anchors>
-											<TexCoords left="0" right="0.0625" top="0" bottom="0.625"/>
-										</Texture>
-										<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
-											<Size>
-												<AbsDimension x="8" y="20"/>
-											</Size>
-											<Anchors>
-												<Anchor point="RIGHT">
-													<Offset>
-														<AbsDimension x="-10" y="0"/>
-													</Offset>
-												</Anchor>
-											</Anchors>
-											<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625"/>
-										</Texture>
-										<Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
-											<Size>
-												<AbsDimension x="10" y="20"/>
-											</Size>
-											<Anchors>
-												<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
-												<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT"/>
-											</Anchors>
-											<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625"/>
-										</Texture>
-									</Layer>
-									<Layer level="ARTWORK">
-										<FontString name="VirtualKeypadText" inherits="GlueFontHighlight" justifyH="LEFT">
-											<Anchors>
-												<Anchor point="LEFT">
-													<Offset>
-														<AbsDimension x="0" y="0"/>
-													</Offset>
-												</Anchor>
-											</Anchors>
-											<Size x="120" y="12"/>
-										</FontString>
-									</Layer>
-								</Layers>
-							</Frame>
-							<Button name="VirtualKeypadButton1" inherits="VirtualKeyPadButtonTemplate" id="0">
-								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="VirtualKeypadPINFrame" relativePoint="BOTTOMLEFT">
-										<Offset>
-											<AbsDimension x="-6" y="-6"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton2" inherits="VirtualKeyPadButtonTemplate" id="1">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton1" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton3" inherits="VirtualKeyPadButtonTemplate" id="2">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton2" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton4" inherits="VirtualKeyPadButtonTemplate" id="3">
-								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="VirtualKeypadButton1" relativePoint="BOTTOMLEFT">
-										<Offset>
-											<AbsDimension x="0" y="-2"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton5" inherits="VirtualKeyPadButtonTemplate" id="4">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton4" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton6" inherits="VirtualKeyPadButtonTemplate" id="5">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton5" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton7" inherits="VirtualKeyPadButtonTemplate" id="6">
-								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="VirtualKeypadButton4" relativePoint="BOTTOMLEFT">
-										<Offset>
-											<AbsDimension x="0" y="-2"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton8" inherits="VirtualKeyPadButtonTemplate" id="7">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton7" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton9" inherits="VirtualKeyPadButtonTemplate" id="8">
-								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton8" relativePoint="RIGHT">
-										<Offset>
-											<AbsDimension x="3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadButton10" inherits="VirtualKeyPadButtonTemplate" id="9">
-								<Anchors>
-									<Anchor point="TOP" relativeTo="VirtualKeypadButton8" relativePoint="BOTTOM">
-										<Offset>
-											<AbsDimension x="0" y="-2"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="VirtualKeypadBackButton" inherits="VirtualKeyPadButtonTemplate">
-								<Anchors>
-									<Anchor point="RIGHT" relativeTo="VirtualKeypadButton10" relativePoint="LEFT">
-										<Offset>
-											<AbsDimension x="-3" y="0"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Layers>
-									<Layer level="OVERLAY">
-										<Texture file="Interface\Glues\Login\UI-BackArrow">
-											<Size>
-												<AbsDimension x="16" y="16"/>
-											</Size>
-											<Anchors>
-												<Anchor point="CENTER">
-													<Offset>
-														<AbsDimension x="0" y="-1"/>
-													</Offset>
-												</Anchor>
-											</Anchors>
-										</Texture>
-									</Layer>
-								</Layers>
+								<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Glues\Common\Glue-Tooltip-Border" tile="true">
+									<BackgroundInsets>
+										<AbsInset left="10" right="5" top="4" bottom="9"/>
+									</BackgroundInsets>
+									<TileSize>
+										<AbsValue val="16"/>
+									</TileSize>
+									<EdgeSize>
+										<AbsValue val="16"/>
+									</EdgeSize>
+								</Backdrop>
 								<Scripts>
-									<OnClick>
-										local numNumbers = strlen(VirtualKeypadText:GetText());
-										VirtualKeypadText:SetText(strsub(VirtualKeypadText:GetText(), 1, numNumbers-1));
-										VirtualKeypadFrame.PIN = strsub(VirtualKeypadFrame.PIN, 1, numNumbers-1);
-										VirtualKeypad_UpdateButtons();
-									</OnClick>
+									<OnShow>
+										VirtualKeypadText:SetFocus();
+									</OnShow>
+									<OnEscapePressed>
+										this:GetParent():Hide();
+										StatusDialogClick();
+									</OnEscapePressed>
+									<OnEnterPressed>
+										VirtualKeypadOkayButton_OnClick();
+									</OnEnterPressed>
+									<OnEditFocusLost>
+										this:HighlightText(0, 0);
+									</OnEditFocusLost>
+									<OnEditFocusGained>
+										this:HighlightText();
+									</OnEditFocusGained>
 								</Scripts>
-							</Button>
+								<FontString inherits="GlueEditBoxFont"/>
+								<TextInsets>
+									<AbsInset left="15" bottom="5"/>
+								</TextInsets>
+							</EditBox>
 							<Button name="VirtualKeypadOkayButton" text="OKAY">
 								<Size x="40" y="24"/>
 								<Anchors>
-									<Anchor point="LEFT" relativeTo="VirtualKeypadButton10" relativePoint="RIGHT">
+									<Anchor point="LEFT" relativeTo="VirtualKeypadText" relativePoint="RIGHT">
 										<Offset>
 											<AbsDimension x="3" y="0"/>
 										</Offset>
@@ -778,9 +641,9 @@
 					</OnShow>
 				</Scripts>
 			</Frame>
-			
 
-<!-- SURVEY NOTIFICATION FRAME BEGIN -->			
+
+<!-- SURVEY NOTIFICATION FRAME BEGIN -->
 			<Frame name="SurveyNotificationFrame" hidden="true">
 				<Size>
 					<AbsDimension x="640" y="512"/>
@@ -945,9 +808,9 @@
 					</Button>
 				</Frames>
 			</Frame>
-			
-<!-- SURVEY NOTIFICATION FRAME END -->		
-			
+
+<!-- SURVEY NOTIFICATION FRAME END -->
+
 			<Frame name="ConnectionHelpFrame" hidden="true">
 				<Size>
 					<AbsDimension x="640" y="512"/>

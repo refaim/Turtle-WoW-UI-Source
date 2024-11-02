@@ -98,11 +98,13 @@ Turtle_TransmogUI\Turtle_TransmogSets.lua
 Turtle_TransmogUI\Turtle_TransmogUI.xml
 
 # Inspect Talents and spell/talent chat links
+Turtle_InspectTalentsUI\Turtle_TalentsData.lua
 Turtle_InspectTalentsUI\Turtle_InspectTalentsUI.lua
 Turtle_InspectTalentsUI\Turtle_SpellChatLinksUI.lua
 Turtle_InspectTalentsUI\InspectTalentsFrame.xml
 
 # Shop
+Turtle_ShopUI\Turtle_ShopUITemplates.xml
 Turtle_ShopUI\Turtle_ShopUI.xml
 
 # Guild Bank
@@ -111,16 +113,20 @@ Turtle_GuildBankUI\Turtle_GuildBankUI.xml
 
 # EverlookBroadcastingCo
 # Author: Lexie
-# Version: 1
 EverlookBroadcastingCo\EverlookBroadcastingCo.xml
 
 # Hooks
 # Author: Lexie
-# Version: 1
 Hooks.lua
 
 # LFT
-# Author: Xerron/Er
-# Version: 0.0.4.0
+# Author: Xerron/Er, modified by Lexie, Luke
 LFT\ChatThrottleLib\ChatThrottleLib.lua
+LFT\LFT_Data.lua
+LFT\LFT.lua
+LFT\LFTTemplates.xml
 LFT\LFT.xml
+
+# Chronoboon Timers
+# Author: Xerron/Er, Edit by Zaas
+ChronoboonTimers.lua

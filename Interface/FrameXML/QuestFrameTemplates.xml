@@ -177,7 +177,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture file="Interface\QuestFrame\UI-Quest-BulletPoint">
+				<Texture name="$parentIcon" file="Interface\QuestFrame\UI-Quest-BulletPoint">
 					<Size>
 						<AbsDimension x="16" y="16"/>
 					</Size>

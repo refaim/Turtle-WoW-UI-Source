@@ -18,6 +18,8 @@ function AccountLogin_OnLoad()
 	AccountLoginAccountEdit:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6]);
 	AccountLoginPasswordEdit:SetBackdropBorderColor(backdropColor[1], backdropColor[2], backdropColor[3]);
 	AccountLoginPasswordEdit:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6]);
+	VirtualKeypadText:SetBackdropBorderColor(backdropColor[1], backdropColor[2], backdropColor[3]);
+	VirtualKeypadText:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6]);
 end
 
 function AccountLogin_OnShow()
@@ -166,18 +168,19 @@ function AccountLogin_SurveyNotificationDone(accepted)
 end
 
 -- Virtual keypad functions
+local buttonText = {}
 function VirtualKeypadFrame_OnEvent(event)
 	if ( event == "PLAYER_ENTER_PIN" ) then
 		for i=1, 10 do
-			getglobal("VirtualKeypadButton"..i):SetText(getglobal("arg"..i));
-		end							
+			buttonText[i] = getglobal("arg"..i)
+		end
 	end
 	-- Randomize location to prevent hacking (yeah right)
 	local xPadding = 5;
 	local yPadding = 10;
 	local xPos = random(xPadding, GlueParent:GetWidth()-VirtualKeypadFrame:GetWidth()-xPadding);
 	local yPos = random(yPadding, GlueParent:GetHeight()-VirtualKeypadFrame:GetHeight()-yPadding);
-	VirtualKeypadFrame:SetPoint("TOPLEFT", GlueParent, "TOPLEFT", xPos, -yPos);
+	--VirtualKeypadFrame:SetPoint("TOPLEFT", GlueParent, "TOPLEFT", xPos, -yPos);
 	
 	VirtualKeypadFrame:Show();
 	VirtualKeypad_UpdateButtons();
@@ -188,18 +191,24 @@ function VirtualKeypadButton_OnClick()
 	if ( not text ) then
 		text = "";
 	end
-	VirtualKeypadText:SetText(text.."*");
 	VirtualKeypadFrame.PIN = VirtualKeypadFrame.PIN..this:GetID();
+	VirtualKeypadText:SetText(VirtualKeypadFrame.PIN);
 	VirtualKeypad_UpdateButtons();
 end
 
 function VirtualKeypadOkayButton_OnClick()
-	local PIN = VirtualKeypadFrame.PIN;
+	local PIN = VirtualKeypadText:GetNumber();
 	local numNumbers = strlen(PIN);
+	if numNumbers < 6 then return end
 	local pinNumber = {};
 	for i=1, MAX_PIN_LENGTH do
 		if ( i <= numNumbers ) then
-			pinNumber[i] = strsub(PIN,i,i);
+			pinNumber[i] = nil;
+			for j=1, 10 do
+				if tonumber(buttonText[j]) == tonumber(strsub(PIN,i,i)) then
+					pinNumber[i] = j-1;
+				end
+			end
 		else
 			pinNumber[i] = nil;
 		end
@@ -209,24 +218,4 @@ function VirtualKeypadOkayButton_OnClick()
 end
 
 function VirtualKeypad_UpdateButtons()
-	local numNumbers = strlen(VirtualKeypadFrame.PIN);
-	if ( numNumbers >= 4 and numNumbers <= MAX_PIN_LENGTH ) then
-		VirtualKeypadOkayButton:Enable();
-	else
-		VirtualKeypadOkayButton:Disable();
-	end
-	if ( numNumbers == 0 ) then
-		VirtualKeypadBackButton:Disable();
-	else
-		VirtualKeypadBackButton:Enable();
-	end
-	if ( numNumbers >= MAX_PIN_LENGTH ) then
-		for i=1, MAX_PIN_LENGTH do
-			getglobal("VirtualKeypadButton"..i):Disable();
-		end
-	else
-		for i=1, MAX_PIN_LENGTH do
-			getglobal("VirtualKeypadButton"..i):Enable();
-		end
-	end
 end

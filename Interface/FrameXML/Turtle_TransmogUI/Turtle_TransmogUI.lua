@@ -532,7 +532,8 @@ function Transmog_OnLoad()
     Transmog:cacheItem(51217)
 
     TransmogFrameInstructions:SetText("Are you tired of wearing the same armor every day?\nSelect the item you wish to change and enjoy your new stylish look.")
-    TransmogFrameNoTransmogs:SetText("You have yet to uncover any kind of appearance for this item. \nThe appearance will unlock after you equip the item.")
+    TransmogFrameSetBonus:SetText("Note: set bonus applies even if not shown.")
+    TransmogFrameNoTransmogs:SetText("You have yet to uncover any kind of appearance for this item. The appearance will unlock after you equip the item.")
 
     if not TRANSMOG_CONFIG then
         TRANSMOG_CONFIG = {}
@@ -669,6 +670,7 @@ function Transmog:Reset(once)
     TransmogFrameRaceBackground:SetTexture("Interface\\TransmogFrame\\transmogbackground" .. self.race)
     TransmogFrameSplash:Show()
     TransmogFrameInstructions:Show()
+    TransmogFrameSetBonus:Show()
     TransmogFrameApplyButton:Disable()
 
     self.currentPage = 1
@@ -692,7 +694,7 @@ function Transmog:aSend(data)
 end
 
 function Transmog:setProgressBar(collected, possible)
-    TransmogFrameCollectedCollectedStatus:SetText(collected .. "/" .. possible)
+    TransmogFrameCollectedCollectedStatus:SetText("Collected: " .. collected .. "/" .. possible)
 
     local fillBarWidth = (collected / possible) * TransmogFrameCollected:GetWidth();
     TransmogFrameCollectedFillBar:SetPoint("TOPRIGHT", TransmogFrameCollected, "TOPLEFT", fillBarWidth, 0);
@@ -1600,6 +1602,7 @@ function selectTransmogSlot(InventorySlotId, slotName)
         Transmog:hidePagination()
         TransmogFrameSplash:Show()
         TransmogFrameInstructions:Show()
+        TransmogFrameSetBonus:Show()
         TransmogFrameCollected:Hide()
         Transmog.currentTransmogSlotName = nil
         Transmog.currentTransmogSlot = nil
@@ -1612,6 +1615,7 @@ function selectTransmogSlot(InventorySlotId, slotName)
 
     TransmogFrameSplash:Hide()
     TransmogFrameInstructions:Hide()
+    TransmogFrameSetBonus:Hide()
 
     Transmog.currentPage = 1
     Transmog.currentTransmogSlotName = slotName
@@ -1760,6 +1764,7 @@ function Transmog_switchTab(to)
 
         TransmogFrameSplash:Hide()
         TransmogFrameInstructions:Hide()
+        TransmogFrameSetBonus:Hide()
 
         TransmogFrameSetsButton:SetNormalTexture('Interface\\TransmogFrame\\tab_active')
         TransmogFrameSetsButton:SetPushedTexture('Interface\\TransmogFrame\\tab_active')

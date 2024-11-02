@@ -138,6 +138,9 @@ function SpellBookFrame_Update(showing)
 			if (name == "ZzzGlyphs") then
 				skillLineTab.tooltip = "Glyphs";
 			end
+			if (name == "ZzzzToys") then
+				skillLineTab.tooltip = "Toys";
+			end
 			skillLineTab:Show();
 			-- Set the selected tab
 			if ( SpellBookFrame.selectedSkillLine == i ) then

@@ -140,13 +140,13 @@ GuildBank.debug = false
 
 GuildBank.prefix = "TW_GUILDBANK"
 
-GuildBank.npc_alliance = "Teller Plushner"
-GuildBank.npc_horde = "Are"
+GuildBank.npcTitle = "Vault Keeper"
 
 GuildBank.alive = false
 
 GuildBank.cursorItem = {}
 GuildBank.tabs = {}
+GuildBank.tabs.info = {}
 
 GuildBank.newTabSettings = {
     tab = nil,
@@ -375,7 +375,7 @@ GuildBank:SetScript("OnEvent", function()
         end
 
         if event == "GOSSIP_SHOW" then
-            if UnitName('target') and (UnitName('target') == GuildBank.npc_alliance or UnitName('target') == GuildBank.npc_horde) then
+            if UnitName('target') and strfind(UnitName('target'), GuildBank.npcTitle) then
                 GuildBank.gossipOpen = true
                 GossipFrame:SetAlpha(0)
                 if not GuildBank.alive then
@@ -393,8 +393,7 @@ GuildBank:SetScript("OnEvent", function()
         if event == "GOSSIP_CLOSED" then
             GuildBank.gossipOpen = false
 
-            if UnitName('target') and (UnitName('target') == GuildBank.npc_alliance or UnitName('target') == GuildBank.npc_horde)
-            then
+            if UnitName('target') and strfind(UnitName('target'), GuildBank.npcTitle) then
                 ClearTarget()
                 GossipFrame:SetAlpha(1)
                 GuildBankFrameCloseButton_OnClick()
@@ -672,6 +671,9 @@ GuildBank:SetScript("OnEvent", function()
                 if tonumber(rEx[2]) and rEx[3] and rEx[4] then
 
                     local tab = tonumber(rEx[2])
+
+                    if not GuildBank.tabs.info then GuildBank.tabs.info = {} end
+                    if not GuildBank.tabs.info[tab] then GuildBank.tabs.info[tab] = {} end
 
                     GuildBank.tabs.info[tab].name = rEx[3]
                     GuildBank.tabs.info[tab].icon = rEx[4]
@@ -1770,6 +1772,10 @@ function GuildBank:UpdateTabTitle()
         GuildBankFrameWithdrawalsTitleBackground:Show()
         GuildBankFrameWithdrawalsTitleBackgroundLeft:Show()
         GuildBankFrameWithdrawalsTitleBackgroundRight:Show()
+
+        if not self.tabs.info[self.currentTab] then return end
+        if not self.tabs.info[self.currentTab].name then return end
+
         GuildBankFrameTabTitle:SetText(self.tabs.info[self.currentTab].name .. " " .. accessText)
     elseif self.BottomTab == 2 then
         GuildBankFrameTabTitle:SetText(self.tabs.info[self.currentTab].name .. " Log ")
@@ -2366,9 +2372,9 @@ function GuildBank:AppendLog(tab, line)
     local enchant = tonumber(log[9])
 
     self:cacheItem(item)
-    
+
     if not self.log[tab] then
-        self.log[tab] = {}    
+        self.log[tab] = {}
     end
 
     tinsert(self.log[tab], {

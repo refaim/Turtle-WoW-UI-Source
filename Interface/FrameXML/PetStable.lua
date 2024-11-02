@@ -1,4 +1,4 @@
-NUM_PET_STABLE_SLOTS = 2;
+NUM_PET_STABLE_SLOTS = 4;
 
 function PetStable_OnLoad()
 	this:RegisterEvent("PET_STABLE_SHOW");
