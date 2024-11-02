@@ -197,16 +197,7 @@
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="MacroFrameSelectedMacroBackground" relativePoint="BOTTOMLEFT">
 							<Offset>
-								<AbsDimension x="8" y="0"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="MacroFrameCharLimitText" inherits="GameFontHighlightSmall">
-					<Anchors>
-						<Anchor point="BOTTOM">
-							<Offset>
-								<AbsDimension x="-15" y="105"/>
+								<AbsDimension x="10" y="8"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -393,27 +384,30 @@
 			</CheckButton>
 			<ScrollFrame name="MacroFrameScrollFrame" inherits="UIPanelScrollFrameTemplate">
 				<Size>
-					<AbsDimension x="286" y="85"/>
+					<AbsDimension x="286" y="108"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="MacroFrameSelectedMacroBackground" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="11" y="-18"/>
+							<AbsDimension x="12" y="-8"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<ScrollChild>
 					<EditBox name="MacroFrameText" multiLine="true" letters="255" autoFocus="false">
 						<Size>
-							<AbsDimension x="286" y="85"/>
+							<AbsDimension x="286" y="100"/>
 						</Size>
+						<TextInsets>
+							<AbsInset left="0" right="0" top="0" bottom="14" />
+						</TextInsets>
 						<Scripts>
 							<OnTextChanged>
 								MacroFrame.textChanged = 1;
 								if ( MacroPopupFrame.mode == "new" ) then
 									MacroPopupFrame:Hide();
 								end
-								MacroFrameCharLimitText:SetText(format(TEXT(MACROFRAME_CHAR_LIMIT), MacroFrameText:GetNumLetters()));
+								MacroFrameCharLimitText:SetText(this:GetNumLetters() .. "/" .. this:GetMaxLetters());
 
 								local scrollBar = getglobal(this:GetParent():GetName().."ScrollBar")
 								this:GetParent():UpdateScrollChildRect();
@@ -433,6 +427,25 @@
 					</EditBox>
 				</ScrollChild>
 			</ScrollFrame>
+			<Frame>
+				<Size>
+					<AbsDimension x="64" y="10" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="MacroFrameSelectedMacroBackground">
+						<Offset>
+							<AbsDimension x="234" y="-112"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="MacroFrameCharLimitText" inherits="GameFontHighlightSmall" setAllPoints="true" justifyH="RIGHT" text="0/0">
+							<Color r="0.7" g="0.7" b="0.7" a="1.0" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
 			<Button name="MacroFrameTextButton">
 				<Size>
 					<AbsDimension x="286" y="85"/>
@@ -448,12 +461,12 @@
 			</Button>
 			<Frame name="MacroFrameTextBackground">
 				<Size>
-					<AbsDimension x="322" y="95"/>
+					<AbsDimension x="324" y="118"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="MacroFrame">
 						<Offset>
-							<AbsDimension x="18" y="-305"/>
+							<AbsDimension x="18" y="-294"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -520,12 +533,12 @@
 			</Button>
 			<Button name="MacroEditButton" inherits="UIPanelButtonTemplate" text="CHANGE_MACRO_NAME_ICON">
 				<Size>
-					<AbsDimension x="170" y="22"/>
+					<AbsDimension x="120" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="MacroFrameSelectedMacroBackground">
 						<Offset>
-							<AbsDimension x="51" y="-30"/>
+							<AbsDimension x="58" y="-32"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -548,10 +561,16 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
+						local tab = PanelTemplates_GetSelectedTab(MacroFrame)
+
 						DeleteMacro(MacroFrame.selectedMacro);
 						MacroFrame_OnLoad();
 						MacroFrame_Update();
 						MacroFrameText:ClearFocus();
+
+						if tab == 2 then
+							MacroFrameTab2:Click()
+						end
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -694,55 +713,21 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<EditBox name="MacroPopupEditBox" letters="16" historyLines="0">
+			<EditBox name="MacroPopupEditBox" letters="16" historyLines="0" inherits="InputBoxTemplate">
 				<Size>
-					<AbsDimension x="200" y="20"/>
+					<AbsDimension x="244" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="29" y="-35"/>
+							<AbsDimension x="28" y="-35"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="MacroPopupNameLeft" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size>
-								<AbsDimension x="12" y="29"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT">
-									<Offset>
-										<AbsDimension x="-11" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<TexCoords left="0" right="0.09375" top="0" bottom="1.0"/>
-						</Texture>
-						<Texture name="MacroPopupNameMiddle" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size>
-								<AbsDimension x="175" y="29"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="MacroPopupNameLeft" relativePoint="RIGHT"/>
-							</Anchors>
-							<TexCoords left="0.09375" right="0.90625" top="0" bottom="1.0"/>
-						</Texture>
-						<Texture name="MacroPopupNameRight" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size>
-								<AbsDimension x="12" y="29"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="MacroPopupNameMiddle" relativePoint="RIGHT"/>
-							</Anchors>
-							<TexCoords left="0.90625" right="1.0" top="0" bottom="1.0"/>
-						</Texture>
-					</Layer>
-				</Layers>
 				<Scripts>
 					<OnTextChanged>
 						MacroPopupOkayButton_Update();
+						MacroPopupFrameCharLimitText:SetText(this:GetNumLetters() .. "/" .. this:GetMaxLetters());
 						MacroFrameSelectedMacroName:SetText(this:GetText());
 					</OnTextChanged>
 					<OnEscapePressed>
@@ -756,6 +741,42 @@
 				</Scripts>
 				<FontString inherits="ChatFontNormal"/>
 			</EditBox>
+			<EditBox name="$parentSearchBox" inherits="SearchBoxTemplate">
+				<Size>
+					<AbsDimension x="108" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="20" y="13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						MacroPopupFrameSearchBox_OnTextChanged()
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<Frame>
+				<Size>
+					<AbsDimension x="36" y="10" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-32" y="-40"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="MacroPopupFrameCharLimitText" inherits="GameFontHighlightSmall" setAllPoints="true" justifyH="RIGHT" text="4/16">
+							<Color r="0.7" g="0.7" b="0.7" a="1.0" />
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
 			<ScrollFrame name="MacroPopupScrollFrame" inherits="ClassTrainerListScrollFrameTemplate">
 				<Size>
 					<AbsDimension x="296" y="195"/>

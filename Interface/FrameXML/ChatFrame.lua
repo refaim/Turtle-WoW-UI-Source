@@ -438,6 +438,8 @@ EmoteList = {
 	"BEG",
 	"CHICKEN",
 	"CRY",
+	"COWER",
+	"DANCESPECIAL",
 	"EAT",
 	"FLEX",
 	"KISS",
@@ -651,6 +653,7 @@ EMOTE167_TOKEN = "JOKE";
 EMOTE168_TOKEN = "WINK";
 EMOTE169_TOKEN = "PAT";
 EMOTE170_TOKEN = "GOLFCLAP";
+EMOTE171_TOKEN = "DANCESPECIAL";
 
 function GetSlashCmdTarget(msg)
 	local target = gsub(msg, "(%s*)(.*[^%s]+)(%s*)", "%2", 1);
@@ -1150,6 +1153,10 @@ end
 
 SlashCmdList["GM"] = function(msg)
 	ToggleHelpFrame();
+end
+
+SlashCmdList["RELOAD"] = function(msg)
+	ReloadUI();
 end
 
 -- ChatFrame functions

@@ -1,5 +1,5 @@
 
-TRADE_SKILLS_DISPLAYED = 8;
+TRADE_SKILLS_DISPLAYED = 19
 MAX_TRADE_SKILL_REAGENTS = 8;
 TRADE_SKILL_HEIGHT = 16;
 
@@ -11,6 +11,56 @@ TradeSkillTypeColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
 TradeSkillTypeColor["header"]	= { r = 1.00, g = 0.82, b = 0 };
 
 UIPanelWindows["TradeSkillFrame"] =	{ area = "left", pushable = 3 };
+
+TradeSkillIcons =
+{
+	["Alchemy"] = "Trade_Alchemy",
+	["Blacksmithing"] = "Trade_Blacksmithing",
+	["Cooking"] = "inv_misc_food_15",
+	["Engineering"] = "Trade_Engineering",
+	["First Aid"] = "spell_holy_sealofsacrifice",
+	["Jewelcrafting"] = "inv_helmet_44",
+	["Leatherworking"] = "inv_misc_armorkit_17",
+	["Mining"] = "spell_fire_flameblades",
+	["Tailoring"] = "Trade_Tailoring",
+}
+
+local found = {}
+
+function TradeSkillFrame_Search()
+	found = {}
+
+	local query = strlower(TradeSkillSearchBox:GetText())
+	local isMatsChecked = TradeSkillMatsCheckButton:GetChecked()
+	local isSkillChecked = TradeSkillSkillCheckButton:GetChecked()
+
+	for i = 1, GetNumTradeSkills() do
+		local skillName, skillType, available = GetTradeSkillInfo(i)
+		if skillType == "header" then
+			ExpandTradeSkillSubClass(i)
+		else
+			if query ~= "search" and query ~= "" then
+				if strfind(strlower(skillName), query) then
+					table.insert(found, i)
+
+					if (isMatsChecked and available == 0) or (isSkillChecked and skillType == "trivial") then
+						table.remove(found, table.getn(found))
+					end
+				end
+			else
+				if isMatsChecked and available > 0 or not isMatsChecked then
+					if isSkillChecked and skillType ~= "trivial" or not isSkillChecked then
+							table.insert(found, i)
+					end
+				end
+			end
+		end
+	end
+
+	TradeSkillFrame_Update()
+
+	TradeSkillListScrollFrame:SetVerticalScroll(1)
+end
 
 function TradeSkillFrame_Show()
 	CloseDropDownMenus();
@@ -29,7 +79,12 @@ function TradeSkillFrame_Show()
 	FauxScrollFrame_SetOffset(TradeSkillListScrollFrame, 0);
 	TradeSkillListScrollFrameScrollBar:SetMinMaxValues(0, 0);
 	TradeSkillListScrollFrameScrollBar:SetValue(0);
-	SetPortraitTexture(TradeSkillFramePortrait, "player");
+	local icon = TradeSkillIcons[format(TEXT(TRADE_SKILL_TITLE), GetTradeSkillLine())]
+	if icon then
+		SetPortraitToTexture(TradeSkillFramePortrait, "Interface\\Icons\\" .. icon)
+	else
+		SetPortraitTexture(TradeSkillFramePortrait, "player");
+	end
 	TradeSkillFrame_Update();
 end
 
@@ -38,9 +93,9 @@ function TradeSkillFrame_Hide()
 end
 
 function TradeSkillFrame_OnLoad()
+	this:RegisterEvent("BAG_UPDATE");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("TRADE_SKILL_UPDATE");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UPDATE_TRADESKILL_RECAST");
 end
 
@@ -61,14 +116,12 @@ function TradeSkillFrame_OnEvent()
 			TradeSkillListScrollFrameScrollBar:SetValue(0);
 		end
 		TradeSkillFrame_Update();
-	elseif ( event == "UNIT_PORTRAIT_UPDATE" ) then
-		if ( arg1 == "player" ) then
-			SetPortraitTexture(TradeSkillFramePortrait, "player");
-		end
 	elseif ( event == "UPDATE_TRADESKILL_RECAST" ) then
 		TradeSkillInputBox:SetNumber(GetTradeskillRepeatCount());
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
 		TradeSkillFrame_Hide();
+	elseif ( event == "BAG_UPDATE" ) then
+		TradeSkillFrame_Search();
 	end
 end
 
@@ -93,21 +146,34 @@ function TradeSkillFrame_Update()
 		TradeSkillSkillIcon:Show();
 		TradeSkillCollapseAllButton:Enable();
 	end
+
 	-- ScrollFrame update
-	FauxScrollFrame_Update(TradeSkillListScrollFrame, numTradeSkills, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 293, 316 );
+	FauxScrollFrame_Update(TradeSkillListScrollFrame, numTradeSkills, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 290, 292 );
 
 	TradeSkillHighlightFrame:Hide();
+
+	local results = table.getn(found)
+
+	TradeSkillFrameNoResultsText:Hide()
+
 	for i=1, TRADE_SKILLS_DISPLAYED, 1 do
-		local skillIndex = i + skillOffset;
+		local skillIndex = 0
+
+		if results > 0 then
+			if found[i + skillOffset] then
+				skillIndex = found[i + skillOffset]
+			end
+		elseif (TradeSkillSearchBox:GetText() ~= "Search" or TradeSkillMatsCheckButton:GetChecked() or TradeSkillSkillCheckButton:GetChecked()) and results == 0 then
+			TradeSkillFrameNoResultsText:Show()
+
+			skillIndex = -1
+		else
+			skillIndex = i + skillOffset;
+		end
 		local skillName, skillType, numAvailable, isExpanded = GetTradeSkillInfo(skillIndex);
 		local skillButton = getglobal("TradeSkillSkill"..i);
-		if ( skillIndex <= numTradeSkills ) then
-			-- Set button widths if scrollbar is shown or hidden
-			if ( TradeSkillListScrollFrame:IsVisible() ) then
-				skillButton:SetWidth(293);
-			else
-				skillButton:SetWidth(323);
-			end
+		if ( skillIndex > 0 and skillIndex <= numTradeSkills ) then
+			skillButton:SetWidth(293);
 			local color = TradeSkillTypeColor[skillType];
 			if ( color ) then
 				skillButton:SetTextColor(color.r, color.g, color.b);

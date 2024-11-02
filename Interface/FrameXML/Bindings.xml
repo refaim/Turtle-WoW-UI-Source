@@ -633,6 +633,9 @@
 	<Binding name="TOGGLEBATTLEFIELDMINIMAP">
 		ToggleBattlefieldMinimap();
 	</Binding>
+	<Binding name="TOGGLEGROUPFINDER">
+		LFT_Toggle();
+	</Binding>
 	<!-- Misc -->
 	<Binding name="MINIMAPZOOMIN" header="MISC">
 		Minimap_ZoomIn();

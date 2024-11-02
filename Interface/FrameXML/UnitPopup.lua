@@ -77,7 +77,7 @@ UnitPopupButtons["PET_ABANDON"] = { text = TEXT(PET_ABANDON), dist = 0 };
 UnitPopupButtons["PET_PAPERDOLL"] = { text = TEXT(PET_PAPERDOLL), dist = 0 };
 UnitPopupButtons["PET_RENAME"] = { text = TEXT(PET_RENAME), dist = 0 };
 UnitPopupButtons["REPORT"] = { text = TEXT(REPORT), dist = 0 };
-
+UnitPopupButtons["IGNORE"] = { text = TEXT(IGNORE_PLAYER), dist = 0 };
 UnitPopupButtons["LOOT_METHOD"] = { text = TEXT(LOOT_METHOD), dist = 0, nested = 1 };
 UnitPopupButtons["FREE_FOR_ALL"] = { text = TEXT(LOOT_FREE_FOR_ALL), dist = 0 };
 UnitPopupButtons["ROUND_ROBIN"] = { text = TEXT(LOOT_ROUND_ROBIN), dist = 0 };
@@ -112,10 +112,10 @@ UnitPopupButtons["RAID_TARGET_NONE"] = { text = TEXT(NONE), dist = 0, checkable 
 UnitPopupMenus = { };
 UnitPopupMenus["SELF"] = { "LOOT_METHOD", "LOOT_THRESHOLD", "LOOT_PROMOTE", "LEAVE", "RESET_INSTANCES", "RAID_TARGET_ICON", "XP", "MOVE", "MOVE_RESET", "CANCEL" };
 UnitPopupMenus["PET"] = { "PET_PAPERDOLL", "PET_RENAME", "PET_ABANDON", "PET_DISMISS", "CANCEL" };
-UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "CANCEL" };
-UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "CANCEL" };
-UnitPopupMenus["RAID"] = { "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "REPORT", "CANCEL" };
-UnitPopupMenus["FRIEND"] = { "WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "REPORT", "CANCEL" };
+UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "CANCEL" };
+UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "CANCEL" };
+UnitPopupMenus["RAID"] = { "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "REPORT", "IGNORE", "CANCEL" };
+UnitPopupMenus["FRIEND"] = { "WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "REPORT", "IGNORE", "CANCEL" };
 UnitPopupMenus["RAID_TARGET_ICON"] = { "RAID_TARGET_1", "RAID_TARGET_2", "RAID_TARGET_3", "RAID_TARGET_4", "RAID_TARGET_5", "RAID_TARGET_6", "RAID_TARGET_7", "RAID_TARGET_8", "RAID_TARGET_NONE" };
 
 -- Second level menus
@@ -342,6 +342,10 @@ function UnitPopup_HideButtons()
 				UnitPopupShown[index] = 0;
 			end
 		elseif ( value == "REPORT" ) then
+			if ( dropdownMenu.name == UnitName("player") ) then
+				UnitPopupShown[index] = 0;
+			end
+		elseif ( value == "IGNORE" ) then
 			if ( dropdownMenu.name == UnitName("player") ) then
 				UnitPopupShown[index] = 0;
 			end
@@ -613,6 +617,8 @@ function UnitPopup_OnClick()
 	elseif ( button == "REPORT" ) then
 		TWReportName = name
 		ToggleHelpFrame()
+	elseif ( button == "IGNORE" ) then
+		AddIgnore(name)
 	elseif ( button == "MOVE" ) then
 		if ( unit == 'player' )  then
 			PlayerFrame.movable = PlayerFrame.movable and 0 or 1

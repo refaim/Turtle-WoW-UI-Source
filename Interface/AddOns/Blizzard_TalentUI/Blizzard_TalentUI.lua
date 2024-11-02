@@ -68,7 +68,7 @@ TALENT_ARROW_TEXTURECOORDS = {
 	},
 };
 
-UIPanelWindows["TalentFrame"] = { area = "left", pushable = 6, whileDead = 1 };
+UIPanelWindows["TalentFrame"] = { area = "left", pushable = 0, whileDead = 1 };
 
 function TalentFrame_Toggle()
 	if ( TalentFrame:IsVisible() ) then

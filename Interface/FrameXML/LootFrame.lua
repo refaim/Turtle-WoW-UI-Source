@@ -16,8 +16,18 @@ function LootFrame_OnEvent(event)
 		ShowUIPanel(this);
 		if ( not this:IsVisible() ) then
 			CloseLoot(1);	-- The parameter tells code that we were unable to open the UI
+			return;
 		end
-		return;
+
+		if ( LOOT_WINDOW_AT_CURSOR == "1" ) then
+			local x, y = GetCursorPosition()
+			local scale = this:GetEffectiveScale()
+			x = (x / scale) - 48
+			y = (y / scale) + 106
+
+			this:ClearAllPoints()
+			this:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", x, y)
+		end
 	end
 	if ( event == "LOOT_SLOT_CLEARED" ) then
 		if ( not this:IsVisible() ) then

@@ -10,6 +10,7 @@ UIOptionsFrameCheckButtons["ASSIST_ATTACK"] =				{ index = 3,  cvar = "assistAtt
 UIOptionsFrameCheckButtons["CLEAR_AFK"] =				{ index = 16, cvar = "autoClearAFK" };
 UIOptionsFrameCheckButtons["BLOCK_TRADES"] =				{ index = 14, cvar = "BlockTrades" };
 UIOptionsFrameCheckButtons["AUTO_SELF_CAST_TEXT"] =			{ index = 61, cvar = "autoSelfCast"};
+UIOptionsFrameCheckButtons["LOOT_AT_WINDOW_CURSOR_TEXT"] =			{ index = 70, uvar = "LOOT_WINDOW_AT_CURSOR", default = "0"};
 
 -- Display
 UIOptionsFrameCheckButtons["USE_UBERTOOLTIPS"] =			{ index = 12, cvar = "UberTooltips" };
@@ -91,6 +92,8 @@ UIOptionsFrameSliders = {
 };
 
 function UIOptionsFrame_Init()
+	LOOT_WINDOW_AT_CURSOR = "0";
+	RegisterForSave("LOOT_WINDOW_AT_CURSOR");
 	SIMPLE_CHAT = "0";
 	RegisterForSave("SIMPLE_CHAT");
 	CHAT_LOCKED = "0"
