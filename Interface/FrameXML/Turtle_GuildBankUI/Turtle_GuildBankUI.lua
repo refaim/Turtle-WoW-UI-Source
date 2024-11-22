@@ -141,6 +141,7 @@ GuildBank.debug = false
 GuildBank.prefix = "TW_GUILDBANK"
 
 GuildBank.npcTitle = "Vault Keeper"
+GuildBank.npcTitleCN = "金库管理员"
 
 GuildBank.alive = false
 
@@ -375,7 +376,7 @@ GuildBank:SetScript("OnEvent", function()
         end
 
         if event == "GOSSIP_SHOW" then
-            if UnitName('target') and strfind(UnitName('target'), GuildBank.npcTitle) then
+            if UnitName('target') and (strfind(UnitName('target'), GuildBank.npcTitle) or strfind(UnitName('target'), GuildBank.npcTitleCN)) then
                 GuildBank.gossipOpen = true
                 GossipFrame:SetAlpha(0)
                 if not GuildBank.alive then
@@ -393,7 +394,7 @@ GuildBank:SetScript("OnEvent", function()
         if event == "GOSSIP_CLOSED" then
             GuildBank.gossipOpen = false
 
-            if UnitName('target') and strfind(UnitName('target'), GuildBank.npcTitle) then
+            if UnitName('target') and (strfind(UnitName('target'), GuildBank.npcTitle) or strfind(UnitName('target'), GuildBank.npcTitleCN)) then
                 ClearTarget()
                 GossipFrame:SetAlpha(1)
                 GuildBankFrameCloseButton_OnClick()

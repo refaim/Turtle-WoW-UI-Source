@@ -10,7 +10,7 @@ TradeSkillTypeColor["easy"]		= { r = 0.25, g = 0.75, b = 0.25 };
 TradeSkillTypeColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
 TradeSkillTypeColor["header"]	= { r = 1.00, g = 0.82, b = 0 };
 
-UIPanelWindows["TradeSkillFrame"] =	{ area = "left", pushable = 3 };
+UIPanelWindows["TradeSkillFrame"] =	{ area = "left", pushable = 10 };
 
 TradeSkillIcons =
 {
@@ -25,44 +25,69 @@ TradeSkillIcons =
 	["Tailoring"] = "Trade_Tailoring",
 }
 
-local found = {}
+local searchResults = {}
 
 function TradeSkillFrame_Search()
-	found = {}
+	searchResults = {}
 
 	local query = strlower(TradeSkillSearchBox:GetText())
 	local isMatsChecked = TradeSkillMatsCheckButton:GetChecked()
 	local isSkillChecked = TradeSkillSkillCheckButton:GetChecked()
 
-	for i = 1, GetNumTradeSkills() do
-		local skillName, skillType, available = GetTradeSkillInfo(i)
-		if skillType == "header" then
-			ExpandTradeSkillSubClass(i)
-		else
-			if query ~= "search" and query ~= "" then
-				if strfind(strlower(skillName), query) then
-					table.insert(found, i)
+	if query ~= "search" and query ~= "" or isMatsChecked or isSkillChecked then
+		local lastHeaderPos = -1
 
-					if (isMatsChecked and available == 0) or (isSkillChecked and skillType == "trivial") then
-						table.remove(found, table.getn(found))
+		for i = 1, GetNumTradeSkills() do
+			local skillName, skillType, available = GetTradeSkillInfo(i)
+			if skillType == "header" then
+				ExpandTradeSkillSubClass(i)
+
+				table.insert(searchResults, i)
+
+				-- if difference between this header and last header position
+				-- is 1, it means they this header is followed by the previous
+				-- and it has no matching results and can be removed from the list
+				if table.getn(searchResults) - lastHeaderPos == 1 then
+					table.remove(searchResults, lastHeaderPos)
+				end
+				lastHeaderPos = table.getn(searchResults)
+			else
+				if query ~= "search" and query ~= "" then
+					if strfind(strlower(skillName), query) then
+						table.insert(searchResults, i)
+
+						if (isMatsChecked and available == 0) or (isSkillChecked and skillType == "trivial") then
+							table.remove(searchResults, table.getn(searchResults))
+						end
+					end
+				else
+					if isMatsChecked and available > 0 or not isMatsChecked then
+						if isSkillChecked and skillType ~= "trivial" or not isSkillChecked then
+							table.insert(searchResults, i)
+						end
 					end
 				end
-			else
-				if isMatsChecked and available > 0 or not isMatsChecked then
-					if isSkillChecked and skillType ~= "trivial" or not isSkillChecked then
-						 table.insert(found, i)
-					end
-			  end
 			end
 		end
+
+		-- if the last result is a header with no children results, remove it
+		if lastHeaderPos == table.getn(searchResults) then
+			table.remove(searchResults, lastHeaderPos)
+		end
+
+		TradeSkillListScrollFrame:SetVerticalScroll(1)
 	end
 
 	TradeSkillFrame_Update()
-
-	TradeSkillListScrollFrame:SetVerticalScroll(1)
 end
 
 function TradeSkillFrame_Show()
+	searchResults = {}
+
+	TradeSkillMatsCheckButton:SetChecked(0)
+	TradeSkillSkillCheckButton:SetChecked(0)
+	TradeSkillSearchBox:SetText("Search")
+
 	CloseDropDownMenus();
 	TradeSkillSubClassDropDown:Hide();
 	TradeSkillSubClassDropDown:Show();
@@ -148,25 +173,27 @@ function TradeSkillFrame_Update()
 	end
 
 	-- ScrollFrame update
-	FauxScrollFrame_Update(TradeSkillListScrollFrame, numTradeSkills, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 290, 292 );
+	local results = table.getn(searchResults)
+	local recipepsToUpdate = results == 0 and numTradeSkills or results
 
-	TradeSkillHighlightFrame:Hide();
+	FauxScrollFrame_Update(TradeSkillListScrollFrame, recipepsToUpdate, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 290, 292 );
 
-	local results = table.getn(found)
-
+	TradeSkillHighlightFrame:Hide()
 	TradeSkillFrameNoResultsText:Hide()
 
 	for i=1, TRADE_SKILLS_DISPLAYED, 1 do
 		local skillIndex = 0
 
-		if results > 0 then
-			if found[i + skillOffset] then
-				skillIndex = found[i + skillOffset]
-			end
-		elseif (TradeSkillSearchBox:GetText() ~= "Search" or TradeSkillMatsCheckButton:GetChecked() or TradeSkillSkillCheckButton:GetChecked()) and results == 0 then
-			TradeSkillFrameNoResultsText:Show()
+		if TradeSkillSearchBox:GetText() ~= "Search" or TradeSkillMatsCheckButton:GetChecked() or TradeSkillSkillCheckButton:GetChecked() then
+			if results > 0 then
+				if searchResults[i + skillOffset] then
+					skillIndex = searchResults[i + skillOffset]
+				end
+			else
+				TradeSkillFrameNoResultsText:Show()
 
-			skillIndex = -1
+				skillIndex = -1
+			end
 		else
 			skillIndex = i + skillOffset;
 		end
@@ -249,10 +276,12 @@ function TradeSkillFrame_SetSelection(id)
 	TradeSkillHighlightFrame:Show();
 	if ( skillType == "header" ) then
 		TradeSkillHighlightFrame:Hide();
-		if ( isExpanded ) then
-			CollapseTradeSkillSubClass(id);
-		else
-			ExpandTradeSkillSubClass(id);
+		if (table.getn(searchResults) == 0) then
+			if ( isExpanded ) then
+				CollapseTradeSkillSubClass(id);
+			else
+				ExpandTradeSkillSubClass(id);
+			end
 		end
 		return;
 	end
@@ -472,11 +501,15 @@ end
 function TradeSkillSubClassDropDownButton_OnClick()
 	UIDropDownMenu_SetSelectedID(TradeSkillSubClassDropDown, this:GetID());
 	SetTradeSkillSubClassFilter(this:GetID() - 1, 1, 1);
+
+	TradeSkillFrame_Search()
 end
 
 function TradeSkillInvSlotDropDownButton_OnClick()
 	UIDropDownMenu_SetSelectedID(TradeSkillInvSlotDropDown, this:GetID())
 	SetTradeSkillInvSlotFilter(this:GetID() - 1, 1, 1);
+
+	TradeSkillFrame_Search()
 end
 
 function TradeSkillFrameIncrement_OnClick()
