@@ -25,23 +25,42 @@ end
 
 function GameTimeFrame_UpdateTooltip(hours, minutes)
 	if(TwentyFourHourTime) then
-		GameTooltip:SetText(format(TEXT(TIME_TWENTYFOURHOURS), hours, minutes));
+		GameTooltip:AddLine("Zone: "..format(TEXT(TIME_TWENTYFOURHOURS), hours, minutes))
+
+		hours, minutes = GetGameTime()
+		SetMapToCurrentZone()
+		local continent = GetCurrentMapContinent()
+
+		if continent == 1 then
+			hours = hours + 12
+
+			if hours >= 24 then
+				hours = hours - 24
+			end
+		end
+		GameTooltip:AddLine("Server: "..format(TEXT(TIME_TWENTYFOURHOURS), hours, minutes))
+
+		hours, minutes = date("%H"), date("%M")
+		GameTooltip:AddLine("Local: "..format(TEXT(TIME_TWENTYFOURHOURS), hours, minutes))
+		GameTooltip:Show()
 	else
-		local pm = 0;
-		if(hours >= 12) then
-			pm = 1;
+		GameTimeAMPM(hours, minutes)
+
+		hours, minutes = GetGameTime()
+		SetMapToCurrentZone()
+		local continent = GetCurrentMapContinent()
+		if continent == 1 then
+			hours = hours + 12
+			if hours >= 24 then
+				hours = hours - 24
+			end
 		end
-		if(hours > 12) then
-			hours = hours - 12;
-		end
-		if(hours == 0) then
-			hours = 12;
-		end
-		if(pm == 0) then
-			GameTooltip:SetText(format(TEXT(TIME_TWELVEHOURAM), hours, minutes));
-		else
-			GameTooltip:SetText(format(TEXT(TIME_TWELVEHOURPM), hours, minutes));
-		end
+		GameTimeAMPM(hours, minutes)
+
+		hours, minutes = date("%H"), date("%M")
+
+		GameTimeAMPM(hours, minutes)
+		GameTooltip:Show()
 	end
 end
 
@@ -66,5 +85,24 @@ function GameTime_GetTime()
 		else
 			return format(TEXT(TIME_TWELVEHOURPM), hour, minute);
 		end
+	end
+end
+
+function GameTimeAMPM(hours,minutes)
+
+	local pm = 0;
+	if(hours >= 12) then
+		pm = 1;
+	end
+	if(hours > 12) then
+		hours = hours - 12;
+	end
+	if(hours == 0) then
+		hours = 12;
+	end
+	if(pm == 0) then
+		GameTooltip:AddLine(format(TEXT(TIME_TWELVEHOURAM), hours, minutes));
+	else
+		GameTooltip:AddLine(format(TEXT(TIME_TWELVEHOURPM), hours, minutes));
 	end
 end

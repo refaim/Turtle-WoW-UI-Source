@@ -291,7 +291,25 @@
 								this:SetWidth(getglobal(this:GetName().."Text"):GetWidth()+40);
 							</OnLoad>
 							<OnClick>
-								HelpFrame_ShowFrame("GMHome");
+								HelpFrame_ShowFrame("OpenTicket");
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="HelpFrameStuckStuck" inherits="UIPanelButtonTemplate2" text="STUCK_BUTTON_TEXT">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="HelpFrameHomeIssues" relativePoint="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="-25"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:SetWidth(getglobal(this:GetName().."Text"):GetWidth()+40);
+							</OnLoad>
+							<OnClick>
+								Stuck();
+								HideUIPanel(HelpFrame);
 							</OnClick>
 						</Scripts>
 					</Button>
