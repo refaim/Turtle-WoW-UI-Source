@@ -8,6 +8,8 @@ function LootFrame_OnLoad()
 	this:RegisterEvent("LOOT_CLOSED");
 	this:RegisterEvent("OPEN_MASTER_LOOT_LIST");
 	this:RegisterEvent("UPDATE_MASTER_LOOT_LIST");
+
+	this:SetClampedToScreen(true)
 end
 
 function LootFrame_OnEvent(event)

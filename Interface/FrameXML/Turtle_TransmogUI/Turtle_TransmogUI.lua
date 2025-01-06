@@ -268,7 +268,7 @@ Transmog:SetScript("OnEvent", function()
 
     if event then
         if event == "GOSSIP_SHOW" then
-            if UnitName("Target") == "Felicia" or UnitName("Target") == "Herrina" or UnitName("Target") == "菲利希亚" or UnitName("Target") == "赫琳娜" then
+            if UnitName("Target") == "Felicia" or UnitName("Target") == "Herrina" or UnitName("target") == "Glitterglam" or UnitName("Target") == "菲利希亚" or UnitName("Target") == "赫琳娜" then
 
                 if Transmog.delayedLoad:IsVisible() then
                     twfdebug("Transmog addon loading retry in 5s.")
@@ -374,7 +374,7 @@ Transmog:SetScript("OnEvent", function()
                             if itemID ~= 0 then
                                 Transmog:cacheItem(itemID)
 
-                                Transmog.transmogDataFromServer[InventorySlotId][i - 3] = itemID;
+                                table.insert(Transmog.transmogDataFromServer[InventorySlotId], itemID)
 
                                 if not Transmog.currentTransmogsData[InventorySlotId] then
                                     Transmog.currentTransmogsData[InventorySlotId] = {}
