@@ -602,7 +602,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentHeader" inherits="GameFontNormal" text="Tab Settings" justifyH="LEFT">
+                        <FontString name="$parentHeader" inherits="GameFontNormal" text="GUILD_BANK_TAB_SETTINGS" justifyH="LEFT">
                             <Size>
                                 <AbsDimension x="190" y="12"/>
                             </Size>
@@ -695,7 +695,7 @@
                         <Layers>
                             <Layer level="OVERLAY">
                                 <FontString name="$parentContent" justifyH="LEFT" inherits="GameFontNormal"
-                                            text="Required Rank:">
+                                            text="GUILD_BANK_RANK_ACCESS_COLON">
                                     <Size>
                                         <AbsDimension x="115" y="15"/>
                                     </Size>
@@ -714,8 +714,8 @@
                             </OnLoad>
                             <OnEnter>
                                 GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-                                GameTooltip:SetText('Rank Access', 1, 1, 1, nil, 1);
-                                GameTooltip:AddLine('Minimum Rank to access this tab.', nil, nil, nil, nil, 1);
+                                GameTooltip:SetText(strsub(GUILD_BANK_RANK_ACCESS_COLON, 1, -2), 1, 1, 1, nil, 1);
+                                GameTooltip:AddLine(GUILD_BANK_MINIMUM_RANK, nil, nil, nil, nil, 1);
                                 GameTooltip:Show();
                             </OnEnter>
                             <OnLeave>
@@ -735,7 +735,7 @@
                         <Layers>
                             <Layer level="OVERLAY">
                                 <FontString name="$parentContent" justifyH="LEFT" inherits="GameFontNormal"
-                                            text="Weekly Withdrawals:">
+                                            text="GUILD_BANK_WEEKLY_WITHDRAWALS_COLON">
                                     <Size>
                                         <AbsDimension x="115" y="15"/>
                                     </Size>
@@ -754,8 +754,8 @@
                             </OnLoad>
                             <OnEnter>
                                 GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-                                GameTooltip:SetText('Weekly Withdrawals', 1, 1, 1, nil, 1);
-                                GameTooltip:AddLine('Maximum stacks a member can withdraw weekly.', nil, nil, nil, nil,
+                                GameTooltip:SetText(strsub(GUILD_BANK_WEEKLY_WITHDRAWALS_COLON, 1, -2), 1, 1, 1, nil, 1);
+                                GameTooltip:AddLine(GUILD_BANK_MAXIMUM_STACKS, nil, nil, nil, nil,
                                 1);
                                 GameTooltip:Show();
                             </OnEnter>
@@ -810,7 +810,7 @@
                         <!--                        </Scripts>-->
                     </Button>
 
-                    <Button name="$parentSaveButton" inherits="UIPanelButtonTemplate2" text="Accept">
+                    <Button name="$parentSaveButton" inherits="UIPanelButtonTemplate2" text="ACCEPT">
                         <Size>
                             <AbsDimension x="110" y="22"/>
                         </Size>
@@ -828,7 +828,7 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="$parentCancelButton" inherits="UIPanelButtonTemplate2" text="Cancel">
+                    <Button name="$parentCancelButton" inherits="UIPanelButtonTemplate2" text="CANCEL">
                         <Size>
                             <AbsDimension x="110" y="22"/>
                         </Size>
@@ -1147,7 +1147,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentAvailableMoneyText" inherits="GameFontNormalSmall"
-                                    text="Available Amount:">
+                                    text="GUILD_BANK_AVAILABLE_AMOUNT_COLON">
                             <Size x="0" y="13"/>
                             <Anchors>
                                 <Anchor point="LEFT">
@@ -1170,7 +1170,7 @@
                 </Scripts>
             </Frame>
 
-            <Button name="$parentDepositButton" inherits="UIPanelButtonTemplate2" text="Deposit">
+            <Button name="$parentDepositButton" inherits="UIPanelButtonTemplate2" text="DEPOSIT">
                 <Size>
                     <AbsDimension x="100" y="21"/>
                 </Size>
@@ -1192,7 +1192,7 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentFrameWithdrawButton" inherits="UIPanelButtonTemplate2" text="Withdraw">
+            <Button name="$parentFrameWithdrawButton" inherits="UIPanelButtonTemplate2" text="WITHDRAW">
                 <Size>
                     <AbsDimension x="100" y="21"/>
                 </Size>
@@ -1215,7 +1215,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentBottomTab1" inherits="TWGuildFrameBottomTabButtonTemplate" id="1" text="Guild Bank">
+            <Button name="$parentBottomTab1" inherits="TWGuildFrameBottomTabButtonTemplate" id="1" text="GUILD_BANK_TITLE">
                 <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOMLEFT">
                         <Offset>
@@ -1224,7 +1224,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentBottomTab2" inherits="TWGuildFrameBottomTabButtonTemplate" id="2" text="Log">
+            <Button name="$parentBottomTab2" inherits="TWGuildFrameBottomTabButtonTemplate" id="2" text="GUILD_BANK_LOG">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="GuildBankFrameBottomTab1" relativePoint="RIGHT">
                         <Offset>
@@ -1233,7 +1233,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentBottomTab3" inherits="TWGuildFrameBottomTabButtonTemplate" id="3" text="Money Log">
+            <Button name="$parentBottomTab3" inherits="TWGuildFrameBottomTabButtonTemplate" id="3" text="GUILD_BANK_MONEY_LOG">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="GuildBankFrameBottomTab2" relativePoint="RIGHT">
                         <Offset>

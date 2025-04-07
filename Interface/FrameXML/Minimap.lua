@@ -157,7 +157,7 @@ function BuildTWBGQueueMenu()
     separator.disabled = true
 
     local title = {};
-    title.text = "Battleground Queues"
+    title.text = BATTLEFIELDS
     title.isTitle = true
     UIDropDownMenu_AddButton(title);
     UIDropDownMenu_AddButton(separator);
@@ -180,11 +180,11 @@ function BuildTWBGQueueMenu()
     end
 
     local bg_ar_menu = {};
-    bg_ar_menu.text = "Blood Ring"
+    bg_ar_menu.text = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING)
     bg_ar_menu.disabled = br_queue
-    bg_ar_menu.tooltipTitle = 'Blood Ring'
+    bg_ar_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING)
     bg_ar_menu.checked = br_queue
-    bg_ar_menu.tooltipText = 'Queue for Blood Ring Arena'
+    bg_ar_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING_TOOLTIP)
     bg_ar_menu.justifyH = 'LEFT'
     bg_ar_menu.func = function()
         SendAddonMessage("TW_BGQueue", "Arena", "GUILD")
@@ -192,11 +192,11 @@ function BuildTWBGQueueMenu()
     UIDropDownMenu_AddButton(bg_ar_menu);
 
     local bg_wsg_menu = {};
-    bg_wsg_menu.text = "Warsong Gulch"
+    bg_wsg_menu.text = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
     bg_wsg_menu.disabled = wsg_queue
-    bg_wsg_menu.tooltipTitle = 'Warsong Gulch'
+    bg_wsg_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
     bg_wsg_menu.checked = wsg_queue
-    bg_wsg_menu.tooltipText = 'Queue for Warsong Gulch'
+    bg_wsg_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_WARSONG_TOOLTIP)
     bg_wsg_menu.justifyH = 'LEFT'
     bg_wsg_menu.func = function()
         SendAddonMessage("TW_BGQueue", "Warsong", "GUILD")
@@ -205,11 +205,11 @@ function BuildTWBGQueueMenu()
 
     if UnitLevel('player') >= 20 then
         local bg_ab_menu = {};
-        bg_ab_menu.text = "Arathi Basin"
+        bg_ab_menu.text = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
         bg_ab_menu.disabled = ab_queue
-        bg_ab_menu.tooltipTitle = 'Arathi Basin'
+        bg_ab_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
         bg_ab_menu.checked = ab_queue
-        bg_ab_menu.tooltipText = 'Queue for Arathi Basin'
+        bg_ab_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ARATHI_TOOLTIP)
         bg_ab_menu.justifyH = 'LEFT'
         bg_ab_menu.func = function()
             SendAddonMessage("TW_BGQueue", "Arathi", "GUILD")
@@ -219,11 +219,11 @@ function BuildTWBGQueueMenu()
 
     if UnitLevel('player') >= 51 then
         local bg_av_menu = {};
-        bg_av_menu.text = "Alterac Valley"
+        bg_av_menu.text = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
         bg_av_menu.disabled = av_queue
-        bg_av_menu.tooltipTitle = 'Alterac Valley'
+        bg_av_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
         bg_av_menu.checked = av_queue
-        bg_av_menu.tooltipText = 'Queue for Alterac Valley'
+        bg_av_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ALTERAC_TOOLTIP)
         bg_av_menu.justifyH = 'LEFT'
         bg_av_menu.func = function()
             SendAddonMessage("TW_BGQueue", "Alterac", "GUILD")
@@ -233,11 +233,11 @@ function BuildTWBGQueueMenu()
 
     if UnitLevel('player') == 60 then
         local bg_sv_menu = {};
-        bg_sv_menu.text = "Sunnyglade Valley"
+        bg_sv_menu.text = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
         bg_sv_menu.disabled = sv_queue
-        bg_sv_menu.tooltipTitle = 'Sunnyglade Valley'
+        bg_sv_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
         bg_sv_menu.checked = sv_queue
-        bg_sv_menu.tooltipText = 'Queue for Sunnyglade Valley'
+        bg_sv_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE_TOOLTIP)
         bg_sv_menu.justifyH = 'LEFT'
         bg_sv_menu.func = function()
             SendAddonMessage("TW_BGQueue", "Sunnyglade", "GUILD")

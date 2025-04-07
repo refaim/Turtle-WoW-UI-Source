@@ -180,6 +180,7 @@
 			<Scripts>
 				<OnClick>
 					DressUpModel:Dress();
+                    DressUpTabard();
 					PlaySound("gsTitleOptionOK");
 				</OnClick>
 			</Scripts>

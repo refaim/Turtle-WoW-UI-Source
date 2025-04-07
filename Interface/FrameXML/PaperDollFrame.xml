@@ -758,28 +758,28 @@
                     </Frame>
                 </Frames>
             </Frame>
-
-
             <Button name="TWTitles" inherits="UIDropDownMenuTemplate" text="None">
                 <Anchors>
-                    <Anchor point="TOP">
-                        <Offset>
-                            <AbsDimension x="0" y="-45"/>
-                        </Offset>
+                    <Anchor point="TOP" relativeTo="CharacterLevelText" relativePoint="BOTTOM">
+                        <Offset x="0" y="-3"/>
                     </Anchor>
                 </Anchors>
                 <Scripts>
+                    <OnLoad>
+                        TitlesDropDown_OnLoad()
+                    </OnLoad>
+                    <OnEvent>
+                        TWTitles_OnEvent()
+                    </OnEvent>
                     <OnEnter>
                         GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-                        GameTooltip:SetText('Select a title', nil, nil, nil, nil, 1);
+                        GameTooltip:SetText(TW_TITLES_SELECT);
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();
                     </OnLeave>
                 </Scripts>
             </Button>
-
-
             <Button name="CharacterHeadSlot" inherits="PaperDollItemSlotButtonTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT">

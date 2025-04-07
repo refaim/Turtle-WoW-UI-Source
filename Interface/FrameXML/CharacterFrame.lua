@@ -71,18 +71,18 @@ function CharacterFrame_OnEvent(event)
 		return;
 	elseif ( event == "UNIT_NAME_UPDATE" ) then
 		if ( arg1 == "player" ) then
-			CharacterNameText:SetText(UnitPVPName(arg1));
+			CharacterNameText:SetText(gsub(UnitPVPName(arg1), "\n.+", ""));
 		end
 		return;
 	elseif ( event == "PLAYER_PVP_RANK_CHANGED" ) then
-		CharacterNameText:SetText(UnitPVPName("player"));
+		CharacterNameText:SetText(gsub(UnitPVPName("player"), "\n.+", ""));
 	end
 end
 
 function CharacterFrame_OnShow()
 	PlaySound("igCharacterInfoOpen");
 	SetPortraitTexture(CharacterFramePortrait, "player");
-	CharacterNameText:SetText(UnitPVPName("player"));
+	CharacterNameText:SetText(gsub(UnitPVPName("player"), "\n.+", ""));
 	UpdateMicroButtons();
 	ShowTextStatusBarText(PlayerFrameHealthBar);
 	ShowTextStatusBarText(PlayerFrameManaBar);
@@ -105,73 +105,59 @@ function CharacterFrame_OnHide()
 	HideWatchedReputationBarText();
 end
 
-
 -- Turtle WoW Title Frame
-
-local TW_Titles = CreateFrame("Frame")
-
-TW_Titles:RegisterEvent("CHAT_MSG_ADDON")
-
 local availableTitles
 
-TW_Titles:SetScript("OnEvent", function()
+function TWTitles_OnEvent()
 	if event then
-
 		--DEFAULT_CHAT_FRAME:AddMessage("prefix [" .. arg1 .. "]")
 		--DEFAULT_CHAT_FRAME:AddMessage("text [" .. arg2 .. "]")
 		--DEFAULT_CHAT_FRAME:AddMessage("chan [" .. arg3 .. "]")
 		--DEFAULT_CHAT_FRAME:AddMessage("sender [" .. arg4 .. "]")
-
 		if event == "CHAT_MSG_ADDON" and arg1 == "TWT_TITLES" then
-
 			-- new title message
-			if string.find(arg2, "newTitle:", 1, true) then
-				local ntEx = ___explode(arg2, ":")
-				DEFAULT_CHAT_FRAME:AddMessage("|cff00FF00You have earned \"" .. getglobal('PVP_MEDAL' .. ntEx[2]) .. "\" title.")
+            local _, _, titleID = string.find(arg2, "newTitle:(%d+)")
+			if titleID then
+				DEFAULT_CHAT_FRAME:AddMessage("|cff00FF00"..format(TW_TITLES_EARNED, getglobal('PVP_MEDAL' .. titleID)))
 			end
 			-- available titles
 			if string.find(arg2, "TW_AVAILABLE_TITLES:", 1, true) then
 				availableTitles = arg2
-				TitlesDropDown_OnLoad()
+				UIDropDownMenu_Initialize(TWTitles, TitlesDropDown_Initialize)
 			end
-
 		end
 	end
-end)
+end
 
 function TitlesDropDown_OnLoad()
-	UIDropDownMenu_Initialize(getglobal('TWTitles'), TitlesDropDown_Initialize);
-	UIDropDownMenu_SetWidth(210, getglobal('TWTitles'));
+    TWTitles:RegisterEvent("CHAT_MSG_ADDON")
+	UIDropDownMenu_Initialize(TWTitles, TitlesDropDown_Initialize);
+	UIDropDownMenu_SetWidth(210, TWTitles);
+    TWTitles:SetScale(0.9)
 end
 
 function TitlesDropDown_Initialize()
-	--get titles
-	local fEx = ___explode(availableTitles, 'TW_AVAILABLE_TITLES:')
-	if fEx[2] then
-		local aEx = ___explode(fEx[2], ';')
+    if not availableTitles then
+        return
+    end
+    -- get titles
+	local fEx = string.gsub(availableTitles, 'TW_AVAILABLE_TITLES:', "")
+	if fEx then
+		local aEx = ___explode(fEx, ';')
 		for _, titleData in aEx do
-
-			local titleDataEx = ___explode(titleData, ':')
-
-			local id = titleDataEx[1]
-			local active = titleDataEx[2]
-
+			local _, _, id, active = string.find(titleData, '(%d+):(%d+)')
 			if id == '0' then
-
 				local info = {}
-				info.text = "None"
+				info.text = GENERIC_NONE
 				info.value = id
 				info.arg1 = id
 				info.checked = active == '1'
 				info.func = TitleChange
 				UIDropDownMenu_AddButton(info)
-
 				if active == '1' then
-					UIDropDownMenu_SetText("None", getglobal('TWTitles'))
+					UIDropDownMenu_SetText(GENERIC_NONE, TWTitles)
 				end
-
 			else
-
 				if getglobal('PVP_MEDAL' .. id) then
 					local info = {}
 					info.text = getglobal('PVP_MEDAL' .. id)
@@ -180,9 +166,8 @@ function TitlesDropDown_Initialize()
 					info.checked = active == '1'
 					info.func = TitleChange
 					UIDropDownMenu_AddButton(info)
-
 					if active == '1' then
-						UIDropDownMenu_SetText(getglobal('PVP_MEDAL' .. id), getglobal('TWTitles'))
+						UIDropDownMenu_SetText(getglobal('PVP_MEDAL' .. id), TWTitles)
 					end
 				end
 			end
@@ -197,7 +182,7 @@ end
 function ___explode(str, delimiter)
 	local result = {}
 	local from = 1
-	local delim_from, delim_to = string.find(str, delimiter, from, 1, true)
+	local delim_from, delim_to = string.find(str, delimiter, from, true)
 	while delim_from do
 		table.insert(result, string.sub(str, from, delim_from - 1))
 		from = delim_to + 1

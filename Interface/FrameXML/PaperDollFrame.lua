@@ -112,12 +112,10 @@ end
 ]]
 
 function PaperDollFrame_SetGuild()
-	local guildName;
-	local rank;
-	guildName, title, rank = GetGuildInfo("player");
+	local guildName, title, rank = GetGuildInfo("player");
 	if ( guildName ) then
-		CharacterGuildText:Show();
-		CharacterGuildText:SetText(format(TEXT(GUILD_TITLE_TEMPLATE), title, guildName));
+		-- CharacterGuildText:Show();
+		-- CharacterGuildText:SetText(format(TEXT(GUILD_TITLE_TEMPLATE), title, guildName));
 		-- Set it for the honor frame while we're at it
 		HonorGuildText:Show();
 		HonorGuildText:SetText(format(TEXT(GUILD_TITLE_TEMPLATE), title, guildName));
@@ -210,6 +208,7 @@ function PaperDollFrame_SetResistances()
 		local unitLevel = UnitLevel("player");
 		unitLevel = max(unitLevel, 20);
 		local magicResistanceNumber = resistance/unitLevel;
+        local resistanceLevel
 		if ( magicResistanceNumber > 5 ) then
 			resistanceLevel = RESISTANCE_EXCELLENT;
 		elseif ( magicResistanceNumber > 3.75 ) then

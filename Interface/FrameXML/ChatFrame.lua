@@ -11,9 +11,9 @@ ChatTypeInfo["SAY"]										= { sticky = 1 };
 ChatTypeInfo["PARTY"]									= { sticky = 1 };
 ChatTypeInfo["RAID"]									= { sticky = 1 };
 ChatTypeInfo["GUILD"]									= { sticky = 1 };
-ChatTypeInfo["OFFICER"]									= { sticky = 0 };
+ChatTypeInfo["OFFICER"]									= { sticky = 1 };
 ChatTypeInfo["YELL"]									= { sticky = 0 };
-ChatTypeInfo["WHISPER"]									= { sticky = 0 };
+ChatTypeInfo["WHISPER"]									= { sticky = 1 };
 ChatTypeInfo["WHISPER_INFORM"]							= { sticky = 0 };
 ChatTypeInfo["REPLY"]									= { sticky = 0 };
 ChatTypeInfo["EMOTE"]									= { sticky = 0 };
@@ -23,7 +23,7 @@ ChatTypeInfo["MONSTER_WHISPER"]							= { sticky = 0 };
 ChatTypeInfo["MONSTER_SAY"]								= { sticky = 0 };
 ChatTypeInfo["MONSTER_YELL"]							= { sticky = 0 };
 ChatTypeInfo["MONSTER_EMOTE"]							= { sticky = 0 };
-ChatTypeInfo["CHANNEL"]									= { sticky = 0 };
+ChatTypeInfo["CHANNEL"]									= { sticky = 1 };
 ChatTypeInfo["CHANNEL_JOIN"]							= { sticky = 0 };
 ChatTypeInfo["CHANNEL_LEAVE"]							= { sticky = 0 };
 ChatTypeInfo["CHANNEL_LIST"]							= { sticky = 0 };
@@ -107,12 +107,13 @@ ChatTypeInfo["BG_SYSTEM_HORDE"]							= { sticky = 0 };
 ChatTypeInfo["COMBAT_FACTION_CHANGE"]					= { sticky = 0 };
 ChatTypeInfo["MONEY"]									= { sticky = 0 };
 ChatTypeInfo["RAID_LEADER"]								= { sticky = 0 };
-ChatTypeInfo["RAID_WARNING"]							= { sticky = 0 };
+ChatTypeInfo["RAID_WARNING"]							= { sticky = 1 };
 ChatTypeInfo["RAID_BOSS_EMOTE"]							= { sticky = 0 };
 ChatTypeInfo["FILTERED"]								= { sticky = 0 };
 ChatTypeInfo["BATTLEGROUND"]                            = { sticky = 1 };
 ChatTypeInfo["BATTLEGROUND_LEADER"]                     = { sticky = 0 };
 ChatTypeInfo["HARDCORE"]					    		= { sticky = 1 };
+
 ChatTypeGroup = {};
 ChatTypeGroup["SYSTEM"] = {
 	"CHAT_MSG_SYSTEM",
@@ -358,7 +359,8 @@ ChannelMenuChatTypeGroups[3] = "GUILD";
 ChannelMenuChatTypeGroups[4] = "WHISPER";
 ChannelMenuChatTypeGroups[5] = "PARTY";
 ChannelMenuChatTypeGroups[6] = "HARDCORE";
- 
+ChannelMenuChatTypeGroups[7] = "SYSTEM";
+
 CombatLogMenuChatTypeGroups = {};
 CombatLogMenuChatTypeGroups[1]  = "COMBAT_MISC_INFO";
 CombatLogMenuChatTypeGroups[2]  = "COMBAT_SELF_HITS";
@@ -657,6 +659,7 @@ EMOTE171_TOKEN = "DANCESPECIAL";
 
 function GetSlashCmdTarget(msg)
 	local target = gsub(msg, "(%s*)(.*[^%s]+)(%s*)", "%2", 1);
+    local server;
 	if ( target == "" ) then
 		if ( UnitIsPlayer("target") ) then
 			target = "target";
@@ -667,9 +670,9 @@ function GetSlashCmdTarget(msg)
 	if ( target and (target == "player" or target == "target" or
 	     strfind(target, "^party[1-4]") or
 		 strfind(target, "^raid[0-9]")) ) then
-		target,server = UnitName(target);
+		target, server = UnitName(target);
 	end
-	return target,server;
+	return target, server;
 end
 
 
@@ -1159,6 +1162,16 @@ SlashCmdList["RELOAD"] = function(msg)
 	ReloadUI();
 end
 
+for i = 1, NUM_CHAT_WINDOWS do
+    if i == 2 then
+        -- disable for combat log by default
+        setglobal("TW_HARDCORE_CHAT"..i, 0)
+    else
+        setglobal("TW_HARDCORE_CHAT"..i, 1)
+    end
+    RegisterForSave("TW_HARDCORE_CHAT"..i)
+end
+
 -- ChatFrame functions
 function ChatFrame_OnLoad()
 	this.flashTimer = 0;
@@ -1168,6 +1181,7 @@ function ChatFrame_OnLoad()
 	this:RegisterEvent("CHAT_MSG_CHANNEL");
 	this:RegisterEvent("ZONE_UNDER_ATTACK");
 	this:RegisterEvent("UPDATE_INSTANCE_INFO");
+    this:EnableMouseWheel(1)
 	this.tellTimer = GetTime();
 	this.channelList = {};
 	this.zoneChannelList = {};
@@ -1195,8 +1209,10 @@ function ChatFrame_RegisterForMessages(...)
 		end
 	end
 	-- custom chat register
-	this.messageTypeList[index] = "HARDCORE";
-	this:RegisterEvent("CHAT_MSG_HARDCORE");
+    if getglobal("TW_HARDCORE_CHAT"..this:GetID()) == 1 then
+	    this.messageTypeList[index] = "HARDCORE";
+	    this:RegisterEvent("CHAT_MSG_HARDCORE");
+    end
 end
 
 function ChatFrame_RegisterForChannels(...)
@@ -1220,6 +1236,9 @@ function ChatFrame_AddMessageGroup(chatFrame, group)
 			chatFrame:RegisterEvent(value);
 		end
 		AddChatWindowMessages(chatFrame:GetID(), group);
+        if group == "HARDCORE" then
+            setglobal("TW_HARDCORE_CHAT"..chatFrame:GetID(), 1)
+        end
 	end
 end
 
@@ -1235,6 +1254,9 @@ function ChatFrame_RemoveMessageGroup(chatFrame, group)
 			chatFrame:UnregisterEvent(value);
 		end
 		RemoveChatWindowMessages(chatFrame:GetID(), group);
+        if group == "HARDCORE" then
+            setglobal("TW_HARDCORE_CHAT"..chatFrame:GetID(), 0)
+        end
 	end
 end
 
@@ -1293,6 +1315,7 @@ function ChatFrame_OnEvent(event)
 	end
 	if ( event == "PLAYER_ENTERING_WORLD" ) then
 		this.defaultLanguage = GetDefaultLanguage();
+        FCF_SelectDockFrame(DEFAULT_CHAT_FRAME);
 		return;
 	end
 	if ( event == "TIME_PLAYED_MSG" ) then
@@ -2495,4 +2518,28 @@ function ChatFrame_ActivateCombatMessages(chatFrame)
 	ChatFrame_AddMessageGroup(chatFrame, "SPELL_PERIODIC_CREATURE_BUFFS");
 	ChatFrame_AddMessageGroup(chatFrame, "SPELL_FAILED_LOCALPLAYER");
 	ChatFrame_AddMessageGroup(chatFrame, "COMBAT_FACTION_CHANGE");
+end
+
+function ChatFrame_OnMouseWheel(dir)
+    if dir > 0 then
+        if IsShiftKeyDown() then
+            this:ScrollToTop()
+        elseif IsAltKeyDown() then
+            for i = 1, 4 do
+                this:ScrollUp()
+            end
+        else
+            this:ScrollUp()
+        end
+    elseif dir < 0 then
+        if IsShiftKeyDown() then
+            this:ScrollToBottom()
+        elseif IsAltKeyDown() then
+            for i = 1, 4 do
+                this:ScrollDown()
+            end
+        else
+            this:ScrollDown()
+        end
+    end
 end

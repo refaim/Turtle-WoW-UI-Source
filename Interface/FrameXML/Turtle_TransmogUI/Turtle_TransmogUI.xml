@@ -3,7 +3,7 @@
 
     <GameTooltip name="FashionTooltip" inherits="GameTooltipTemplate" parent="UIParent" hidden="true" />
 
-    <Frame name="TransmogFrameLookTemplate" virtual="true" framestrata="HIGH">
+    <Frame name="TransmogFrameLookTemplate" virtual="true" frameStrata="MEDIUM">
         <Size>
             <AbsDimension x="90" y="110" />
         </Size>
@@ -493,7 +493,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="TransmogFrame" hidden="true" toplevel="true" parent="UIParent" movable="true" enableMouse="true">
+    <Frame name="TransmogFrame" frameStrata="MEDIUM" hidden="true" toplevel="true" parent="UIParent" movable="true" enableMouse="true" clampedToScreen="true">
         <Size>
             <AbsDimension x="750" y="506" />
         </Size>
@@ -570,7 +570,7 @@
                         </Anchor>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentTitleText" inherits="GameFontNormal" text="Transmogrify">
+                <FontString name="$parentTitleText" inherits="GameFontNormal" text="TRANSMOGRIFY">
                     <Size>
                         <AbsDimension x="512" y="14" />
                     </Size>
@@ -662,14 +662,14 @@
                     </OnLoad>
                     <OnEnter>
                         GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-                        GameTooltip:SetText('Select an Outfit', nil, nil, nil, nil, 1);
+                        GameTooltip:SetText(TRANSMOG_SELECT_OUTFIT, nil, nil, nil, nil, 1);
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();
                     </OnLeave>
                 </Scripts>
             </Button>
-            <Button name="$parentSaveOutfit" inherits="UIPanelButtonTemplate2" text="Save" topLevel="true">
+            <Button name="$parentSaveOutfit" inherits="UIPanelButtonTemplate2" text="SAVE" topLevel="true">
                 <Size>
                     <AbsDimension x="60" y="24" />
                 </Size>
@@ -703,7 +703,7 @@
                 <Scripts>
                     <OnEnter>
                         GameTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4), -(this:GetHeight() / 4));
-                        GameTooltip:SetText("Delete Outfit");
+                        GameTooltip:SetText(strsub(TRANSMOG_OUTFIT_DELETE, 1, -2));
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();
@@ -880,7 +880,7 @@
                 <!--                    </OnClick>-->
                 <!--                </Scripts>-->
             </Button>
-            <Button name="$parentApplyButton" inherits="UIPanelButtonTemplate2" text="Apply">
+            <Button name="$parentApplyButton" inherits="UIPanelButtonTemplate2" text="GENERIC_APPLY">
                 <Size>
                     <AbsDimension x="170" y="22" />
                 </Size>
@@ -1000,7 +1000,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="WristSlot" hidden="false" inherits="TransmogPlayerSlot" text="">
+            <Button name="ShirtSlot" hidden="false" inherits="TransmogPlayerSlot" text="">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="ChestSlot" relativePoint="BOTTOM">
                         <Offset>
@@ -1009,7 +1009,24 @@
                     </Anchor>
                 </Anchors>
             </Button>
-
+            <Button name="TabardSlot" hidden="false" inherits="TransmogPlayerSlot" text="">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="ShirtSlot" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-5" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="WristSlot" hidden="false" inherits="TransmogPlayerSlot" text="">
+                <Anchors>
+                    <Anchor point="TOP" relativeTo="TabardSlot" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="-5" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
             <Button name="HandsSlot" hidden="false" inherits="TransmogPlayerSlot" text="">
                 <Anchors>
                     <Anchor point="TOPLEFT">

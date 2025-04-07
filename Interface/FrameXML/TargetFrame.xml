@@ -180,7 +180,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="TargetHPPercText" inherits="TextStatusBarText" text="100%">
+						<FontString name="TargetHPPercText" inherits="TextStatusBarText" text="100%" hidden="true">
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset>
@@ -189,7 +189,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="TargetHPText" inherits="TextStatusBarText" text="1000" justifyH="RIGHT">
+						<FontString name="TargetHPText" inherits="TextStatusBarText" text="1000" justifyH="RIGHT" hidden="true">
 							<Anchors>
 								<Anchor point="RIGHT">
 									<Offset>
@@ -281,12 +281,27 @@
 				</Anchors>
 				<Scripts>
 					<OnEvent>
-						UnitFrameHealthBar_Update(this, arg1);
+                        UnitFrameHealthBar_Update(this, arg1);
 					</OnEvent>
 					<OnValueChanged>
 						UnitFrameHealthBar_OnValueChanged(arg1);
+                        if GetCVar("statusBarText") == "1" then
+                            TargetHPText:Show()
+			                TargetHPPercText:Show()
+                        end
 						TargetHealthCheck();
 					</OnValueChanged>
+                    <OnEnter>
+                        TargetHPText:Show()
+			            TargetHPPercText:Show()
+                        TargetHealthCheck()
+                    </OnEnter>
+                    <OnLeave>
+                        if GetCVar("statusBarText") ~= "1" then
+                            TargetHPText:Hide()
+                            TargetHPPercText:Hide()
+                        end
+                    </OnLeave>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 			</StatusBar>

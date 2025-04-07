@@ -1,10 +1,9 @@
 UnitPopupButtons = { };
 TWReportName = nil
 
-UnitPopupButtons["XP"] = { text = "|cffff0000Experience: Enabled", dist = 0 };
-
-UnitPopupButtons["MOVE"] = { text = "Unlock Frame", dist = 0 };
-UnitPopupButtons["MOVE_RESET"] = { text = "Reset Position", dist = 0 };
+UnitPopupButtons["XP"] = { text = "|cffff0000" .. TEXT(UNIT_POPUP_XP), dist = 0 };
+UnitPopupButtons["MOVE"] = { text = TEXT(UNIT_POPUP_MOVE), dist = 0 };
+UnitPopupButtons["MOVE_RESET"] = { text = TEXT(UNIT_POPUP_MOVE_RESET), dist = 0 };
 
 local TW_XPFrameData = CreateFrame("Frame")
 TW_XPFrameData:RegisterEvent("CHAT_MSG_SYSTEM")
@@ -14,11 +13,11 @@ TW_XPFrameData:SetScript("OnEvent", function()
 		if event == "CHAT_MSG_SYSTEM" then
 			if arg1 == "XP gain is ON" or arg1 == "XP gain is now ON" then
 				TW_XPFrameData.xp = true
-				UnitPopupButtons["XP"] = { text = "|cff1EFF0CExperience: Enabled", dist = 0 };
+				UnitPopupButtons["XP"] = { text = "|cff1EFF0C" .. TEXT(UNIT_POPUP_XP_ON), dist = 0 };
 			end
 			if arg1 == "XP gain is OFF" or arg1 == "XP gain is now OFF" then
 				TW_XPFrameData.xp = false
-				UnitPopupButtons["XP"] = { text = "|cffff0000Experience: Disabled", dist = 0 };
+				UnitPopupButtons["XP"] = { text = "|cffff0000" .. TEXT(UNIT_POPUP_XP_OFF), dist = 0 };
 			end
 		end
 	end
@@ -144,6 +143,7 @@ UnitPopupFrames = {
 
 function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 	-- Init variables
+    local server
 	dropdownMenu.which = which;
 	dropdownMenu.unit = unit;
 	if ( unit and not name ) then
@@ -253,9 +253,9 @@ function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 			info.text = UnitPopupButtons[value].text;
 			if ( value == 'MOVE' ) then
 				if ( dropdownMenu.unit == 'player' ) then
-					info.text = PlayerFrame.movable and "Lock Frame" or "Unlock Frame"
+					info.text = PlayerFrame.movable and TEXT(UNIT_POPUP_FRAME_LOCK) or TEXT(UNIT_POPUP_FRAME_UNLOCK)
 				elseif ( dropdownMenu.unit == 'target' ) then
-					info.text = TargetFrame.movable and "Lock Frame" or "Unlock Frame"
+					info.text = TargetFrame.movable and TEXT(UNIT_POPUP_FRAME_LOCK) or TEXT(UNIT_POPUP_FRAME_UNLOCK)
 				end
 			end
 			info.value = value;
@@ -620,10 +620,16 @@ function UnitPopup_OnClick()
 	elseif ( button == "IGNORE" ) then
 		AddIgnore(name)
 	elseif ( button == "MOVE" ) then
+		local frame
 		if ( unit == 'player' )  then
-			PlayerFrame.movable = PlayerFrame.movable and 0 or 1
+			frame = PlayerFrame;
 		elseif ( unit == 'target' )  then
-			TargetFrame.movable = TargetFrame.movable and 0 or 1
+			frame = TargetFrame;
+		end
+		if ( frame.movable ) then
+			frame.movable = nil;
+		else
+			frame.movable = 1;
 		end
 	elseif ( button == "MOVE_RESET" ) then
 		if ( unit == 'player' ) then
@@ -634,10 +640,10 @@ function UnitPopup_OnClick()
 	--elseif ( button == "TARGET_MOVE" ) then
 	--	if TargetFrame:IsMovable() then
 	--		TargetFrame:SetMovable(false)
-	--		UnitPopupButtons["TARGET_MOVE"] = { text = "Unlock Frame", dist = 0 };
+	--		UnitPopupButtons["TARGET_MOVE"] = { text = "解锁框体", dist = 0 };
 	--	else
 	--		TargetFrame:SetMovable(true)
-	--		UnitPopupButtons["TARGET_MOVE"] = { text = "Lock Frame", dist = 0 };
+	--		UnitPopupButtons["TARGET_MOVE"] = { text = "锁定框体", dist = 0 };
 	--	end
 	--elseif ( button == "TARGET_MOVE_RESET" ) then
 	--	TargetFrame:SetPoint("TOPLEFT", 250, -4)
@@ -697,7 +703,7 @@ function UnitPopup_OnClick()
 		UninviteFromRaid(dropdownFrame.userData);
 	elseif ( button == "ITEM_QUALITY2_DESC" or button == "ITEM_QUALITY3_DESC" or button == "ITEM_QUALITY4_DESC" ) then
 		SetLootThreshold(this:GetID()+1);
-		color = ITEM_QUALITY_COLORS[this:GetID()+1];
+		local color = ITEM_QUALITY_COLORS[this:GetID()+1];
 		UIDropDownMenu_SetButtonText(1, 3, UnitPopupButtons[button].text, color.r, color.g, color.b);
 	elseif ( strsub(button, 1, 12) == "RAID_TARGET_" and button ~= "RAID_TARGET_ICON" ) then
 		local raidTargetIndex = strsub(button, 13);

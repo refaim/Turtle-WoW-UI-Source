@@ -1,3 +1,6 @@
+local strfind = string.find
+local gsub = string.gsub
+
 ChatFrame_OnEvent_Original = ChatFrame_OnEvent
 
 function ChatFrame_OnEvent(event)
@@ -43,4 +46,91 @@ function SendAddonMessage(prefix, text, msgType, target)
 	else
 		SendAddonMessage_Original(prefix,text,msgType)
 	end
+end
+
+-- HACK FIX for set bonuses not showing if transmogrified
+local HooksScanTooltip = CreateFrame("GameTooltip", "HooksScanTooltip", nil, "GameTooltipTemplate")
+HooksScanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+
+local function SameSet(id, set)
+    HooksScanTooltip:ClearLines()
+    HooksScanTooltip:SetHyperlink(id)
+    for i = 1, HooksScanTooltip:NumLines() do
+        local left = getglobal("HooksScanTooltipTextLeft"..i):GetText()
+        if left and strfind(left, "^"..set) then
+            return true
+        end
+    end
+    return false
+end
+
+local setColon = gsub(ITEM_SET_BONUS, "%%s", "")
+
+local function FixSetInspect(tooltip, unit)
+    local tooltipName = tooltip:GetName()
+    local numLines = tooltip:NumLines()
+    local setName, numSetItems
+    local itemsEquipped = 0
+    for i = 1, numLines do
+        local originalLine = getglobal(tooltipName.."TextLeft"..i)
+        local originalText = originalLine:GetText()
+        if originalText then
+            _, _, setName, numSetItems = strfind(originalText, "(.+) %(%d/(%d)%)")
+            if setName then
+                numSetItems = tonumber(numSetItems)
+                local index = 1
+                repeat
+                    local setItemLine = getglobal(tooltipName.."TextLeft"..(i + index))
+                    local setItem = setItemLine:GetText() or ""
+                    setItem = (string.gsub(setItem, "^%s*(.-)%s*$", "%1"))
+                    for slot = 1, 18 do
+                        local link = GetInventoryItemLink(unit, slot)
+                        local _, _, id, name = strfind(link or "", "(item:%d+).+%[(.+)%]")
+                        if name and name == setItem and SameSet(id, setName) then
+                            itemsEquipped = itemsEquipped + 1
+                            setItemLine:SetTextColor(1, 1, 0.6)
+                        end
+                    end
+                    index = index + 1
+                until index > numSetItems
+                originalLine:SetText(format(setName.." (%d/"..numSetItems..")", itemsEquipped))
+                break
+            end
+        end
+    end
+    for i = 1, numLines do
+        local originalLine = getglobal(tooltipName.."TextLeft"..i)
+        local originalText = originalLine:GetText()
+        if originalText then
+            local _, _, bonus = strfind(originalText, "%((%d+)%) "..setColon)
+            if bonus and tonumber(bonus) <= itemsEquipped then
+                originalLine:SetText(gsub(originalText, "%(%d+%) "..setColon, setColon))
+                originalLine:SetTextColor(0, 1, 0)
+            end
+        end
+    end
+    tooltip:Show()
+end
+
+local tooltips = { GameTooltip, ShoppingTooltip1, ShoppingTooltip2 }
+
+for _, object in pairs(tooltips) do
+    local SetInventoryItem_Original = object.SetInventoryItem
+    local SetBagItem_Original = object.SetBagItem
+
+    function object.SetInventoryItem(self, unit, slot)
+        local hasItem, hasCooldown, repairCost = SetInventoryItem_Original(self, unit, slot)
+        if GetInventoryItemLink(unit, slot) then
+            FixSetInspect(self, unit)
+        end
+        return hasItem, hasCooldown, repairCost
+    end
+
+    function object.SetBagItem(self, container, slot)
+        local hasCooldown, repairCost = SetBagItem_Original(self, container, slot)
+        if GetContainerItemLink(container, slot) then
+            FixSetInspect(self, "player")
+        end
+        return hasCooldown, repairCost
+    end
 end

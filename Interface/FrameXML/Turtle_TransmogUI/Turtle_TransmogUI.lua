@@ -50,6 +50,7 @@ Transmog.faction = 'A'
 if Transmog.race ~= 'human' and Transmog.race ~= 'gnome' and Transmog.race ~= 'dwarf' and Transmog.race ~= 'nightelf' and Transmog.race ~= 'bloodelf' then
     Transmog.faction = 'H'
 end
+if Transmog.race == "scourge" then Transmog.race = "undead" end
 
 Transmog.prefix = "TW_TRANSMOG"
 
@@ -80,6 +81,7 @@ Transmog.localCache = {}
 Transmog.inventorySlots = {
     ['HeadSlot'] = 1,
     ['ShoulderSlot'] = 3,
+    ['ShirtSlot'] = 4,
     ['ChestSlot'] = 5,
     ['WaistSlot'] = 6,
     ['LegsSlot'] = 7,
@@ -89,12 +91,14 @@ Transmog.inventorySlots = {
     ['BackSlot'] = 15,
     ['MainHandSlot'] = 16,
     ['SecondaryHandSlot'] = 17,
-    ['RangedSlot'] = 18
+    ['RangedSlot'] = 18,
+    ['TabardSlot'] = 19,
 }
 
 Transmog.inventorySlotNames = {
     [1] = "Head Slot",
     [3] = "Shoulder Slot",
+    [4] = "Shirt Slot",
     [5] = "Chest Slot",
     [6] = "Waist Slot",
     [7] = "Legs Slot",
@@ -104,14 +108,16 @@ Transmog.inventorySlotNames = {
     [15] = "Back Slot",
     [16] = "Main Hand Slot",
     [17] = "Off Hand Slot",
-    [18] = "Ranged Slot"
+    [18] = "Ranged Slot",
+    [19] = "Tabard Slot",
 }
 
 Transmog.invTypes = {
     ['INVTYPE_HEAD'] = 1,
     ['INVTYPE_SHOULDER'] = 3,
     ['INVTYPE_CLOAK'] = 16,
-    --['INVTYPE_BODY'] = 4, -- shirt
+    ['INVTYPE_BODY'] = 4, -- shirt
+    ['INVTYPE_TABARD'] = 19,
     ['INVTYPE_CHEST'] = 5,
     ['INVTYPE_ROBE'] = 20,
     ['INVTYPE_WAIST'] = 6,
@@ -148,7 +154,7 @@ Transmog.errors = {
 -- server side
 EQUIPMENT_SLOT_HEAD = 0
 EQUIPMENT_SLOT_SHOULDERS = 2
-EQUIPMENT_SLOT_BODY = 3 -- shirt ?
+EQUIPMENT_SLOT_BODY = 3
 EQUIPMENT_SLOT_CHEST = 4
 EQUIPMENT_SLOT_WAIST = 5
 EQUIPMENT_SLOT_LEGS = 6
@@ -159,6 +165,7 @@ EQUIPMENT_SLOT_BACK = 14
 EQUIPMENT_SLOT_MAINHAND = 15
 EQUIPMENT_SLOT_OFFHAND = 16
 EQUIPMENT_SLOT_RANGED = 17
+EQUIPMENT_SLOT_TABARD = 18
 
 C_INVTYPE_HEAD = 1;
 C_INVTYPE_SHOULDERS = 3;
@@ -174,6 +181,7 @@ C_INVTYPE_SHIELD = 14;
 C_INVTYPE_RANGED = 15;
 C_INVTYPE_CLOAK = 16;
 C_INVTYPE_2HWEAPON = 17;
+C_INVTYPE_TABARD = 19;
 C_INVTYPE_ROBE = 20;
 C_INVTYPE_WEAPONMAINHAND = 21;
 C_INVTYPE_WEAPONOFFHAND = 22;
@@ -182,7 +190,6 @@ C_INVTYPE_THROWN = 25;
 C_INVTYPE_RANGEDRIGHT = 26;
 
 function Transmog:slotIdToServerSlot(slotId)
-
     local itemType = 99
     if GetInventoryItemLink('player', slotId) then
         local itemName, _, _, _, _, _, _, it = GetItemInfo(self:IDFromLink(GetInventoryItemLink('player', slotId)))
@@ -244,6 +251,14 @@ function Transmog:slotIdToServerSlot(slotId)
         return EQUIPMENT_SLOT_BACK
     end
 
+    if itemType == 'INVTYPE_BODY' then
+        return EQUIPMENT_SLOT_BODY
+    end
+
+    if itemType == 'INVTYPE_TABARD' then
+        return EQUIPMENT_SLOT_TABARD
+    end
+
     if itemType == 'INVTYPE_WEAPONOFFHAND' then
         return EQUIPMENT_SLOT_OFFHAND
     end
@@ -264,24 +279,38 @@ function Transmog:slotIdToServerSlot(slotId)
     return 99
 end
 
+Transmog.NPCs = {}
+Transmog.NPCs["Felicia"] = 1
+Transmog.NPCs["Herrina"] = 1
+Transmog.NPCs["Glitterglam"] = 1
+Transmog.NPCs["菲利希亚"] = 1
+Transmog.NPCs["赫琳娜"] = 1
+Transmog.NPCs["炫光魅影"] = 1
+
 Transmog:SetScript("OnEvent", function()
 
     if event then
         if event == "GOSSIP_SHOW" then
-            if UnitName("Target") == "Felicia" or UnitName("Target") == "Herrina" or UnitName("target") == "Glitterglam" or UnitName("Target") == "菲利希亚" or UnitName("Target") == "赫琳娜" then
-
+            if Transmog.NPCs[UnitName("npc") or ""] then
                 if Transmog.delayedLoad:IsVisible() then
                     twfdebug("Transmog addon loading retry in 5s.")
                 else
                     GossipFrame:SetAlpha(0)
+                    GossipFrame:EnableMouse(nil)
                     TransmogFrame:Show()
+                    UIPanelWindows.GossipFrame.pushable = 3
+                    local centerFrame = (GetCenterFrame())
+                    HideUIPanel(centerFrame)
+                    ShowUIPanel(centerFrame)
                 end
             end
             return
         end
         if event == "GOSSIP_CLOSED" then
             GossipFrame:SetAlpha(1)
+            GossipFrame:EnableMouse(1)
             TransmogFrame:Hide()
+            UIPanelWindows.GossipFrame.pushable = 0
             return
         end
         if event == "UNIT_INVENTORY_CHANGED" then
@@ -352,7 +381,6 @@ Transmog:SetScript("OnEvent", function()
             end
 
             if TransmogFrame_Find(message, "AvailableTransmogs", 1, true) then
-
                 --AvailableTransmogs:slot:num:id1:id2:id3
                 --AvailableTransmogs:slot:num:0
                 --AvailableTransmogs:slot:num:end
@@ -531,9 +559,9 @@ function Transmog_OnLoad()
 
     Transmog:cacheItem(51217)
 
-    TransmogFrameInstructions:SetText("Are you tired of wearing the same armor every day?\nSelect the item you wish to change and enjoy your new stylish look.")
-    TransmogFrameSetBonus:SetText("Note: set bonus applies even if not shown.")
-    TransmogFrameNoTransmogs:SetText("You have yet to uncover any kind of appearance for this item. The appearance will unlock after you equip the item.")
+    TransmogFrameInstructions:SetText(TRANSMOG_INSTRUCTIONS)
+    TransmogFrameSetBonus:SetText("")
+    TransmogFrameNoTransmogs:SetText(TRANSMOG_NO_MOGS)
 
     if not TRANSMOG_CONFIG then
         TRANSMOG_CONFIG = {}
@@ -552,7 +580,7 @@ function Transmog_OnLoad()
     UIDropDownMenu_SetWidth(123, TransmogFrameOutfits);
     TransmogFrameSaveOutfit:Disable()
     TransmogFrameDeleteOutfit:Disable()
-    UIDropDownMenu_SetText("Outfits", TransmogFrameOutfits)
+    UIDropDownMenu_SetText(TEXT(TRANSMOG_OUTFITS), TransmogFrameOutfits)
 
     -- pre cache equipped items
     Transmog:CacheEquippedGear()
@@ -678,7 +706,11 @@ function Transmog:Reset(once)
     self:getFashionCoins()
 
     TransmogFramePlayerModel:SetUnit("player")
-
+    local tabardLink = GetInventoryItemLink("player", 19)
+    if tabardLink then
+        local _, _, tabard = TransmogFrame_Find(tabardLink, "item:(%d+)")
+        TransmogFramePlayerModel:TryOn(tonumber(tabard))
+    end
     Transmog_switchTab(self.tab)
     AddButtonOnEnterTextTooltip(TransmogFrameRevert, "Reset")
 
@@ -694,7 +726,10 @@ function Transmog:aSend(data)
 end
 
 function Transmog:setProgressBar(collected, possible)
-    TransmogFrameCollectedCollectedStatus:SetText("Collected: " .. collected .. "/" .. possible)
+    if collected > possible then
+        collected = possible
+    end
+    TransmogFrameCollectedCollectedStatus:SetText(collected .. "/" .. possible)
 
     local fillBarWidth = (collected / possible) * TransmogFrameCollected:GetWidth();
     TransmogFrameCollectedFillBar:SetPoint("TOPRIGHT", TransmogFrameCollected, "TOPLEFT", fillBarWidth, 0);
@@ -705,8 +740,6 @@ function Transmog:setProgressBar(collected, possible)
     TransmogFrameCollectedFillBar:SetVertexColor(0.0, 1.0, 0.0, 0.5);
 
     TransmogFrameCollected:Show()
-
-    --AddButtonOnEnterTextTooltip(TransmogFrameCollectedBorder, "penus", nil, nil, "ANCHOR_RIGHT", 0, -58)
 end
 
 Transmog.availableTransmogsCacheDelay = CreateFrame("Frame")
@@ -886,6 +919,36 @@ function Transmog:availableTransmogs(InventorySlotId)
                 model:SetPosition(Z + 5.8, X + 0.1, Y - 1.2)
             end
 
+            -- shirt
+            if self.currentTransmogSlot == self.inventorySlots['ShirtSlot'] then
+                if self.race == 'tauren' then
+                    model:SetRotation(0.3);
+                    X = X - 0.2
+                    Y = Y + 0.5
+                end
+                if self.race == 'goblin' then
+                    Y = Y + 1.5
+                    Z = Z - 0.5
+                end
+                model:SetRotation(0.61);
+                model:SetPosition(Z + 5.8, X + 0.1, Y - 1.2)
+            end
+
+            -- tabard
+            if self.currentTransmogSlot == self.inventorySlots['TabardSlot'] then
+                if self.race == 'tauren' then
+                    model:SetRotation(0.3);
+                    X = X - 0.2
+                    Y = Y + 0.5
+                end
+                if self.race == 'goblin' then
+                    Y = Y + 1.5
+                    Z = Z - 0.5
+                end
+                model:SetRotation(0.61);
+                model:SetPosition(Z + 5.8, X + 0.1, Y - 1.2)
+            end
+
             -- bracer
             if self.currentTransmogSlot == self.inventorySlots['WristSlot'] then
                 model:SetRotation(1.5);
@@ -1040,7 +1103,7 @@ function Transmog:availableTransmogs(InventorySlotId)
 
     self.totalPages = self:ceil(self:tableSize(self.availableTransmogItems[InventorySlotId]) / self.ipp)
 
-    TransmogFramePageText:SetText("Page " .. self.currentPage .. "/" .. self.totalPages)
+    TransmogFramePageText:SetText(TEXT(GENERIC_PAGE) .. " " .. self.currentPage .. "/" .. self.totalPages)
 
     if self.currentPage == 1 then
         TransmogFrameLeftArrow:Disable()
@@ -1106,7 +1169,7 @@ function Transmog:transmogStatus()
             getglobal(frame:GetName() .. 'NoEquip'):Show()
             getglobal(frame:GetName() .. 'BorderHi'):Hide()
 
-            AddButtonOnEnterTextTooltip(frame, self.inventorySlotNames[InventorySlotId], "There is no equipped item in this slot", true)
+            AddButtonOnEnterTextTooltip(frame, self.inventorySlotNames[InventorySlotId], TEXT(TRANSMOG_NO_ITEM), true)
         end
     end
 
@@ -1284,6 +1347,11 @@ function Transmog_Try(itemId, slotName, newReset)
     if Transmog.tab == 'sets' and not newReset then
 
         TransmogFramePlayerModel:SetUnit("player")
+        local tabardLink = GetInventoryItemLink("player", 19)
+        if tabardLink then
+            local _, _, tabard = TransmogFrame_Find(tabardLink, "item:(%d+)")
+            TransmogFramePlayerModel:TryOn(tonumber(tabard))
+        end
         Transmog:getFashionCoins()
         Transmog:transmogStatus()
 
@@ -1454,7 +1522,7 @@ function Transmog:getFashionCoins()
 
             if item then
                 local _, itemCount = GetContainerItemInfo(bag, slot);
-                if TransmogFrame_Find(item, 'Fashion Coin', 1, true) then
+                if TransmogFrame_Find(item, TRANSMOG_FASHION_COIN, 1, true) then
                     self.fashionCoins = self.fashionCoins + TransmogFrame_ToNumber(itemCount)
                 end
             end
@@ -1513,19 +1581,19 @@ function Transmog:calculateCost(to)
 
         if resets > 0 then
             TransmogFrameApplyButton:Enable()
-            TransmogFrameApplyButton:SetText("Apply Reset")
+            TransmogFrameApplyButton:SetText(TRANSMOG_APPLY_RESET)
         else
             TransmogFrameApplyButton:Disable()
-            TransmogFrameApplyButton:SetText("Apply")
+            TransmogFrameApplyButton:SetText(GENERIC_APPLY)
         end
 
     else
         if self.fashionCoins >= cost then
             TransmogFrameApplyButton:Enable()
-            TransmogFrameApplyButton:SetText("Apply for " .. cost .. " Fashion " .. (cost == 1 and "Coin" or "Coins"))
+            TransmogFrameApplyButton:SetText(TRANSMOG_APPLY_FOR .. " " .. cost .. " " .. TRANSMOG_FASHION_COINS)
         else
             TransmogFrameApplyButton:Disable()
-            TransmogFrameApplyButton:SetText("Not enough Fashion Coins")
+            TransmogFrameApplyButton:SetText(TRANSMOG_INSUFICCIENT_COINS)
         end
     end
 end
@@ -1535,6 +1603,8 @@ function Transmog:HidePlayerItemsAnimation()
     ShoulderSlotAutoCast:Hide()
     BackSlotAutoCast:Hide()
     ChestSlotAutoCast:Hide()
+    ShirtSlotAutoCast:Hide()
+    TabardSlotAutoCast:Hide()
     WristSlotAutoCast:Hide()
     HandsSlotAutoCast:Hide()
     WaistSlotAutoCast:Hide()
@@ -1550,6 +1620,8 @@ function Transmog:hidePlayerItemsBorders()
     ShoulderSlotBorderSelected:Hide()
     BackSlotBorderSelected:Hide()
     ChestSlotBorderSelected:Hide()
+    ShirtSlotBorderSelected:Hide()
+    TabardSlotBorderSelected:Hide()
     WristSlotBorderSelected:Hide()
     HandsSlotBorderSelected:Hide()
     WaistSlotBorderSelected:Hide()
@@ -1696,9 +1768,9 @@ function AddButtonOnEnterTooltipFashion(frame, itemLink, TransmogText, revert)
             local tLabel = getglobal(FashionTooltip:GetName() .. "TextLeft2")
             if tLabel and TransmogText then
                 if revert then
-                    tLabel:SetText('|cfff471f5Transmogrified to:\n' .. TransmogText .. '\n|cffffd200Right-Click to revert\n|cffffffff' .. tLabel:GetText())
+                    tLabel:SetText('|cfff471f5' .. TEXT(TRANSMOG_CHANGED_TO) .. '\n' .. TransmogText .. '\n|cffffd200' .. TEXT(TRANSMOG_REVERT) .. '\n|cffffffff' .. tLabel:GetText())
                 else
-                    tLabel:SetText('|cfff471f5Transmogrified to:\n' .. TransmogText .. '\n|cffffffff' .. tLabel:GetText())
+                    tLabel:SetText('|cfff471f5' .. TEXT(TRANSMOG_CHANGED_TO) .. '\n' .. TransmogText .. '\n|cffffffff' .. tLabel:GetText())
                 end
             end
 
@@ -1713,9 +1785,9 @@ function AddButtonOnEnterTooltipFashion(frame, itemLink, TransmogText, revert)
             local tLabel = getglobal(FashionTooltip:GetName() .. "TextLeft2")
             if tLabel and TransmogText then
                 if revert then
-                    tLabel:SetText('|cfff471f5Transmogrified to:\n' .. TransmogText .. '\n|cffffd200Right-Click to revert\n|cffffffff' .. tLabel:GetText())
+                    tLabel:SetText('|cfff471f5' .. TEXT(TRANSMOG_CHANGED_TO) .. '\n' .. TransmogText .. '\n|cffffd200' .. TEXT(TRANSMOG_REVERT) .. '\n|cffffffff' .. tLabel:GetText())
                 else
-                    tLabel:SetText('|cfff471f5Transmogrified to:\n' .. TransmogText .. '\n|cffffffff' .. tLabel:GetText())
+                    tLabel:SetText('|cfff471f5' .. TEXT(TRANSMOG_CHANGED_TO) .. '\n' .. TransmogText .. '\n|cffffffff' .. tLabel:GetText())
                 end
             end
             FashionTooltip:Show();
@@ -1746,11 +1818,11 @@ function Transmog_switchTab(to)
     if to == 'items' then
         TransmogFrameItemsButton:SetNormalTexture('Interface\\TransmogFrame\\tab_active')
         TransmogFrameItemsButton:SetPushedTexture('Interface\\TransmogFrame\\tab_active')
-        TransmogFrameItemsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. 'Items')
+        TransmogFrameItemsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_ITEMS)
 
         TransmogFrameSetsButton:SetNormalTexture('Interface\\TransmogFrame\\tab_inactive')
         TransmogFrameSetsButton:SetPushedTexture('Interface\\TransmogFrame\\tab_inactive')
-        TransmogFrameSetsButtonText:SetText(FONT_COLOR_CODE_CLOSE .. 'Sets')
+        TransmogFrameSetsButtonText:SetText(FONT_COLOR_CODE_CLOSE .. TRANSMOG_SETS)
 
         if Transmog.currentTransmogSlot ~= nil then
             selectTransmogSlot(Transmog.currentTransmogSlot, Transmog.currentTransmogSlotName)
@@ -1768,11 +1840,11 @@ function Transmog_switchTab(to)
 
         TransmogFrameSetsButton:SetNormalTexture('Interface\\TransmogFrame\\tab_active')
         TransmogFrameSetsButton:SetPushedTexture('Interface\\TransmogFrame\\tab_active')
-        TransmogFrameSetsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. 'Sets')
+        TransmogFrameSetsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_SETS)
 
         TransmogFrameItemsButton:SetNormalTexture('Interface\\TransmogFrame\\tab_inactive')
         TransmogFrameItemsButton:SetPushedTexture('Interface\\TransmogFrame\\tab_inactive')
-        TransmogFrameItemsButtonText:SetText(FONT_COLOR_CODE_CLOSE .. 'Items')
+        TransmogFrameItemsButtonText:SetText(FONT_COLOR_CODE_CLOSE .. TRANSMOG_ITEMS)
 
         Transmog:hideItems()
         Transmog:hideItemBorders()
@@ -1887,7 +1959,7 @@ function Transmog_switchTab(to)
 
         Transmog.totalPages = Transmog:ceil(Transmog:tableSize(Transmog.availableSets) / Transmog.ipp)
 
-        TransmogFramePageText:SetText("Page " .. Transmog.currentPage .. "/" .. Transmog.totalPages)
+        TransmogFramePageText:SetText(GENERIC_PAGE .. " " .. Transmog.currentPage .. "/" .. Transmog.totalPages)
 
         if Transmog.currentPage == 1 then
             TransmogFrameLeftArrow:Disable()
@@ -1915,7 +1987,7 @@ end
 function TransmogFrame_Explode(str, delimiter)
     local result = {}
     local from = 1
-    local delim_from, delim_to = TransmogFrame_Find(str, delimiter, from, 1, true)
+    local delim_from, delim_to = TransmogFrame_Find(str, delimiter, from, true)
     while delim_from do
         table.insert(result, string.sub(str, from, delim_from - 1))
         from = delim_to + 1
@@ -1964,7 +2036,7 @@ EquipTransmogTooltip:SetScript("OnShow", function()
                     local tLabel = getglobal(GameTooltip:GetName() .. "TextLeft2")
 
                     if tLabel then
-                        tLabel:SetText('|cfff471f5Transmogrified to:\n' .. Transmog.equippedTransmogs[itemName] .. '\n|cffffffff' .. tLabel:GetText())
+                        tLabel:SetText('|cfff471f5' .. TRANSMOG_CHANGED_TO .. '\n' .. Transmog.equippedTransmogs[itemName] .. '\n|cffffffff' .. tLabel:GetText())
                     end
 
                     GameTooltip:Show()
@@ -2208,7 +2280,7 @@ function Transmog:addWonItem(itemID)
             return false
         end
 
-        twfprint(GAME_YELLOW .. '[' .. name .. ']' .. HIGHLIGHT_FONT_COLOR_CODE .. ' was added to your collection.')
+        twfprint(GAME_YELLOW .. '[' .. name .. '] ' .. HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_APPEARANCE_COLLECTED)
 
         local newTransmogIndex = 0
         for i = 1, self:tableSize(self.newTransmogAlert.wonItems), 1 do
@@ -2333,7 +2405,7 @@ Transmog.newTransmogAlert:SetScript("OnUpdate", function()
 end)
 
 function Transmog_close_placement()
-    twfprint('|cAnchor window closed. Type |cfffff569/transmog |cto show the Anchor window.')
+    twfprint(TRANSMOG_ANCHOR_CLOSED)
     Transmog.newTransmogAlert:HideAnchor()
 end
 
@@ -2386,7 +2458,7 @@ function OutfitsDropDown_Initialize()
         local _, _, _, color = GetItemQualityColor(2)
 
         local newOutfit = {}
-        newOutfit.text = color .. "+ New Outfit"
+        newOutfit.text = color .. "+ " .. TEXT(TRANSMOG_NEW_OUTFIT)
         newOutfit.value = 1
         newOutfit.arg1 = 1
         newOutfit.checked = false
@@ -2487,14 +2559,14 @@ function Transmog_deleteOutfit()
     TransmogFrameSaveOutfit:Disable()
     TransmogFrameDeleteOutfit:Disable()
     Transmog.currentOutfit = nil
-    UIDropDownMenu_SetText("Outfits", TransmogFrameOutfits)
+    UIDropDownMenu_SetText(TEXT(TRANSMOG_OUTFITS), TransmogFrameOutfits)
     Transmog_revert()
 end
 
 StaticPopupDialogs["TRANSMOG_NEW_OUTFIT"] = {
-    text = "Enter Outfit Name:",
-    button1 = "Save",
-    button2 = "Cancel",
+    text = TEXT(TRANSMOG_OUTFIT_NAME) .. ":",
+    button1 = TEXT(SAVE),
+    button2 = TEXT(CANCEL),
     hasEditBox = 1,
     OnAccept = function()
         local outfitName = getglobal(this:GetParent():GetName() .. "EditBox"):GetText()
@@ -2519,8 +2591,8 @@ StaticPopupDialogs["TRANSMOG_NEW_OUTFIT"] = {
 };
 
 StaticPopupDialogs["TRANSMOG_OUTFIT_EXISTS"] = {
-    text = "Outfit Name already exists.",
-    button1 = "Okay",
+    text = TEXT(TRANSMOG_OUTFIT_NAME_TAKEN),
+    button1 = TEXT(OKAY),
     timeout = 0,
     exclusive = 1,
     whileDead = 1,
@@ -2528,8 +2600,8 @@ StaticPopupDialogs["TRANSMOG_OUTFIT_EXISTS"] = {
 };
 
 StaticPopupDialogs["TRANSMOG_OUTFIT_EMPTY_NAME"] = {
-    text = "Outfit Name not valid.",
-    button1 = "Okay",
+    text = TEXT(TRANSMOG_OUTFIT_NAME_EMPTY),
+    button1 = TEXT(OKAY),
     timeout = 0,
     exclusive = 1,
     whileDead = 1,
@@ -2537,7 +2609,7 @@ StaticPopupDialogs["TRANSMOG_OUTFIT_EMPTY_NAME"] = {
 };
 
 StaticPopupDialogs["CONFIRM_DELETE_OUTFIT"] = {
-    text = "Delete Outfit ?",
+    text = TEXT(TRANSMOG_OUTFIT_DELETE),
     button1 = TEXT(YES),
     button2 = TEXT(NO),
     OnAccept = function()

@@ -60,15 +60,15 @@ boonTip:SetScript("OnShow", function()
 
         if itemName == "Supercharged Chronoboon Displacer" then
             GameTooltip:AddLine("\n")
-            GameTooltip:AddLine("World effects suspended:")
+            GameTooltip:AddLine(CHRONOBOON_LINE_1)
 
             for _, buff in BOON_BUFFS do
                 GameTooltip:AddLine(buff, 1, 1, 1)
             end
 
             GameTooltip:AddLine("\n")
-            GameTooltip:AddLine("While a world effect is suspended, you")
-            GameTooltip:AddLine("cannot benefit from it.")
+            GameTooltip:AddLine(CHRONOBOON_LINE_2)
+            GameTooltip:AddLine(CHRONOBOON_LINE_3)
 
             GameTooltip:Show()
         end

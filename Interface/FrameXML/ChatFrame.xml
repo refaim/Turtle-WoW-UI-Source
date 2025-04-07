@@ -15,6 +15,9 @@
 			<OnHyperlinkClick>
 				ChatFrame_OnHyperlinkShow(arg1, arg2, arg3);
 			</OnHyperlinkClick>
+            <OnMouseWheel>
+                ChatFrame_OnMouseWheel(arg1);
+            </OnMouseWheel>
 		</Scripts>
 		<FontString inherits="ChatFontNormal" justifyH="LEFT"/>
 	</ScrollingMessageFrame>

@@ -18,3 +18,4 @@ MovieFrame.xml
 GlueTooltip.xml
 RealmWizard.xml
 CreditsFrame.xml
+ChallengeList.xml

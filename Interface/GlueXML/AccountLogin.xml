@@ -275,9 +275,23 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Button name="AccountLoginTurtleDiscord" inherits="GlueButtonSmallTemplate" text="TURTLE_DISCORD">
+					<Button name="AccountLoginTurtleReddit" inherits="GlueButtonSmallTemplate" text="TURTLE_REDDIT">
 						<Anchors>
 							<Anchor point="BOTTOM" relativeTo="AccountLoginCinematicsButton" relativePoint="TOP" >
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								AccountLogin_Turtle_Reddit();
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="AccountLoginTurtleDiscord" inherits="GlueButtonSmallTemplate" text="TURTLE_DISCORD">
+						<Anchors>
+							<Anchor point="BOTTOM" relativeTo="AccountLoginTurtleReddit" relativePoint="TOP" >
 								<Offset>
 									<AbsDimension x="0" y="-2"/>
 								</Offset>

@@ -1,0 +1,395 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="ChallengeList.lua"/>
+    <Frame name="ChallengeEntryTemplate" virtual="true">
+        <Size x="270" y="80"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentSelected" file="Interface\Glues\CharacterSelect\Glue-CharacterSelect-Highlight" setAllPoints="true" hidden="true" alphaMode="ADD"/>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture name="$parentIcon">
+                    <Size x="40" y="40"/>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset x="20" y="2"/>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentName" inherits="GlueFontNormalLarge">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPRIGHT">
+                            <Offset x="4" y="-8"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+			<Layer level="OVERLAY">
+                <Texture name="$parentHighlight" file="Interface\Glues\CharacterSelect\Glue-CharacterSelect-Highlight2" setAllPoints="true" hidden="true" alphaMode="ADD"/>      
+				<!-- <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays">
+					<Size x="45" y="43"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="$parentIcon" relativePoint="CENTER">
+                            <Offset x="-1" y="0"/>
+                        </Anchor>
+					</Anchors>
+					<TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
+                    <Color r="1" g="0.82" b="0"/>
+				</Texture> -->
+            </Layer>
+        </Layers>
+        <Scripts>
+            <!-- <OnLoad>
+                getglobal(this:GetName().."Border"):SetVertexColor(1, 0.82, 0)
+                getglobal(this:GetName().."Border"):Hide()
+            </OnLoad> -->
+            <OnEnter>
+                getglobal(this:GetName().."Highlight"):Show()
+                if this.tooltip then
+                    ChallengesTooltip:SetPoint("TOPRIGHT", this, "TOPLEFT", -14, 0)
+                    ChallengesTooltip_Update(getglobal(this:GetName().."Name"):GetText(), this.tooltip)
+                    ChallengesTooltip:Show()
+                end
+            </OnEnter>
+            <OnLeave>
+                getglobal(this:GetName().."Highlight"):Hide()
+                ChallengesTooltip:Hide()
+            </OnLeave>
+            <OnMouseUp>
+                ChallengeListEntry_OnMouseUp()
+            </OnMouseUp>
+        </Scripts>
+    </Frame>
+	<Frame name="ChallengeList" toplevel="true" parent="GlueParent" setAllPoints="true" enableMouse="true" enableKeyboard="true" frameStrata="DIALOG" hidden="true">
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color a="0.75" r="0" g="0" b="0"/>
+				</Texture>
+			</Layer>
+		</Layers>
+        <Frames>
+            <Frame name="ChallengeListFrame">
+                <Size x="640" y="512"/>
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset x="24" y="0"/>
+					</Anchor>
+				</Anchors>
+				<HitRectInsets>
+					<AbsInset left="0" right="44" top="0" bottom="13"/>
+				</HitRectInsets>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\HelpFrame\HelpFrame-TopLeft">
+							<Size x="256" y="256"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+						<Texture file="Interface\HelpFrame\HelpFrame-Top">
+							<Size x="256" y="256"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="256" y="0"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture file="Interface\HelpFrame\HelpFrame-TopRight">
+							<Size x="128" y="256"/>
+							<Anchors>
+								<Anchor point="TOPRIGHT"/>
+							</Anchors>
+						</Texture>
+						<Texture file="Interface\HelpFrame\HelpFrame-BotLeft">
+							<Size x="256" y="256"/>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT"/>
+							</Anchors>
+						</Texture>
+						<Texture file="Interface\HelpFrame\HelpFrame-Bottom">
+							<Size x="256" y="256"/>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT">
+									<Offset x="256" y="0"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture file="Interface\HelpFrame\HelpFrame-BotRight">
+							<Size x="128" y="256"/>
+							<Anchors>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+                    <Layer level="ARTWORK">
+						<Texture name="ChallengeListHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+							<Size x="256" y="64"/>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="-12" y="12"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<FontString inherits="GlueFontNormalSmall" text="CHALLENGES">
+							<Anchors>
+								<Anchor point="TOP" relativeTo="ChallengeListHeader">
+									<Offset x="0" y="-14"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+                        <Texture file="Interface\DialogFrame\UI-DialogBox-Gold-Dragon2">
+							<Size x="256" y="256"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+                                    <Offset x="-70" y="36"/>
+                                </Anchor>
+							</Anchors>
+                        </Texture>
+                        <Texture file="Interface\DialogFrame\UI-DialogBox-Gold-Dragon3">
+							<Size x="256" y="64"/>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT">
+                                    <Offset x="-35" y="-25"/>
+                                </Anchor>
+							</Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+					<Button name="ChallengeListCloseButton" inherits="GlueCloseButton">
+						<Anchors>
+							<Anchor point="TOPRIGHT">
+								<Offset x="-42" y="-3"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								ChallengeList:Hide()
+							</OnClick>
+						</Scripts>
+					</Button>
+                    <ScrollFrame name="ChallengeListScrollFrame" inherits="GlueScrollFrameTemplate">
+						<Size x="540" y="407"/>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="20" y="-58"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture name="$parentTop" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Size x="31" y="256"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+											<Offset x="-2" y="5"/>
+										</Anchor>
+									</Anchors>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0"/>
+								</Texture>
+								<Texture name="$parentBottom" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Size x="31" y="106"/>
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+											<Offset x="-2" y="-2"/>
+										</Anchor>
+									</Anchors>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>
+								</Texture>
+								<Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Size x="31" y="60"/>
+									<Anchors>
+										<Anchor point="TOP" relativeTo="$parentTop" relativePoint="BOTTOM"/>
+										<Anchor point="BOTTOM" relativeTo="$parentBottom" relativePoint="TOP"/>
+									</Anchors>
+									<TexCoords left="0" right="0.484375" top=".75" bottom="1.0"/>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnVerticalScroll>
+								ChallengeListScrollFrame_OnVerticalScroll()
+							</OnVerticalScroll>
+                            <OnLoad>
+                                getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable()
+                                getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable()
+                                this.scrollBarHideable = 1
+                                GlueScrollFrame_OnScrollRangeChanged()
+                            </OnLoad>
+                            <OnScrollRangeChanged>
+                                GlueScrollFrame_OnScrollRangeChanged(arg2)
+                                if this:GetVerticalScrollRange() == 0 then
+                                    getglobal(this:GetName().."Top"):Hide()
+                                    getglobal(this:GetName().."Bottom"):Hide()
+                                    getglobal(this:GetName().."Middle"):Hide()
+                                    this:SetPoint("TOPLEFT", this:GetParent(), 28, -58)
+                                else
+                                    getglobal(this:GetName().."Top"):Show()
+                                    getglobal(this:GetName().."Bottom"):Show()
+                                    getglobal(this:GetName().."Middle"):Show()
+                                    this:SetPoint("TOPLEFT", this:GetParent(), 20, -58)
+                                end
+                            </OnScrollRangeChanged>
+						</Scripts>
+						<ScrollChild>
+							<Frame name="ChallengeListScrollFrameScrollChildFrame">
+								<Size x="540" y="407"/>
+                                <Layers>
+                                    <Layer level="BORDER">
+                                        <FontString name="ChallengesText" inherits="GlueFontHighlightSmall" justifyH="CENTER" text="CHALLENGES_TEXT">
+                                        <Size x="520" y="42"/> 
+                                            <Anchors>
+                                                <Anchor point="TOP">
+                                                    <Offset x="0" y="-3"/>
+                                                </Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <Frame name="ChallengeEntry1" inherits="ChallengeEntryTemplate" id="1">
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeTo="ChallengesText" relativePoint="BOTTOMLEFT">
+                                                <Offset x="-6" y="-5"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry2" inherits="ChallengeEntryTemplate" id="2">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry1" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry3" inherits="ChallengeEntryTemplate" id="3">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry2" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry4" inherits="ChallengeEntryTemplate" id="4">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry3" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry5" inherits="ChallengeEntryTemplate" id="5">
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeTo="ChallengeEntry1" relativePoint="TOPRIGHT">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry6" inherits="ChallengeEntryTemplate" id="6">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry5" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry7" inherits="ChallengeEntryTemplate" id="7">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry6" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                    <Frame name="ChallengeEntry8" inherits="ChallengeEntryTemplate" id="8">
+                                        <Anchors>
+                                            <Anchor point="TOP" relativeTo="ChallengeEntry7" relativePoint="BOTTOM">
+                                                <Offset x="0" y="0"/>
+                                            </Anchor>
+                                        </Anchors>
+                                    </Frame>
+                                </Frames>
+							</Frame>
+						</ScrollChild>
+					</ScrollFrame>
+					<Button name="ChallengeListCancelButton" inherits="GlueDialogButtonTemplate" text="CANCEL">
+						<Size x="125" y="35"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-46" y="13"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								ChallengeList_OnCancel()
+							</OnClick>
+						</Scripts>
+					</Button>
+                    <Button name="ChallengeListOkButton" inherits="GlueDialogButtonTemplate" text="OKAY">
+						<Size x="125" y="35"/>
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="ChallengeListCancelButton" relativePoint="LEFT">
+								<Offset x="8" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								ChallengeList_OnOk()
+							</OnClick>
+						</Scripts>
+					</Button>
+                </Frames>
+            </Frame>
+        </Frames>
+        <Scripts>
+			<OnLoad>
+				ChallengeList_OnLoad()
+			</OnLoad>
+			<OnKeyDown>
+				ChallengeList_OnKeyDown()
+			</OnKeyDown>
+            <OnShow>
+                ChallengeList_Update()
+            </OnShow>
+			<OnHide>
+				ChallengeList_OnHide()
+			</OnHide>
+		</Scripts>
+    </Frame>
+    <Frame name="ChallengesTooltip" frameStrata="TOOLTIP" hidden="true">
+        <Size x="220" y="0"/>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parentTitle" inherits="GlueFontNormal" justifyH="LEFT">
+                    <Size x="200" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="10" y="-10"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNotes" inherits="GlueFontNormalSmall" justifyH="LEFT">
+                    <Size x="200" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+                            <Offset x="0" y="-2"/>
+                        </Anchor>
+                    </Anchors>
+                    <Color r="1.0" g="1.0" b="1.0"/>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                this:SetBackdropBorderColor(1.0, 1.0, 1.0)
+                this:SetBackdropColor(0.09, 0.09, 0.19 )
+            </OnLoad>
+        </Scripts>
+    </Frame>
+</Ui>

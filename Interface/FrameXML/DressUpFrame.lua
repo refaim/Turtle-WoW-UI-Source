@@ -1,8 +1,16 @@
+function DressUpTabard()
+    local tabardLink = GetInventoryItemLink("player", 19);
+    local _, _, itemID = strfind(tabardLink or "", "item:(%d+)");
+    if itemID then
+        DressUpModel:TryOn(tonumber(itemID));
+    end
+end
 
 function DressUpItem(item)
 	if ( not DressUpFrame:IsVisible() ) then
 		ShowUIPanel(DressUpFrame);
 		DressUpModel:SetUnit("player");
+        DressUpTabard()
 	end
 	DressUpModel:TryOn(item);
 end

@@ -93,6 +93,10 @@ DressUpFrame.xml
 RaidWarning.xml
 ClassTrainerFrameTemplates.xml
 
+# Barbershop
+Turtle_Barbershop\Turtle_BarbershopTemplates.xml
+Turtle_Barbershop\Turtle_Barbershop.xml
+
 # Transmog
 Turtle_TransmogUI\Turtle_TransmogSets.lua
 Turtle_TransmogUI\Turtle_TransmogUI.xml

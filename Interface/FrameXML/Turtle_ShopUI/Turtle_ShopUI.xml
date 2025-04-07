@@ -54,7 +54,7 @@
                         </Anchor>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentTitleText" inherits="GameFontNormal" text="Turtle WoW Donation Rewards">
+                <FontString name="$parentTitleText" inherits="GameFontNormal" text="DONO_SHOP_TITLE">
                     <Size>
                         <AbsDimension x="512" y="14" />
                     </Size>
@@ -195,8 +195,6 @@
                         <Size>
                             <AbsDimension x="181" y="351" />
                         </Size>
-                        <Frames>
-                        </Frames>
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
@@ -247,20 +245,6 @@
                 <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
             </Button>
-            <Frame name="$parentFashionDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-130" y="-40" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        UIDropDownMenu_Initialize(this, ShopFrameFashionDropDown_OnLoad);
-                    </OnLoad>
-                </Scripts>
-            </Frame>
             <Frame name="$parentAboutFrame" hidden="true">
                 <Size>
                     <AbsDimension x="450" y="360" />
@@ -276,7 +260,7 @@
                     <Layer level="BORDER">
                     </Layer>
                     <Layer level="ARTWORK">
-                        <FontString name="$parentName" inherits="GameFontNormal" text="Thank you for supporting the Turtle WoW project!">
+                        <FontString name="$parentName" inherits="GameFontNormal" text="DONO_SHOP_THANKS">
                             <Size>
                                 <AbsDimension x="512" y="14" />
                             </Size>
@@ -288,8 +272,7 @@
                                 </Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString name="$parentLongText" hidden="false" inherits="GameFontHighlight" text=""
-                            justifyH="LEFT" justifyV="TOP">
+                        <FontString name="$parentLongText" hidden="false" inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP">
                             <Size>
                                 <AbsDimension x="410" y="276" />
                             </Size>
@@ -311,6 +294,8 @@
 
                 this:RegisterEvent("CHAT_MSG_ADDON")
                 this:RegisterEvent("VARIABLES_LOADED")
+
+                this.selected = nil
             </OnLoad>
             <OnEvent>
                 ShopFrame_OnEvent();
@@ -322,6 +307,13 @@
             <OnHide>
                 PlaySound("igCharacterInfoClose");
             </OnHide>
+            <OnMouseWheel>
+                if arg1 == 1 then
+                    ShopFrameNextButton:Click()
+                elseif arg1 == -1 then
+                    ShopFramePreviousButton:Click()
+                end
+            </OnMouseWheel>
         </Scripts>
     </Frame>
     <Button name="MinimapShopFrame" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
@@ -381,11 +373,11 @@
             </OnDragStop>
             <OnEnter>
                 GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-                GameTooltip:SetText("Donation Rewards");
-                GameTooltip:AddLine('Left-click to open.', 1, 1, 1);
-                GameTooltip:AddLine('Right-click to hide this button.', 1, 1, 1);
-                GameTooltip:AddLine('Hold control and drag to move.', 1, 1, 1);
-                GameTooltip:AddLine('Hold control and right-click to reset position.', 1, 1, 1);
+                GameTooltip:SetText(DONO_SHOP_TOOLTIP1);
+                GameTooltip:AddLine(DONO_SHOP_TOOLTIP2, 1, 1, 1);
+                GameTooltip:AddLine(DONO_SHOP_TOOLTIP3, 1, 1, 1);
+                GameTooltip:AddLine(DONO_SHOP_TOOLTIP4, 1, 1, 1);
+                GameTooltip:AddLine(DONO_SHOP_TOOLTIP5, 1, 1, 1);
                 GameTooltip:Show();
             </OnEnter>
             <OnLeave>
@@ -403,7 +395,7 @@
                 else
                 TWS_HIDE_MINIMAP_BUTTON = 1
                 MinimapShopFrame:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage("Donation rewards minimap button hidden. Type '/shop button' to make it visible again. To open the shop, type '/shop'.")
+                DEFAULT_CHAT_FRAME:AddMessage(DONO_SHOP_CHAT_COMMAND)
                 end
                 end
             </OnClick>

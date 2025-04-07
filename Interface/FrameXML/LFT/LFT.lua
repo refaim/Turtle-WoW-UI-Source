@@ -5,52 +5,6 @@ LFT_ADDON_CHANNEL = "GUILD"
 LFT_ADDON_ARRAY_DELIMITER = ":"
 LFT_ADDON_FIELD_DELIMITER = ";"
 
--- localization
-LFT_CHAT_ERROR_COMBINATION_MSG = "LFT: Invalid party role combination. Make sure\'s there is 1 tank, 1 healer and 3 damage dealers."
-LFT_CHAT_ERROR_INTERNAL_MSG = "LFT has encountered an internal error."
-LFT_CHAT_ERROR_LEADER_MSG = "LFT: You are not the leader of the party."
-LFT_CHAT_ERROR_MISMATCH_MSG = "LFT: Party members levels mismatch."
-LFT_CHAT_OFFER_DECLINED_TEXT = "You have declined the offer. You have been removed from the queue."
-LFT_CHAT_QUEUE_JOIN_TEXT = "You have joined the queue."
-LFT_CHAT_SELECTED_ROLES_TEXT = " has selected these roles: "
-
-LFT_DROPDOWN_TYPE_1 = "Suggested Dungeons"
-LFT_DROPDOWN_TYPE_2 = "All Available Dungeons"
-LFT_DROPDOWN_LABEL_TEXT = "Type:"
-
-LFT_GENERAL_BROWSE_TAB_TEXT = "Browse"
-LFT_GENERAL_LEAVE_QUEUE_TEXT = "Leave Queue"
-LFT_GENERAL_LOW_LEVEL_TEXT = "Reach level 13 to use this feature."
-LFT_GENERAL_INSTANCE_TYPE_TEXT = "Type:"
-LFT_GENERAL_IN_RAID_TEXT = "You can\'t use the group finder while in a raid."
-
-LFT_GROUP_READY_GROUP_FORMED_TEXT = "A group has been formed for:"
-LFT_GROUP_READY_YOUR_ROLE_TEXT = "Your Role"
-LFT_GROUP_READY_CONFIRM_TEXT = "Let\'s do this!"
-LFT_GROUP_READY_STATUS_TEXT = "Ready check"
-LFT_GROUP_READY_COMPLETE_TEXT = "The dungeon group is ready. Enjoy!"
-
-LFT_ROLE_CHECK_TITLE_TEXT = "Role check"
-LFT_ROLE_CHECK_CONFIRM_TEXT = "Confirm"
-LFT_ROLE_CHECK_DECLINE_TEXT = "Decline"
-LFT_ROLE_CHECK_INSTANCES_TEXT = "Queued for: "
-LFT_ROLE_CHECK_MULTIPLE_INSTANCES_TEXT = "Queued for |cffffffffmultiple instances"
-
-LFT_MAIN_BUTTON_FIND_GROUP_TEXT = "Find Group"
-LFT_MAIN_BUTTON_FIND_MORE_TEXT = "Find More"
-
-LFT_MINIMAP_TOOLTIP_LINE_1 = "Group Finder"
-LFT_MINIMAP_TOOLTIP_LINE_2 = "Left-click to open the group finder."
-LFT_MINIMAP_TOOLTIP_LINE_3 = "Hold control and drag to move."
-LFT_MINIMAP_TOOLTIP_LINE_4 = "Hold control and right-click to reset position."
-LFT_MINIMAP_TOOLTIP_NO_QUEUE = "You are not looking for any groups."
-LFT_MINIMAP_TOOLTIP_QUEUED = "You are queued for: "
-
-
-LFT_ROLE_TANK_TOOLTIP = "Indicates that you are willing to\nprotect allies from harm by\nensuring that enemies are\nattacking you instead of them."
-LFT_ROLE_HEALER_TOOLTIP = "Indicates that you are willing to\nheal your allies when they take\ndamage."
-LFT_ROLE_DAMAGE_TOOLTIP = "Indicates that you are willing to\ntake on the role of dealing\ndamage to enemies."
-
 -- define instance type dropdown menu items
 LFT_DropDownItems = {
 	[1] = LFT_DROPDOWN_TYPE_1,
@@ -254,10 +208,13 @@ local function LFT_HandleMessageFromServer(message)
 	end
 end
 
+local controlsDisabled = false
+
 local function LFT_EnableControls()
 	for _, frame in ipairs({LFTFrameInstancesListContent:GetChildren()}) do
 		getglobal(frame:GetName() .. "CheckButton"):EnableMouse(1)
 	end
+    controlsDisabled = false
 
 	local _, class = UnitClass("player")
 	for role, available in pairs(LFT_ClassRoles[strupper(class)]) do
@@ -280,6 +237,7 @@ local function LFT_DisableControls()
 	for _, frame in ipairs({LFTFrameInstancesListContent:GetChildren()}) do
 		getglobal(frame:GetName() .. "CheckButton"):EnableMouse(0)
 	end
+    controlsDisabled = true
 
 	LFTFrameRoleTank:Disable()
 	LFTFrameRoleTankCheckButton:Disable()
@@ -348,7 +306,6 @@ end
 
 function LFT_Update()
 	LFT_DisableControls()
-	LFT_UpdateInstances()
 
 	if GetNumPartyMembers() > 0 then
 		if IsPartyLeader() then
@@ -381,6 +338,8 @@ function LFT_Update()
 			LFT_CheckIfCanQueue()
 		end
 	end
+
+	LFT_UpdateInstances()
 end
 
 -- handle button click in instances tab based on the button text
@@ -593,7 +552,7 @@ function LFT_UpdateInstances()
 		for i = 1, 4 do
 			local unit = "party" .. i
 			if UnitIsConnected(unit) then
-				math.min(level, UnitLevel(unit))
+				level = math.min(level, UnitLevel(unit))
 			end
 		end
 	end
@@ -629,13 +588,15 @@ function LFT_UpdateInstances()
 			elseif instance.minLevel + 2 >= level then
 				color = COLOR_ORANGE
 			end
-
+            if controlsDisabled then
+                color = COLOR_DISABLED2
+            end
 			getglobal(instanceListEntry:GetName() .. "Name"):SetText(color .. instance.name)
 			getglobal(instanceListEntry:GetName() .. "Levels"):SetText(color .. "(" .. instance.minLevel .. " - " .. instance.maxLevel .. ")")
 		end
 	end
 
-	LFTFrameInstancesList:SetVerticalScroll(0)
+	--LFTFrameInstancesList:SetVerticalScroll(0)
 	LFTFrameInstancesList:UpdateScrollChildRect()
 end
 
@@ -755,7 +716,8 @@ function LFT_InitDropDown()
 		for _, text in ipairs(LFT_DropDownItems) do
 			UIDropDownMenu_AddButton({
 				text = text,
-				func = LFTFrameDropDownItem_OnClick
+				func = LFTFrameDropDownItem_OnClick,
+                checked = UIDropDownMenu_GetText(LFTFrameDropDown) == text
 			})
 		end
 	end)
@@ -769,8 +731,11 @@ function LFTFrameDropDownItem_OnClick()
 	local text = getglobal(this:GetName() .. "NormalText"):GetText()
 	UIDropDownMenu_SetText(text, LFTFrameDropDown)
 	UIDropDownMenu_SetSelectedValue(LFTFrameDropDown, this:GetID())
-
-	LFT_UpdateInstances()
+	for code in pairs(LFT_Instances) do
+		selectedInstances[code] = false
+	end
+	LFT_Update()
+	LFTFrameInstancesList:SetVerticalScroll(0)
 end
 
 -- animate minimap button eye

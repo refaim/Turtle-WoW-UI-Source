@@ -130,16 +130,16 @@ function SpellBookFrame_Update(showing)
 				-- skillLineTab:SetNormalTexture("Interface\\Icons\\BTNLeatherHood");
 			-- end
 			if (name == "ZzCompanions") then
-				skillLineTab.tooltip = "Companions";
+				skillLineTab.tooltip = TEXT(SPELLBOOK_COMPANIONS_BUTTON);
 			end
 			if (name == "ZMounts") then
-				skillLineTab.tooltip = "Mounts";
+				skillLineTab.tooltip = TEXT(SPELLBOOK_MOUNTS_BUTTON);
 			end
 			if (name == "ZzzGlyphs") then
-				skillLineTab.tooltip = "Glyphs";
+				skillLineTab.tooltip = TEXT(SPELLBOOK_GLYPHS_BUTTON);
 			end
 			if (name == "ZzzzToys") then
-				skillLineTab.tooltip = "Toys";
+				skillLineTab.tooltip = TEXT(SPELLBOOK_TOYS_BUTTON);
 			end
 			skillLineTab:Show();
 			-- Set the selected tab
