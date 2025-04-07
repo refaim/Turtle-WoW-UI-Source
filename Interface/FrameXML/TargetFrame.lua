@@ -543,25 +543,24 @@ function TargetFrame_HealthUpdate(elapsed, unit)
 	end
 end
 
-local targetFrame_floor = math.floor
+local floor = math.floor
 
-function TargetFrame_Round(num, numDecimalPlaces)
+local function round(num, numDecimalPlaces)
 	local mult = 10 ^ (numDecimalPlaces or 0)
-	return targetFrame_floor(num * mult + 0.5) / mult
+	return floor(num * mult + 0.5) / mult
 end
 
 function TargetFrame_FormatHealth(n)
 	if n <= 0 then n = 0 end
-	if n < 9999 then return TargetFrame_Round(n) end
-	if n < 999999 then return TargetFrame_Round(n / 10) / 100 .. 'K' or 0 end
-	return TargetFrame_Round(n / 10000) / 100 .. 'M' or 0
+	if n < 9999 then return round(n) end
+	if n < 999999 then return round(n / 10) / 100 .. 'K' or 0 end
+	return round(n / 10000) / 100 .. 'M' or 0
 end
 
 function TargetHealthCheck()
 	if ( UnitIsPlayer("target") ) then
-		local unitMinHP, unitMaxHP, unitCurrHP;
-		unitHPMin, unitHPMax = this:GetMinMaxValues();
-		unitCurrHP = this:GetValue();
+		local unitHPMin, unitHPMax = this:GetMinMaxValues();
+		local unitCurrHP = this:GetValue();
 		this:GetParent().unitHPPercent = unitCurrHP / unitHPMax;
 		if ( UnitIsDead("target") ) then
 			TargetPortrait:SetVertexColor(0.35, 0.35, 0.35, 1.0);
@@ -578,16 +577,8 @@ function TargetHealthCheck()
 		TargetHPText:Hide()
 		TargetHPPercText:Hide()
 	else
-		if GetCVar("statusBarText") == "1" then
-			TargetHPText:Show()
-			TargetHPPercText:Show()
-
-			TargetHPText:SetText(TargetFrame_FormatHealth(UnitHealth("target")))
-			TargetHPPercText:SetText(math.floor(UnitHealth("target") / UnitHealthMax("target") * 100) .. "%")
-		else
-			TargetHPText:Hide()
-			TargetHPPercText:Hide()
-		end
+		TargetHPText:SetText(TargetFrame_FormatHealth(UnitHealth("target")))
+		TargetHPPercText:SetText(math.floor(UnitHealth("target") / UnitHealthMax("target") * 100) .. "%")
 	end
 end
 
@@ -747,9 +738,8 @@ end
 
 function TargetofTargetHealthCheck()
 	if ( UnitIsPlayer("targettarget") ) then
-		local unitMinHP, unitMaxHP, unitCurrHP;
-		unitHPMin, unitHPMax = this:GetMinMaxValues();
-		unitCurrHP = this:GetValue();
+		local unitHPMin, unitHPMax = this:GetMinMaxValues();
+		local unitCurrHP = this:GetValue();
 		this:GetParent().unitHPPercent = unitCurrHP / unitHPMax;
 		if ( UnitIsDead("targettarget") ) then
 			TargetofTargetPortrait:SetVertexColor(0.35, 0.35, 0.35, 1.0);

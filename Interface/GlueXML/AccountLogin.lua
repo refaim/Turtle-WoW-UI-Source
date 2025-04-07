@@ -128,6 +128,11 @@ function AccountLogin_Turtle_Discord()
 	LaunchURL(TURTLE_DISCORD_WEBSITE);
 end
 
+function AccountLogin_Turtle_Reddit()
+	PlaySound("gsLoginNewAccount");
+	LaunchURL(TURTLE_REDDIT_WEBSITE);
+end
+
 function AccountLogin_Credits()
 	if ( not GlueDialog:IsVisible() ) then
 		PlaySound("gsTitleCredits");

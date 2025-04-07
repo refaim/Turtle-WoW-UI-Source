@@ -105,7 +105,7 @@
 				</FontString>
 			</Layer>
 			<Layer level="OVERLAY">
-				<FontString name="$parentNoResultsText" inherits="GameFontNormalLarge" text="No results." hidden="true">
+				<FontString name="$parentNoResultsText" inherits="GameFontNormalLarge" text="NO_RESULTS" hidden="true">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="TradeSkillFrame">
 							<Offset>
@@ -523,7 +523,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. 'Text'):SetText("Have materials");
+						getglobal(this:GetName() .. 'Text'):SetText(HAVE_MATERIALS);
 					</OnLoad>
 					<OnClick>
 						TradeSkillFrame_Search();
@@ -544,7 +544,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. 'Text'):SetText("Provides skill-up");
+						getglobal(this:GetName() .. 'Text'):SetText(IMPROVES_SKILL);
 					</OnLoad>
 					<OnClick>
 						TradeSkillFrame_Search();

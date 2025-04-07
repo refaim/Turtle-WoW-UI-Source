@@ -3,7 +3,7 @@
 	<Script file="UIParent.lua"/>
 	<Frame name="GameMenuFrame" toplevel="true" frameStrata="DIALOG" movable="true" enableMouse="true" hidden="true" parent="UIParent">
 		<Size>
-			<AbsDimension x="195" y="246"/>
+			<AbsDimension x="195" y="310"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER"/>
@@ -45,11 +45,29 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Button name="GameMenuButtonOptions" inherits="GameMenuButtonTemplate" text="VIDEOOPTIONS_MENU">
+			<Button name="GameMenuButtonShop" inherits="GameMenuButtonTemplate" text="DONATION_REWARDS_MENU">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP">
 						<Offset>
-							<AbsDimension x="0" y="-37"/>
+							<AbsDimension x="0" y="-42" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "Text"):SetTextColor(1.0, 0.82, 0.0)
+					</OnLoad>
+					<OnClick>
+						HideUIPanel(GameMenuFrame);
+						ShopFrame_Toggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="GameMenuButtonOptions" inherits="GameMenuButtonTemplate" text="VIDEOOPTIONS_MENU">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="GameMenuButtonShop" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-16"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -94,7 +112,7 @@
 				<Anchors>
 					<Anchor point="TOP" relativeTo="GameMenuButtonUIOptions" relativePoint="BOTTOM">
 						<Offset>
-							<AbsDimension x="0" y="-1"/>
+							<AbsDimension x="0" y="-16"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -126,7 +144,7 @@
 				<Anchors>
 					<Anchor point="TOP" relativeTo="GameMenuButtonMacros" relativePoint="BOTTOM">
 						<Offset>
-							<AbsDimension x="0" y="-1"/>
+							<AbsDimension x="0" y="-16"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

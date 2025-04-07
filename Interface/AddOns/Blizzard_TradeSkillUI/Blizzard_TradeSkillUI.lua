@@ -86,7 +86,7 @@ function TradeSkillFrame_Show()
 
 	TradeSkillMatsCheckButton:SetChecked(0)
 	TradeSkillSkillCheckButton:SetChecked(0)
-	TradeSkillSearchBox:SetText("Search")
+	TradeSkillSearchBox:SetText(SEARCH)
 
 	CloseDropDownMenus();
 	TradeSkillSubClassDropDown:Hide();
