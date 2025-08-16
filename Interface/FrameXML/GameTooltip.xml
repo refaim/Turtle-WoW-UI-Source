@@ -12,12 +12,18 @@
 			<OnEvent>
 				if ( event == "UPDATE_MOUSEOVER_UNIT" ) then
 					getglobal(this:GetName().."TextLeft1"):SetTextColor(GameTooltip_UnitColor("mouseover"));
+
+					if UnitIsPlayer("mouseover") then
+						TargetFrame_CheckChallenges("mouseover")
+					end
 				end
 			</OnEvent>
 			<OnHide>
 				GameTooltip_OnHide();
 				ShoppingTooltip1:Hide();
 				ShoppingTooltip2:Hide();
+
+				this.challenges = false
 			</OnHide>
 		</Scripts>
 	</GameTooltip>

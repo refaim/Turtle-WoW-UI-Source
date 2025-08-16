@@ -11,7 +11,6 @@ MAX_BATTLEFIELD_QUEUES = 3;
 CURRENT_BATTLEFIELD_QUEUES = {};
 PREVIOUS_BATTLEFIELD_QUEUES = {};
 
-
 function BattlefieldFrame_OnLoad()
 	this:RegisterEvent("BATTLEFIELDS_SHOW");
 	this:RegisterEvent("BATTLEFIELDS_CLOSED");
@@ -307,47 +306,46 @@ function MiniMapBattlefieldDropDown_Initialize()
 	local numQueued = 0;
 	for i=1, MAX_BATTLEFIELD_QUEUES do
 		status, mapName, instanceID = GetBattlefieldStatus(i);
+
 		if ( status == "queued" or status == "confirm" ) then
 			numQueued = numQueued+1;
 			-- Add a spacer if there were dropdown items before this
 			if ( numQueued > 1 ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = "";
 				info.isTitle = 1;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
 			end
 
-			info = {};
+			info = UIDropDownMenu_CreateInfo();
 			info.text = mapName;
 			info.isTitle = 1;
 			info.notCheckable = 1;
 			UIDropDownMenu_AddButton(info);
 			if ( status == "queued" ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = CHANGE_INSTANCE;
 				info.func = ShowBattlefieldList;
 				info.arg1 = i;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-				info = {};
 				info.text = LEAVE_QUEUE;
-				info.func = AcceptBattlefieldPort;
+				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = nil;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
 			elseif ( status == "confirm" ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = ENTER_BATTLE;
 				info.func = AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = 1;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-				info = {};
 				info.text = LEAVE_QUEUE;
-				info.func = AcceptBattlefieldPort;
+				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = nil;
 				info.notCheckable = 1;

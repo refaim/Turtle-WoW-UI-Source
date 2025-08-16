@@ -1,3 +1,4 @@
+GlueConstants.lua
 GlueStrings.lua
 GlueFonts.xml
 GlueLocalization.xml

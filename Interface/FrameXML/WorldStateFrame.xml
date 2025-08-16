@@ -144,6 +144,7 @@
 							</Offset>
 						</Anchor>
 					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="1"/>
 				</Texture>
 				<Texture name="$parentFactionRight" file="Interface\WorldStateFrame\WorldStateFinalScore-Highlight">
 					<Size>
@@ -161,6 +162,7 @@
 							</Offset>
 						</Anchor>
 					</Anchors>
+					<TexCoords left="1" right="0" top="0" bottom="1"/>
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
@@ -1347,6 +1349,7 @@
 									</Offset>
 								</Anchor>
 							</Anchors>
+							<TexCoords left="0" right="1" top="0" bottom="1"/>
 						</Texture>
 						<Texture name="$parentRight" file="Interface\WorldStateFrame\WorldStateFinalScore-Highlight">
 							<Size>
@@ -1364,6 +1367,7 @@
 									</Offset>
 								</Anchor>
 							</Anchors>
+							<TexCoords left="1" right="0" top="0" bottom="1"/>
 						</Texture>
 						<FontString name="$parentText" inherits="GameFontHighlight">
 							<Anchors>
@@ -1387,6 +1391,17 @@
 			</OnLoad>
 			<OnEvent>
 				if	( event == "UPDATE_BATTLEFIELD_SCORE" or event == "UPDATE_WORLD_STATES") then
+					local _, instanceType = IsInInstance()
+					if ( event == "UPDATE_WORLD_STATES" ) then
+						if instanceType == "none" then
+							this.arenaData = nil
+						end
+					else
+						if instanceType == "pvp" and not this.arenaData then
+							RequestArenaScoreInfo()
+						end
+					end
+
 					if ( WorldStateScoreFrame:IsVisible() or GetBattlefieldWinner() ) then
 						WorldStateScoreFrame_Resize();
 						WorldStateScoreFrame_Update();
@@ -1398,6 +1413,10 @@
 				end
 			</OnEvent>
 			<OnShow>
+				if this.arenaData then
+					RequestArenaScoreInfo()
+				end
+
 				WorldStateScoreFrame_Resize();
 				WorldStateScoreFrame_Update();
 				WorldStateScoreFrameTab_OnClick(WorldStateScoreFrameTab1);

@@ -717,5 +717,12 @@ function SendMailPackageButton_OnClick()
 		DropCursorMoney();
 	else
 		ClickSendMailItemButton();
+		if arg1 == "RightButton" then
+			PutItemInBackpack()
+			PutItemInBag(20)
+			PutItemInBag(21)
+			PutItemInBag(22)
+			PutItemInBag(23)
+		end
 	end
 end

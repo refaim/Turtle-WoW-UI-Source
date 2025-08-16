@@ -34,7 +34,7 @@ function TradeSkillFrame_Search()
 	local isMatsChecked = TradeSkillMatsCheckButton:GetChecked()
 	local isSkillChecked = TradeSkillSkillCheckButton:GetChecked()
 
-	if query ~= "search" and query ~= "" or isMatsChecked or isSkillChecked then
+	if query ~= "" or isMatsChecked or isSkillChecked then
 		local lastHeaderPos = -1
 
 		for i = 1, GetNumTradeSkills() do
@@ -52,7 +52,7 @@ function TradeSkillFrame_Search()
 				end
 				lastHeaderPos = table.getn(searchResults)
 			else
-				if query ~= "search" and query ~= "" then
+				if query ~= "" then
 					if strfind(strlower(skillName), query) then
 						table.insert(searchResults, i)
 
@@ -86,7 +86,6 @@ function TradeSkillFrame_Show()
 
 	TradeSkillMatsCheckButton:SetChecked(0)
 	TradeSkillSkillCheckButton:SetChecked(0)
-	TradeSkillSearchBox:SetText(SEARCH)
 
 	CloseDropDownMenus();
 	TradeSkillSubClassDropDown:Hide();
@@ -152,7 +151,7 @@ end
 
 function TradeSkillFrame_Update()
 	local numTradeSkills = GetNumTradeSkills();
-	local skillOffset = FauxScrollFrame_GetOffset(TradeSkillListScrollFrame);
+	local skillOffset = FauxScrollFrame_GetOffset(TradeSkillListScrollFrame) or 0;
 	-- If no tradeskills
 	if ( numTradeSkills == 0 ) then
 		TradeSkillFrameTitleText:SetText(format(TEXT(TRADE_SKILL_TITLE), GetTradeSkillLine()));
@@ -184,7 +183,7 @@ function TradeSkillFrame_Update()
 	for i=1, TRADE_SKILLS_DISPLAYED, 1 do
 		local skillIndex = 0
 
-		if TradeSkillSearchBox:GetText() ~= "Search" or TradeSkillMatsCheckButton:GetChecked() or TradeSkillSkillCheckButton:GetChecked() then
+		if TradeSkillSearchBox:GetText() ~= "" or TradeSkillMatsCheckButton:GetChecked() or TradeSkillSkillCheckButton:GetChecked() then
 			if results > 0 then
 				if searchResults[i + skillOffset] then
 					skillIndex = searchResults[i + skillOffset]

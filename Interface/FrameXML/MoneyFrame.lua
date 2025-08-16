@@ -165,7 +165,9 @@ end
 function MoneyFrame_UpdateMoney()
 	if ( this.info ) then
 		local money = this.info.UpdateFunc();
-		MoneyFrame_Update(this:GetName(), money);
+		if ( money ) then
+			MoneyFrame_Update(this:GetName(), money);
+		end
 		if ( this.hasPickup == 1 ) then
 			UpdateCoinPickupFrame(money);
 		end
@@ -209,7 +211,7 @@ function MoneyFrame_Update(frameName, money)
 	copperButton:Show();
 
 	-- Store how much money the frame is displaying
-	frame.staticMoney = money;
+	frame.staticMoney = money or 0;
 
 	-- If not collapsable don't need to continue
 	if ( not info.collapse ) then

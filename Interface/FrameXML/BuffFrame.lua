@@ -19,10 +19,6 @@ function BuffFrame_OnLoad()
 	BuffFrameFlashTime = 0;
 	BuffFrameFlashState = 1;
 	BUFF_ALPHA_VALUE = 1;
-
-	for i=1, 24 do
-		getglobal("BuffButton"..(i-1).."Duration"):SetPoint("TOP", "BuffButton"..(i-1), "BOTTOM", 0, 0);
-	end
 end
 
 function BuffFrame_OnUpdate(elapsed)
@@ -150,13 +146,21 @@ function BuffButton_OnClick()
 end
 
 function BuffButtons_UpdatePositions()
+	local padding;
 	if ( SHOW_BUFF_DURATIONS == "1" ) then
-		BuffButton8:SetPoint("TOP", "TempEnchant1", "BOTTOM", 0, -15);
-		BuffButton16:SetPoint("TOPRIGHT", "TemporaryEnchantFrame", "TOPRIGHT", 0, -90);
+		padding = -15;
 	else
-		BuffButton8:SetPoint("TOP", "TempEnchant1", "BOTTOM", 0, -5);
-		BuffButton16:SetPoint("TOPRIGHT", "TemporaryEnchantFrame", "TOPRIGHT", 0, -70);
+		padding = -5;
 	end
+	if ( TempEnchant1:IsShown() ) then
+		BuffButton8:SetPoint("TOP", "TempEnchant1", "BOTTOM", 0, padding);
+	else
+		BuffButton8:SetPoint("TOP", "BuffButton0", "BOTTOM", 0, padding);
+	end
+	BuffButton16:SetPoint("TOP", "BuffButton8", "BOTTOM", 0, padding);
+	BuffButton24:SetPoint("TOP", "BuffButton16", "BOTTOM", 0, padding);
+	BuffButton32:SetPoint("TOP", "BuffButton24", "BOTTOM", 0, padding);
+	BuffButton40:SetPoint("TOP", "BuffButton32", "BOTTOM", 0, padding);
 end
 
 function BuffFrame_Enchant_OnUpdate(elapsed)
@@ -182,7 +186,6 @@ function BuffFrame_Enchant_OnUpdate(elapsed)
 		TempEnchant1:SetID(17);
 		TempEnchant1Icon:SetTexture(textureName);
 		TempEnchant1:Show();
-		hasEnchant = 1;
 
 		-- Show buff durations if necessary
 		if ( offHandExpiration ) then
@@ -205,7 +208,6 @@ function BuffFrame_Enchant_OnUpdate(elapsed)
 		enchantButton:SetID(16);
 		getglobal(enchantButton:GetName().."Icon"):SetTexture(textureName);
 		enchantButton:Show();
-		hasEnchant = 1;
 
 		-- Show buff durations if necessary
 		if ( mainHandExpiration ) then

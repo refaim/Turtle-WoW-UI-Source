@@ -3,7 +3,7 @@
 	<Script file="FriendsFrame.lua"/>
 	<Button name="FriendsFrameButtonTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="298" y="31"/>
+			<AbsDimension x="298" y="30"/>
 		</Size>
 		<Frames>
 			<Frame name="$parentButtonText" setAllPoints="true">
@@ -456,6 +456,20 @@
 			</Anchors>
 		</ButtonText>
 		<NormalFont inherits="GameFontHighlightSmall"/>
+		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parentLeft">
+					<Offset>
+						<AbsDimension x="-2" y="5"/>
+					</Offset>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT" relativeTo="$parentRight">
+					<Offset>
+						<AbsDimension x="2" y="-7"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
 	</Button>
 	<CheckButton name="GuildControlPopupFrameCheckboxTemplate" virtual="true">
 		<Size>
@@ -741,7 +755,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="FriendsFrame">
 								<Offset>
-									<AbsDimension x="23" y="-76"/>
+									<AbsDimension x="23" y="-78"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1324,6 +1338,7 @@
 						</Anchors>
 						<Frames>
 							<Frame name="WhoFrameDropDown" inherits="UIDropDownMenuTemplate" id="1">
+								<HitRectInsets left="12" right="16" top="0" bottom="0"/>
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset>
@@ -3122,7 +3137,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="GuildMemberDetailZoneText" inherits="GameFontHighlight">
+						<FontString name="GuildMemberDetailZoneText" inherits="GameFontHighlight" justifyH="LEFT">
 							<Size x="147" y="12"/>
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="GuildMemberDetailZoneLabel" relativePoint="RIGHT">
@@ -3445,6 +3460,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(2);
+					</OnLoad>
 					<OnEnter>
 						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(FRIENDS), "TOGGLEFRIENDSTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_FRIENDSTAB, 1);
 					</OnEnter>
@@ -3481,6 +3499,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(2);
+					</OnLoad>
 					<OnEnter>
 						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(WHO), "TOGGLEWHOTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_WHOTAB, 1);
 					</OnEnter>

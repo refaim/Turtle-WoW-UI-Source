@@ -860,7 +860,7 @@
 									<Anchors>
 										<Anchor point="TOPLEFT">
 											<Offset>
-												<AbsDimension x="-2" y="2"/>
+												<AbsDimension x="-1" y="1"/>
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -943,6 +943,7 @@
 								SendMailPackageButton_OnClick();
 							</OnReceiveDrag>
 							<OnLoad>
+								this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 								this:RegisterForDrag("LeftButton");
 								SendMailMoney.nextFocus = SendMailNameEditBox;
 							</OnLoad>
@@ -1914,4 +1915,3 @@
 		</Scripts>
 	</Frame>
 </Ui>
-

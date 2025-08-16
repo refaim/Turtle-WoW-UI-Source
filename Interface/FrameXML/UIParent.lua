@@ -14,7 +14,7 @@ BATTLEFIELD_TAB_OFFSET_Y = 0;
 UIPanelWindows = {};
 UIPanelWindows["GameMenuFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["OptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
-UIPanelWindows["SoundOptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
+UIPanelWindows["SoundOptionsFrame"] =	{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["UIOptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["CharacterFrame"] =		{ area = "left",	pushable = 2 ,	whileDead = 1};
 UIPanelWindows["ItemTextFrame"] =		{ area = "left",	pushable = 0 };
@@ -30,14 +30,14 @@ UIPanelWindows["FriendsFrame"] =		{ area = "left",	pushable = 0,	whileDead = 1 }
 UIPanelWindows["WorldMapFrame"] =		{ area = "full",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["CinematicFrame"] =		{ area = "full",	pushable = 0 };
 UIPanelWindows["TabardFrame"] =			{ area = "left",	pushable = 0 };
-UIPanelWindows["GuildRegistrarFrame"] =		{ area = "left",	pushable = 0 };
+UIPanelWindows["GuildRegistrarFrame"] =	{ area = "left",	pushable = 0 };
 UIPanelWindows["PetitionFrame"] =		{ area = "left",	pushable = 0 };
 UIPanelWindows["HelpFrame"] =			{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["GossipFrame"] =			{ area = "left",	pushable = 0 };
 UIPanelWindows["MailFrame"] =			{ area = "left",	pushable = 0 };
-UIPanelWindows["BattlefieldFrame"] =		{ area = "left",	pushable = 0 };
+UIPanelWindows["BattlefieldFrame"] =	{ area = "left",	pushable = 0 };
 UIPanelWindows["PetStableFrame"] =		{ area = "left",	pushable = 0 };
-UIPanelWindows["WorldStateScoreFrame"] =	{ area = "center",	pushable = 0,	whileDead = 1 };
+UIPanelWindows["WorldStateScoreFrame"] ={ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["DressUpFrame"] =		{ area = "left",	pushable = 2 };
 UIPanelWindows["MinigameFrame"] =		{ area = "left",	pushable = 0 };
 
@@ -723,7 +723,7 @@ function ShowUIPanel(frame, force)
 	end
 
 	-- If there's only one open...
-	leftInfo = UIPanelWindows[leftFrame:GetName()];
+	local leftInfo = UIPanelWindows[leftFrame:GetName()];
 	if ( not centerFrame ) then
 		-- If neither is pushable, replace
 		if ( (leftInfo.pushable == 0) and (info.pushable == 0) ) then
@@ -984,7 +984,7 @@ end
 function CloseMenus()
 	local menusVisible = nil;
 	for index, value in UIMenus do
-		menu = getglobal(value);
+		local menu = getglobal(value);
 		if ( menu and menu:IsVisible() ) then
 			menu:Hide();
 			menusVisible = 1;
@@ -1586,7 +1586,7 @@ UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = {baseY = 0, bottomLeft 
 UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_X"] = {baseX = 0, rightLeft = 90, rightRight = 45, isVar = "xAxis"};
 UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_Y"] = {baseY = 70, bottomEither = 27, bottomRight = 0, reputation = 9, isVar = "yAxis", pet = 23};
 UIPARENT_MANAGED_FRAME_POSITIONS["BATTLEFIELD_TAB_OFFSET_Y"] = {baseY = 210, bottomRight = 40, reputation = 9, isVar = "yAxis"};
-UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = {baseY = 97, bottomLeft = 43, reputation = 9, maxLevel = -5, isVar = "yAxis"};
+UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = {baseY = 97, reputation = 9, maxLevel = -5, isVar = "yAxis"};
 
 -- Call this function to update the positions of all frames that can appear on the right side of the screen
 function UIParent_ManageFramePositions()
@@ -1640,7 +1640,7 @@ function UIParent_ManageFramePositions()
 			end
 
 			-- Iterate through frames that affect y offsets
-			local hasBottomLeft, hasPetBar;
+			local hasBottomLeft, hasPetBar, hasBottomRight;
 			for flag, flagValue in yOffsetFrames do
 				if ( value[flagValue] ) then
 					if ( flagValue == "bottomLeft" ) then
@@ -1704,8 +1704,6 @@ function UIParent_ManageFramePositions()
 
 	-- Update shapeshift bar appearance
 	if ( MultiBarBottomLeft:IsShown() ) then
-		SlidingActionBarTexture0:Hide();
-		SlidingActionBarTexture1:Hide();
 		if ( ShapeshiftBarFrame ) then
 			ShapeshiftBarLeft:Hide();
 			ShapeshiftBarRight:Hide();
@@ -1716,12 +1714,10 @@ function UIParent_ManageFramePositions()
 			end
 		end
 	else
-		if ( GetNumShapeshiftForms() > 2 ) then
-			ShapeshiftBarMiddle:Show();
-		end
-		SlidingActionBarTexture0:Show();
-		SlidingActionBarTexture1:Show();
 		if ( ShapeshiftBarFrame ) then
+			if ( GetNumShapeshiftForms() > 2 ) then
+				ShapeshiftBarMiddle:Show();
+			end
 			ShapeshiftBarLeft:Show();
 			ShapeshiftBarRight:Show();
 			for i=1, GetNumShapeshiftForms() do
@@ -1733,6 +1729,23 @@ function UIParent_ManageFramePositions()
 
 	-- If petactionbar is already shown have to set its point is addition to changing its y target
 	if ( PetActionBarFrame:IsShown() ) then
+		SlidingActionBarTexture0:Show();
+		SlidingActionBarTexture1:Show();
+		if ( ShapeshiftBarFrame and ShapeshiftBarFrame:IsShown() ) then
+			PETACTIONBAR_XPOS = 539;
+			if ( MultiBarBottomRight:IsShown() ) then
+				PETACTIONBAR_YPOS = PETACTIONBAR_YPOS + 43;
+				SlidingActionBarTexture0:Hide();
+				SlidingActionBarTexture1:Hide();
+			end
+		else
+			PETACTIONBAR_XPOS = 36;
+			if ( MultiBarBottomLeft:IsShown() ) then
+				PETACTIONBAR_YPOS = PETACTIONBAR_YPOS + 43;
+				SlidingActionBarTexture0:Hide();
+				SlidingActionBarTexture1:Hide();
+			end
+		end
 		PetActionBarFrame:SetPoint("TOPLEFT", MainMenuBar, "BOTTOMLEFT", PETACTIONBAR_XPOS, PETACTIONBAR_YPOS);
 	end
 

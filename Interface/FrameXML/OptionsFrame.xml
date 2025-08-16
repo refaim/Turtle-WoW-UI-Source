@@ -194,10 +194,12 @@
 								if ( this:GetChecked() ) then
 									PlaySound("igMainMenuOptionCheckBoxOn");
 								else
+									StaticPopup_Show("DISABLE_OPTION_WARNING2")
 									PlaySound("igMainMenuOptionCheckBoxOff");
 								end
 								OptionsFrame_UpdateCheckboxes();
 								OptionsFrame_UpdateGammaControls();
+								OptionsFrame_UpdateRefreshRatesDropdown();
 							</OnClick>
 						</Scripts>
 					</CheckButton>
@@ -507,6 +509,7 @@
 								if ( this:GetChecked() ) then
 									PlaySound("igMainMenuOptionCheckBoxOn");
 								else
+									StaticPopup_Show("DISABLE_OPTION_WARNING")
 									PlaySound("igMainMenuOptionCheckBoxOff");
 								end
 								OptionsFrame_UpdateCheckboxes();

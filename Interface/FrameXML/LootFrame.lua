@@ -2,14 +2,31 @@ LOOTFRAME_NUMBUTTONS = 4;
 NUM_GROUP_LOOT_FRAMES = 4;
 MASTER_LOOT_THREHOLD = 4;
 
+local GroupRoster = {}
+for k in pairs(RAID_CLASS_COLORS) do
+	GroupRoster[k] = {}
+	for k2, v2 in pairs(TW_CLASS_TOKEN[GetLocale()]) do
+		if v2 == k then
+			GroupRoster[k].class = k2
+		end
+	end
+end
+
+local lastSelectedButton = nil
+
 function LootFrame_OnLoad()
 	this:RegisterEvent("LOOT_OPENED");
 	this:RegisterEvent("LOOT_SLOT_CLEARED");
 	this:RegisterEvent("LOOT_CLOSED");
 	this:RegisterEvent("OPEN_MASTER_LOOT_LIST");
 	this:RegisterEvent("UPDATE_MASTER_LOOT_LIST");
-
+	this:RegisterEvent("RAID_ROSTER_UPDATE")
 	this:SetClampedToScreen(true)
+	local OnHide = DropDownList1:GetScript("OnHide")
+	DropDownList1:SetScript("OnHide", function()
+		if OnHide then OnHide() end
+		lastSelectedButton = nil
+	end)
 end
 
 function LootFrame_OnEvent(event)
@@ -68,11 +85,54 @@ function LootFrame_OnEvent(event)
 		return;
 	end
 	if ( event == "OPEN_MASTER_LOOT_LIST" ) then
-		ToggleDropDownMenu(1, nil, GroupLootDropDown, LootFrame.selectedLootButton, 0, 0);
+		LootFrame_UpdateRoster()
+		if LootFrame.selectedLootButton ~= lastSelectedButton then
+			DropDownList1:Hide()
+			ToggleDropDownMenu(1, nil, GroupLootDropDown, LootFrame.selectedLootButton, 0, 0);
+			lastSelectedButton = LootFrame.selectedLootButton
+		else
+			DropDownList1:Hide()
+			lastSelectedButton = nil
+		end
 		return;
 	end
 	if ( event == "UPDATE_MASTER_LOOT_LIST" ) then
 		UIDropDownMenu_Refresh(GroupLootDropDown);
+	end
+	if ( event == "RAID_ROSTER_UPDATE" ) then
+		LootFrame_UpdateRoster()
+	end
+end
+
+function LootFrame_UpdateRoster()
+	for class in pairs(GroupRoster) do
+		for i = getn(GroupRoster[class]), 1, -1 do
+			tremove(GroupRoster[class], i)
+		end
+	end
+	local class, name
+	if UnitInRaid("player") then
+		for i = 1, GetNumRaidMembers() do
+			if GetRaidRosterInfo(i) then
+				_, class = UnitClass("raid" .. i)
+				name = GetRaidRosterInfo(i)
+				tinsert(GroupRoster[class], name)
+			end
+		end
+	elseif UnitInParty("player") then
+		_, class = UnitClass("player")
+		name = UnitName("player")
+		tinsert(GroupRoster[class], name)
+		for i = 1, GetNumPartyMembers() do
+			if UnitName("party" .. i) then
+				_, class = UnitClass("party" .. i)
+				name = UnitName("party" .. i)
+				tinsert(GroupRoster[class], name)
+			end
+		end
+	end
+	for k in pairs(GroupRoster) do
+		sort(GroupRoster[k])
 	end
 end
 
@@ -177,22 +237,40 @@ function GroupLootDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, GroupLootDropDown_Initialize, "MENU");
 end
 
+local function IsRaidMemberOffline(member)
+	for i = 1, MAX_RAID_MEMBERS do
+		if GetRaidRosterInfo(i) then
+			local name, rank, subgroup, level, class, classToken, zone, online, isDead = GetRaidRosterInfo(i)
+			if name == member and not online then
+				return 1
+			end
+		end
+	end
+	return nil
+end
+
+local DropDownSorted = { "DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR" }
+
 function GroupLootDropDown_Initialize()
 	local candidate, info;
 
 	if ( UIDROPDOWNMENU_MENU_LEVEL == 2 ) then
-		local lastIndex = UIDROPDOWNMENU_MENU_VALUE + 5 - 1;
-		for i=UIDROPDOWNMENU_MENU_VALUE, lastIndex do
-			candidate = GetMasterLootCandidate(i);
-			if ( candidate ) then
-				-- Add candidate button
-				info = {};
-				info.text = candidate;
-				info.textHeight = 12;
-				info.value = i;
-				info.notCheckable = 1;
-				info.func = GroupLootDropDown_GiveLoot;
-				UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+		for _, player in ipairs(GroupRoster[UIDROPDOWNMENU_MENU_VALUE]) do
+			for i = 1, MAX_RAID_MEMBERS do
+				if player == GetMasterLootCandidate(i) then
+					info = UIDropDownMenu_CreateInfo()
+					info.value = i
+					info.text = player
+					info.textHeight = 12
+					info.notCheckable = 1
+					info.textR = RAID_CLASS_COLORS[UIDROPDOWNMENU_MENU_VALUE].r
+					info.textG = RAID_CLASS_COLORS[UIDROPDOWNMENU_MENU_VALUE].g
+					info.textB = RAID_CLASS_COLORS[UIDROPDOWNMENU_MENU_VALUE].b
+					info.disabled = IsRaidMemberOffline(player)
+					info.func = GroupLootDropDown_GiveLoot
+					UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
+					break
+				end
 			end
 		end
 		return;
@@ -200,42 +278,55 @@ function GroupLootDropDown_Initialize()
 
 	if ( GetNumRaidMembers() > 0 ) then
 		-- In a raid
-		info = {};
+		info = UIDropDownMenu_CreateInfo();
 		info.text = GIVE_LOOT;
 		info.textHeight = 12;
 		info.notCheckable = 1;
 		info.isTitle = 1;
 		UIDropDownMenu_AddButton(info);
-		for i=1, 40, 5 do
-			for j=i, i+4 do
-				candidate = GetMasterLootCandidate(j);
-				if ( candidate ) then
-					-- Add raid group
-					info = {};
-					info.text = GROUP.." "..ceil(i/5);
-					info.textHeight = 12;
-					info.hasArrow = 1;
-					info.notCheckable = 1;
-					info.value = j;
-					info.func = nil;
-					UIDropDownMenu_AddButton(info);
-					break;
-				end
+
+		info.textHeight = 12
+		info.notCheckable = 1
+		info.hasArrow = 1
+		info.isTitle = nil
+		info.disabled = nil
+		for _, classToken in ipairs(DropDownSorted) do
+			info.text = GroupRoster[classToken].class
+			info.textR = RAID_CLASS_COLORS[classToken].r
+			info.textG = RAID_CLASS_COLORS[classToken].g
+			info.textB = RAID_CLASS_COLORS[classToken].b
+			info.value = classToken
+			if getn(GroupRoster[classToken]) > 0 then
+				UIDropDownMenu_AddButton(info)
 			end
 		end
 	else
 		-- In a party
-
 		for i=1, MAX_PARTY_MEMBERS+1, 1 do
 			candidate = GetMasterLootCandidate(i);
 			if ( candidate ) then
 				-- Add candidate button
-				info = {};
+				local class
+				local unit
+				if candidate == UnitName("player") then
+					unit = "player"
+				else
+					for j = 1, 4 do
+						if candidate == UnitName("party"..j) then
+							unit = "party"..j
+							break
+						end
+					end
+				end
+				_, class = UnitClass(unit)
+				info = UIDropDownMenu_CreateInfo();
 				info.text = candidate;
+				info.textR = RAID_CLASS_COLORS[class].r
+				info.textG = RAID_CLASS_COLORS[class].g
+				info.textB = RAID_CLASS_COLORS[class].b
 				info.textHeight = 12;
 				info.value = i;
 				info.notCheckable = 1;
-				info.value = i;
 				info.func = GroupLootDropDown_GiveLoot;
 				UIDropDownMenu_AddButton(info);
 			end

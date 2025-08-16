@@ -758,19 +758,13 @@
 					</Frame>
 				</Frames>
 			</Frame>
-			<Button name="TWTitles" inherits="UIDropDownMenuTemplate" text="None">
+			<Button name="$parentTitlesDropdown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="CharacterLevelText" relativePoint="BOTTOM">
 						<Offset x="0" y="-3"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnLoad>
-						TitlesDropDown_OnLoad()
-					</OnLoad>
-					<OnEvent>
-						TWTitles_OnEvent()
-					</OnEvent>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
 						GameTooltip:SetText(TW_TITLES_SELECT);

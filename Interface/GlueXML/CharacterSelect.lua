@@ -6,7 +6,6 @@ CHARACTER_ROTATION_CONSTANT = 0.6;
 MAX_CHARACTERS_DISPLAYED = 10;
 MAX_CHARACTERS_PER_REALM = 10;
 
-
 function CharacterSelect_OnLoad()
 	this:SetSequence(0);
 	this:SetCamera(0);
@@ -224,14 +223,10 @@ end
 function UpdateCharacterList()
 	local numChars = GetNumCharacters();
 	local index = 1;
-	local coords;
+
 	for i=1, numChars, 1 do
 		local name, race, class, level, zone, fileString, gender, ghost = GetCharacterInfo(i);
-		if ( gender == 0 ) then
-			gender = "MALE";
-		else
-			gender = "FEMALE";
-		end
+
 		local button = getglobal("CharSelectCharacterButton"..index);
 		if ( not name ) then
 			button:SetText("ERROR - Tell Jeremy");
@@ -239,11 +234,17 @@ function UpdateCharacterList()
 			if ( not zone ) then
 				zone = "";
 			end
+
+			local classColor = "|cffFFFFFF"
+			local classToken = TW_CLASS_TOKEN[GetLocale()] and TW_CLASS_TOKEN[GetLocale()][class]
+			if classToken then
+				classColor = CLASS_COLORS[classToken] or classColor
+			end
 			getglobal("CharSelectCharacterButton"..index.."ButtonTextName"):SetText(name);
-			if( ghost ) then
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO_GHOST), level, class));
+			if ( ghost ) then
+				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO_GHOST), level, classColor .. class .. "|r"));
 			else
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO), level, class));
+				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO), level, classColor .. class .. "|r"));
 			end
 			getglobal("CharSelectCharacterButton"..index.."ButtonTextLocation"):SetText(zone);
 		end

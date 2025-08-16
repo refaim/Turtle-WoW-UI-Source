@@ -1,20 +1,23 @@
 local strfind = string.find
 local gsub = string.gsub
+local strsub = string.sub
 
 ChatFrame_OnEvent_Original = ChatFrame_OnEvent
 
 function ChatFrame_OnEvent(event)
-	if  event == "CHAT_MSG_HARDCORE" then
+	if event == "CHAT_MSG_HARDCORE" then
+		-- Remove GM's coloured text from the message
+		local output, c = gsub(arg1, "^|c", "")
+		if c then
+			_, _, output = strfind(arg1, "(ª.*ª)")
+		end
+		if not output then
+			output = arg1
+		end
 
-		--Remove GM's coloured text from the message
-		local output,c = string.gsub(arg1, "^|c", "")
-		if c then _, _, output = string.find(arg1,"(ª.*ª)") end
-		if output == nil then output = arg1 end
-
-		--Some checks to see if the message is the spoofed AddonMessage
-		local _,c=string.gsub(output,"ª","")
-		if string.sub(output,1, 2) == "ª" and string.sub(output,-2) == "ª" and c == 3 then
-
+		-- Some checks to see if the message is the spoofed AddonMessage
+		local _, c = gsub(output, "ª", "")
+		if strsub(output, 1, 2) == "ª" and strsub(output, -2) == "ª" and c == 3 then
 			--[[
 			-- This is an example of how you could convert this CHAT_MSG into a similar format to a regular CHAT_MSG_ADDON event.
 			-- I recommend using copying this entire function as is and expanding this commented section for your addons.
@@ -29,7 +32,7 @@ function ChatFrame_OnEvent(event)
 			local sender = arg2
 			local msgType = "HARDCORE"
 
-			]]--
+			]]           --
 			return false --Hides the "AddonMessage" from the Hardcore chat client side.
 		end
 	end
@@ -38,13 +41,13 @@ end
 
 -- Extends SendAddonMessage() to support a "HARDCORE" type.
 SendAddonMessage_Original = SendAddonMessage
-function SendAddonMessage(prefix, text, msgType, target)
 
+function SendAddonMessage(prefix, text, msgType, target)
 	if msgType == "HARDCORE" then
-		SendChatMessage("ª"..prefix.."ª"..text.."ª","HARDCORE")
+		SendChatMessage("ª" .. prefix .. "ª" .. text .. "ª", "HARDCORE")
 		return false
 	else
-		SendAddonMessage_Original(prefix,text,msgType)
+		SendAddonMessage_Original(prefix, text, msgType)
 	end
 end
 
@@ -56,8 +59,8 @@ local function SameSet(id, set)
 	HooksScanTooltip:ClearLines()
 	HooksScanTooltip:SetHyperlink(id)
 	for i = 1, HooksScanTooltip:NumLines() do
-		local left = getglobal("HooksScanTooltipTextLeft"..i):GetText()
-		if left and strfind(left, "^"..set) then
+		local left = _G["HooksScanTooltipTextLeft" .. i]:GetText()
+		if left and strfind(left, "^" .. set) then
 			return true
 		end
 	end
@@ -72,7 +75,7 @@ local function FixSetInspect(tooltip, unit)
 	local setName, numSetItems
 	local itemsEquipped = 0
 	for i = 1, numLines do
-		local originalLine = getglobal(tooltipName.."TextLeft"..i)
+		local originalLine = _G[tooltipName .. "TextLeft" .. i]
 		local originalText = originalLine:GetText()
 		if originalText then
 			_, _, setName, numSetItems = strfind(originalText, "(.+) %(%d/(%d)%)")
@@ -80,9 +83,8 @@ local function FixSetInspect(tooltip, unit)
 				numSetItems = tonumber(numSetItems)
 				local index = 1
 				repeat
-					local setItemLine = getglobal(tooltipName.."TextLeft"..(i + index))
-					local setItem = setItemLine:GetText() or ""
-					setItem = (string.gsub(setItem, "^%s*(.-)%s*$", "%1"))
+					local setItemLine = _G[tooltipName .. "TextLeft" .. (i + index)]
+					local setItem = trim(setItemLine:GetText() or "")
 					for slot = 1, 18 do
 						local link = GetInventoryItemLink(unit, slot)
 						local _, _, id, name = strfind(link or "", "(item:%d+).+%[(.+)%]")
@@ -93,18 +95,18 @@ local function FixSetInspect(tooltip, unit)
 					end
 					index = index + 1
 				until index > numSetItems
-				originalLine:SetText(format(setName.." (%d/"..numSetItems..")", itemsEquipped))
+				originalLine:SetText(format(setName .. " (%d/" .. numSetItems .. ")", itemsEquipped))
 				break
 			end
 		end
 	end
 	for i = 1, numLines do
-		local originalLine = getglobal(tooltipName.."TextLeft"..i)
+		local originalLine = _G[tooltipName .. "TextLeft" .. i]
 		local originalText = originalLine:GetText()
 		if originalText then
-			local _, _, bonus = strfind(originalText, "%((%d+)%) "..setColon)
+			local _, _, bonus = strfind(originalText, "%((%d+)%) " .. setColon)
 			if bonus and tonumber(bonus) <= itemsEquipped then
-				originalLine:SetText(gsub(originalText, "%(%d+%) "..setColon, setColon))
+				originalLine:SetText(gsub(originalText, "%(%d+%) " .. setColon, setColon))
 				originalLine:SetTextColor(0, 1, 0)
 			end
 		end

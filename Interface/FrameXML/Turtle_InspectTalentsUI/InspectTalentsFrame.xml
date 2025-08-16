@@ -1,5 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
+	<Script file="Turtle_TalentsData.lua"/>
+	<Script file="Turtle_SpellChatLinksUI.lua"/>
 	<Script file="InspectTalentsFrame.lua"/>
 
 	<Button name="TWTCharacterFrameTabButtonTemplate" virtual="true">
@@ -70,11 +72,11 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				this:SetFrameLevel(this:GetFrameLevel() + 4);
+				this:SetFrameLevel(this:GetFrameLevel() + 4)
 			</OnLoad>
 			<OnShow>
-				PanelTemplates_TabResize(0);
-				getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 30);
+				PanelTemplates_TabResize(0)
+				_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 30)
 			</OnShow>
 		</Scripts>
 		<ButtonText name="$parentText">
@@ -89,8 +91,7 @@
 		<NormalFont inherits="GameFontNormalSmall"/>
 		<HighlightFont inherits="GameFontHighlightSmall"/>
 		<DisabledFont inherits="GameFontHighlightSmall"/>
-		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight"
-							alphaMode="ADD">
+		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="LEFT">
 					<Offset>
@@ -152,20 +153,16 @@
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
 				GameTooltip:ClearLines()
-				GameTooltip:AddLine(TWTalentName(getglobal('TWTalentFrame').selectedTab, this:GetID()), 1,1,1)
-				GameTooltip:AddLine(TWTalentRank(getglobal('TWTalentFrame').selectedTab, this:GetID()), 1,1,1)
-				GameTooltip:AddLine(TWTalentDescription(getglobal('TWTalentFrame').selectedTab, this:GetID()),
-				NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+				GameTooltip:AddLine(TWTalentName(TWTalentFrame.selectedTab, this:GetID()), 1,1,1)
+				GameTooltip:AddLine(TWTalentRank(TWTalentFrame.selectedTab, this:GetID()), 1,1,1)
+				GameTooltip:AddLine(TWTalentDescription(TWTalentFrame.selectedTab, this:GetID()), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
 				GameTooltip:Show()
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
+				GameTooltip:Hide()
 			</OnLeave>
 			<OnClick>
-<!--                TWTalentOnClick(TWTalentName(getglobal('TWTalentFrame').selectedTab, this:GetID()),-->
-<!--                TWTalentRank(getglobal('TWTalentFrame').selectedTab, this:GetID()),-->
-<!--                TWTalentDescription(getglobal('TWTalentFrame').selectedTab, this:GetID()))-->
-				TWTalentOnClick(getglobal('TWTalentFrame').selectedTab, this:GetID())
+				TWTalentOnClick(TWTalentFrame.selectedTab, this:GetID())
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -185,7 +182,6 @@
 			<Anchor point="TOPLEFT"/>
 		</Anchors>
 	</Texture>
-
 	<Frame name="InspectTalentsFrame" setAllPoints="true" parent="InspectFrame" hidden="true" id="3">
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -244,7 +240,6 @@
 				<Size>
 					<AbsDimension x="384" y="412"/>
 				</Size>
-
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
@@ -274,8 +269,7 @@
 								<AbsDimension x="64" y="256"/>
 							</Size>
 							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
-										relativePoint="TOPRIGHT">
+								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft" relativePoint="TOPRIGHT">
 									<Offset>
 										<AbsDimension x="0" y="0"/>
 									</Offset>
@@ -287,8 +281,7 @@
 								<AbsDimension x="256" y="168"/>
 							</Size>
 							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
-										relativePoint="BOTTOMLEFT">
+								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft" relativePoint="BOTTOMLEFT">
 									<Offset>
 										<AbsDimension x="0" y="0"/>
 									</Offset>
@@ -300,8 +293,7 @@
 								<AbsDimension x="64" y="168"/>
 							</Size>
 							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft"
-										relativePoint="BOTTOMRIGHT">
+								<Anchor point="TOPLEFT" relativeTo="TWTalentFrameBackgroundTopLeft" relativePoint="BOTTOMRIGHT">
 									<Offset>
 										<AbsDimension x="0" y="0"/>
 									</Offset>
@@ -311,7 +303,6 @@
 					</Layer>
 				</Layers>
 				<Frames>
-
 					<Button name="TWTalentFrameTab1" inherits="TabButtonTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -322,7 +313,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								TWTalentFrameTab_OnClick();
+								TWTalentFrameTab_OnClick()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -336,7 +327,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								TWTalentFrameTab_OnClick();
+								TWTalentFrameTab_OnClick()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -350,18 +341,14 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								TWTalentFrameTab_OnClick();
+								TWTalentFrameTab_OnClick()
 							</OnClick>
 						</Scripts>
 					</Button>
-
 					<ScrollFrame name="TWTalentFrameScrollFrame" inherits="UIPanelScrollFrameTemplate">
 						<Size>
 							<AbsDimension x="296" y="354"/>
 						</Size>
-<!--                        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
-<!--                                  tile="false">-->
-<!--                        </Backdrop>-->
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
@@ -474,48 +461,27 @@
 												<Texture name="TWTalentFrameArrow7" inherits="TWTalentArrowTemplate"/>
 												<Texture name="TWTalentFrameArrow8" inherits="TWTalentArrowTemplate"/>
 												<Texture name="TWTalentFrameArrow9" inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow10"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow11"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow12"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow13"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow14"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow15"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow16"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow17"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow18"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow19"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow20"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow21"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow22"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow23"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow24"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow25"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow26"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow27"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow28"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow29"
-															inherits="TWTalentArrowTemplate"/>
-												<Texture name="TWTalentFrameArrow30"
-															inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow10" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow11" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow12" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow13" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow14" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow15" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow16" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow17" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow18" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow19" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow20" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow21" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow22" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow23" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow24" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow25" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow26" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow27" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow28" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow29" inherits="TWTalentArrowTemplate"/>
+												<Texture name="TWTalentFrameArrow30" inherits="TWTalentArrowTemplate"/>
 											</Layer>
 										</Layers>
 									</Frame>
@@ -525,15 +491,16 @@
 					</ScrollFrame>
 				</Frames>
 				<Scripts>
+					<OnLoad>
+						PanelTemplates_SetNumTabs(TWTalentFrame, 3)
+						PanelTemplates_SetTab(TWTalentFrame, 1)
+					</OnLoad>
 					<OnShow>
-						TWTalentFrame_OnShow();
+						TWTalentFrame_OnShow()
 					</OnShow>
 					<OnHide>
-						TWTalentFrame_OnHide();
+						TWTalentFrame_OnHide()
 					</OnHide>
-					<OnLoad>
-						tinsert(UISpecialFrames, this:GetName());
-					</OnLoad>
 				</Scripts>
 			</Frame>
 		</Frames>

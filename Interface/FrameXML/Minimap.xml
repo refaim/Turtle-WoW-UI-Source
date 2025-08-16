@@ -54,12 +54,12 @@
 						GameTooltip:AddLine(GetMinimapZoneText(), "", 1.0, 1.0, 1.0);
 						local pvpType, factionName, isArena = GetZonePVPInfo();
 						if ( (pvpType == "friendly") or (pvpType == "hostile") ) then
-						GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), "", 1.0, 1.0, 1.0);
 						elseif ( pvpType == "contested" ) then
-						GameTooltip:AddLine(CONTESTED_TERRITORY, "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(CONTESTED_TERRITORY, "", 1.0, 1.0, 1.0);
 						end
 						if ( isArena ) then
-						GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, "", 1.0, 1.0, 1.0);
 						end
 						GameTooltip:Show();
 					</OnEnter>
@@ -95,8 +95,7 @@
 				<HighlightTexture alphaMode="ADD" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" />
 			</Button>
 
-			<Minimap name="Minimap" enableMouse="true" minimapPlayerModel="Interface\Minimap\MinimapArrow.mdx"
-				minimapArrowModel="Interface\Minimap\Rotating-MinimapArrow.mdl">
+			<Minimap name="Minimap" enableMouse="true" minimapPlayerModel="Interface\Minimap\MinimapArrow.mdx" minimapArrowModel="Interface\Minimap\Rotating-MinimapArrow.mdl">
 				<Size>
 					<AbsDimension x="140" y="140" />
 				</Size>
@@ -151,18 +150,18 @@
 							</OnLoad>
 							<OnEvent>
 								if ( event == "PLAYER_AURAS_CHANGED" ) then
-								local icon = GetTrackingTexture();
-								if ( icon ) then
-								MiniMapTrackingIcon:SetTexture(icon);
-								MiniMapTrackingFrame:Show();
-								else
-								MiniMapTrackingFrame:Hide();
-								end
+									local icon = GetTrackingTexture();
+									if ( icon ) then
+										MiniMapTrackingIcon:SetTexture(icon);
+										MiniMapTrackingFrame:Show();
+									else
+										MiniMapTrackingFrame:Hide();
+									end
 								end
 							</OnEvent>
 							<OnMouseUp>
 								if ( arg1 == "RightButton" ) then
-								CancelTrackingBuff();
+									CancelTrackingBuff();
 								end
 							</OnMouseUp>
 							<OnEnter>
@@ -222,11 +221,11 @@
 							</OnClick>
 							<OnEvent>
 								if ( event == "MEETINGSTONE_CHANGED" ) then
-								if ( IsInMeetingStoneQueue() ) then
-								MiniMapMeetingStoneFrame:Show();
-								else
-								MiniMapMeetingStoneFrame:Hide();
-								end
+									if ( IsInMeetingStoneQueue() ) then
+										MiniMapMeetingStoneFrame:Show();
+									else
+										MiniMapMeetingStoneFrame:Hide();
+									end
 								end
 							</OnEvent>
 							<OnEnter>
@@ -283,11 +282,11 @@
 							</OnLoad>
 							<OnEvent>
 								if ( event == "UPDATE_PENDING_MAIL" ) then
-								if ( HasNewMail() ) then
-								this:Show();
-								else
-								this:Hide();
-								end
+									if ( HasNewMail() ) then
+										this:Show();
+									else
+										this:Hide();
+									end
 								end
 							</OnEvent>
 							<OnEnter>
@@ -316,7 +315,7 @@
 								<Texture name="MiniMapBattlefieldIcon"
 									file="Interface\BattlefieldFrame\UI-Battlefield-Icon">
 									<Size>
-										<AbsDimension x="32" y="32" />
+										<AbsDimension x="18" y="18" />
 									</Size>
 									<Anchors>
 										<Anchor point="CENTER">
@@ -377,8 +376,8 @@
 							</OnEnter>
 							<OnUpdate>
 								if ( GameTooltip:IsOwned(this) ) then
-								BattlefieldFrame_UpdateStatus(1);
-								GameTooltip:SetText(this.tooltip);
+									BattlefieldFrame_UpdateStatus(1);
+									GameTooltip:SetText(this.tooltip);
 								end
 							</OnUpdate>
 							<OnLeave>
@@ -388,17 +387,17 @@
 								-- Hide tooltip
 								GameTooltip:Hide();
 								if ( MiniMapBattlefieldFrame.status == "active") then
-								if ( arg1 == "RightButton" ) then
-								ToggleDropDownMenu(1, nil, MiniMapBattlefieldDropDown, "MiniMapBattlefieldFrame", 10,
-								-5);
-								elseif ( IsShiftKeyDown() ) then
-								ToggleBattlefieldMinimap();
-								else
-								ToggleWorldStateScoreFrame();
-								end
+									if ( arg1 == "RightButton" ) then
+										ToggleDropDownMenu(1, nil, MiniMapBattlefieldDropDown, "MiniMapBattlefieldFrame", 10, -5);
+									elseif ( IsShiftKeyDown() ) then
+										ToggleBattlefieldMinimap();
+									else
+										ToggleWorldStateScoreFrame();
+
+										RequestArenaScoreInfo()
+									end
 								elseif ( arg1 == "RightButton" ) then
-								ToggleDropDownMenu(1, nil, MiniMapBattlefieldDropDown, "MiniMapBattlefieldFrame", 10,
-								-5);
+									ToggleDropDownMenu(1, nil, MiniMapBattlefieldDropDown, "MiniMapBattlefieldFrame", 10, -5);
 								end
 							</OnClick>
 						</Scripts>
@@ -453,8 +452,8 @@
 							</OnLoad>
 							<OnDragStart>
 								if ( IsControlKeyDown() ) then
-								this:LockHighlight();
-								this:StartMoving();
+									this:LockHighlight();
+									this:StartMoving();
 								end
 							</OnDragStart>
 							<OnDragStop>
@@ -464,10 +463,10 @@
 							</OnDragStop>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-								GameTooltip:SetText("Battleground Finder");
-								GameTooltip:AddLine('Left-click to open menu.', 1, 1, 1);
-								GameTooltip:AddLine('Hold control and drag to move.', 1, 1, 1);
-								GameTooltip:AddLine('Hold control and right-click to reset position.', 1, 1, 1);
+								GameTooltip:SetText(BATTLEGROUND_FINDER);
+								GameTooltip:AddLine(BATTLEGROUND_LEFT_CLICK, 1, 1, 1);
+								GameTooltip:AddLine(BATTLEGROUND_DRAG_MOVE, 1, 1, 1);
+								GameTooltip:AddLine(BATTLEGROUND_RESET_POSITION, 1, 1, 1);
 								GameTooltip:Show();
 							</OnEnter>
 							<OnLeave>
@@ -475,14 +474,14 @@
 							</OnLeave>
 							<OnClick>
 								if ( arg1 == "LeftButton" ) then
-								ShowTWBGQueueMenu();
+									ShowTWBGQueueMenu();
 								elseif ( arg1 == "RightButton" ) then
-								if ( IsControlKeyDown() ) then
-								this:SetUserPlaced(0);
-								this:ClearAllPoints();
-								this:SetParent("Minimap");
-								this:SetPoint("BOTTOMLEFT", Minimap, -11, 10);
-								end
+									if ( IsControlKeyDown() ) then
+										this:SetUserPlaced(0);
+										this:ClearAllPoints();
+										this:SetParent("Minimap");
+										this:SetPoint("BOTTOMLEFT", Minimap, -11, 10);
+									end
 								end
 							</OnClick>
 						</Scripts>
@@ -542,8 +541,8 @@
 									</OnClick>
 									<OnEnter>
 										if ( GetCVar("UberTooltips") == "1" ) then
-										GameTooltip_SetDefaultAnchor(GameTooltip, UIParent);
-										GameTooltip:SetText(ZOOM_IN);
+											GameTooltip_SetDefaultAnchor(GameTooltip, UIParent);
+											GameTooltip:SetText(ZOOM_IN);
 										end
 									</OnEnter>
 									<OnLeave>
@@ -553,8 +552,7 @@
 								<NormalTexture file="Interface\Minimap\UI-Minimap-ZoomInButton-Up" />
 								<PushedTexture file="Interface\Minimap\UI-Minimap-ZoomInButton-Down" />
 								<DisabledTexture file="Interface\Minimap\UI-Minimap-ZoomInButton-Disabled" />
-								<HighlightTexture alphaMode="ADD"
-									file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+								<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
 							</Button>
 							<Button name="MinimapZoomOut">
 								<Size>
@@ -573,8 +571,8 @@
 									</OnClick>
 									<OnEnter>
 										if ( GetCVar("UberTooltips") == "1" ) then
-										GameTooltip_SetDefaultAnchor(GameTooltip, UIParent);
-										GameTooltip:SetText(ZOOM_OUT);
+											GameTooltip_SetDefaultAnchor(GameTooltip, UIParent);
+											GameTooltip:SetText(ZOOM_OUT);
 										end
 									</OnEnter>
 									<OnLeave>
@@ -584,8 +582,7 @@
 								<NormalTexture file="Interface\Minimap\UI-Minimap-ZoomOutButton-Up" />
 								<PushedTexture file="Interface\Minimap\UI-Minimap-ZoomOutButton-Down" />
 								<DisabledTexture file="Interface\Minimap\UI-Minimap-ZoomOutButton-Disabled" />
-								<HighlightTexture alphaMode="ADD"
-									file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+								<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
 							</Button>
 						</Frames>
 					</Frame>

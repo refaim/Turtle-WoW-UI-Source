@@ -105,6 +105,13 @@ function SpellBookFrame_OnShow()
 	MultiActionBar_ShowAllGrids();
 end
 
+local function StripLeadingZ(str)
+	while strsub(str, 1, 1) == "z" or strsub(str, 1, 1) == "Z" do
+		str = strsub(str, 2); -- Remove the first character
+	end
+	return str;
+end
+
 function SpellBookFrame_Update(showing)
 	-- Hide all tabs
 	SpellBookFrameTabButton1:Hide();
@@ -125,23 +132,9 @@ function SpellBookFrame_Update(showing)
 		if ( i <= numSkillLineTabs and SpellBookFrame.bookType == BOOKTYPE_SPELL ) then
 			name, texture, offset, numSpells = GetSpellTabInfo(i);
 			skillLineTab:SetNormalTexture(texture);
-			skillLineTab.tooltip = name;
-			-- if (i == 1) then
-				-- skillLineTab:SetNormalTexture("Interface\\Icons\\BTNLeatherHood");
-			-- end
-			if (name == "ZzCompanions") then
-				skillLineTab.tooltip = TEXT(SPELLBOOK_COMPANIONS_BUTTON);
-			end
-			if (name == "ZMounts") then
-				skillLineTab.tooltip = TEXT(SPELLBOOK_MOUNTS_BUTTON);
-			end
-			if (name == "ZzzGlyphs") then
-				skillLineTab.tooltip = TEXT(SPELLBOOK_GLYPHS_BUTTON);
-			end
-			if (name == "ZzzzToys") then
-				skillLineTab.tooltip = TEXT(SPELLBOOK_TOYS_BUTTON);
-			end
+			skillLineTab.tooltip = StripLeadingZ(name);
 			skillLineTab:Show();
+
 			-- Set the selected tab
 			if ( SpellBookFrame.selectedSkillLine == i ) then
 				skillLineTab:SetChecked(1);
@@ -151,6 +144,15 @@ function SpellBookFrame_Update(showing)
 		else
 			skillLineTab:Hide();
 		end
+	end
+
+	local point, relativeTo, relativePoint, x, y = SpellBookSkillLineTab1:GetPoint();
+	if ( getglobal("SpellBookSkillLineTab"..MAX_SKILLLINE_TABS):IsShown() ) then
+		if y < -48 then
+			SpellBookSkillLineTab1:SetPoint(point, relativeTo, relativePoint, x, -47);
+		end
+	else
+		SpellBookSkillLineTab1:SetPoint(point, relativeTo, relativePoint, x, -65)
 	end
 
 	-- Setup tabs

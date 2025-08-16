@@ -145,110 +145,95 @@ function Minimap_ZoomOut()
 	MinimapZoomOut:Click();
 end
 
+local TWBGQueueMinimapMenuFrame = CreateFrame("Frame", "TWBGQueueMinimapMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
 function ShowTWBGQueueMenu()
-	local TWBGQueueMinimapMenuFrame = CreateFrame('Frame', 'TWBGQueueMinimapMenuFrame', UIParent, 'UIDropDownMenuTemplate')
-	UIDropDownMenu_Initialize(TWBGQueueMinimapMenuFrame, BuildTWBGQueueMenu, "MENU");
-	ToggleDropDownMenu(1, nil, TWBGQueueMinimapMenuFrame, "cursor", 2, 3);
+	UIDropDownMenu_Initialize(TWBGQueueMinimapMenuFrame, BuildTWBGQueueMenu, "MENU")
+	ToggleDropDownMenu(1, nil, TWBGQueueMinimapMenuFrame, this, 2, 2)
 end
 
+local function send(bgType)
+	SendAddonMessage("TW_BGQueue", bgType, "GUILD")
+end
+
+
 function BuildTWBGQueueMenu()
-	local separator = {};
-	separator.text = ""
-	separator.disabled = true
+	local info = UIDropDownMenu_CreateInfo()
 
-	local title = {};
-	title.text = BATTLEFIELDS
-	title.isTitle = true
-	UIDropDownMenu_AddButton(title);
-	UIDropDownMenu_AddButton(separator);
+	info.text = BATTLEFIELDS
+	info.disabled = false
+	info.isTitle = true
+	info.tooltipTitle = nil
+	info.tooltipText = nil
+	info.func = nil
+	UIDropDownMenu_AddButton(info)
 
-	local br_queue = false
+	info.text = ""
+	info.disabled = true
+	info.isTitle = false
+	info.tooltipTitle = nil
+	info.tooltipText = nil
+	info.func = nil
+	UIDropDownMenu_AddButton(info)
+
 	local sv_queue = false
 	local wsg_queue = false
 	local ab_queue = false
 	local av_queue = false
 
-	for i = 1, 30 do
-		if GetBattlefieldStatus(i) then
-			local a, b = GetBattlefieldStatus(i)
-			if b == 'Blood Ring' then br_queue = true end
-			if b == 'Sunnyglade Valley' then sv_queue = true end
-			if b == 'Warsong Gulch' then wsg_queue = true end
-			if b == 'Arathi Basin' then ab_queue = true end
-			if b == 'Alterac Valley' then av_queue = true end
+	for i = 1, MAX_BATTLEFIELD_QUEUES do
+		local a, b = GetBattlefieldStatus(i)
+		if a == "queued" then
+			if b == MINIMAP_BATTLEGROUND_SUNNYGLADE then sv_queue = true end
+			if b == MINIMAP_BATTLEGROUND_WARSONG then wsg_queue = true end
+			if b == MINIMAP_BATTLEGROUND_ARATHI then ab_queue = true end
+			if b == MINIMAP_BATTLEGROUND_ALTERAC then av_queue = true end
 		end
 	end
 
-	local bg_ar_menu = {};
-	bg_ar_menu.text = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING)
-	bg_ar_menu.disabled = br_queue
-	bg_ar_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING)
-	bg_ar_menu.checked = br_queue
-	bg_ar_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_BLOOD_RING_TOOLTIP)
-	bg_ar_menu.justifyH = 'LEFT'
-	bg_ar_menu.func = function()
-		SendAddonMessage("TW_BGQueue", "Arena", "GUILD")
-	end
-	UIDropDownMenu_AddButton(bg_ar_menu);
+	info.text = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
+	info.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
+	info.tooltipText = TEXT(MINIMAP_BATTLEGROUND_WARSONG_TOOLTIP)
+	info.disabled = wsg_queue
+	info.checked = wsg_queue
+	info.isTitle = false
+	info.func = send
+	info.arg1 = "Warsong"
+	UIDropDownMenu_AddButton(info)
 
-	local bg_wsg_menu = {};
-	bg_wsg_menu.text = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
-	bg_wsg_menu.disabled = wsg_queue
-	bg_wsg_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_WARSONG)
-	bg_wsg_menu.checked = wsg_queue
-	bg_wsg_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_WARSONG_TOOLTIP)
-	bg_wsg_menu.justifyH = 'LEFT'
-	bg_wsg_menu.func = function()
-		SendAddonMessage("TW_BGQueue", "Warsong", "GUILD")
-	end
-	UIDropDownMenu_AddButton(bg_wsg_menu);
-
-	if UnitLevel('player') >= 20 then
-		local bg_ab_menu = {};
-		bg_ab_menu.text = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
-		bg_ab_menu.disabled = ab_queue
-		bg_ab_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
-		bg_ab_menu.checked = ab_queue
-		bg_ab_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ARATHI_TOOLTIP)
-		bg_ab_menu.justifyH = 'LEFT'
-		bg_ab_menu.func = function()
-			SendAddonMessage("TW_BGQueue", "Arathi", "GUILD")
-		end
-		UIDropDownMenu_AddButton(bg_ab_menu);
+	if UnitLevel("player") >= 20 then
+		info.text = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
+		info.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ARATHI)
+		info.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ARATHI_TOOLTIP)
+		info.disabled = ab_queue
+		info.checked = ab_queue
+		info.isTitle = false
+		info.func = send
+		info.arg1 = "Arathi"
+		UIDropDownMenu_AddButton(info)
 	end
 
-	if UnitLevel('player') >= 51 then
-		local bg_av_menu = {};
-		bg_av_menu.text = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
-		bg_av_menu.disabled = av_queue
-		bg_av_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
-		bg_av_menu.checked = av_queue
-		bg_av_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ALTERAC_TOOLTIP)
-		bg_av_menu.justifyH = 'LEFT'
-		bg_av_menu.func = function()
-			SendAddonMessage("TW_BGQueue", "Alterac", "GUILD")
-		end
-		UIDropDownMenu_AddButton(bg_av_menu);
+	if UnitLevel("player") >= 51 then
+		info.text = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
+		info.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_ALTERAC)
+		info.tooltipText = TEXT(MINIMAP_BATTLEGROUND_ALTERAC_TOOLTIP)
+		info.disabled = av_queue
+		info.checked = av_queue
+		info.isTitle = false
+		info.func = send
+		info.arg1 = "Alterac"
+		UIDropDownMenu_AddButton(info)
 	end
 
-	if UnitLevel('player') == 60 then
-		local bg_sv_menu = {};
-		bg_sv_menu.text = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
-		bg_sv_menu.disabled = sv_queue
-		bg_sv_menu.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
-		bg_sv_menu.checked = sv_queue
-		bg_sv_menu.tooltipText = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE_TOOLTIP)
-		bg_sv_menu.justifyH = 'LEFT'
-		bg_sv_menu.func = function()
-			SendAddonMessage("TW_BGQueue", "Sunnyglade", "GUILD")
-		end
-
-		UIDropDownMenu_AddButton(bg_sv_menu);
+	if UnitLevel("player") == 60 then
+		info.text = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
+		info.tooltipTitle = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE)
+		info.tooltipText = TEXT(MINIMAP_BATTLEGROUND_SUNNYGLADE_TOOLTIP)
+		info.disabled = sv_queue
+		info.checked = sv_queue
+		info.isTitle = false
+		info.func = send
+		info.arg1 = "Sunnyglade"
+		UIDropDownMenu_AddButton(info)
 	end
-
-
-end
-
-if TWS_HIDE_MINIMAP_BUTTON and TWS_HIDE_MINIMAP_BUTTON == 1 then
-	TWMinimapShopFrame:Hide()
 end
