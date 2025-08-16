@@ -592,15 +592,52 @@ function ContainerFrameItemButton_OnClick(button, ignoreModifiers)
 		elseif ( MerchantFrame:IsShown() and MerchantFrame.selectedTab == 2 ) then
 			-- Don't sell the item if the buyback tab is selected
 			return;
-		elseif ( AuctionFrame and AuctionFrame:IsShown() and AuctionFrame.selectedTab == 3 ) then
-			PickupContainerItem(this:GetParent():GetID(), this:GetID());
-			ClickAuctionSellItemButton()
-			-- Attempt to place the previous listed item back into the bags
-			PutItemInBackpack()
-			PutItemInBag(20)
-			PutItemInBag(21)
-			PutItemInBag(22)
-			PutItemInBag(23)
+		elseif ( AuctionFrame and AuctionFrame:IsShown() ) then
+            if IsShiftKeyDown() then
+                UseContainerItem(this:GetParent():GetID(), this:GetID())
+            elseif AuctionFrame.selectedTab == 1 then
+                local link = GetContainerItemLink(this:GetParent():GetID(), this:GetID())
+                local _, _, id = string.find(link, "item:(%d+):(%d*):(%d*):(%d*)")
+				local name = GetItemInfo(tonumber(id))
+
+                BrowseName:SetText(name)
+            elseif AuctionFrame.selectedTab == 3 then
+                PickupContainerItem(this:GetParent():GetID(), this:GetID())
+                ClickAuctionSellItemButton()
+                -- Attempt to place the previous listed item back into the bags
+                PutItemInBackpack()
+                PutItemInBag(20)
+                PutItemInBag(21)
+                PutItemInBag(22)
+                PutItemInBag(23)
+            end
+        elseif ( MailFrame and MailFrame:IsShown() and SendMailFrame:IsShown() ) then
+            if IsShiftKeyDown() then
+                UseContainerItem(this:GetParent():GetID(), this:GetID())
+            else
+                PickupContainerItem(this:GetParent():GetID(), this:GetID())
+                ClickSendMailItemButton()
+                -- Attempt to place the previous listed item back into the bags
+                PutItemInBackpack()
+                PutItemInBag(20)
+                PutItemInBag(21)
+                PutItemInBag(22)
+                PutItemInBag(23)
+
+                ClearCursor()
+            end
+        elseif ( TradeFrame and TradeFrame:IsShown() ) then
+            if IsShiftKeyDown() then
+                UseContainerItem(this:GetParent():GetID(), this:GetID())
+            else
+                for i = 1, MAX_TRADABLE_ITEMS do
+                    if not GetTradePlayerItemLink(i) then
+                        PickupContainerItem(this:GetParent():GetID(), this:GetID())
+                        ClickTradeButton(i)
+                        break
+                    end
+                end
+            end
 		else
 			UseContainerItem(this:GetParent():GetID(), this:GetID());
 			StackSplitFrame:Hide();

@@ -1,45 +1,4 @@
-UnitPopupButtons = { };
 TWReportName = nil
-
-UnitPopupButtons["XP"] = { text = "|cffff0000" .. TEXT(UNIT_POPUP_XP), dist = 0 };
-UnitPopupButtons["MOVE"] = { text = TEXT(UNIT_POPUP_MOVE), dist = 0 };
-UnitPopupButtons["MOVE_RESET"] = { text = TEXT(UNIT_POPUP_MOVE_RESET), dist = 0 };
-
-local TW_XPFrameData = CreateFrame("Frame")
-TW_XPFrameData:RegisterEvent("CHAT_MSG_SYSTEM")
-TW_XPFrameData.xp = true
-TW_XPFrameData:SetScript("OnEvent", function()
-	if event then
-		if event == "CHAT_MSG_SYSTEM" then
-			if arg1 == "XP gain is ON" or arg1 == "XP gain is now ON" then
-				TW_XPFrameData.xp = true
-				UnitPopupButtons["XP"] = { text = "|cff1EFF0C" .. TEXT(UNIT_POPUP_XP_ON), dist = 0 };
-			end
-			if arg1 == "XP gain is OFF" or arg1 == "XP gain is now OFF" then
-				TW_XPFrameData.xp = false
-				UnitPopupButtons["XP"] = { text = "|cffff0000" .. TEXT(UNIT_POPUP_XP_OFF), dist = 0 };
-			end
-		end
-	end
-end)
-
-local TW_XPFrameDotCommandDelayer = CreateFrame("Frame")
-TW_XPFrameDotCommandDelayer:Hide()
-TW_XPFrameDotCommandDelayer:SetScript("OnShow", function()
-	this.startTime = GetTime()
-end)
-
-TW_XPFrameDotCommandDelayer:SetScript("OnUpdate", function()
-	local plus = 2
-	local gt = GetTime() * 1000
-	local st = (this.startTime + plus) * 1000
-	if gt >= st then
-		SendChatMessage(".xp")
-		TW_XPFrameDotCommandDelayer:Hide()
-	end
-end)
-
-TW_XPFrameDotCommandDelayer:Show()
 
 UNITPOPUP_TITLE_HEIGHT = 26;
 UNITPOPUP_BUTTON_HEIGHT = 15;
@@ -51,7 +10,10 @@ UNITPOPUP_TIMEOUT = 5;
 
 UNITPOPUP_SPACER_SPACING = 6;
 
-
+UnitPopupButtons = { };
+UnitPopupButtons["XP"] = { text = TEXT(UNIT_POPUP_XP), dist = 0 };
+UnitPopupButtons["MOVE"] = { text = TEXT(UNIT_POPUP_MOVE), dist = 0 };
+UnitPopupButtons["MOVE_RESET"] = { text = TEXT(UNIT_POPUP_MOVE_RESET), dist = 0 };
 UnitPopupButtons["CANCEL"] = { text = TEXT(CANCEL), dist = 0, space = 1 };
 UnitPopupButtons["TRADE"] = { text = TEXT(TRADE), dist = 2 };
 UnitPopupButtons["INSPECT"] = { text = TEXT(INSPECT), dist = 1 };
@@ -141,9 +103,33 @@ UnitPopupFrames = {
 	"FriendsDropDown"
 };
 
+function UnitPopup_OnLoad()
+	this:RegisterEvent("CHAT_MSG_SYSTEM")
+	this:RegisterEvent("PLAYER_LOGIN")
+	this.xp = true
+end
+
+function UnitPopup_OnEvent()
+	if ( event == "CHAT_MSG_SYSTEM" ) then
+		if ( arg1 == "XP gain is ON" or arg1 == "XP gain is now ON" ) then
+			this.xp = true
+			UnitPopupButtons["XP"].text = GREEN_FONT_COLOR_CODE .. TEXT(UNIT_POPUP_XP_ON)
+		end
+		if ( arg1 == "XP gain is OFF" or arg1 == "XP gain is now OFF" ) then
+			this.xp = false
+			UnitPopupButtons["XP"].text = RED_FONT_COLOR_CODE .. TEXT(UNIT_POPUP_XP_OFF)
+		end
+		return
+	end
+	if ( event == "PLAYER_LOGIN" ) then
+		SendChatMessage(".xp")
+		return
+	end
+end
+
 function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 	-- Init variables
-    local server
+	local server
 	dropdownMenu.which = which;
 	dropdownMenu.unit = unit;
 	if ( unit and not name ) then
@@ -192,7 +178,7 @@ function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 		-- Set which menu is being opened
 		OPEN_DROPDOWNMENUS[UIDROPDOWNMENU_MENU_LEVEL] = {which = dropdownMenu.which, unit = dropdownMenu.unit};
 		for index, value in UnitPopupMenus[UIDROPDOWNMENU_MENU_VALUE] do
-			info = {};
+			info = UIDropDownMenu_CreateInfo();
 			info.text = UnitPopupButtons[value].text;
 			info.owner = UIDROPDOWNMENU_MENU_VALUE;
 			-- Set the text color
@@ -232,7 +218,7 @@ function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 
 	-- Add dropdown title
 	if ( unit or name ) then
-		info = {};
+		info = UIDropDownMenu_CreateInfo();
 		if ( name ) then
 			info.text = name;
 		else
@@ -248,13 +234,13 @@ function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 	-- Show the buttons which are used by this menu
 	local tooltipText;
 	for index, value in UnitPopupMenus[which] do
-		if( UnitPopupShown[index] == 1 ) then
-			info = {};
+		if ( UnitPopupShown[index] == 1 ) then
+			info = UIDropDownMenu_CreateInfo();
 			info.text = UnitPopupButtons[value].text;
-			if ( value == 'MOVE' ) then
-				if ( dropdownMenu.unit == 'player' ) then
+			if ( value == "MOVE" ) then
+				if ( dropdownMenu.unit == "player" ) then
 					info.text = PlayerFrame.movable and TEXT(UNIT_POPUP_FRAME_LOCK) or TEXT(UNIT_POPUP_FRAME_UNLOCK)
-				elseif ( dropdownMenu.unit == 'target' ) then
+				elseif ( dropdownMenu.unit == "target" ) then
 					info.text = TargetFrame.movable and TEXT(UNIT_POPUP_FRAME_LOCK) or TEXT(UNIT_POPUP_FRAME_UNLOCK)
 				end
 			end
@@ -580,7 +566,7 @@ function UnitPopup_OnClick()
 	if ( button == "TRADE" ) then
 		InitiateTrade(unit);
 	elseif ( button == "WHISPER" ) then
-		if(server) then
+		if ( server ) then
 			ChatFrame_SendTell(name.."-"..server);
 		else
 			ChatFrame_SendTell(name)
@@ -609,10 +595,10 @@ function UnitPopup_OnClick()
 	elseif ( button == "LEAVE" ) then
 		LeaveParty();
 	elseif ( button == "XP" ) then
-		if TW_XPFrameData.xp then
+		if ( UnitPopup.xp ) then
 			StaticPopup_Show("CONFIRM_TOGGLE_XP_OFF");
 		else
-		StaticPopup_Show("CONFIRM_TOGGLE_XP_ON");
+			StaticPopup_Show("CONFIRM_TOGGLE_XP_ON");
 		end
 	elseif ( button == "REPORT" ) then
 		TWReportName = name
@@ -621,9 +607,9 @@ function UnitPopup_OnClick()
 		AddIgnore(name)
 	elseif ( button == "MOVE" ) then
 		local frame
-		if ( unit == 'player' )  then
+		if ( unit == "player" )  then
 			frame = PlayerFrame;
-		elseif ( unit == 'target' )  then
+		elseif ( unit == "target" )  then
 			frame = TargetFrame;
 		end
 		if ( frame.movable ) then
@@ -632,21 +618,11 @@ function UnitPopup_OnClick()
 			frame.movable = 1;
 		end
 	elseif ( button == "MOVE_RESET" ) then
-		if ( unit == 'player' ) then
+		if ( unit == "player" ) then
 			PlayerFrame:SetPoint("TOPLEFT", -19, -4)
-		elseif ( unit == 'target') then
+		elseif ( unit == "target") then
 			TargetFrame:SetPoint("TOPLEFT", 250, -4)
 		end
-	--elseif ( button == "TARGET_MOVE" ) then
-	--	if TargetFrame:IsMovable() then
-	--		TargetFrame:SetMovable(false)
-	--		UnitPopupButtons["TARGET_MOVE"] = { text = "解锁框体", dist = 0 };
-	--	else
-	--		TargetFrame:SetMovable(true)
-	--		UnitPopupButtons["TARGET_MOVE"] = { text = "锁定框体", dist = 0 };
-	--	end
-	--elseif ( button == "TARGET_MOVE_RESET" ) then
-	--	TargetFrame:SetPoint("TOPLEFT", 250, -4)
 	elseif ( button == "PET_PASSIVE" ) then
 		PetPassiveMode();
 	elseif ( button == "PET_DEFENSIVE" ) then

@@ -442,18 +442,27 @@
 		<HitRectInsets>
 			<AbsInset left="15" right="20" top="0" bottom="0" />
 		</HitRectInsets>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentIcon" file="Interface\Common\UI-SearchBox-Icon">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent">
+							<Offset x="1" y="-2" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentLabel" inherits="ChatFontNormal" text="SEARCH" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT">
+							<Offset x="1" y="2" />
+						</Anchor>
+					</Anchors>
+					<Color r="1.0" g="1.0" b="1.0" a="0.5"/>
+				</FontString>
+			</Layer>
+		</Layers>
 		<Frames>
-			<Frame>
-				<Size x="14" y="14" />
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent">
-						<Offset x="1" y="-2" />
-					</Anchor>
-				</Anchors>
-				<Backdrop bgFile="Interface\Common\UI-SearchBox-Icon">
-					<Color r="1.0" g="1.0" b="1.0" a="0.6" />
-				</Backdrop>
-			</Frame>
 			<Button name="$parentClearButton">
 				<Size x="14" y="14" />
 				<Anchors>
@@ -467,7 +476,6 @@
 				<Scripts>
 					<OnClick>
 						local box = this:GetParent();
-
 						box:SetText("");
 						box:SetFocus();
 						box:ClearFocus();
@@ -483,19 +491,17 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				this:SetText(SEARCH)
 				this:SetTextColor(0.5, 0.5, 0.5, 1);
 			</OnLoad>
 			<OnEditFocusGained>
 				this:SetTextColor(1.0, 1.0, 1.0, 1.0);
-
 				this:HighlightText()
+				getglobal(this:GetName().."Label"):Hide()
 			</OnEditFocusGained>
 			<OnEditFocusLost>
 				this:SetTextColor(0.5, 0.5, 0.5, 1);
-
-				if not string.find(this:GetText(), "%w") then
-					this:SetText(SEARCH);
+				if this:GetText() == "" then
+					getglobal(this:GetName().."Label"):Show()
 				end
 			</OnEditFocusLost>
 			<OnEnterPressed>

@@ -281,27 +281,27 @@
 				</Anchors>
 				<Scripts>
 					<OnEvent>
-                        UnitFrameHealthBar_Update(this, arg1);
+						UnitFrameHealthBar_Update(this, arg1);
 					</OnEvent>
 					<OnValueChanged>
 						UnitFrameHealthBar_OnValueChanged(arg1);
-                        if GetCVar("statusBarText") == "1" then
-                            TargetHPText:Show()
-			                TargetHPPercText:Show()
-                        end
+						if GetCVar("statusBarText") == "1" then
+							TargetHPText:Show()
+							TargetHPPercText:Show()
+						end
 						TargetHealthCheck();
 					</OnValueChanged>
-                    <OnEnter>
-                        TargetHPText:Show()
-			            TargetHPPercText:Show()
-                        TargetHealthCheck()
-                    </OnEnter>
-                    <OnLeave>
-                        if GetCVar("statusBarText") ~= "1" then
-                            TargetHPText:Hide()
-                            TargetHPPercText:Hide()
-                        end
-                    </OnLeave>
+					<OnEnter>
+						TargetHPText:Show()
+						TargetHPPercText:Show()
+						TargetHealthCheck()
+					</OnEnter>
+					<OnLeave>
+						if GetCVar("statusBarText") ~= "1" then
+							TargetHPText:Hide()
+							TargetHPPercText:Hide()
+						end
+					</OnLeave>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 			</StatusBar>
@@ -320,6 +320,25 @@
 					<OnEvent>
 						UnitFrameManaBar_Update(this, arg1);
 					</OnEvent>
+					<OnEnter>
+						TextStatusBar_UpdateTextString();
+						ShowTextStatusBarText(this);
+						if ( this.tooltipTitle ) then
+							GameTooltip_AddNewbieTip(this.tooltipTitle, 1.0, 1.0, 1.0, this.tooltipText, 1);
+						elseif ( this:GetParent() == TargetFrame ) then
+							GameTooltip_SetDefaultAnchor(GameTooltip, this);
+							if ( GameTooltip:SetUnit(TargetFrame.unit) ) then
+								TargetFrame.updateTooltip = TOOLTIP_UPDATE_TIME;
+							else
+								TargetFrame.updateTooltip = nil;
+							end
+
+							TargetFrame.r, TargetFrame.g, TargetFrame.b = GameTooltip_UnitColor(TargetFrame.unit);
+							GameTooltipTextLeft1:SetTextColor(TargetFrame.r, TargetFrame.g, TargetFrame.b);
+						end
+
+						TargetFrame_CheckChallenges("target")
+					</OnEnter>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0" g="0" b="1.0"/>
@@ -585,6 +604,91 @@
 					</Anchor>
 				</Anchors>
 			</Button>
+			<StatusBar name="$parentCastingBar" hidden="true">
+				<Size>
+					<AbsDimension x="150" y="10"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-16" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+    			<Layers>
+      				<Layer level="BACKGROUND">
+        				<Texture setAllPoints="true">
+          					<Color r="0" g="0" b="0" a="0.5"/>
+        				</Texture>
+      				</Layer>
+      				<Layer level="ARTWORK">
+        				<FontString name="$parentText" inherits="GameFontHighlight">
+							<Size>
+								<AbsDimension x="185" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+        				</FontString>
+						<Texture name="$parentBorder" file="Interface\CastingBar\UI-CastingBar-Border-Small">
+							<Size>
+								<AbsDimension x="197" y="49"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="20"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentIcon" hidden="true">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT">
+									<Offset>
+										<AbsDimension x="-5" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+      				</Layer>
+      				<Layer level="OVERLAY">
+						<Texture name="$parentSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+							<Size>
+								<AbsDimension x="32" y="32"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentFlash" file="Interface\CastingBar\UI-CastingBar-Flash-Small" alphaMode="ADD">
+							<Size>
+								<AbsDimension x="197" y="49"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="20"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+      				</Layer>
+    			</Layers>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="1.0" g="0.7" b="0.0"/>
+				<OnLoad>
+					this:SetMinMaxValues(0, 1)
+					this:SetValue(0)
+				</OnLoad>
+			</StatusBar>
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -622,6 +726,10 @@
 			</OnHide>
 			<OnEnter>
 				UnitFrame_OnEnter();
+
+				if SHOW_NEWBIE_TIPS == "0" then
+					TargetFrame_CheckChallenges("target")
+				end
 			</OnEnter>
 			<OnLeave>
 				UnitFrame_OnLeave();

@@ -8,6 +8,8 @@ WORLDSTATECOREFRAME_BUTTON_TEXT_OFFSET = -32;
 
 ExtendedUI = {};
 
+local inArena = false
+
 -- Always up stuff (i.e. capture the flag indicators)
 function WorldStateAlwaysUpFrame_OnLoad()
 	this:RegisterEvent("UPDATE_WORLD_STATES");
@@ -28,7 +30,7 @@ end
 
 function WorldStateAlwaysUpFrame_Update()
 	local numUI = GetNumWorldStateUI();
-	local name, frame, frameText, frameDynamicIcon, frameIcon, frameFlash, flashTexture, frameDynamicButton;
+	local name, frame, frameText, frameDynamicIcon, frameIcon, frameFlash, flashTexture, frameDynamicButton, relative;
 	local extendedUI, extendedUIState1, extendedUIState2, extendedUIState3, uiInfo; 
 	local text, icon, state, dynamicIcon, tooltip, dynamicTooltip, flash;
 	local inInstance, instanceType = IsInInstance();
@@ -188,6 +190,29 @@ function WorldStateScoreFrame_OnLoad()
 end
 
 function WorldStateScoreFrame_Update()
+    local inArena = this.arenaData and true or false
+    local arenaData, firstTeam
+    local arenaPlayerData = {}
+    if inArena then
+        arenaData = explode(this.arenaData, ADDON_MSG_FIELD_DELIMITER)
+        local players = explode(arenaData[4], ADDON_MSG_ARRAY_DELIMITER)
+        local playerData
+        for i, player in players do
+            playerData = explode(player, ADDON_MSG_SUBFIELD_DELIMITER)
+            arenaPlayerData[playerData[1]] = { playerData[2], playerData[3] }
+
+            firstTeam = firstTeam or playerData[2]
+        end
+
+        WorldStateScoreFrameTab1:Hide()
+        WorldStateScoreFrameTab2:Hide()
+        WorldStateScoreFrameTab3:Hide()
+    else
+        WorldStateScoreFrameTab1:Show()
+        WorldStateScoreFrameTab2:Show()
+        WorldStateScoreFrameTab3:Show()
+    end
+
 	--Show the frame if its hidden and there is a victor
 	if ( GetBattlefieldWinner() ) then
 		-- Show the final score frame, set textures etc.
@@ -197,19 +222,34 @@ function WorldStateScoreFrame_Update()
 		WorldStateScoreFrameTimer:Show();
 
 		-- Show winner
-		local battlefieldWinner = GetBattlefieldWinner(); 
-		WorldStateScoreWinnerFrameText:SetText(getglobal("VICTORY_TEXT"..battlefieldWinner));
-		if ( battlefieldWinner == 0 ) then
-			-- Horde won
-			WorldStateScoreWinnerFrameLeft:SetTexCoord(0, 1, 0.5, 0.75);
-			WorldStateScoreWinnerFrameRight:SetTexCoord(0, 0.97265625, 0.75, 1.0);
-			WorldStateScoreWinnerFrameText:SetVertexColor(1.0, 0.1, 0.1);
-		else
-			-- Alliance won
-			WorldStateScoreWinnerFrameLeft:SetTexCoord(0, 1, 0, 0.25);
-			WorldStateScoreWinnerFrameRight:SetTexCoord(0, 0.97265625, 0.25, 0.5);
-			WorldStateScoreWinnerFrameText:SetVertexColor(0, 0.68, 0.94);	
-		end
+        if inArena then
+            print(arenaData[2], firstTeam)
+            if arenaData[2] == firstTeam then
+		        WorldStateScoreWinnerFrameText:SetText(getglobal(ARENA_TEAM_GOLD_WIN));
+                WorldStateScoreWinnerFrameText:SetVertexColor(0.1, 1.0, 0.1);
+                WorldStateScoreWinnerFrameLeft:SetVertexColor(0.19, 0.57, 0.11);
+                WorldStateScoreWinnerFrameRight:SetVertexColor(0.19, 0.57, 0.11);
+            else
+		        WorldStateScoreWinnerFrameText:SetText(getglobal(ARENA_TEAM_GREEN_WIN));
+                WorldStateScoreWinnerFrameText:SetVertexColor(1, 0.82, 0);
+                WorldStateScoreWinnerFrameLeft:SetVertexColor(0.85, 0.71, 0.26);
+                WorldStateScoreWinnerFrameRight:SetVertexColor(0.85, 0.71, 0.26);
+            end
+        else
+            local battlefieldWinner = GetBattlefieldWinner();
+            WorldStateScoreWinnerFrameText:SetText(getglobal("VICTORY_TEXT"..battlefieldWinner));
+            if ( battlefieldWinner == 0 ) then
+                -- Horde won
+                WorldStateScoreWinnerFrameText:SetVertexColor(1.0, 0.1, 0.1);
+                WorldStateScoreWinnerFrameLeft:SetVertexColor(0.52, 0.075, 0.18);
+                WorldStateScoreWinnerFrameRight:SetVertexColor(0.52, 0.075, 0.18);
+            else
+                -- Alliance won
+                WorldStateScoreWinnerFrameText:SetVertexColor(0, 0.68, 0.94);
+                WorldStateScoreWinnerFrameLeft:SetVertexColor(0.11, 0.26, 0.51);
+                WorldStateScoreWinnerFrameRight:SetVertexColor(0.11, 0.26, 0.51);
+            end
+        end
 		WorldStateScoreWinnerFrame:Show();
 
 	else
@@ -218,13 +258,13 @@ function WorldStateScoreFrame_Update()
 		WorldStateScoreFrameTimerLabel:Hide();
 		WorldStateScoreFrameTimer:Hide();
 	end
-	
+
 	-- Update buttons
 	local numScores = GetNumBattlefieldScores();
 
 	local scoreButton, buttonIcon, buttonName, nameButton, buttonKills, buttonDeaths, buttonHonorGained, buttonFaction, columnButtonText, columnButtonIcon, buttonFactionLeft, buttonFactionRight;
 	local name, kills, killingBlows, deaths, honorGained, faction, rank, race, class;
-	local index;
+	local index, buttonKillingBlows, honorableKills, rankName, rankNumber;
 	local columnData;
 
         -- ScrollFrame update
@@ -250,7 +290,7 @@ function WorldStateScoreFrame_Update()
 			columnButtonText:SetText(text);
 			columnButton.icon = icon;
 			columnButton.tooltip = tooltip;
-			
+
 			columnTextButton = getglobal("WorldStateScoreButton1Column"..i.."Text");
 
 			if ( icon ~= "" ) then
@@ -259,20 +299,19 @@ function WorldStateScoreFrame_Update()
 				columnTextButton:SetPoint("CENTER", "WorldStateScoreColumn"..i, "CENTER", -1, -33);
 			end
 
-			
 			if ( i == numStatColumns ) then
 				honorGainedAnchorFrame = "WorldStateScoreColumn"..i;
 			end
-		
+
 			getglobal("WorldStateScoreColumn"..i):Show();
 		else
 			getglobal("WorldStateScoreColumn"..i):Hide();
 		end
 	end
-	
+
 	-- Anchor the bonus honor gained to the last column shown
 	WorldStateScoreFrameHonorGained:SetPoint("CENTER", honorGainedAnchorFrame, "CENTER", 58, 0);
-	
+
 	-- Last button shown is what the player count anchors to
 	local lastButtonShown = "WorldStateScoreButton1";
 
@@ -295,7 +334,7 @@ function WorldStateScoreFrame_Update()
 			buttonHonorGained = getglobal("WorldStateScoreButton"..i.."HonorGained");
 			buttonFactionLeft = getglobal("WorldStateScoreButton"..i.."FactionLeft");
 			buttonFactionRight = getglobal("WorldStateScoreButton"..i.."FactionRight");
-			
+
 			name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class = GetBattlefieldScore(index);
 			rankName, rankNumber = GetPVPRankInfo(rank, faction);
 			if ( rankNumber > 0 ) then
@@ -304,15 +343,20 @@ function WorldStateScoreFrame_Update()
 			else
 				buttonIcon:Hide();
 			end
-			
-			buttonName:SetText(name);
-			nameButton:SetWidth(buttonName:GetWidth());
+
 			if ( not race ) then
 				race = "";
 			end
 			if ( not class ) then
 				class = "";
 			end
+			local classToken = TW_CLASS_TOKEN[GetLocale()][class]
+			local classColor = ""
+			if classToken and RAID_CLASS_COLORS[classToken] then
+				classColor = RAID_CLASS_COLORS[classToken].hex or ""
+			end
+			buttonName:SetText(classColor..name);
+			nameButton:SetWidth(buttonName:GetWidth());
 			nameButton.name = name;
 			nameButton.tooltip = race.." "..class;
 			getglobal("WorldStateScoreButton"..i.."RankButton").tooltip = rankName;
@@ -335,7 +379,6 @@ function WorldStateScoreFrame_Update()
 							columnButtonText:SetText("");
 							columnButtonIcon:Hide();
 						end
-						
 					else
 						columnButtonText:SetText(columnData);
 						columnButtonIcon:Hide();
@@ -346,16 +389,27 @@ function WorldStateScoreFrame_Update()
 					columnButtonIcon:Hide();
 				end
 			end
-			if ( faction ) then
-				if ( faction == 0 ) then
-					buttonFactionLeft:SetTexCoord(0, 1, 0.5, 0.75);
-					buttonFactionRight:SetTexCoord(0, 0.97265625, 0.75, 1.0);
-					buttonName:SetVertexColor(1.0, 0.1, 0.1);
-				else
-					buttonFactionLeft:SetTexCoord(0, 1, 0, 0.25);
-					buttonFactionRight:SetTexCoord(0, 0.97265625, 0.25, 0.5);
-					buttonName:SetVertexColor(0, 0.68, 0.94);
-				end
+
+            if inArena then
+                if arenaPlayerData[name] and arenaPlayerData[name][1] == firstTeam then
+                    buttonName:SetVertexColor(0.1, 1.0, 0.1);
+                    buttonFactionLeft:SetVertexColor(0.19, 0.57, 0.11);
+                    buttonFactionRight:SetVertexColor(0.19, 0.57, 0.11);
+                else
+                    buttonName:SetVertexColor(1, 0.82, 0);
+                    buttonFactionLeft:SetVertexColor(0.85, 0.71, 0.26);
+                    buttonFactionRight:SetVertexColor(0.85, 0.71, 0.26);
+                end
+			elseif ( faction ) then
+				if ( faction ) == 0 then
+                    buttonName:SetVertexColor(1.0, 0.1, 0.1);
+                    buttonFactionLeft:SetVertexColor(0.52, 0.075, 0.18);
+                    buttonFactionRight:SetVertexColor(0.5, 0.075, 0.18);
+                else
+                    buttonName:SetVertexColor(0, 0.68, 0.94);
+                    buttonFactionLeft:SetVertexColor(0.11, 0.26, 0.51);
+                    buttonFactionRight:SetVertexColor(0.11, 0.26, 0.51);
+                end
 				if ( name == UnitName("player") ) then
 					buttonName:SetVertexColor(1.0, 0.82, 0);
 				end
@@ -372,31 +426,34 @@ function WorldStateScoreFrame_Update()
 		end
 	end
 
-	-- Count number of players on each side
-	local numHorde = 0;
-	local numAlliance = 0;
-	for i=1, numScores do
-		name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class = GetBattlefieldScore(i);	
-		if ( faction ) then
-			if ( faction == 0 ) then
-				numHorde = numHorde + 1;
-			else
-				numAlliance = numAlliance + 1;
-			end
-		end
-	end
-	
 	-- Set count text and anchor team count to last button shown
-	WorldStateScorePlayerCount:Show();
-	if ( numHorde > 0 and numAlliance > 0 ) then
-		WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_ALLIANCE", nil, numAlliance), numAlliance).." / "..format(GetText("PLAYER_COUNT_HORDE", nil, numHorde), numHorde));
-	elseif ( numAlliance > 0 ) then
-		WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_ALLIANCE", nil, numAlliance), numAlliance));
-	elseif ( numHorde > 0 ) then
-		WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_HORDE", nil, numHorde), numHorde));
-	else
-		WorldStateScorePlayerCount:Hide();
-	end
+    WorldStateScorePlayerCount:Show();
+    if inArena then
+        WorldStateScorePlayerCount:SetText(arenaData[3] .. " " .. PLAYERS_COUNT)
+    else
+        -- Count number of players on each side
+        local numHorde = 0;
+        local numAlliance = 0;
+        for i=1, numScores do
+            name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class = GetBattlefieldScore(i);
+            if ( faction ) then
+                if ( faction == 0 ) then
+                    numHorde = numHorde + 1;
+                else
+                    numAlliance = numAlliance + 1;
+                end
+            end
+        end
+        if ( numHorde > 0 and numAlliance > 0 ) then
+            WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_ALLIANCE", nil, numAlliance), numAlliance).." / "..format(GetText("PLAYER_COUNT_HORDE", nil, numHorde), numHorde));
+        elseif ( numAlliance > 0 ) then
+            WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_ALLIANCE", nil, numAlliance), numAlliance));
+        elseif ( numHorde > 0 ) then
+            WorldStateScorePlayerCount:SetText(format(GetText("PLAYER_COUNT_HORDE", nil, numHorde), numHorde));
+        else
+            WorldStateScorePlayerCount:Hide();
+        end
+    end
 	WorldStateScorePlayerCount:SetPoint("TOPLEFT", lastButtonShown, "BOTTOMLEFT", 15, -6);
 	WorldStateScoreBattlegroundRunTime:SetText(TIME_ELAPSED.." "..SecondsToTime(GetBattlefieldInstanceRunTime()/1000, 1));
 	WorldStateScoreBattlegroundRunTime:SetPoint("TOPRIGHT", lastButtonShown, "BOTTOMRIGHT", -20, -7);
@@ -419,7 +476,7 @@ function WorldStateScoreFrame_Resize(width)
 	WorldStateScoreScrollFrame:SetWidth(WorldStateScoreFrame.scrollBarButtonWidth);
 
 	-- Position Column data horizontally
-	local buttonKills, buttonDeaths, buttonHonorGained, buttonReturnedIcon, buttonCapturedIcon;
+	local buttonKills, buttonDeaths, buttonHonorGained, buttonReturnedIcon, buttonCapturedIcon, buttonKillingBlows;
 	for i=1, MAX_WORLDSTATE_SCORE_BUTTONS do
 		buttonKills = getglobal("WorldStateScoreButton"..i.."HonorableKills");
 		buttonKillingBlows = getglobal("WorldStateScoreButton"..i.."KillingBlows");

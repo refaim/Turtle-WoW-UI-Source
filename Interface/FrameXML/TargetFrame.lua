@@ -26,16 +26,9 @@ function DispelTypeToDebuffType(type)
 	return "";
 end
 
-
-
-
-
--- hook the addon chat messages
-
+-- Hook the addon chat messages
 local customDebuffs = {};
 local customDebuffIds = {};
-
-
 
 local UnitDebuff_orig = UnitDebuff;
 UnitDebuff = function(unit, index, filter)
@@ -59,8 +52,6 @@ GameTooltip.SetUnitDebuff = function(self, unitId, buffIndex)
 	CheckCustomDebuffs(buffIndex);
 end
 
-
-
 function TargetFrame_OnLoad()
 	this.statusCounter = 0;
 	this.statusSign = -1;
@@ -77,27 +68,26 @@ function TargetFrame_OnLoad()
 	this:RegisterEvent("PLAYER_FLAGS_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("RAID_TARGET_UPDATE");
+	this:RegisterEvent("CHAT_MSG_ADDON")
 
 	local frameLevel = TargetFrameTextureFrame:GetFrameLevel();
 	TargetFrameHealthBar:SetFrameLevel(frameLevel-1);
 	TargetFrameManaBar:SetFrameLevel(frameLevel-1);
 
-	local listener = CreateFrame("Frame");
-	listener:RegisterEvent("PLAYER_TARGET_CHANGED");
-	listener:RegisterEvent("CHAT_MSG_ADDON")
-	listener:SetScript("OnEvent", function ()
-		if event then
-			if (event == "PLAYER_TARGET_CHANGED") then
-				ClearCustomBuffs();
-			end
-		
-			if (event == "CHAT_MSG_ADDON") then
-				if ( arg1 == "TW_Debuff" ) then
-					HandleMessage(arg2);
-				end
-			end
-		end
-	end)
+	-- local listener = CreateFrame("Frame");
+	-- listener:RegisterEvent("PLAYER_TARGET_CHANGED");
+	-- listener:RegisterEvent("CHAT_MSG_ADDON")
+	-- listener:SetScript("OnEvent", function ()
+	-- 	if (event == "PLAYER_TARGET_CHANGED") then
+	-- 		ClearCustomBuffs();
+	-- 	end
+
+	-- 	if (event == "CHAT_MSG_ADDON") then
+	-- 		if ( arg1 == "TW_Debuff" ) then
+	-- 			HandleMessage(arg2);
+	-- 		end
+	-- 	end
+	-- end)
 end
 
 function TargetFrame_Update()
@@ -109,6 +99,7 @@ function TargetFrame_Update()
 		TargetFrame_CheckClassification();
 		TargetFrame_CheckDead();
 		TargetFrame_CheckDishonorableKill();
+		TargetFrame_CheckChallenges("target");
 		if ( UnitIsPartyLeader("target") ) then
 			TargetLeaderIcon:Show();
 		else
@@ -121,8 +112,7 @@ function TargetFrame_Update()
 	end
 end
 
-
--- clear table customBuffs after target PLAYER_TARGET_CHANGED
+-- Clear table customBuffs after target PLAYER_TARGET_CHANGED
 function ClearCustomBuffs()
 	customDebuffs = {};
 	customDebuffIds = {};
@@ -136,7 +126,7 @@ function TargetFrame_OnEvent(event)
 	elseif ( event == "PLAYER_TARGET_CHANGED" ) then
 		TargetFrame_Update();
 		TargetFrame_UpdateRaidTargetIcon();
-		TargetofTarget_Update();		
+		TargetofTarget_Update();
 	elseif ( event == "UNIT_HEALTH" ) then
 		if ( arg1 == "target" ) then
 			TargetFrame_CheckDead();
@@ -171,10 +161,20 @@ function TargetFrame_OnEvent(event)
 		TargetofTarget_Update();
 	elseif ( event == "RAID_TARGET_UPDATE" ) then
 		TargetFrame_UpdateRaidTargetIcon();
+	elseif ( event == "CHAT_MSG_ADDON" ) then
+        if arg1 == "RESPONSE_PLAYER_CHALLENGES" then
+			local s = strfind(arg2, ":")
+			local player = strsub(arg2, 1, s - 1)
+			if UnitName("target") or UnitName("mouseover") == player then
+				local mask = strsub(arg2, s + 1)
+				table.insert(Turtle_ChallengesCache[GetRealmName()][player], tonumber(mask))
+			end
+			TargetFrame_UpdateChallenges(player)
+		end
 	end
 end
 
--- handle message
+-- Handle message
 function HandleMessage(msg)
 	local message = json.decode(msg);
 	if (message.opcode == "ADD") then
@@ -191,6 +191,30 @@ function HandleMessage(msg)
 		TargetDebuffButton_Update();
 	end
 	-- SendAddonMessage("TW_Debuff", json.encode({ 1, 2, 3, { x = 10 } }), "GUILD");
+end
+
+function TargetFrame_UpdateChallenges(player)
+    if GameTooltip.challenges then return end
+
+	local playerChallenges = Turtle_ChallengesCache[GetRealmName()][player]
+	-- Check if > 1 because table always has level stored
+	if playerChallenges and table.getn(playerChallenges) > 1 then
+		local mask = playerChallenges[2]
+
+        GameTooltip:AddLine(" ")
+		GameTooltip:AddLine(ACTIVE_CHALLENGES)
+        for i, challenge in ipairs(Turtle_AvailableChallenges) do
+            if math.mod(math.floor(mask / 2^(i - 1)), 2) == 1 then
+                if challenge.name == LEVELING_CHALLENGE_HARDCORE and UnitIsUnit("target", "mouseover") then
+                    -- Update target frame texture if hardcore
+                    TargetFrameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame_HC")
+                end
+			    GameTooltip:AddLine(challenge.name, 1, 1, 1, true)
+            end
+		end
+        GameTooltip.challenges = true
+		GameTooltip:Show()
+	end
 end
 
 function TargetFrame_OnShow()
@@ -210,7 +234,7 @@ end
 
 function TargetFrame_CheckLevel()
 	local targetLevel = UnitLevel("target");
-	
+
 	if ( UnitIsCorpse("target") ) then
 		TargetLevelText:Hide();
 		TargetHighLevelTexture:Show();
@@ -330,6 +354,28 @@ function TargetFrame_CheckDishonorableKill()
 	end
 end
 
+function TargetFrame_CheckChallenges(unit)
+    if PLAYER_CHALLENGES == "0"
+        or not unit
+        or not UnitIsPlayer(unit)
+        or UnitIsUnit("target", "player") then return end
+
+    local realm = GetRealmName()
+    local name = UnitName(unit)
+    local level = UnitLevel(unit)
+    if name then
+        local playerChallenges = Turtle_ChallengesCache[realm][name]
+        if playerChallenges and playerChallenges[1] <= level then
+            Turtle_ChallengesCache[realm][name][1] = level
+            TargetFrame_UpdateChallenges(name)
+        else
+            Turtle_ChallengesCache[realm][name] = { level }
+
+            SendAddonMessage("TW_UI", "REQUEST_PLAYER_CHALLENGES;" .. name, "GUILD")
+        end
+    end
+end
+
 function TargetFrame_OnClick(button)
 	if ( SpellIsTargeting() and button == "RightButton" ) then
 		SpellStopTargeting();
@@ -364,7 +410,7 @@ function TargetDebuffButton_Update()
 			getglobal("TargetFrameBuff"..i.."Icon"):SetTexture(buff);
 			button:Show();
 			button.id = i;
-			numBuffs = numBuffs + 1; 
+			numBuffs = numBuffs + 1;
 		else
 			button:Hide();
 		end
@@ -421,8 +467,8 @@ function TargetDebuffButton_Update()
 			TargetFrameBuff1:SetPoint("TOPLEFT", "TargetFrameDebuff7", "BOTTOMLEFT", 0, -2);
 		end
 	end
-	
-	-- loop over table and display them
+
+	-- Loop over table and display them
 	local buttonIndex = 17;
 	for k,v in pairs(customDebuffs) do
 		if (buttonIndex > 24) then
@@ -462,15 +508,14 @@ function TargetDebuffButton_Update()
 		getglobal("TargetFrameDebuff"..i):Hide();
 	end
 
-	
-	-- set the wrap point for the rows of de/buffs.
+	-- Set the wrap point for the rows of de/buffs.
 	if ( targetofTarget ) then
 		debuffWrap = 5;
 	else
 		debuffWrap = 6;
 	end
 
-	-- and shrinks the debuffs if they begin to overlap the TargetFrame
+	-- And shrinks the debuffs if they begin to overlap the TargetFrame
 	if ( ( targetofTarget and ( numBuffs == 5 ) ) or ( numDebuffs >= debuffWrap ) ) then
 		debuffSize = 17;
 		debuffFrameSize = 19;
@@ -478,8 +523,8 @@ function TargetDebuffButton_Update()
 		debuffSize = 21;
 		debuffFrameSize = 23;
 	end
-	
-	-- resize Buffs
+
+	-- Resize Buffs
 	for i=1, 5 do
 		button = getglobal("TargetFrameBuff"..i);
 		if ( button ) then
@@ -488,7 +533,7 @@ function TargetDebuffButton_Update()
 		end
 	end
 
-	-- resize Debuffs
+	-- Resize Debuffs
 	for i=1, 6 do
 		button = getglobal("TargetFrameDebuff"..i);
 		debuffFrame = getglobal("TargetFrameDebuff"..i.."Border");
@@ -524,15 +569,15 @@ function TargetFrame_HealthUpdate(elapsed, unit)
 		if ( (this.unitHPPercent > 0) and (this.unitHPPercent <= 0.2) ) then
 			local alpha = 255;
 			local counter = this.statusCounter + elapsed;
-			local sign    = this.statusSign;
-	
+			local sign	 = this.statusSign;
+
 			if ( counter > 0.5 ) then
 				sign = -sign;
 				this.statusSign = sign;
 			end
 			counter = mod(counter, 0.5);
 			this.statusCounter = counter;
-	
+
 			if ( sign == 1 ) then
 				alpha = (127  + (counter * 256)) / 255;
 			else
@@ -608,7 +653,6 @@ function TargetFrameDropDown_Initialize()
 	end
 end
 
-
 -- Raid target icon function
 RAID_TARGET_ICON_DIMENSION = 64;
 RAID_TARGET_TEXTURE_DIMENSION = 256;
@@ -638,9 +682,7 @@ function CheckCustomDebuffs(id)
 	GameTooltip:AddDoubleLine(customDebuff.name, DispelTypeToDebuffType(customDebuff.dispel));
 	GameTooltip:AddLine(customDebuff.tooltip, 1, 1, 1, 1);
 	GameTooltip:Show();
-
 end
-
 
 function SetRaidTargetIconTexture(texture, raidTargetIconIndex)
 	raidTargetIconIndex = raidTargetIconIndex - 1;
@@ -709,7 +751,6 @@ function TargetofTarget_Update()
 	end
 end
 
-
 function TargetofTarget_OnClick(button)
 	if ( SpellIsTargeting() and button == "RightButton" ) then
 		SpellStopTargeting();
@@ -752,5 +793,3 @@ function TargetofTargetHealthCheck()
 		end
 	end
 end
-
-

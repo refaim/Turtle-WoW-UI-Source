@@ -3,6 +3,8 @@ NUM_STATS = 5;
 NUM_SHOPPING_TOOLTIPS = 2;
 ATTACK_POWER_MAGIC_NUMBER = 14;
 
+local availableTitles = nil
+
 function PaperDollFrame_OnLoad()
 	CharacterAttackFrameLabel:SetText(TEXT(MELEE_ATTACK));
 	CharacterDamageFrameLabel:SetText(TEXT(DAMAGE_COLON));
@@ -12,6 +14,7 @@ function PaperDollFrame_OnLoad()
 	CharacterRangedAttackPowerFrameLabel:SetText(TEXT(ATTACK_POWER_COLON));
 	CharacterArmorFrameLabel:SetText(TEXT(ARMOR_COLON));
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("CHAT_MSG_ADDON");
 	this:RegisterEvent("CHARACTER_POINTS_CHANGED");
 	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_LEVEL");
@@ -26,6 +29,10 @@ function PaperDollFrame_OnLoad()
 	this:RegisterEvent("UNIT_ATTACK");
 	this:RegisterEvent("PLAYER_GUILD_UPDATE");
 	this:RegisterEvent("SKILL_LINES_CHANGED");
+
+	UIDropDownMenu_Initialize(PaperDollFrameTitlesDropdown, TitlesDropDown_Initialize)
+	UIDropDownMenu_SetWidth(210, PaperDollFrameTitlesDropdown)
+	PaperDollFrameTitlesDropdown:SetScale(0.9)
 end
 
 function CharacterModelFrame_OnMouseUp(button)
@@ -35,8 +42,25 @@ function CharacterModelFrame_OnMouseUp(button)
 end
 
 function PaperDollFrame_OnEvent(event, unit)
+	if ( event == "CHAT_MSG_ADDON" and arg1 == "TWT_TITLES" ) then
+		-- new title message
+		local _, _, titleID = string.find(arg2, "newTitle:(%d+)")
+		if titleID then
+			DEFAULT_CHAT_FRAME:AddMessage("|cff00FF00"..format(TW_TITLES_EARNED, getglobal("PVP_MEDAL" .. titleID)))
+
+			SendAddonMessage("TW_TITLES", "Titles:List", "GUILD")
+		end
+
+		-- available titles
+		if string.find(arg2, "TW_AVAILABLE_TITLES:", 1, true) then
+			availableTitles = arg2
+			UIDropDownMenu_Initialize(PaperDollFrameTitlesDropdown, TitlesDropDown_Initialize)
+		end
+	end
 	if ( event == "PLAYER_ENTERING_WORLD" ) then
 		CharacterModelFrame:SetUnit("player");
+
+		SendAddonMessage("TW_TITLES", "Titles:List", "GUILD")
 		return;
 	end
 	if ( not this:IsVisible() ) then
@@ -208,7 +232,7 @@ function PaperDollFrame_SetResistances()
 		local unitLevel = UnitLevel("player");
 		unitLevel = max(unitLevel, 20);
 		local magicResistanceNumber = resistance/unitLevel;
-        local resistanceLevel
+		local resistanceLevel
 		if ( magicResistanceNumber > 5 ) then
 			resistanceLevel = RESISTANCE_EXCELLENT;
 		elseif ( magicResistanceNumber > 3.75 ) then
@@ -675,7 +699,7 @@ function PaperDollItemSlotButton_Update(cooldownOnly)
 		end
 		this.hasItem = 1;
 	else
-		local textureName = this.backgroundTextureName;
+		textureName = this.backgroundTextureName;
 		if ( this.checkRelic and UnitHasRelicSlot("player") ) then
 			textureName = "Interface\\Paperdoll\\UI-PaperDoll-Slot-Relic.blp";
 		end
@@ -859,4 +883,46 @@ function CharacterRangedDamageFrame_OnEnter()
 	GameTooltip:AddDoubleLine(DAMAGE_COLON, this.damage, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	GameTooltip:AddDoubleLine(DAMAGE_PER_SECOND, format("%.1f", this.dps), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	GameTooltip:Show();
+end
+
+function TitlesDropDown_Initialize()
+	if not availableTitles then
+		return
+	end
+	-- get titles
+	local fEx = string.gsub(availableTitles, "TW_AVAILABLE_TITLES:", "")
+	if fEx then
+		local aEx = explode(fEx, ";")
+		local info = UIDropDownMenu_CreateInfo()
+		for _, titleData in aEx do
+			local _, _, id, active = string.find(titleData, "(%d+):(%d+)")
+			if id == "0" then
+				info.text = GENERIC_NONE
+				info.value = id
+				info.arg1 = id
+				info.checked = active == "1"
+				info.func = TitlesDropDown_OnValueChanged
+				UIDropDownMenu_AddButton(info)
+				if active == "1" then
+					UIDropDownMenu_SetText(GENERIC_NONE, PaperDollFrameTitlesDropdown)
+				end
+			else
+				if getglobal("PVP_MEDAL" .. id) then
+					info.text = getglobal("PVP_MEDAL" .. id)
+					info.value = id
+					info.arg1 = id
+					info.checked = active == "1"
+					info.func = TitlesDropDown_OnValueChanged
+					UIDropDownMenu_AddButton(info)
+					if active == "1" then
+						UIDropDownMenu_SetText(getglobal("PVP_MEDAL" .. id), PaperDollFrameTitlesDropdown)
+					end
+				end
+			end
+		end
+	end
+end
+
+function TitlesDropDown_OnValueChanged(a)
+	SendAddonMessage("TW_TITLES", "ChangeTitle:" .. a, "GUILD")
 end

@@ -1,308 +1,282 @@
-local TWTalent = {}
-local currentTab = 1
-
-function InspectFrameSelectTalentTree(tree)
-
-    PanelTemplates_DeselectTab(InspectTalentsFrameToggleTab1)
-    PanelTemplates_DeselectTab(InspectTalentsFrameToggleTab2)
-    PanelTemplates_DeselectTab(InspectTalentsFrameToggleTab3)
-
-    PanelTemplates_SelectTab(this)
-    PanelTemplates_TabResize(0);
-
-    getglobal(this:GetName() .. "HighlightTexture"):SetWidth(this:GetTextWidth() + 31)
-
-    if this == InspectTalentsFrameToggleTab1 then
-        currentTab = 1
-    end
-    if this == InspectTalentsFrameToggleTab2 then
-        currentTab = 2
-    end
-    if this == InspectTalentsFrameToggleTab3 then
-        currentTab = 3
-    end
-
-end
-
-local __ins_find = string.find
-local __ins_substr = string.sub
-local __ins_tinsert = table.insert
-local __ins_parseint = tonumber
-
-function __ins_explode(str, delimiter)
-    local result = {}
-    local from = 1
-    local delim_from, delim_to = __ins_find(str, delimiter, from, 1, true)
-    while delim_from do
-        __ins_tinsert(result, __ins_substr(str, from, delim_from - 1))
-        from = delim_to + 1
-        delim_from, delim_to = __ins_find(str, delimiter, from, true)
-    end
-    __ins_tinsert(result, __ins_substr(str, from))
-    return result
-end
-
-function inSend(to, data)
+local function inSend(to, data)
     SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. to .. ">", data, "GUILD")
 end
 
-local inspectCom = CreateFrame("Frame")
+local loadedFor = ""
 
+function InspectFrameTalentsTab_OnClick()
+	if loadedFor ~= UnitName('target') then
+		Ins_Init()
+		inSend(UnitName('target'), "INSShowTalents")
+	else
+		TWInspectTalents_Show()
+	end
+end
+
+if LoadAddOn("Blizzard_TalentUI") and LoadAddOn("Blizzard_InspectUI") then
+	local TWInspectFrame_Show = InspectFrame_Show
+	if TWInspectFrame_Show then
+		InspectFrame_Show = function(unit)
+			TWInspectFrame_Show(unit)
+			if UnitName('target') then
+				inSend(UnitName('target'), "INSShowTransmogs")
+				if InspectFrame.selectedTab == 3 then
+					Ins_Init()
+					inSend(UnitName('target'), "INSShowTalents")
+				end
+			end
+			if not InspectFrameTab3 then
+				CreateFrame('Button', 'InspectFrameTab3', InspectFrame, 'CharacterFrameTabButtonTemplate')
+				InspectFrameTab3:SetPoint("LEFT", InspectFrameTab2, "RIGHT", -16, 0)
+				InspectFrameTab3:SetID(3)
+				InspectFrameTab3:SetText(TALENTS)
+				InspectFrameTab3:SetScript("OnEnter", function()
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+					GameTooltip:SetText(TALENTS, 1.0,1.0,1.0 );
+				end)
+				InspectFrameTab3:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
+				InspectFrameTab3:SetScript("OnClick", function()
+					InspectFrameTalentsTab_OnClick()
+					PlaySound("igCharacterInfoTab");
+				end)
+				InspectFrameTab3:Show()
+				PanelTemplates_TabResize(0, InspectFrameTab3);
+
+				tinsert(INSPECTFRAME_SUBFRAMES, "InspectTalentsFrame")
+				UIPanelWindows["InspectFrame"].pushable = 4
+
+				PanelTemplates_SetNumTabs(InspectFrame, 3)
+				PanelTemplates_SetTab(InspectFrame, 1)
+			end
+		end
+	end
+end
+
+local TWTalent = {}
+
+local inspectCom = CreateFrame("Frame")
+inspectCom.SPEC = {}
+for i = 1, 3 do
+	inspectCom.SPEC[i] = { name = "", iconTexture = "", pointsSpent = 0, numTalents = 0 }
+end
+inspectCom.SPEC.class = ""
 inspectCom.transmogs = {}
 
+function Ins_Init()
+	local _, class = UnitClass("target")
+    inspectCom.SPEC.class = class
+
+	inspectCom.SPEC[1].name = Turtle_TalentsData[class][1].name
+	inspectCom.SPEC[1].iconTexture = ""
+	inspectCom.SPEC[1].pointsSpent = 0
+	inspectCom.SPEC[1].numTalents = 0
+
+    inspectCom.SPEC[2].name = Turtle_TalentsData[class][2].name
+    inspectCom.SPEC[2].iconTexture = ""
+    inspectCom.SPEC[2].pointsSpent = 0
+    inspectCom.SPEC[2].numTalents = 0
+
+	inspectCom.SPEC[3].name = Turtle_TalentsData[class][3].name
+	inspectCom.SPEC[3].iconTexture = ""
+	inspectCom.SPEC[3].pointsSpent = 0
+	inspectCom.SPEC[3].numTalents = 0
+end
+
+TWTalent.TALENT_BRANCH_ARRAY = {}
 inspectCom:RegisterEvent("CHAT_MSG_ADDON")
-inspectCom:RegisterEvent("PLAYER_TARGET_CHANGED")
 inspectCom:SetScript("OnEvent", function()
-    if event then
-        if event == "CHAT_MSG_ADDON" then
+	if event == "CHAT_MSG_ADDON" then
 
-            if arg1 == "TW_CHAT_MSG_WHISPER" then
+		if arg1 == "TW_CHAT_MSG_WHISPER" then
 
-                local message = arg2
-                local from = arg4
+			local message = arg2
+			local from = arg4
 
-                if string.find(message, "INSShowTalents", 1, true) then
+			if string.find(message, "INSShowTalents", 1, true) then
 
-                    for tree = 1, GetNumTalentTabs() do
-                        local treeName, iconTexture, pointsSpent = GetTalentTabInfo(tree)
-                        local numTalents = GetNumTalents(tree)
+				for tree = 1, GetNumTalentTabs() do
+					local treeName, iconTexture, pointsSpent = GetTalentTabInfo(tree)
+					local numTalents = GetNumTalents(tree)
 
-                        inSend(from, 'INSTalentTabInfo;' .. tree .. ';' .. treeName .. ';' .. pointsSpent .. ';' .. numTalents)
+					inSend(from, 'INSTalentTabInfo;' .. tree .. ';' .. treeName .. ';' .. pointsSpent .. ';' .. numTalents)
 
-                        for i = 1, GetNumTalents(tree) do
-                            local name, icon, tier, column, currRank, maxRank, _, meetsPrereq = GetTalentInfo(tree, i)
-                            local ptier, pcolumn, isLearnable = GetTalentPrereqs(tree, i)
-                            if not ptier then
-                                ptier = -1
-                            end
-                            if not pcolumn then
-                                pcolumn = -1
-                            end
-                            if not isLearnable then
-                                isLearnable = -1
-                            end
+					for i = 1, GetNumTalents(tree) do
+						local name, icon, tier, column, currRank, maxRank, _, meetsPrereq = GetTalentInfo(tree, i)
+						local ptier, pcolumn, isLearnable = GetTalentPrereqs(tree, i)
+						if not ptier then
+							ptier = -1
+						end
+						if not pcolumn then
+							pcolumn = -1
+						end
+						if not isLearnable then
+							isLearnable = -1
+						end
 
-                            if not meetsPrereq then
-                                meetsPrereq = 0
-                            end
+						if not meetsPrereq then
+							meetsPrereq = 0
+						end
 
-                            inSend(from, 'INSTalentInfo;' .. tree .. ';' .. i .. ';' ..
-                                    name .. ';' .. tier .. ';' .. column .. ';' ..
-                                    currRank .. ';' .. maxRank .. ';' .. meetsPrereq .. ';' ..
-                                    ptier .. ';' .. pcolumn .. ';' .. isLearnable)
+						inSend(from, 'INSTalentInfo;' .. tree .. ';' .. i .. ';' ..
+								name .. ';' .. tier .. ';' .. column .. ';' ..
+								currRank .. ';' .. maxRank .. ';' .. meetsPrereq .. ';' ..
+								ptier .. ';' .. pcolumn .. ';' .. isLearnable)
 
-                        end
-                    end
+					end
+				end
 
-                    inSend(from, 'INSTalentEND;')
+				inSend(from, 'INSTalentEND;')
 
-                    return true
-                end
+				return true
+			end
 
-                if string.find(message, "INSTalentEND;", 1, true) then
-                    if TWTalentFrame:IsVisible() then
-                        TWTalentFrame:Hide()
-                        TWTalentFrame:Show()
-                    else
-                        TWInspectTalents_Show()
-                    end
+			if string.find(message, "INSTalentEND;", 1, true) then
+				loadedFor = UnitName('target')
+				if TWTalentFrame:IsVisible() then
+					TWTalentFrame:Hide()
+					TWTalentFrame:Show()
+				elseif CanInspect("target") then
+					TWInspectTalents_Show()
+				end
 
-                    return true
-                end
+				return true
+			end
 
-                if string.find(message, "INSTalentTabInfo;", 1, true) then
-                    local talentEx = __ins_explode(message, ';')
-                    local index = __ins_parseint(talentEx[2])
-                    local name = talentEx[3]
-                    local pointsSpent = __ins_parseint(talentEx[4])
-                    local numTalents = __ins_parseint(talentEx[5])
+			if string.find(message, "INSTalentTabInfo;", 1, true) then
+				local talentEx = explode(message, ';')
+				local index = tonumber(talentEx[2])
+				local name = talentEx[3]
+				local pointsSpent = tonumber(talentEx[4])
+				local numTalents = tonumber(talentEx[5])
 
-                    inspectCom.SPEC[index].name = name
-                    inspectCom.SPEC[index].pointsSpent = pointsSpent
-                    inspectCom.SPEC[index].numTalents = numTalents
+				-- inspectCom.SPEC[index].name = name
+				inspectCom.SPEC[index].pointsSpent = pointsSpent
+				inspectCom.SPEC[index].numTalents = numTalents
 
-                    return true
-                end
+				return true
+			end
 
-                if string.find(message, "INSTalentInfo;", 1, true) then
+			if string.find(message, "INSTalentInfo;", 1, true) then
 
-                    local talentEx = __ins_explode(message, ';')
+				local talentEx = explode(message, ';')
 
-                    local tree = __ins_parseint(talentEx[2])
-                    local i = __ins_parseint(talentEx[3])
-                    local name = talentEx[4]
-                    local tier = __ins_parseint(talentEx[5])
-                    local column = __ins_parseint(talentEx[6])
-                    local currRank = __ins_parseint(talentEx[7])
-                    local maxRank = __ins_parseint(talentEx[8])
-                    local meetsPrereq = talentEx[9] == '1'
+				local tree = tonumber(talentEx[2])
+				local i = tonumber(talentEx[3])
+				local name = talentEx[4]
+				local tier = tonumber(talentEx[5])
+				local column = tonumber(talentEx[6])
+				local currRank = tonumber(talentEx[7])
+				local maxRank = tonumber(talentEx[8])
+				local meetsPrereq = talentEx[9] == '1'
 
-                    local ptier = nil
-                    local pcolumn = nil
-                    local isLearnable = true --WTF??
+				local ptier = nil
+				local pcolumn = nil
+				local isLearnable = true --WTF??
 
-                    if talentEx[10] ~= '-1' then
-                        ptier = __ins_parseint(talentEx[10])
-                    end
-                    if talentEx[11] ~= '-1' then
-                        pcolumn = __ins_parseint(talentEx[11])
-                    end
-                    --if talentEx[12] == '-1' then
-                    --    isLearnable = true
-                    --end
+				if talentEx[10] ~= '-1' then
+					ptier = tonumber(talentEx[10])
+				end
+				if talentEx[11] ~= '-1' then
+					pcolumn = tonumber(talentEx[11])
+				end
+				--if talentEx[12] == '-1' then
+				--    isLearnable = true
+				--end
 
-                    if not inspectCom.SPEC[tree][i] then
-                        inspectCom.SPEC[tree][i] = {}
-                    end
+				if not inspectCom.SPEC[tree][i] then
+					inspectCom.SPEC[tree][i] = {}
+				end
 
-                    inspectCom.SPEC[tree][i].name = name
-                    inspectCom.SPEC[tree][i].tier = tier
-                    inspectCom.SPEC[tree][i].column = column
-                    inspectCom.SPEC[tree][i].rank = currRank
-                    inspectCom.SPEC[tree][i].maxRank = maxRank
-                    inspectCom.SPEC[tree][i].meetsPrereq = meetsPrereq
+				if Turtle_TalentsData[inspectCom.SPEC.class] and Turtle_TalentsData[inspectCom.SPEC.class][tree]
+					and Turtle_TalentsData[inspectCom.SPEC.class][tree][i] and Turtle_TalentsData[inspectCom.SPEC.class][tree][i].name then
+					
+					inspectCom.SPEC[tree][i].name = Turtle_TalentsData[inspectCom.SPEC.class][tree][i].name
+					inspectCom.SPEC[tree][i].tier = tier
+					inspectCom.SPEC[tree][i].column = column
+					inspectCom.SPEC[tree][i].rank = currRank
+					inspectCom.SPEC[tree][i].maxRank = maxRank
+					inspectCom.SPEC[tree][i].meetsPrereq = meetsPrereq
 
-                    inspectCom.SPEC[tree][i].ptier = ptier
-                    inspectCom.SPEC[tree][i].pcolumn = pcolumn
-                    inspectCom.SPEC[tree][i].isLearnable = isLearnable
+					inspectCom.SPEC[tree][i].ptier = ptier
+					inspectCom.SPEC[tree][i].pcolumn = pcolumn
+					inspectCom.SPEC[tree][i].isLearnable = isLearnable
+				end
 
-                    return true
-                end
+				return true
+			end
 
-                if string.find(message, "INSTransmogs:", 1, true) then
+			if string.find(message, "INSTransmogs:", 1, true) then
 
-                    local tEx = __ins_explode(message, ':')
+				local tEx = explode(message, ':')
 
-                    if tEx[2] == "start" then
-                        inspectCom.transmogs = {}
-                    elseif tEx[2] == "end" then
+				if tEx[2] == "start" then
+					inspectCom.transmogs = {}
+				elseif tEx[2] == "end" then
 
-                    else
-                        if tEx[3] then
-                            inspectCom.transmogs[tEx[2]] = tEx[3]
-                        end
-                    end
-                end
+				else
+					if tEx[3] then
+						inspectCom.transmogs[tEx[2]] = tEx[3]
+					end
+				end
+			end
 
-            end
-        elseif event == "PLAYER_TARGET_CHANGED" then
-            if InspectFrame:IsVisible() and TWTalentFrame:IsVisible() then
-                InspectFrameTalentsTab_OnClick()
-            end
-        end
-
-    end
+		end
+	end
 end)
 
 function TWInspectTalents_Show()
     ToggleInspect("InspectTalentsFrame");
-    getglobal('TWTalentFrame'):Show()
+    TWTalentFrame:Show()
 end
-
-inspectCom.SPEC = {}
-
-function Ins_Init()
-    inspectCom.SPEC = {
-        class = UnitClass('target'),
-        {
-            name = 'Arms',
-            iconTexture = "interface\\icons\\ability_warrior_cleave",
-            pointsSpent = 27,
-            numTalents = 18
-        },
-        {
-            name = 'Fury',
-            iconTexture = "interface\\icons\\ability_warrior_cleave",
-            pointsSpent = 24,
-            numTalents = 17
-        },
-        {
-            name = 'Protection',
-            iconTexture = "interface\\icons\\ability_warrior_cleave",
-            pointsSpent = 0,
-            numTalents = 17
-        }
-    }
-end
-
-TWTalent.TALENT_BRANCH_ARRAY = {}
 
 function TWTalentOnClick(tab, id)
-
     if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-        local name = GetTalentInfo(tab, id);
+        local name = TWTalentName(tab, id);
         local talent = "|cFF71D5FF|Htalent:" .. tab .. ":" .. id .. ":" .. UnitName("target") .. ":|h[" .. name .. "]|h|r"
         ChatFrameEditBox:Insert(talent)
         return
     end
-
 end
 
 function TWTalentName(i, j)
-    return inspectCom.SPEC[i][j].name
+	if Turtle_TalentsData[inspectCom.SPEC.class][i][j] and Turtle_TalentsData[inspectCom.SPEC.class][i][j].name then
+		return Turtle_TalentsData[inspectCom.SPEC.class][i][j].name
+	end
+	return UNKNOWN
 end
 
 function TWTalentDescription(i, j)
-
-    if not Turtle_TalentsData[inspectCom.SPEC.class .. inspectCom.SPEC[i].name] then
-        return ''
-    end
-
-    for _, d in Turtle_TalentsData[inspectCom.SPEC.class .. inspectCom.SPEC[i].name] do
-        if d.name == inspectCom.SPEC[i][j].name then
-            return d.desc[inspectCom.SPEC[i][j].rank > 0 and inspectCom.SPEC[i][j].rank or 1]
-        end
-    end
-    return ''
+	if Turtle_TalentsData[inspectCom.SPEC.class][i][j] then
+		return Turtle_TalentsData[inspectCom.SPEC.class][i][j].desc[inspectCom.SPEC[i][j].rank > 0 and inspectCom.SPEC[i][j].rank or 1]
+	end
+	return UNKNOWN
 end
 
 function TWTalentRank(i, j)
-    return 'Rank ' .. inspectCom.SPEC[i][j].rank .. '/' .. inspectCom.SPEC[i][j].maxRank
+	if inspectCom.SPEC[i] and inspectCom.SPEC[i][j] and inspectCom.SPEC[i][j].rank and inspectCom.SPEC[i][j].maxRank then
+		return format(TOOLTIP_TALENT_RANK, inspectCom.SPEC[i][j].rank, inspectCom.SPEC[i][j].maxRank)
+	end
+	return format(TOOLTIP_TALENT_RANK, 1, 1)
 end
 
 function TWTalent.GetTalentTabInfo(i)
-    local name = inspectCom.SPEC[i].name
-    local iconTexture = ''
+    local name = Turtle_TalentsData[inspectCom.SPEC.class][i].name
+    local iconTexture = ""
     local pointsSpent = inspectCom.SPEC[i].pointsSpent
-
-    local spec = name
-
-    if name == 'Affliction' then
-        spec = 'Curses'
-    elseif name == 'Demonology' then
-        spec = 'Summoning'
-    elseif name == 'Feral Combat' then
-        spec = 'FeralCombat'
-    elseif name == 'Beast Mastery' then
-        spec = 'BeastMastery'
-    elseif name == 'Retribution' then
-        spec = 'Combat'
-    elseif name == 'Elemental' then
-        spec = 'ElementalCombat'
-    end
-
-    local fileName = inspectCom.SPEC.class .. spec
+    local fileName = Turtle_TalentsData[inspectCom.SPEC.class][i].background
 
     return name, iconTexture, pointsSpent, fileName
 end
 
 function TWTalent.GetNumTalents(i)
-    local num = inspectCom.SPEC[i].numTalents
-    return num
+    return inspectCom.SPEC[i].numTalents
 end
 
 function TWTalent.GetTalentInfo(i, j)
-
-    local name = inspectCom.SPEC[i][j].name
-    local texture = 'inv_misc_questionmark'
-
-    if Turtle_TalentsData[inspectCom.SPEC.class .. inspectCom.SPEC[i].name] then
-        for _, d in Turtle_TalentsData[inspectCom.SPEC.class .. inspectCom.SPEC[i].name] do
-            if d.name == name then
-                texture = d.icon
-            end
-        end
-    end
+    local name = Turtle_TalentsData[inspectCom.SPEC.class][i][j] and Turtle_TalentsData[inspectCom.SPEC.class][i][j].name or ""
+    local texture = Turtle_TalentsData[inspectCom.SPEC.class][i][j] and Turtle_TalentsData[inspectCom.SPEC.class][i][j].icon or "inv_misc_questionmark"
     local iconTexture = "Interface\\Icons\\" .. texture
 
     local tier = inspectCom.SPEC[i][j].tier
@@ -312,7 +286,6 @@ function TWTalent.GetTalentInfo(i, j)
     local meetsPrereq = inspectCom.SPEC[i][j].meetsPrereq
 
     return name, iconTexture, tier, column, rank, maxRank, meetsPrereq
-
 end
 
 function TWTalent.GetTalentPrereqs(i, j)
@@ -327,11 +300,11 @@ function TWTalentFrame_Update()
     local tab, name, iconTexture, pointsSpent, button
     local numTabs = 3
     for i = 1, numTabs do
-        tab = getglobal('TWTalentFrameTab' .. i)
+        tab = _G['TWTalentFrameTab' .. i]
         name, iconTexture, pointsSpent = TWTalent.GetTalentTabInfo(i)
-        if i == PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')) then
+        if i == TWTalentFrame.selectedTab then
             -- If tab is the selected tab set the points spent info
-            getglobal('TWTalentFrame').pointsSpent = pointsSpent
+            TWTalentFrame.pointsSpent = pointsSpent
         end
 
         tab:SetText(name)
@@ -340,28 +313,26 @@ function TWTalentFrame_Update()
         PanelTemplates_TabResize(-8, tab)
     end
 
-    PanelTemplates_SetNumTabs(getglobal('TWTalentFrame'), numTabs)
-    PanelTemplates_UpdateTabs(getglobal('TWTalentFrame'))
+    PanelTemplates_SetNumTabs(TWTalentFrame, numTabs)
+    PanelTemplates_UpdateTabs(TWTalentFrame)
 
-    local cp = UnitLevel('target') - 9 - inspectCom.SPEC[1].pointsSpent - inspectCom.SPEC[2].pointsSpent - inspectCom.SPEC[3].pointsSpent
+    TWTalentFrame.talentPoints = UnitLevel('target') - 9 - inspectCom.SPEC[1].pointsSpent - inspectCom.SPEC[2].pointsSpent - inspectCom.SPEC[3].pointsSpent
 
-    getglobal('TWTalentFrame').talentPoints = cp
-
-    local talentTabName = TWTalent.GetTalentTabInfo(PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')))
+    local talentTabName = TWTalent.GetTalentTabInfo(TWTalentFrame.selectedTab)
     local base
-    local name, texture, points, fileName = TWTalent.GetTalentTabInfo(PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')))
+    local name, texture, points, fileName = TWTalent.GetTalentTabInfo(TWTalentFrame.selectedTab)
     if talentTabName then
         base = "Interface\\TalentFrame\\" .. fileName .. "-"
     else
         base = "Interface\\TalentFrame\\MageFire-"
     end
 
-    getglobal('TWTalentFrameBackgroundTopLeft'):SetTexture(base .. "TopLeft")
-    getglobal('TWTalentFrameBackgroundTopRight'):SetTexture(base .. "TopRight")
-    getglobal('TWTalentFrameBackgroundBottomLeft'):SetTexture(base .. "BottomLeft")
-    getglobal('TWTalentFrameBackgroundBottomRight'):SetTexture(base .. "BottomRight")
+    TWTalentFrameBackgroundTopLeft:SetTexture(base .. "TopLeft")
+    TWTalentFrameBackgroundTopRight:SetTexture(base .. "TopRight")
+    TWTalentFrameBackgroundBottomLeft:SetTexture(base .. "BottomLeft")
+    TWTalentFrameBackgroundBottomRight:SetTexture(base .. "BottomRight")
 
-    local numTalents = TWTalent.GetNumTalents(PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')))
+    local numTalents = TWTalent.GetNumTalents(TWTalentFrame.selectedTab)
 
     if numTalents > MAX_NUM_TALENTS then
         message("Too many talents in talent frame!")
@@ -372,23 +343,23 @@ function TWTalentFrame_Update()
     local tier, column, rank, maxRank, isLearnable, meetsPrereq
     local forceDesaturated, tierUnlocked
     for i = 1, MAX_NUM_TALENTS do
-        button = getglobal('TWTalentFrameTalent' .. i)
+        button = _G['TWTalentFrameTalent' .. i]
         if i <= numTalents then
             -- Set the button info
-            name, iconTexture, tier, column, rank, maxRank, meetsPrereq = TWTalent.GetTalentInfo(PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')), i)
-            getglobal('TWTalentFrameTalent' .. i .. 'Rank'):SetText(rank)
+            name, iconTexture, tier, column, rank, maxRank, meetsPrereq = TWTalent.GetTalentInfo(TWTalentFrame.selectedTab, i)
+            _G['TWTalentFrameTalent' .. i .. 'Rank']:SetText(rank)
             SetTalentButtonLocation(button, tier, column)
             TWTalent.TALENT_BRANCH_ARRAY[tier][column].id = button:GetID()
 
             -- If player has no talent points then show only talents with points in them
-            if getglobal('TWTalentFrame').talentPoints <= 0 and rank == 0 then
+            if TWTalentFrame.talentPoints <= 0 and rank == 0 then
                 forceDesaturated = 1
             else
                 forceDesaturated = nil
             end
 
             -- If the player has spent at least 5 talent points in the previous tier
-            if ((tier - 1) * 5) <= getglobal('TWTalentFrame').pointsSpent then
+            if ((tier - 1) * 5) <= TWTalentFrame.pointsSpent then
                 tierUnlocked = 1
             else
                 tierUnlocked = nil
@@ -397,32 +368,30 @@ function TWTalentFrame_Update()
             SetItemButtonTexture(button, iconTexture)
 
             -- Talent must meet prereqs or the player must have no points to spend
-            local a5, a6, a7 = TWTalent.GetTalentPrereqs(PanelTemplates_GetSelectedTab(getglobal('TWTalentFrame')), i)
+            local a5, a6, a7 = TWTalent.GetTalentPrereqs(TWTalentFrame.selectedTab, i)
             if TWTalent.TalentFrame_SetPrereqs(tier, column, forceDesaturated, tierUnlocked, a5, a6, a7) and meetsPrereq then
 
                 SetItemButtonDesaturated(button, nil)
 
                 if rank < maxRank then
                     -- Rank is green if not maxed out
-                    --_G['TWTalentFrameTalent' .. i .. 'Slot']:SetVertexColor(0.1, 1.0, 0.1)
-                    --_G['TWTalentFrameTalent' .. i .. 'Rank']:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
-                    getglobal('TWTalentFrameTalent' .. i .. 'Slot'):SetVertexColor(1.0, 0.82, 0)
-                    getglobal('TWTalentFrameTalent' .. i .. 'Rank'):SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                    _G['TWTalentFrameTalent' .. i .. 'Slot']:SetVertexColor(0.1, 1.0, 0.1)
+                    _G['TWTalentFrameTalent' .. i .. 'Rank']:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
                 else
-                    getglobal('TWTalentFrameTalent' .. i .. 'Slot'):SetVertexColor(1.0, 0.82, 0)
-                    getglobal('TWTalentFrameTalent' .. i .. 'Rank'):SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                    _G['TWTalentFrameTalent' .. i .. 'Slot']:SetVertexColor(1.0, 0.82, 0)
+                    _G['TWTalentFrameTalent' .. i .. 'Rank']:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
                 end
-                getglobal('TWTalentFrameTalent' .. i .. 'RankBorder'):Show()
-                getglobal('TWTalentFrameTalent' .. i .. 'Rank'):Show()
+                _G['TWTalentFrameTalent' .. i .. 'RankBorder']:Show()
+                _G['TWTalentFrameTalent' .. i .. 'Rank']:Show()
             else
                 SetItemButtonDesaturated(button, 1, 0.65, 0.65, 0.65)
-                getglobal("TWTalentFrameTalent" .. i .. "Slot"):SetVertexColor(0.5, 0.5, 0.5)
+                _G["TWTalentFrameTalent" .. i .. "Slot"]:SetVertexColor(0.5, 0.5, 0.5)
                 if rank == 0 then
-                    getglobal("TWTalentFrameTalent" .. i .. "RankBorder"):Hide()
-                    getglobal("TWTalentFrameTalent" .. i .. "Rank"):Hide()
+                    _G["TWTalentFrameTalent" .. i .. "RankBorder"]:Hide()
+                    _G["TWTalentFrameTalent" .. i .. "Rank"]:Hide()
                 else
-                    getglobal("TWTalentFrameTalent" .. i .. "RankBorder"):SetVertexColor(0.5, 0.5, 0.5)
-                    getglobal("TWTalentFrameTalent" .. i .. "Rank"):SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+                    _G["TWTalentFrameTalent" .. i .. "RankBorder"]:SetVertexColor(0.5, 0.5, 0.5)
+                    _G["TWTalentFrameTalent" .. i .. "Rank"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
                 end
             end
 
@@ -442,9 +411,9 @@ function TWTalentFrame_Update()
     local ignoreUp
     local tempNode
 
-    getglobal('TWTalentFrame').textureIndex = 1
+    TWTalentFrame.textureIndex = 1
 
-    getglobal('TWTalentFrame').arrowIndex = 1
+    TWTalentFrame.arrowIndex = 1
 
     for i = 1, MAX_NUM_TALENT_TIERS do
         --8
@@ -518,23 +487,25 @@ function TWTalentFrame_Update()
                 end
             end
         end
-        getglobal('TWTalentFrameScrollFrame'):UpdateScrollChildRect()
+        TWTalentFrameScrollFrame:UpdateScrollChildRect()
     end
     -- Hide any unused branch textures
-    for i = getglobal('TWTalentFrame').textureIndex, MAX_NUM_BRANCH_TEXTURES do
-        getglobal("TWTalentFrameBranch" .. i):Hide()
+    for i = TWTalentFrame.textureIndex, MAX_NUM_BRANCH_TEXTURES do
+        _G["TWTalentFrameBranch" .. i]:Hide()
     end
     -- Hide and unused arrow textures
-    for i = getglobal('TWTalentFrame').arrowIndex, MAX_NUM_ARROW_TEXTURES do
-        getglobal("TWTalentFrameArrow" .. i):Hide()
+    for i = TWTalentFrame.arrowIndex, MAX_NUM_ARROW_TEXTURES do
+        _G["TWTalentFrameArrow" .. i]:Hide()
     end
 end
 
 function TWTalentFrame_OnShow()
 
-    PanelTemplates_SetNumTabs(getglobal('TWTalentFrame'), 3)
-    PanelTemplates_SetTab(getglobal('TWTalentFrame'), 1)
-
+	if loadedFor ~= UnitName("target") then
+		PanelTemplates_SetTab(TWTalentFrame, 1)
+	else
+		PanelTemplates_SetTab(TWTalentFrame, TWTalentFrame.selectedTab)
+	end
     for i = 1, MAX_NUM_TALENT_TIERS do
         TWTalent.TALENT_BRANCH_ARRAY[i] = {}
         for j = 1, NUM_TALENT_COLUMNS do
@@ -542,13 +513,13 @@ function TWTalentFrame_OnShow()
         end
     end
 
-    PlaySound("TalentScreenOpen")
+    -- PlaySound("TalentScreenOpen")
     TWTalentFrame_Update()
-    getglobal('TWTalentFrameScrollFrame'):UpdateScrollChildRect()
+    TWTalentFrameScrollFrame:UpdateScrollChildRect()
 end
 
 function TWTalentFrame_OnHide()
-    PlaySound("TalentScreenClose")
+    -- PlaySound("TalentScreenClose")
 end
 
 function TWTalent.TalentFrame_ResetBranches()
@@ -567,8 +538,8 @@ function TWTalent.TalentFrame_ResetBranches()
 end
 
 function TWTalent.TalentFrame_GetBranchTexture()
-    local branchTexture = getglobal("TWTalentFrameBranch" .. getglobal('TWTalentFrame').textureIndex)
-    getglobal('TWTalentFrame').textureIndex = getglobal('TWTalentFrame').textureIndex + 1
+    local branchTexture = _G["TWTalentFrameBranch" .. TWTalentFrame.textureIndex]
+    TWTalentFrame.textureIndex = TWTalentFrame.textureIndex + 1
     if not branchTexture then
         message("Not enough branch textures")
     else
@@ -584,8 +555,8 @@ function TWTalent.TalentFrame_SetBranchTexture(tier, column, texCoords, xOffset,
 end
 
 function TWTalent.TalentFrame_GetArrowTexture()
-    local arrowTexture = getglobal("TWTalentFrameArrow" .. getglobal('TWTalentFrame').arrowIndex)
-    getglobal('TWTalentFrame').arrowIndex = getglobal('TWTalentFrame').arrowIndex + 1
+    local arrowTexture = _G["TWTalentFrameArrow" .. TWTalentFrame.arrowIndex]
+    TWTalentFrame.arrowIndex = TWTalentFrame.arrowIndex + 1
     if (not arrowTexture) then
         message("Not enough arrow textures")
     else
@@ -756,7 +727,7 @@ function TWTalent.TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, 
 end
 
 function TWTalentFrameTab_OnClick()
-    PanelTemplates_SetTab(getglobal('TWTalentFrame'), this:GetID())
+    PanelTemplates_SetTab(TWTalentFrame, this:GetID())
     TWTalentFrame_Update()
     PlaySound("igCharacterInfoTab")
 
@@ -776,6 +747,8 @@ local paperDollFrames = {
     InspectMainHandSlot,
     InspectSecondaryHandSlot,
     InspectRangedSlot,
+    InspectTabardSlot,
+    InspectShirtSlot,
 }
 
 local InspectTransmogTooltip = CreateFrame("Frame", "InspectTransmogTooltip", GameTooltip)
@@ -797,7 +770,7 @@ InspectTransmogTooltip:SetScript("OnShow", function()
             if GameTooltip:IsOwned(frame) == 1 then
                 local itemName = GetItemInfo(itemLink)
 
-                local tLabel = getglobal(GameTooltip:GetName() .. "TextLeft2")
+                local tLabel = _G[GameTooltip:GetName() .. "TextLeft2"]
 
                 if tLabel and tLabel:GetText() and inspectCom.transmogs[itemName] then
                     tLabel:SetText('|cfff471f5Transmogrified to:\n' .. inspectCom.transmogs[itemName] .. '\n|cffffffff' .. tLabel:GetText())

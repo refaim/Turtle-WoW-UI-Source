@@ -228,6 +228,9 @@
 			<OnHide>
 				LootFrame_OnHide();
 			</OnHide>
+			<OnMouseUp>
+				CloseDropDownMenus()
+			</OnMouseUp>
 		</Scripts>
 	</Frame>
 	<Frame name="GroupLootDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">

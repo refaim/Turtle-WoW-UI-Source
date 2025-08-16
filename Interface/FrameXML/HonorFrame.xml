@@ -57,23 +57,23 @@
 					</Anchors>
 				</Texture>
 				<FontString name="HonorLevelText" inherits="GameFontNormalSmall" text="Level level race class">
-                    <Anchors>
-                        <Anchor point="TOP" relativeTo="CharacterNameText" relativePoint="BOTTOM">
-                            <Offset>
-                                <AbsDimension x="0" y="-6"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString name="HonorGuildText" inherits="GameFontNormalSmall">
-                    <Anchors>
-                        <Anchor point="TOP" relativeTo="HonorLevelText" relativePoint="BOTTOM">
-                            <Offset>
-                                <AbsDimension x="0" y="-1"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
+					<Anchors>
+						<Anchor point="TOP" relativeTo="CharacterNameText" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="-6"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="HonorGuildText" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="HonorLevelText" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture file="Interface\PaperDollInfoFrame\UI-Character-Honor-TopLeft">
@@ -204,6 +204,42 @@
 			</Layer>
 		</Layers>
 		<Frames>
+			<Button name="$parentTab1" inherits="TabButtonTemplate" text="HONOR" id="7">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="72" y="-42" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						PanelTemplates_SelectTab(this);
+						PanelTemplates_TabResize(10);
+						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 36)
+					</OnLoad>
+				</Scripts>
+			</Button>
+			<Button name="$parentTab2" inherits="TabButtonTemplate" text="ARENA" id="8">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTab1" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="3" y="3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						PanelTemplates_DeselectTab(this);
+						PanelTemplates_TabResize(10)
+						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 36)
+					</OnLoad>
+					<OnClick>
+						HonorFrame:Hide()
+						ArenaFrame:Show()
+					</OnClick>
+				</Scripts>
+			</Button>
 			<Frame name="HonorFrameCurrentHK" inherits="HonorFrameHKButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="HonorFrameCurrentSessionTitle" relativePoint="BOTTOMLEFT">
@@ -376,6 +412,14 @@
 			<OnEvent>
 				HonorFrame_OnEvent(event);
 			</OnEvent>
+			<OnShow>
+				HonorGuildText:Hide()
+				HonorLevelText:Hide()
+			</OnShow>
+			<OnHide>
+				HonorGuildText:Show()
+				HonorLevelText:Show()
+			</OnHide>
 		</Scripts>
 	</Frame>
 </Ui>

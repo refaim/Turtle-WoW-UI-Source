@@ -1,0 +1,383 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Button name="TWGuildFrameBottomTabButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="115" y="32" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentLeftDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentMiddleDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="88" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentRightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentLeft" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="88" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1" />
+				</Texture>
+				<Texture name="$parentRight" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size>
+						<AbsDimension x="20" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:SetFrameLevel(this:GetFrameLevel() + 4);
+			</OnLoad>
+			<OnClick>
+				GuildBankFrameBottomTab_OnClick(this:GetID());
+			</OnClick>
+			<OnShow>
+				PanelTemplates_TabResize(0);
+				_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 30);
+			</OnShow>
+		</Scripts>
+		<ButtonText name="$parentText">
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="2" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont inherits="GameFontNormalSmall" />
+		<HighlightFont inherits="GameFontHighlightSmall" />
+		<DisabledFont inherits="GameFontHighlightSmall" />
+		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="LEFT">
+					<Offset>
+						<AbsDimension x="10" y="2" />
+					</Offset>
+				</Anchor>
+				<Anchor point="RIGHT">
+					<Offset>
+						<AbsDimension x="-10" y="2" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+	<CheckButton name="GuildBankFrameTabButtonTemplate" inherits="ItemButtonTemplate" virtual="true" hidden="true">
+		<Size>
+			<AbsDimension x="32" y="32" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\GuildBankFrame\UI-GuildBankFrame-Tab">
+					<Size>
+						<AbsDimension x="64" y="64" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-3" y="11" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+				GameTooltip:SetText(this.tooltip, 1, 1, 1, 1);
+				GameTooltip:AddLine(this.tooltip2);
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<OnShow>
+			</OnShow>
+			<OnClick>
+				GuildBankFrameTab_OnClick(this:GetID())
+			</OnClick>
+			<OnMouseUp>
+				if (arg1 == "RightButton") then
+				GuildBankFrameTab_OnClick(this:GetID())
+				end
+			</OnMouseUp>
+		</Scripts>
+		<NormalTexture/>
+		<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<PushedTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD" />
+	</CheckButton>
+	<Button name="GuildBankFrameItemButtonTemplate" virtual="true" hidden="true">
+		<Size>
+			<AbsDimension x="37" y="37" />
+		</Size>
+		<Layers>
+			<Layer level="BORDER">
+				<Texture name="$parentIconTexture" />
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-5" y="2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentSlot" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentShine" file="Interface\ComboFrame\ComboPoint" alphaMode="ADD" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="3" y="3" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.5625" right="1" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
+			<Size>
+				<AbsDimension x="64" y="64" />
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="-1" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</NormalTexture>
+		<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
+		<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<Scripts>
+			<OnLoad>
+				this:RegisterForDrag("LeftButton", "LeftButtonUp");
+				this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+			</OnLoad>
+			<OnClick>
+				BankSlot_OnClick(arg1)
+			</OnClick>
+			<OnDragStart>
+				BankSlot_OnDragStart(arg1)
+			</OnDragStart>
+			<OnReceiveDrag>
+				BankSlot_OnReceiveDrag();
+			</OnReceiveDrag>
+		</Scripts>
+	</Button>
+	<Button name="GuildBankFrameTabIconButtonTemplate" virtual="true" hidden="true">
+		<Size>
+			<AbsDimension x="36" y="36" />
+		</Size>
+		<Layers>
+			<Layer level="BORDER">
+				<Texture name="$parentIconTexture" />
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentSelected" file="Interface\Buttons\UI-Quickslot-Depress" alphaMode="ADD" hidden="true">
+					<Size>
+						<AbsDimension x="36" y="36" />
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
+			<Size>
+				<AbsDimension x="60" y="60" />
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="-1" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</NormalTexture>
+		<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
+		<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+		<Scripts>
+			<OnClick>
+				GuildBankFrameWithdrawalsIcon_OnClick()
+			</OnClick>
+		</Scripts>
+	</Button>
+	<ScrollingMessageFrame name="TWChatFrameTemplate" toplevel="true" displayDuration="1120.0" maxLines="512" hidden="true" virtual="true">
+		<Scripts>
+			<OnLoad>
+				_G[this:GetName().."BottomButton"]:Hide();
+				_G[this:GetName().."DownButton"]:Hide();
+				_G[this:GetName().."UpButton"]:Hide();
+			</OnLoad>
+			<OnHyperlinkClick>
+				TWGuildLogHyperlinkClick()
+			</OnHyperlinkClick>
+		</Scripts>
+		<FontString inherits="ChatFontNormal" justifyH="LEFT"/>
+	</ScrollingMessageFrame>
+	<ScrollingMessageFrame name="TWFloatingChatFrameTemplate" enableMouse="true" inherits="TWChatFrameTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="710" y="302" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="33" y="-73" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="$parentBottomButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="-32" y="-4" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="$parentFlash" file="Interface\ChatFrame\UI-ChatIcon-BlinkHilight" hidden="true" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						PlaySound("igChatBottom");
+						this:GetParent():ScrollToBottom();
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Up" />
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Down" />
+				<DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollEnd-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentDownButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="$parentBottomButton" relativePoint="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						MessageFrameScrollButton_OnLoad();
+					</OnLoad>
+					<OnUpdate>
+						MessageFrameScrollButton_OnUpdate(arg1);
+					</OnUpdate>
+					<OnClick>
+						if ( this:GetButtonState() == "PUSHED" ) then
+						this.clickDelay = MESSAGE_SCROLLBUTTON_INITIAL_DELAY;
+						else
+						PlaySound("igChatScrollDown");
+						this:GetParent():ScrollDown();
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up" />
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down" />
+				<DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentUpButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="$parentDownButton" relativePoint="TOP" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						MessageFrameScrollButton_OnLoad();
+					</OnLoad>
+					<OnUpdate>
+						MessageFrameScrollButton_OnUpdate(arg1);
+					</OnUpdate>
+					<OnClick>
+						if ( this:GetButtonState() == "PUSHED" ) then
+						this.clickDelay = MESSAGE_SCROLLBUTTON_INITIAL_DELAY;
+						else
+						PlaySound("igChatScrollUp");
+						this:GetParent():ScrollUp();
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Up" />
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Down" />
+				<DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollUp-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnMouseWheel>
+				TWGuildLog_OnScroll()
+			</OnMouseWheel>
+		</Scripts>
+	</ScrollingMessageFrame>
+</Ui>

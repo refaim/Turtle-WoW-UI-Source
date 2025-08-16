@@ -93,18 +93,24 @@ DressUpFrame.xml
 RaidWarning.xml
 ClassTrainerFrameTemplates.xml
 
+Globals.lua
+
+# Arena
+Turtle_ArenaUI\Turtle_ArenaUI.lua
+Turtle_ArenaUI\Turtle_ArenaUITemplates.xml
+Turtle_ArenaUI\Turtle_ArenaFrame.xml
+Turtle_ArenaUI\Turtle_ArenaQueueFrame.xml
+Turtle_ArenaUI\Turtle_ArenaRegistrarFrame.xml
+
 # Barbershop
 Turtle_Barbershop\Turtle_BarbershopTemplates.xml
 Turtle_Barbershop\Turtle_Barbershop.xml
 
 # Transmog
-Turtle_TransmogUI\Turtle_TransmogSets.lua
+Turtle_TransmogUI\Turtle_TransmogUITemplates.xml
 Turtle_TransmogUI\Turtle_TransmogUI.xml
 
 # Inspect Talents and spell/talent chat links
-Turtle_InspectTalentsUI\Turtle_TalentsData.lua
-Turtle_InspectTalentsUI\Turtle_InspectTalentsUI.lua
-Turtle_InspectTalentsUI\Turtle_SpellChatLinksUI.lua
 Turtle_InspectTalentsUI\InspectTalentsFrame.xml
 
 # Shop
@@ -113,6 +119,7 @@ Turtle_ShopUI\Turtle_ShopUI.xml
 
 # Guild Bank
 StaticPopup2\StaticPopup2.xml
+Turtle_GuildBankUI\Turtle_GuildBankUITemplates.xml
 Turtle_GuildBankUI\Turtle_GuildBankUI.xml
 
 # EverlookBroadcastingCo

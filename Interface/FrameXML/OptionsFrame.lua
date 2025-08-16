@@ -55,15 +55,16 @@ function OptionsFrame_OnEvent()
 end
 
 function OptionsFrame_Load()
-	local bmLoaded, bmReason = LoadAddOn("Blizzard_BattlefieldMinimap")
-	if not BattlefieldMinimapOptions.farclip then BattlefieldMinimapOptions.farclip = OPTIONS_FARCLIP_MAX end
+	LoadAddOn("Blizzard_BattlefieldMinimap")
+	if not BattlefieldMinimapOptions.farclip then
+		BattlefieldMinimapOptions.farclip = OPTIONS_FARCLIP_MAX
+	end
 	local shadersEnabled = GetCVar("pixelShaders");
 	local hasAnisotropic, hasPixelShaders, hasVertexShaders, hasTrilinear, hasTripleBuffering, maxAnisotropy, hasHardwareCursor = GetVideoCaps();
 	for index, value in OptionsFrameCheckButtons do
 		local button = getglobal("OptionsFrameCheckButton"..value.index);
 		local string = getglobal("OptionsFrameCheckButton"..value.index.."Text");
-		local checked;
-		checked = GetCVar(value.cvar);
+		local checked = GetCVar(value.cvar);
 
 		string:SetText(TEXT(getglobal(index)));
 		button.tooltipText = value.tooltipText;
@@ -182,6 +183,8 @@ function OptionsFrame_Load()
 	OptionsFrame_UpdateGammaControls();
 	-- Update ui scale
 	OptionsFrame_UpdateUIScaleControls();
+	-- Update refresh rates dropdown
+	OptionsFrame_UpdateRefreshRatesDropdown();
 
 	-- Resize the options frame
 	OptionsFrame:SetWidth(OPTIONS_FRAME_WIDTH);
@@ -284,11 +287,9 @@ function OptionsFrameResolutionDropDown_Initialize()
 end
 
 function OptionsFrameResolutionDropDown_LoadResolutions(...)
-	local info;
+	local info = UIDropDownMenu_CreateInfo();
 	local resolution, xIndex, width, height;
 	for i=1, arg.n, 1 do
-		checked = nil;
-		info = {};
 		resolution = arg[i];
 		xIndex = strfind(resolution, "x");
 		width = strsub(resolution, 1, xIndex-1);
@@ -299,7 +300,7 @@ function OptionsFrameResolutionDropDown_LoadResolutions(...)
 		info.text = resolution;
 		info.value = arg[i];
 		info.func = OptionsFrameResolutionButton_OnClick;
-		info.checked = checked;
+		info.checked = UIDropDownMenu_GetSelectedID(OptionsFrameResolutionDropDown) == i;
 		UIDropDownMenu_AddButton(info);
 	end
 end
@@ -319,7 +320,7 @@ function OptionsFrameRefreshDropDown_Initialize()
 end
 
 function OptionsFrame_GetRefreshRates(...)
-	local info = {};
+	local info = UIDropDownMenu_CreateInfo();
 	local checked;
 	if ( arg.n == 1 and arg[1] == 0 ) then
 		OptionsFrameRefreshDropDownButton:Disable();
@@ -328,7 +329,6 @@ function OptionsFrame_GetRefreshRates(...)
 		return;
 	end
 	for i=1, arg.n do
-		info = {};
 		info.text = arg[i]..HERTZ;
 		info.func = OptionsFrameRefreshDropDown_OnClick;
 		
@@ -360,14 +360,13 @@ function OptionsFrameMultiSampleDropDown_Initialize()
 end
 
 function OptionsFrame_GetMultisampleFormats(...)
-	local colorBits, depthBits, multiSample;
-	local info, checked;
+	local colorBits, depthBits, multiSample, checked;
+	local info = UIDropDownMenu_CreateInfo();
 	local index = 1;
 	for i=1, arg.n, 3 do
 		colorBits = arg[i];
 		depthBits = arg[i+1];
 		multiSample = arg[i+2];
-		info = {};
 		info.text = format(MULTISAMPLING_FORMAT_STRING, colorBits, depthBits, multiSample);
 		info.func = OptionsFrameMultiSampleDropDown_OnClick;
 		
@@ -424,6 +423,18 @@ function OptionsFrame_UpdateUIScaleControls()
 		OptionsFrame_EnableSlider(OptionsFrameSlider1);
 	else
 		OptionsFrame_DisableSlider(OptionsFrameSlider1);
+	end
+end
+
+function OptionsFrame_UpdateRefreshRatesDropdown()
+	if getglobal("OptionsFrameCheckButton"..OptionsFrameCheckButtons["WINDOWED_MODE"].index):GetChecked() then
+		OptionsFrameRefreshDropDownButton:Disable();
+		OptionsFrameRefreshDropDownLabel:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+		OptionsFrameRefreshDropDownText:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+	else
+		OptionsFrameRefreshDropDownButton:Enable();
+		OptionsFrameRefreshDropDownLabel:SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+		OptionsFrameRefreshDropDownText:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	end
 end
 

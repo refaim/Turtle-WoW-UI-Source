@@ -8,19 +8,46 @@
 			<AbsDimension x="26" y="26"/>
 		</Size>
 	</CheckButton>
-	<Frame name="UIOptionsFrame" setAllPoints="true" frameStrata="FULLSCREEN" hidden="true" enableKeyboard="true" enableMouse="true">
+	<Frame name="UIOptionsFrame" parent="UIParent" frameStrata="FULLSCREEN_DIALOG" hidden="true" enableMouse="true">
+		<Size x="1024" y="648"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="11" top="12" bottom="10"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="UIOptionsFrameTitle" inherits="GameFontNormal" text="UIOPTIONS_MENU">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
-								<AbsDimension x="0" y="-5"/>
+								<AbsDimension x="0" y="-4"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<Texture file="Interface\OptionsFrame\UIOptionsFrame-TopLeft">
+				<Texture name="$parentHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+					<Size>
+						<AbsDimension x="300" y="68"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset>
+								<AbsDimension x="0" y="12"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<!-- <Texture file="Interface\OptionsFrame\UIOptionsFrame-TopLeft">
 					<Size>
 						<AbsDimension x="512" y="512"/>
 					</Size>
@@ -67,13 +94,13 @@
 							</Offset>
 						</Anchor>
 					</Anchors>
-				</Texture>
+				</Texture> -->
 			</Layer>
-			<Layer level="BACKGROUND">
+			<!-- <Layer level="BACKGROUND">
 				<Texture name="UIOptionsBlackground" setAllPoints="true">
 					<Color r="0.0" g="0.0" b="0.0"/>
 				</Texture>
-			</Layer>
+			</Layer> -->
 		</Layers>
 		<Frames>
 			<Frame name="BasicOptions">
@@ -232,7 +259,7 @@
 					</Frame>
 					<Frame name="BasicOptionsDisplay" inherits="OptionFrameBoxTemplate">
 						<Size>
-							<AbsDimension x="10" y="155"/>
+							<AbsDimension x="10" y="172"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="BasicOptionsGeneral">
@@ -422,6 +449,15 @@
 									</Anchor>
 								</Anchors>
 							</CheckButton>
+							<CheckButton name="UIOptionsFrameCheckButton71" inherits="UIOptionsCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="UIOptionsFrameCheckButton21" relativePoint="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="-52"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</CheckButton>
 						</Frames>
 						<Scripts>
 							<OnLoad>
@@ -580,7 +616,8 @@
 									</Anchor>
 								</Anchors>
 							</CheckButton>
-							<Button name="UIOptionsFrameResetTutorials" inherits="GameMenuButtonTemplate" text="RESET_TUTORIALS">
+							<Button name="UIOptionsFrameResetTutorials" inherits="UIPanelButtonTemplate2" text="RESET_TUTORIALS">
+								<Size x="144" y="21"/>
 								<Anchors>
 									<Anchor point="TOP">
 										<Offset>
@@ -680,7 +717,7 @@
 								<Anchors>
 									<Anchor point="TOP">
 										<Offset>
-											<AbsDimension x="-80" y="-8"/>
+											<AbsDimension x="-130" y="-8"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -714,7 +751,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-180" y="-8"/>
+											<AbsDimension x="-260" y="-8"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -1182,11 +1219,12 @@
 					</Frame>
 				</Frames>
 			</Frame>
-			<Button name="UIOptionsFrameCancel" inherits="GameMenuButtonTemplate" text="CANCEL">
+			<Button name="UIOptionsFrameCancel" inherits="UIPanelButtonTemplate2" text="CANCEL">
+				<Size x="144" y="21"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativeTo="BasicOptions">
 						<Offset>
-							<AbsDimension x="-8" y="6"/>
+							<AbsDimension x="-16" y="74"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -1202,7 +1240,8 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="UIOptionsFrameOkay" inherits="GameMenuButtonTemplate" text="OKAY">
+			<Button name="UIOptionsFrameOkay" inherits="UIPanelButtonTemplate2" text="OKAY">
+				<Size x="144" y="21"/>
 				<Anchors>
 					<Anchor point="RIGHT" relativeTo="UIOptionsFrameCancel" relativePoint="LEFT">
 						<Offset>
@@ -1218,11 +1257,12 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="UIOptionsFrameDefaults" inherits="OptionsButtonTemplate" text="DEFAULTS">
+			<Button name="UIOptionsFrameDefaults" inherits="UIPanelButtonTemplate2" text="DEFAULTS">
+				<Size x="144" y="21"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativeTo="BasicOptions">
 						<Offset>
-							<AbsDimension x="8" y="6"/>
+							<AbsDimension x="16" y="74"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -1310,9 +1350,9 @@
 					<OnLoad>
 						PanelTemplates_TabResize(0);
 						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
-						UIOptionsFrameTab1LeftDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
-						UIOptionsFrameTab1MiddleDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
-						UIOptionsFrameTab1RightDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab1LeftDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab1MiddleDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab1RightDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
 					</OnLoad>
 					<OnClick>
 						PanelTemplates_Tab_OnClick(UIOptionsFrame);
@@ -1435,9 +1475,9 @@
 					<OnLoad>
 						PanelTemplates_TabResize(0);
 						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
-						UIOptionsFrameTab2LeftDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
-						UIOptionsFrameTab2MiddleDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
-						UIOptionsFrameTab2RightDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab2LeftDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab2MiddleDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
+						-- UIOptionsFrameTab2RightDisabled:SetTexture("Interface\\OptionsFrame\\OptionsFrameTab-Active");
 					</OnLoad>
 					<OnClick>
 						PanelTemplates_Tab_OnClick(UIOptionsFrame);
@@ -1483,7 +1523,7 @@
 					</Anchors>
 				</HighlightTexture>
             </Button>
-			<Button inherits="UIPanelCloseButton">
+			<!-- <Button inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="BasicOptions">
 						<Offset>
@@ -1491,7 +1531,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-			</Button>
+            </Button> -->
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -1513,6 +1553,7 @@
 				MultiActionBar_Update();
 				MultiActionBar_HideAllGrids();
 				UpdateMicroButtons();
+				PlaySound("igMainMenuOptionCheckBoxOn");
 			</OnHide>
 		</Scripts>
 	</Frame>

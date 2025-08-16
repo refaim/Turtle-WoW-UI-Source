@@ -1,270 +1,297 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
-    <Model name="ShopEntryModelTemplate" virtual="true">
-        <Scripts>
-            <OnLoad>
-                this:SetID(-1)
-            </OnLoad>
-            <OnShow>
-                this.elapsed = 0
-            </OnShow>
-            <OnEnter>
-                ShopFrameEntryModel_OnEnter()
-            </OnEnter>
-            <OnLeave>
-                ShopFrameEntryModel_OnLeave()
-            </OnLeave>
-            <OnMouseDown>
-                ShopFrameEntryModel_OnMouseDown()
-            </OnMouseDown>
-            <OnMouseUp>
-                ShopFrameEntryModel_OnMouseUp(arg1)
-            </OnMouseUp>
-        </Scripts>
-    </Model>
-    <Button name="ShopCategoryFrameTemplate" virtual="true" inherits="UIPanelButtonTemplate" text="" framestrata="HIGH">
-        <Size>
-            <AbsDimension x="178" y="36" />
-        </Size>
-        <NormalTexture file="Interface\ShopFrame\cat_normal" setAllPoints="true">
-            <TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
-        </NormalTexture>
-        <PushedTexture file="Interface\ShopFrame\cat_highlight" setAllPoints="true">
-            <TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
-        </PushedTexture>
-        <HighlightTexture file="Interface\ShopFrame\cat_highlight" setAllPoints="true" alphaMode="ADD">
-            <TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
-        </HighlightTexture>
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString name="$parentName" inherits="GameFontNormal" text="Horses"
-                    justifyH="LEFT" hidden="false">
-                    <Size>
-                        <AbsDimension x="135" y="25" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="LEFT">
-                            <Offset>
-                                <AbsDimension x="30" y="0" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <Texture name="$parentSelected" file="Interface\ShopFrame\cat_highlight" setAllPoints="true" hidden="true">
-                    <TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
-                </Texture>
-            </Layer>
-        </Layers>
-        <Scripts>
-            <OnLoad>
-                this.subcategories = {}
-            </OnLoad>
-            <OnClick>
-                ShopFrameCategoryButton_OnClick(this:GetID())
-            </OnClick>
-        </Scripts>
-        <Frames>
-            <Frame name="$parentIcon">
-                <Size>
-                    <AbsDimension x="64" y="64" />
-                </Size>
-                <Anchors>
-                    <Anchor point="LEFT">
-                        <Offset>
-                            <AbsDimension x="-20" y="-1" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" setAllPoints="true" hidden="false" />
-                    </Layer>
-                </Layers>
-            </Frame>
-        </Frames>
-    </Button>
-    <Button name="ShopSubcategoryFrameTemplate" virtual="true" inherits="ShopCategoryFrameTemplate" hidden="true">
-        <Size>
-            <AbsDimension x="172" y="30" />
-        </Size>
-        <Scripts>
-            <OnLoad>
-                this:GetNormalTexture():SetVertexColor(0.7, 0.7, 0.7, 1.0)
-                this.subcategoryID = 0
+	<Model name="ShopEntryModelTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				this:SetID(-1)
+			</OnLoad>
+			<OnShow>
+				this.elapsed = 0
+			</OnShow>
+			<OnEnter>
+				ShopFrameEntryModel_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				ShopFrameEntryModel_OnLeave()
+			</OnLeave>
+			<OnMouseDown>
+				ShopFrameEntryModel_OnMouseDown()
+			</OnMouseDown>
+			<OnMouseUp>
+				ShopFrameEntryModel_OnMouseUp(arg1)
+			</OnMouseUp>
+			<OnMouseWheel>
+				ShopFrameEntryModel_OnMouseWheel()
+			</OnMouseWheel>
+		</Scripts>
+	</Model>
+	<Button name="ShopCategoryFrameTemplate" virtual="true" inherits="UIPanelButtonTemplate" text="" framestrata="HIGH">
+		<Size>
+			<AbsDimension x="178" y="36" />
+		</Size>
+		<NormalTexture file="Interface\ShopFrame\cat_normal" setAllPoints="true">
+			<TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
+		</NormalTexture>
+		<PushedTexture file="Interface\ShopFrame\cat_highlight" setAllPoints="true">
+			<TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
+		</PushedTexture>
+		<HighlightTexture file="Interface\ShopFrame\cat_highlight" setAllPoints="true" alphaMode="ADD">
+			<TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
+		</HighlightTexture>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentName" inherits="GameFontNormal" text="Horses"
+					justifyH="LEFT" hidden="false">
+					<Size>
+						<AbsDimension x="135" y="25" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="30" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentSelected" file="Interface\ShopFrame\cat_highlight" setAllPoints="true" hidden="true">
+					<TexCoords left="0" right="0.6875" top="0" bottom="0.59375" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this.subcategories = {}
+			</OnLoad>
+			<OnClick>
+				ShopFrameCategoryButton_OnClick(this:GetID())
+				PlaySound("igMainMenuOptionCheckBoxOn")
+			</OnClick>
+		</Scripts>
+		<Frames>
+			<Frame name="$parentIcon">
+				<Size>
+					<AbsDimension x="64" y="64" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="$parentTexture" setAllPoints="true" hidden="false" />
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Button>
+	<Button name="ShopSubcategoryFrameTemplate" virtual="true" inherits="ShopCategoryFrameTemplate" hidden="true">
+		<Size>
+			<AbsDimension x="172" y="30" />
+		</Size>
+		<Scripts>
+			<OnLoad>
+				this:GetNormalTexture():SetVertexColor(0.7, 0.7, 0.7, 1.0)
+				this.subcategoryID = 0
 
-                getglobal(this:GetName() .. "Name"):SetPoint("LEFT", 14, 0)
-            </OnLoad>
-            <OnClick>
-                ShopFrameCategoryButton_OnClick(this:GetID(), this.subcategoryID)
-            </OnClick>
-        </Scripts>
-    </Button>
-    <Button name="ShopEntryFrameTemplate" virtual="true" inherits="UIPanelButtonTemplate" text="" framestrata="MEDIUM" hidden="true">
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentItemBorder" file="Interface\ShopFrame\ShopFrame-ItemRing" hidden="true">
-                    <Size>
-                        <AbsDimension x="96" y="96" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOP">
-                            <Offset x="21" y="-27" />
-                        </Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK">
-                <FontString name="$parentPrice" hidden="false" inherits="GameFontNormal"
-                    justifyH="CENTER">
-                    <Size>
-                        <AbsDimension x="100" y="55" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="BOTTOM">
-                            <Offset>
-                                <AbsDimension x="0" y="-10" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentName" hidden="false" inherits="GameFontNormalSmall"
-                    justifyV="BOTTOM">
-                    <Size>
-                        <AbsDimension x="100" y="55" />
-                    </Size>
-                    <Color r="1" g="1" b="1" />
-                    <Anchors>
-                        <Anchor point="BOTTOM" relativeTo="$parentPrice" relativePoint="TOP">
-                            <Offset>
-                                <AbsDimension x="0" y="-18" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <Texture name="$parentItemTexture" hidden="true">
-                    <Size>
-                        <AbsDimension x="48" y="48" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOP">
-                            <Offset x="0" y="-30" />
-                        </Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Frame name="$parentFeaturedFrame" hidden="true">
-                <Size>
-                    <AbsDimension x="32" y="32" />
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset x="0" y="-6" />
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture file="Interface\ShopFrame\ShopFrame-Featured" setAllPoints="true" />
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnEnter>
-                        GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-                        GameTooltip:SetText(DONO_SHOP_FEATURED)
-                        GameTooltip:Show()
-                    </OnEnter>
-                    <OnLeave>
-                        GameTooltip:Hide()
-                    </OnLeave>
-                </Scripts>
-            </Frame>
-        </Frames>
-        <Scripts>
-            <OnLoad>
-                this:GetNormalTexture():SetDrawLayer("BACKGROUND")
-            </OnLoad>
-            <OnClick>
-                ShopFrameEntryButton_OnClick()
-            </OnClick>
-            <OnShow>
-                this:EnableMouse(true)
-                this:GetNormalTexture():SetDesaturated(nil)
+				_G[this:GetName() .. "Name"]:SetPoint("LEFT", 14, 0)
+			</OnLoad>
+			<OnClick>
+				ShopFrameCategoryButton_OnClick(this:GetID(), this.subcategoryID)
+				PlaySound("igMainMenuOptionCheckBoxOn")
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Button name="ShopEntryFrameTemplate" virtual="true" inherits="UIPanelButtonTemplate" framestrata="MEDIUM" hidden="true">
+		<Size>
+			<AbsDimension x="116" y="166" />
+		</Size>
+		<NormalTexture file="Interface\ShopFrame\item_normal">
+			<Size>
+				<AbsDimension x="200" y="200" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" />
+			</Anchors>
+		</NormalTexture>
+		<PushedTexture file="Interface\ShopFrame\item_highlight" alphaMode="ADD">
+			<Size>
+				<AbsDimension x="200" y="200" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" />
+			</Anchors>
+		</PushedTexture>
+		<HighlightTexture file="Interface\ShopFrame\item_highlight" alphaMode="ADD">
+			<Size>
+				<AbsDimension x="200" y="200" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" />
+			</Anchors>
+		</HighlightTexture>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentItemBorder" file="Interface\ShopFrame\ShopFrame-ItemRing" hidden="true">
+					<Size>
+						<AbsDimension x="96" y="96" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="21" y="-27" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentPrice" hidden="false" inherits="GameFontNormal"
+					justifyH="CENTER">
+					<Size>
+						<AbsDimension x="100" y="55" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="-10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentName" hidden="false" inherits="GameFontNormalSmall"
+					justifyV="BOTTOM">
+					<Size>
+						<AbsDimension x="100" y="55" />
+					</Size>
+					<Color r="1" g="1" b="1" />
+					<Anchors>
+						<Anchor point="BOTTOM" relativeTo="$parentPrice" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-18" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentItemTexture" hidden="true">
+					<Size>
+						<AbsDimension x="48" y="48" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="0" y="-30" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentFeaturedFrame" hidden="true">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="0" y="-6" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\ShopFrame\ShopFrame-Featured" setAllPoints="true" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DONO_SHOP_FEATURED)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+			</Frame>
+			<Button name="$parentShared" hidden="true" enableMouse="true" topLevel="true">
+				<Size x="32" y="32"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="-2" y="-10" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\ShopFrame\Shared">
+							<Size x="18" y="18"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="5" y="-5"/>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.075" right="0.925" top="0.075" bottom="0.925"/>
+						</Texture>
+					</Layer>
+					<Layer level="BORDER">
+						<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+							<Size x="48" y="48"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+				<Scripts>
+					<OnLoad>
+						this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+					</OnLoad>
+					<OnEnter>
+						ShopEntryShared_OnEnter()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						if arg1 == "LeftButton" then
+							ShopFrame_CycleModels(this:GetParent(), 1)
+						elseif arg1 == "RightButton" then
+							ShopFrame_CycleModels(this:GetParent(), -1)
+						end
+						if TWS_AUTODRESS == 1 then
+						   ShopDressUpItem(this:GetParent())
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				this:GetNormalTexture():SetDrawLayer("BACKGROUND")
+			</OnLoad>
+			<OnUpdate>
+				if GameTooltip:IsOwned(this) and (this.dress or this.model) then
+					if IsControlKeyDown() then
+						ShowInspectCursor()
+					else
+						ResetCursor()
+					end
+				end
+			</OnUpdate>
+			<OnClick>
+				ShopFrameEntryButton_OnClick()
+			</OnClick>
+			<OnShow>
+				this:EnableMouse(true)
+				this:GetNormalTexture():SetDesaturated(nil)
 
-                getglobal(this:GetName() .. "Price"):SetTextColor(1, 0.82, 0)
-                getglobal(this:GetName() .. "ItemBorder"):SetDesaturated(nil)
-                getglobal(this:GetName() .. "ItemTexture"):SetDesaturated(nil)
-            </OnShow>
-            <OnHide>
-                getglobal(this:GetName() .. "FeaturedFrame"):Hide()
-                getglobal(this:GetName() .. "ItemBorder"):Hide()
-                getglobal(this:GetName() .. "ItemTexture"):Hide()
-            </OnHide>
-        </Scripts>
-    </Button>
-    <Button name="ShopSmallEntryFrameTemplate" virtual="true" inherits="ShopEntryFrameTemplate">
-        <NormalTexture file="Interface\ShopFrame\item_normal">
-            <Size>
-                <AbsDimension x="200" y="200" />
-            </Size>
-            <Anchors>
-                <Anchor point="TOPLEFT" />
-            </Anchors>
-        </NormalTexture>
-        <PushedTexture file="Interface\ShopFrame\item_highlight" alphaMode="ADD">
-            <Size>
-                <AbsDimension x="200" y="200" />
-            </Size>
-            <Anchors>
-                <Anchor point="TOPLEFT" />
-            </Anchors>
-        </PushedTexture>
-        <HighlightTexture file="Interface\ShopFrame\item_highlight" alphaMode="ADD">
-            <Size>
-                <AbsDimension x="200" y="200" />
-            </Size>
-            <Anchors>
-                <Anchor point="TOPLEFT" />
-            </Anchors>
-        </HighlightTexture>
-        <Size>
-            <AbsDimension x="116" y="166" />
-        </Size>
-    </Button>
-    <Button name="ShopLargeEntryFrameTemplate" virtual="true" inherits="ShopEntryFrameTemplate">
-        <NormalTexture file="Interface\ShopFrame\ShopFrame-ItemLarge" setAllPoints="true">
-            <TexCoords left="0" right="0.57" top="0" bottom="0.85" />
-        </NormalTexture>
-        <PushedTexture file="Interface\ShopFrame\ShopFrame-ItemLargeHighlight" alphaMode="ADD" setAllPoints="true">
-            <TexCoords left="0" right="0.57" top="0" bottom="0.85" />
-        </PushedTexture>
-        <HighlightTexture file="Interface\ShopFrame\ShopFrame-ItemLargeHighlight" alphaMode="ADD" setAllPoints="true">
-            <TexCoords left="0" right="0.57" top="0" bottom="0.85" />
-        </HighlightTexture>
-        <Size>
-            <AbsDimension x="230" y="326" />
-        </Size>
-        <Frames>
-            <DressUpModel name="$parentDressUpModel" hidden="true" inherits="ShopEntryModelTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset>
-                            <AbsDimension x="10" y="-10" />
-                        </Offset>
-                    </Anchor>
-                    <Anchor point="BOTTOMRIGHT">
-                        <Offset>
-                            <AbsDimension x="-10" y="50" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        this:SetUnit("player")
-                        this:Dress()
-                        this:TryOn(this:GetID())
-                    </OnShow>
-                </Scripts>
-            </DressUpModel>
-        </Frames>
-    </Button>
+				_G[this:GetName() .. "Price"]:SetTextColor(1, 0.82, 0)
+				_G[this:GetName() .. "ItemBorder"]:SetDesaturated(nil)
+				_G[this:GetName() .. "ItemTexture"]:SetDesaturated(nil)
+			</OnShow>
+			<OnHide>
+				_G[this:GetName() .. "FeaturedFrame"]:Hide()
+				_G[this:GetName() .. "ItemBorder"]:Hide()
+				_G[this:GetName() .. "ItemTexture"]:Hide()
+			</OnHide>
+		</Scripts>
+	</Button>
 </Ui>

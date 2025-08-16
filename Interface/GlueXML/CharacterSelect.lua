@@ -6,7 +6,6 @@ CHARACTER_ROTATION_CONSTANT = 0.6;
 MAX_CHARACTERS_DISPLAYED = 10;
 MAX_CHARACTERS_PER_REALM = 10;
 
-
 function CharacterSelect_OnLoad()
 	this:SetSequence(0);
 	this:SetCamera(0);
@@ -37,7 +36,7 @@ function CharacterSelect_OnLoad()
 	local backdropColor = DEFAULT_TOOLTIP_COLOR;
 	CharacterSelectCharacterFrame:SetBackdropBorderColor(backdropColor[1], backdropColor[2], backdropColor[3]);
 	CharacterSelectCharacterFrame:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6], 0.85);
-	
+
 end
 
 function CharacterSelect_OnShow()
@@ -93,7 +92,7 @@ function CharacterSelect_OnShow()
 				-- Free account
 				if ( billingTimeLeft < (24 * 60) ) then
 					billingText = format(BILLING_FREE_TIME_EXPIRE, billingTimeLeft.." "..GetText("MINUTES_ABBR", nil, billingTimeLeft));
-				end				
+				end
 			elseif ( paymentPlan == 3 ) then
 				-- Fixed but not recurring
 				if ( isGameRoom == 1 ) then
@@ -108,7 +107,7 @@ function CharacterSelect_OnShow()
 						billingText = BILLING_FIXED_LASTDAY;
 					else
 						billingText = format(billingText, MinutesToTime(billingTimeLeft));
-					end	
+					end
 				end
 			elseif ( paymentPlan == 4 ) then
 				-- Usage plan
@@ -224,14 +223,10 @@ end
 function UpdateCharacterList()
 	local numChars = GetNumCharacters();
 	local index = 1;
-	local coords;
+
 	for i=1, numChars, 1 do
 		local name, race, class, level, zone, fileString, gender, ghost = GetCharacterInfo(i);
-		if ( gender == 0 ) then
-			gender = "MALE";
-		else
-			gender = "FEMALE";
-		end
+
 		local button = getglobal("CharSelectCharacterButton"..index);
 		if ( not name ) then
 			button:SetText("ERROR - Tell Jeremy");
@@ -239,11 +234,17 @@ function UpdateCharacterList()
 			if ( not zone ) then
 				zone = "";
 			end
+
+			local classColor = "|cffFFFFFF"
+			local classToken = TW_CLASS_TOKEN[GetLocale()] and TW_CLASS_TOKEN[GetLocale()][class]
+			if classToken then
+				classColor = CLASS_COLORS[classToken] or classColor
+			end
 			getglobal("CharSelectCharacterButton"..index.."ButtonTextName"):SetText(name);
-			if( ghost ) then
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO_GHOST), level, class));
+			if ( ghost ) then
+				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO_GHOST), level, classColor .. class .. "|r"));
 			else
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO), level, class));
+				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO), level, classColor .. class .. "|r"));
 			end
 			getglobal("CharSelectCharacterButton"..index.."ButtonTextLocation"):SetText(zone);
 		end
@@ -264,8 +265,8 @@ function UpdateCharacterList()
 	end
 
 	CharacterSelect.createIndex = 0;
-	CharSelectCreateCharacterButton:Hide();	
-	
+	CharSelectCreateCharacterButton:Hide();
+
 	local connected = IsConnectedToServer();
 	for i=index, MAX_CHARACTERS_DISPLAYED, 1 do
 		local button = getglobal("CharSelectCharacterButton"..index);
@@ -275,7 +276,7 @@ function UpdateCharacterList()
 				--If can create characters position and show the create button
 				CharSelectCreateCharacterButton:SetID(index);
 				--CharSelectCreateCharacterButton:SetPoint("TOP", button, "TOP", 0, -5);
-				CharSelectCreateCharacterButton:Show();	
+				CharSelectCreateCharacterButton:Show();
 			end
 		end
 		button:Hide();

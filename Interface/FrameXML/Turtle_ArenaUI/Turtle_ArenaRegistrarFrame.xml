@@ -1,0 +1,239 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Frame name="ArenaRegistrarFrame" parent="UIParent" enableMouse="true" toplevel="true" hidden="true">
+        <Size>
+            <AbsDimension x="384" y="512" />
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="0" y="-104" />
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <HitRectInsets>
+            <AbsInset left="0" right="30" top="0" bottom="70" />
+        </HitRectInsets>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentPortrait">
+                    <Size>
+                        <AbsDimension x="60" y="60" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="7" y="-6" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\QuestFrame\UI-QuestGreeting-TopLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\QuestFrame\UI-QuestGreeting-TopRight">
+                    <Size>
+                        <AbsDimension x="128" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\QuestFrame\UI-QuestGreeting-BotLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\QuestFrame\UI-QuestGreeting-BotRight">
+                    <Size>
+                        <AbsDimension x="128" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" />
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentText" inherits="QuestFont" justifyH="LEFT" text="ARENA_REGISTRAR_TEXT">
+                    <Size>
+                        <AbsDimension x="270" y="0" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="35" y="-95" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentTypeLabel" inherits="GameFontNormal" text="LFT_DROPDOWN_LABEL_TEXT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentText" relativePoint="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="-5" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNameLabel" inherits="GameFontNormal" text="NAME">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentTypeLabel" relativePoint="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="-48" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentNpcName">
+                <Size>
+                    <AbsDimension x="300" y="14" />
+                </Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="-23" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <FontString name="$parentText" inherits="GameFontHighlight" />
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+                        this:SetFrameLevel(this:GetFrameLevel() + 2)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+            <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-42" y="-30" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentGoodbyeButton" inherits="UIPanelButtonTemplate" text="CANCEL">
+                <Size>
+                    <AbsDimension x="75" y="22" />
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-40" y="72" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        HideUIPanel(ArenaRegistrarFrame)
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentConfirmButton" inherits="UIPanelButtonTemplate" text="CONFIRM">
+                <Size>
+                    <AbsDimension x="85" y="22" />
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="22" y="72" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        ArenaRegistrarFrameConfirmButton_OnClick()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentDropDown" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTypeLabel" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="-20" y="-6" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+                        ArenaRegistrarFrameDropDown_OnLoad()
+					</OnLoad>
+				</Scripts>
+			</Button>
+            <EditBox name="$parentEditBox" letters="24" historyLines="1">
+                <Size>
+                    <AbsDimension x="130" y="32" />
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentNameLabel" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="4" y="-6" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
+                            <Size>
+                                <AbsDimension x="75" y="32" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="LEFT">
+                                    <Offset>
+                                        <AbsDimension x="-10" y="0" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="0.29296875" top="0" bottom="1.0" />
+                        </Texture>
+                        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Right">
+                            <Size>
+                                <AbsDimension x="75" y="32" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="10" y="0" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                            <TexCoords left="0.70703125" right="1.0" top="0" bottom="1.0" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnEscapePressed>
+                        ChatFrameEditBox:SetFocus()
+                    </OnEscapePressed>
+                </Scripts>
+                <FontString inherits="ChatFontNormal" />
+            </EditBox>
+        </Frames>
+        <Scripts>
+            <OnShow>
+                PlaySound("igQuestListOpen")
+
+                SetPortraitTexture(ArenaRegistrarFramePortrait, "NPC");
+                ArenaRegistrarFrameNpcNameText:SetText(UnitName("NPC"));
+            </OnShow>
+            <OnHide>
+                PlaySound("igQuestListClose")
+
+                HideUIPanel(GossipFrame)
+            </OnHide>
+        </Scripts>
+    </Frame>
+</Ui>

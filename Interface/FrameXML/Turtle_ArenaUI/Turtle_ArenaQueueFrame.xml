@@ -1,0 +1,204 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Frame name="ArenaQueueFrame" parent="UIParent" enableMouse="true" toplevel="true" hidden="true">
+        <Size>
+            <AbsDimension x="384" y="512" />
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="0" y="-104" />
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <HitRectInsets>
+            <AbsInset left="0" right="34" top="0" bottom="75" />
+        </HitRectInsets>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-Icon">
+                    <Size>
+                        <AbsDimension x="60" y="60" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="7" y="-6" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-TopLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-TopRight">
+                    <Size>
+                        <AbsDimension x="128" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-BotLeft">
+                    <Size>
+                        <AbsDimension x="256" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-BotRight">
+                    <Size>
+                        <AbsDimension x="128" y="256" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" />
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentFrameLabel" inherits="GameFontNormal" text="ARENA_QUEUE_TITLE">
+                    <Anchors>
+                        <Anchor point="TOP" relativeTo="BattlefieldFrame" relativePoint="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-17" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentArenaDescription" inherits="GameFontBlack" justifyH="LEFT" justifyV="TOP" text="ARENA_QUEUE_DESCRIPTION">
+                    <Size>
+                        <AbsDimension x="293" y="115" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="30" y="-292" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-Bar">
+                    <Size>
+                        <AbsDimension x="513" y="64" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="LEFT">
+                            <Offset>
+                                <AbsDimension x="14" y="95" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
+                <Size>
+                    <AbsDimension x="83" y="22" />
+                </Size>
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="305" y="-423" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        HideUIPanel(this:GetParent())
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentJoinButton" inherits="UIPanelButtonTemplate" text="BATTLEFIELD_JOIN">
+                <Size>
+                    <AbsDimension x="109" y="22" />
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parentCancelButton" relativePoint="LEFT">
+                        <Offset>
+                            <AbsDimension x="-2" y="0" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        this:Disable()
+                    </OnLoad>
+                    <OnClick>
+                        JoinArenaQueue()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentGroupJoinButton" inherits="UIPanelButtonTemplate" text="BATTLEFIELD_GROUP_JOIN">
+                <Size>
+                    <AbsDimension x="136" y="22" />
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parentJoinButton" relativePoint="LEFT" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        JoinArenaQueue(1)
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-29" y="-8" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentButton1" inherits="ArenaQueueButtonTemplate" id="1">
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="23" y="-79" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentButton2" inherits="ArenaQueueButtonTemplate" id="2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </Button>
+            <Button name="$parentButton3" inherits="ArenaQueueButtonTemplate" id="3">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </Button>
+            <Button name="$parentSkirmishButton" inherits="ArenaQueueButtonTemplate" id="0" text="ARENA_QUEUE_SKIRMISH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-72" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                ArenaQueueFrame_OnLoad()
+            </OnLoad>
+            <OnShow>
+                PlaySound("igCharacterInfoOpen")
+            </OnShow>
+            <OnHide>
+                PlaySound("igCharacterInfoClose")
+
+                CloseGossip()
+            </OnHide>
+        </Scripts>
+    </Frame>
+</Ui>

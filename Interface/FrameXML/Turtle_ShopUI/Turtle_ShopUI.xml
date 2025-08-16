@@ -1,404 +1,516 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
-    <Script file="Turtle_ShopUI.lua" />
-    <GameTooltip name="ShopFrameScanTooltip" inherits="GameTooltipTemplate">
-        <Scripts>
-            <Onload>
-                this:SetOwner(WorldFrame, "ANCHOR_NONE");
-            </Onload>
-        </Scripts>
-    </GameTooltip>
-    <Frame name="ShopFrame" hidden="true" toplevel="true" parent="UIParent" enableMouse="true">
-        <Size>
-            <AbsDimension x="700" y="460" />
-        </Size>
-        <Anchors>
-            <Anchor point="CENTER">
-                <Offset>
-                    <AbsDimension x="0" y="70" />
-                </Offset>
-            </Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BORDER">
-                <Texture name="$parentBackground1" file="Interface\ShopFrame\bg1">
-                    <Size>
-                        <AbsDimension x="512" y="512" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" />
-                    </Anchors>
-                </Texture>
-                <Texture name="$parentBackground2" file="Interface\ShopFrame\bg2">
-                    <Size>
-                        <AbsDimension x="512" y="512" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT">
-                            <Offset>
-                                <AbsDimension x="512" y="0" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK">
-                <Texture name="$parentPortrait">
-                    <Size>
-                        <AbsDimension x="60" y="60" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT">
-                            <Offset>
-                                <AbsDimension x="7" y="-6" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </Texture>
-                <FontString name="$parentTitleText" inherits="GameFontNormal" text="DONO_SHOP_TITLE">
-                    <Size>
-                        <AbsDimension x="512" y="14" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOP" relativePoint="TOP">
-                            <Offset>
-                                <AbsDimension x="0" y="-18" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentDescText" inherits="GameFontNormal" justifyH="CENTER">
-                    <Size>
-                        <AbsDimension x="542" y="44" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOP" relativePoint="TOP">
-                            <Offset>
-                                <AbsDimension x="10" y="-32" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentPageText" hidden="true" inherits="GameFontHighlightSmall" text="Page 1"
-                    justifyH="CENTER">
-                    <Size>
-                        <AbsDimension x="80" y="36" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT">
-                            <Offset>
-                                <AbsDimension x="-56" y="28" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentBalance" inherits="GameFontNormal" justifyH="RIGHT" text="Balance: 0">
-                    <Size>
-                        <AbsDimension x="140" y="12" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT">
-                            <Offset>
-                                <AbsDimension x="-22" y="17" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Button name="$parentEntry1" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="ShopFrame" relativePoint="TOPLEFT">
-                        <Offset x="232" y="-74" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry2" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry1" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry3" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry2" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry4" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry3" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry5" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry1" relativePoint="BOTTOMLEFT">
-                        <Offset x="0" y="5" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry6" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry5" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry7" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry6" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentEntry8" inherits="ShopSmallEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentEntry7" relativePoint="TOPRIGHT">
-                        <Offset x="-4" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentLargeEntry1" inherits="ShopLargeEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="232" y="-74" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentLargeEntry2" inherits="ShopLargeEntryFrameTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentLargeEntry1" relativePoint="TOPRIGHT">
-                        <Offset x="-6" y="0" />
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <ScrollFrame name="$parentCategoriesScrollFrame" inherits="UIPanelScrollFrameTemplate">
-                <Size>
-                    <AbsDimension x="181" y="351" />
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset>
-                            <AbsDimension x="23" y="-74" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <ScrollChild>
-                    <Frame name="$parentChild">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" />
-                        </Anchors>
-                        <Size>
-                            <AbsDimension x="181" y="351" />
-                        </Size>
-                    </Frame>
-                </ScrollChild>
-            </ScrollFrame>
-            <Button name="$parentFrameCloseButton" inherits="UIPanelCloseButton">
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-1" y="-8" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentPreviousButton" hidden="true">
-                <Size>
-                    <AbsDimension x="24" y="24" />
-                </Size>
-                <Anchors>
-                    <Anchor point="RIGHT" relativeTo="$parentPageText" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="16" y="1" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        ShopFrame_ChangePage(-1)
-                    </OnClick>
-                </Scripts>
-                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
-                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
-                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
-                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
-            </Button>
-            <Button name="$parentNextButton" hidden="true">
-                <Size>
-                    <AbsDimension x="24" y="24" />
-                </Size>
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentPreviousButton" relativePoint="RIGHT" />
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        ShopFrame_ChangePage(1)
-                    </OnClick>
-                </Scripts>
-                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
-                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
-                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
-                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
-            </Button>
-            <Frame name="$parentAboutFrame" hidden="true">
-                <Size>
-                    <AbsDimension x="450" y="360" />
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-20" y="-75" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="BORDER">
-                    </Layer>
-                    <Layer level="ARTWORK">
-                        <FontString name="$parentName" inherits="GameFontNormal" text="DONO_SHOP_THANKS">
-                            <Size>
-                                <AbsDimension x="512" y="14" />
-                            </Size>
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP">
-                                    <Offset>
-                                        <AbsDimension x="0" y="-18" />
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString name="$parentLongText" hidden="false" inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP">
-                            <Size>
-                                <AbsDimension x="410" y="276" />
-                            </Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT">
-                                    <Offset>
-                                        <AbsDimension x="25" y="-50" />
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-        </Frames>
-        <Scripts>
-            <OnLoad>
-                tinsert(UISpecialFrames, this:GetName());
-
-                this:RegisterEvent("CHAT_MSG_ADDON")
-                this:RegisterEvent("VARIABLES_LOADED")
-
-                this.selected = nil
-            </OnLoad>
-            <OnEvent>
-                ShopFrame_OnEvent();
-            </OnEvent>
-            <OnShow>
-                PlaySound("igCharacterInfoOpen");
-                Shop_GetBalance();
-            </OnShow>
-            <OnHide>
-                PlaySound("igCharacterInfoClose");
-            </OnHide>
-            <OnMouseWheel>
-                if arg1 == 1 then
-                    ShopFrameNextButton:Click()
-                elseif arg1 == -1 then
-                    ShopFramePreviousButton:Click()
-                end
-            </OnMouseWheel>
-        </Scripts>
-    </Frame>
-    <Button name="MinimapShopFrame" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
-        <HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
-        <Size>
-            <AbsDimension x="32" y="32" />
-        </Size>
-        <Anchors>
-            <Anchor point="BOTTOM" relativeTo="Minimap">
-                <Offset>
-                    <AbsDimension x="12" y="-24" />
-                </Offset>
-            </Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture name="$parentIcon" file="Interface\Icons\inv_crate_03">
-                    <Size>
-                        <AbsDimension x="18" y="18" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT">
-                            <Offset>
-                                <AbsDimension x="5" y="-5" />
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY">
-                <Texture name="$parentBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
-                    <Size>
-                        <AbsDimension x="48" y="48" />
-                    </Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" />
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Scripts>
-            <OnLoad>
-                this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-                this:RegisterForDrag("LeftButton");
-                this:SetClampedToScreen(true);
-            </OnLoad>
-            <OnDragStart>
-                if ( IsControlKeyDown() ) then
-                this:LockHighlight();
-                this:StartMoving();
-                end
-            </OnDragStart>
-            <OnDragStop>
-                this:UnlockHighlight();
-                this:StopMovingOrSizing();
-                this:SetParent("UIParent");
-            </OnDragStop>
-            <OnEnter>
-                GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-                GameTooltip:SetText(DONO_SHOP_TOOLTIP1);
-                GameTooltip:AddLine(DONO_SHOP_TOOLTIP2, 1, 1, 1);
-                GameTooltip:AddLine(DONO_SHOP_TOOLTIP3, 1, 1, 1);
-                GameTooltip:AddLine(DONO_SHOP_TOOLTIP4, 1, 1, 1);
-                GameTooltip:AddLine(DONO_SHOP_TOOLTIP5, 1, 1, 1);
-                GameTooltip:Show();
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide();
-            </OnLeave>
-            <OnClick>
-                if ( arg1 == "LeftButton" ) then
-                ShopFrame_Toggle();
-                elseif ( arg1 == "RightButton" ) then
-                if ( IsControlKeyDown() ) then
-                this:SetUserPlaced(0);
-                this:ClearAllPoints();
-                this:SetParent("Minimap");
-                this:SetPoint("BOTTOM", Minimap, 12, -24);
-                else
-                TWS_HIDE_MINIMAP_BUTTON = 1
-                MinimapShopFrame:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage(DONO_SHOP_CHAT_COMMAND)
-                end
-                end
-            </OnClick>
-        </Scripts>
-    </Button>
+	<Script file="Turtle_ShopUI.lua" />
+	<GameTooltip name="ShopFrameScanTooltip" inherits="GameTooltipTemplate">
+		<Scripts>
+			<Onload>
+				this:SetOwner(WorldFrame, "ANCHOR_NONE")
+			</Onload>
+		</Scripts>
+	</GameTooltip>
+	<Frame name="ShopFrame" hidden="true" toplevel="true" parent="UIParent" enableMouse="true" clampedToScreen="true" movable="true">
+		<Size>
+			<AbsDimension x="700" y="460" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="70" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BORDER">
+				<Texture name="$parentBackground1" file="Interface\ShopFrame\bg1">
+					<Size>
+						<AbsDimension x="512" y="512" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<Texture name="$parentBackground2" file="Interface\ShopFrame\bg2">
+					<Size>
+						<AbsDimension x="512" y="512" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="512" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentAutoDressLabel" inherits="GameFontHighlightSmall" text="DONO_SHOP_AUTODRESS" justifyH="RIGHT"/>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentPortrait">
+					<Size>
+						<AbsDimension x="60" y="60" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="7" y="-6" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentTitleText" inherits="GameFontNormal" text="DONO_SHOP_TITLE">
+					<Size>
+						<AbsDimension x="512" y="14" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="115" y="-18" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentPageText" hidden="true" inherits="GameFontHighlightSmall" text="Page 1" justifyH="CENTER">
+					<Size>
+						<AbsDimension x="80" y="36" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="564" y="30" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentBalance" inherits="GameFontNormal" justifyH="RIGHT" text="Balance: 0">
+					<Size>
+						<AbsDimension x="140" y="12" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="540" y="17" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentEntryFrame1" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+						<Offset x="232" y="-74" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame2" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame1" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame3" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame2" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame4" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame3" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame5" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame1" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="5" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame6" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame5" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame7" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame6" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentEntryFrame8" inherits="ShopEntryFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame7" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<ScrollFrame name="$parentCategoriesScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="181" y="351" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="23" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<Frame name="$parentChild">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+						</Anchors>
+						<Size>
+							<AbsDimension x="181" y="351" />
+						</Size>
+					</Frame>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="667" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentPreviousButton" hidden="true">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentPageText" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="16" y="1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ShopFrameSearchBox:ClearFocus()
+						ShopFrame_ChangePage(-1)
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentNextButton" hidden="true">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentPreviousButton" relativePoint="RIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ShopFrameSearchBox:ClearFocus()
+						ShopFrame_ChangePage(1)
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentClaimButton" inherits="OptionsButtonTemplate" text="DONO_SHOP_CLAIM">
+				<Size x="90" y="20"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentPreviousButton" relativePoint="LEFT">
+						<Offset x="-132" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						this:Disable()
+					</OnLoad>
+					<OnClick>
+						ShopFrame_Claim()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parentAboutFrame" hidden="true">
+				<Size>
+					<AbsDimension x="450" y="360" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="235" y="-75" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentName" inherits="GameFontNormal" text="DONO_SHOP_THANKS">
+							<Size>
+								<AbsDimension x="512" y="14" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-18" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parentLongText" hidden="false" inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP">
+							<Size>
+								<AbsDimension x="410" y="276" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="25" y="-50" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="ShopDressUpFrame" hidden="true" toplevel="true" enableMouse="true">
+				<Size x="287" y="400"/>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="696" y="-36"/>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="ShopDressUpBackground" file="Interface\ShopFrame\ShopFrame-ItemLarge">
+							<Size x="512" y="512"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="-6" y="21"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="BORDER">
+						<Texture name="ShopDressUpBorder" file="Interface\ShopFrame\ShopDressUpFrameBorder">
+							<Size x="512" y="512"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="-6" y="21"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<DressUpModel name="ShopDressUpModel" scale="1.0" enableMouse="true">
+						<Size x="270" y="412"/>
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="ShopDressUpFrame" relativePoint="RIGHT">
+								<Offset x="-13" y="2"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								ShopDressUpModel_OnLoad()
+							</OnLoad>
+						</Scripts>
+						<Frames>
+							<Button name="ShopDressUpFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+								<Size x="80" y="22"/>
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset x="0" y="20"/>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										ShopDressUpModel_Reset()
+										PlaySound("gsTitleOptionOK")
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Button name="ShopDressUpFrameCloseButton" inherits="UIPanelCloseButton">
+								<Anchors>
+									<Anchor point="CENTER" relativeTo="ShopDressUpModel" relativePoint="TOPRIGHT">
+										<Offset x="-5" y="-2"/>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										HideUIPanel(this:GetParent():GetParent())
+									</OnClick>
+								</Scripts>
+							</Button>
+						</Frames>
+					</DressUpModel>
+				</Frames>
+				<Scripts>
+					<OnShow>
+						ShopDressUpFrame_OnShow()
+					</OnShow>
+					<OnHide>
+						ShopDressUpFrame_OnHide()
+					</OnHide>
+				</Scripts>
+			</Frame>
+			<EditBox name="$parentSearchBox" inherits="SearchBoxTemplate" letters="120">
+				<Size x="160" y="32" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="500" y="-35" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						ShopFrame_Search()
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<CheckButton name="$parentAutoDress" inherits="UICheckButtonTemplate">
+				<Size x="24" y="24"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentSearchBox" relativePoint="LEFT">
+						<Offset x="-24" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if this:GetChecked() then
+							TWS_AUTODRESS = 1
+						else
+							TWS_AUTODRESS = 0
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+						GameTooltip:SetText(DONO_SHOP_AUTODRESS_TOOLTIP, nil, nil, nil, nil, 1)
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+			</CheckButton>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				ShopFrame_OnLoad()
+			</OnLoad>
+			<OnEvent>
+				ShopFrame_OnEvent()
+			</OnEvent>
+			<OnShow>
+				ShopFrame_OnShow()
+			</OnShow>
+			<OnHide>
+				ShopDressUpFrame:Hide()
+				StaticPopup_Hide("SHOP_CONFIRMATION")
+				PlaySound("igCharacterInfoClose")
+			</OnHide>
+			<OnMouseWheel>
+				if arg1 == 1 then
+					ShopFrameNextButton:Click()
+				elseif arg1 == -1 then
+					ShopFramePreviousButton:Click()
+				end
+			</OnMouseWheel>
+			<OnMouseUp>
+				ShopFrameSearchBox:ClearFocus()
+			</OnMouseUp>
+			<OnDragStart>
+				this:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				this:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+	<Button name="MinimapShopFrame" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+		<Size>
+			<AbsDimension x="32" y="32" />
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" relativeTo="Minimap">
+				<Offset>
+					<AbsDimension x="12" y="-24" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon" file="Interface\Icons\inv_crate_03">
+					<Size>
+						<AbsDimension x="18" y="18" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="5" y="-5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size>
+						<AbsDimension x="48" y="48" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				this:RegisterForDrag("LeftButton")
+				this:SetClampedToScreen(true)
+			</OnLoad>
+			<OnDragStart>
+				if IsControlKeyDown() then
+					this:LockHighlight()
+					this:StartMoving()
+				end
+			</OnDragStart>
+			<OnDragStop>
+				this:UnlockHighlight()
+				this:StopMovingOrSizing()
+				this:SetParent("UIParent")
+			</OnDragStop>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+				GameTooltip:SetText(DONO_SHOP_TOOLTIP1)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP2, 1, 1, 1)
+				GameTooltip:AddLine(" ", 1, 1, 1)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP3, 1, 1, 1)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP4, 1, 1, 1)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP5, 1, 1, 1)
+				GameTooltip:Show()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnClick>
+				if arg1 == "LeftButton" then
+					ShopFrame_Toggle()
+				elseif arg1 == "RightButton" then
+					if IsControlKeyDown() then
+						this:SetUserPlaced(0)
+						this:ClearAllPoints()
+						this:SetParent("Minimap")
+						this:SetPoint("BOTTOM", Minimap, 12, -24)
+					elseif IsAltKeyDown() then
+						StaticPopup_Show("SHOP_HIDE_CONFIRMATION")
+					end
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
 </Ui>

@@ -1,257 +1,199 @@
 local spellCom = CreateFrame("Frame")
 spellCom:RegisterEvent("CHAT_MSG_ADDON")
 spellCom:RegisterEvent("VARIABLES_LOADED")
-spellCom:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
-function spellCom.replace(text, search, replace)
-    if search == replace then
-        return text
-    end
-    local searchedtext = ""
-    local textleft = text
-    while string.find(textleft, search, 1, true) do
-        searchedtext = searchedtext .. string.sub(textleft, 1, string.find(textleft, search, 1, true) - 1) .. replace
-        textleft = string.sub(textleft, string.find(textleft, search, 1, true) + string.len(search))
-    end
-    if string.len(textleft) > 0 then
-        searchedtext = searchedtext .. textleft
-    end
-    return searchedtext
+local function Send(name, msg)
+	SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. name .. ">", msg, "GUILD")
 end
 
-function spellCom.explode(str, delimiter)
-    local result = {}
-    local from = 1
-    local delim_from, delim_to = string.find(str, delimiter, from, 1, true)
-    while delim_from do
-        table.insert(result, string.sub(str, from, delim_from - 1))
-        from = delim_to + 1
-        delim_from, delim_to = string.find(str, delimiter, from, true)
-    end
-    table.insert(result, string.sub(str, from))
-    return result
+local function ShowSpellTooltip(arg)
+	local _, _, spellInfo = string.find(arg, "_(.+)")
+	if spellInfo then
+		ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
+
+		local data = explode(spellInfo, "@")
+		for _, s in pairs(data) do
+			local _, _, side, line, text = strfind(s, "(%u)(%d+);(.+)")
+			if side == "L" then
+				text = gsub(text, "%*dd%*", ":")
+				if string.find(text, ".", 1, true) then
+					ItemRefTooltip:AddLine(text, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+				else
+					ItemRefTooltip:AddLine(text, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, false)
+				end
+				_G["ItemRefTooltipTextLeft" .. line]:Show()
+			end
+
+			if side == "R" then
+				text = gsub(text, "%*dd%*", ":")
+				_G["ItemRefTooltipTextRight" .. line]:SetText(text)
+				_G["ItemRefTooltipTextRight" .. line]:Show()
+			end
+		end
+		ItemRefTooltip:Show()
+	end
 end
 
 spellCom:SetScript("OnEvent", function()
-    if event then
-        if event == "VARIABLES_LOADED" then
-            spellCom.hookFunctions()
-        end
+	if event == "VARIABLES_LOADED" then
+		spellCom.HookFunctions()
+	end
 
-        if event == "CHAT_MSG_ADDON" and arg1 == "TW_CHAT_MSG_WHISPER" then
+	if event == "CHAT_MSG_ADDON" and arg1 == "TW_CHAT_MSG_WHISPER" then
 
-            local message = arg2
-            local from = arg4
+		local message = arg2
+		local from = arg4
 
-            if string.find(message, "SpellInfoAnswer_", 1, true) then
-                showSpellTooltip(message)
-            end
-            if string.find(message, "TalentInfoAnswer_", 1, true) then
-                showSpellTooltip(message)
-            end
-            if string.find(message, "TalentInfoRequest_", 1, true) then
-                local spellData = spellCom.explode(message, "_")
-                local tab = spellData[2]
-                local id = spellData[3]
-                if tab and id then
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
+		if string.find(message, "SpellInfoAnswer_", 1, true) then
+			ShowSpellTooltip(message)
+		end
+		if string.find(message, "TalentInfoAnswer_", 1, true) then
+			ShowSpellTooltip(message)
+		end
+		if string.find(message, "TalentInfoRequest_", 1, true) then
+			local _, _, tab, id = string.find(message, "_(%d+)_(%d+)")
+			if tab and id then
+				GameTooltip:ClearLines()
+				GameTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
+				GameTooltip:SetTalent(tonumber(tab), tonumber(id))
+				GameTooltip:Show()
 
-                    if GameTooltip:SetTalent(tonumber(tab), tonumber(id)) then
-                    end
+				local tip = ""
+				for i = 1, 30 do
+					local left = _G["GameTooltipTextLeft" .. i]
+					local right = _G["GameTooltipTextRight" .. i]
+					local textleft = left and left:IsVisible() and left:GetText()
+					local textRight = right and right:IsVisible() and right:GetText()
+					if textleft then
+						tip = tip .. "L" .. i .. ";" .. textleft .. "@"
+					end
+					if textRight then
+						tip = tip .. "R" .. i .. ";" .. textRight .. "@"
+					end
+				end
+				GameTooltip:Hide()
 
-                    GameTooltip:Show()
+				if tip ~= "" then
+					tip = gsub(tip, ":", "*dd*")
+					tip = gsub(tip, TOOLTIP_TALENT_LEARN, "")
+					Send(from, ":TalentInfoAnswer_" .. tip)
+				end
 
-                    local tip = ''
-                    for i = 1, 30 do
-                        if getglobal('GameTooltipTextLeft' .. i) and getglobal('GameTooltipTextLeft' .. i):IsVisible() and getglobal('GameTooltipTextLeft' .. i):GetText() then
-                            tip = tip .. "L" .. i .. ";" .. getglobal('GameTooltipTextLeft' .. i):GetText() .. "@"
-                        end
-                        if getglobal('GameTooltipTextRight' .. i) and getglobal('GameTooltipTextRight' .. i):IsVisible() and getglobal('GameTooltipTextRight' .. i):GetText() then
-                            tip = tip .. "R" .. i .. ";" .. getglobal('GameTooltipTextRight' .. i):GetText() .. "@"
-                        end
-                    end
-                    GameTooltip:Hide()
+			end
+		end
+		if string.find(message, "SpellInfoRequest_", 1, true) then
+			local _, _, spellData = string.find(message, "_(%d+)")
+			local id = tonumber(spellData)
+			if id then
+				GameTooltip:ClearLines()
+				GameTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
+				GameTooltip:SetSpell(id, SpellBookFrame.bookType)
+				GameTooltip:Show()
 
-                    if tip ~= '' then
-                        tip = spellCom.replace(tip, ':', '*dd*')
-                        tip = spellCom.replace(tip, 'Click to learn', '')
-                        SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", ":TalentInfoAnswer_" .. tip, "GUILD")
-                    end
+				local tip = ""
+				for i = 1, 30 do
+					local left = _G["GameTooltipTextLeft" .. i]
+					local right = _G["GameTooltipTextRight" .. i]
+					local textleft = left and left:IsVisible() and left:GetText()
+					local textRight = right and right:IsVisible() and right:GetText()
+					if textleft then
+						tip = tip .. "L" .. i .. ";" .. textleft .. "@"
+					end
+					if textRight then
+						tip = tip .. "R" .. i .. ";" .. textRight .. "@"
+					end
+				end
+				GameTooltip:Hide()
 
-                end
-            end
-            if string.find(message, "SpellInfoRequest_", 1, true) then
-                local spellData = spellCom.explode(message, "_")
-                local id = spellData[2]
-                if id then
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
-
-                    if GameTooltip:SetSpell(id, SpellBookFrame.bookType) then
-                    end
-
-                    GameTooltip:Show()
-
-                    local tip = ''
-                    for i = 1, 30 do
-                        if getglobal('GameTooltipTextLeft' .. i) and getglobal('GameTooltipTextLeft' .. i):IsVisible() and getglobal('GameTooltipTextLeft' .. i):GetText() then
-                            tip = tip .. "L" .. i .. ";" .. getglobal('GameTooltipTextLeft' .. i):GetText() .. "@"
-                        end
-                        if getglobal('GameTooltipTextRight' .. i) and getglobal('GameTooltipTextRight' .. i):IsVisible() and getglobal('GameTooltipTextRight' .. i):GetText() then
-                            tip = tip .. "R" .. i .. ";" .. getglobal('GameTooltipTextRight' .. i):GetText() .. "@"
-                        end
-                    end
-                    GameTooltip:Hide()
-
-                    if tip ~= '' then
-                        tip = spellCom.replace(tip, ':', '*dd*')
-                        SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", ":SpellInfoAnswer_" .. tip, "GUILD")
-                    end
-
-                end
-
-            end
-        end
-    end
+				if tip ~= "" then
+					tip = gsub(tip, ":", "*dd*")
+					Send(from, ":SpellInfoAnswer_" .. tip)
+				end
+			end
+		end
+	end
 end)
 
 function SpellButton_OnClick(drag)
-
-    local id = SpellBook_GetSpellID(this:GetID());
-    if (id > MAX_SPELLS) then
-        return ;
-    end
-    this:SetChecked("false");
-    if (drag) then
-        PickupSpell(id, SpellBookFrame.bookType);
-    elseif (IsShiftKeyDown()) then
-        local spellName, subSpellName = GetSpellName(id, SpellBookFrame.bookType);
-        if (MacroFrame and MacroFrame:IsVisible()) then
-            if (spellName and not IsSpellPassive(id, SpellBookFrame.bookType)) then
-                if (subSpellName and (string.len(subSpellName) > 0)) then
-                    MacroFrame_AddMacroLine(TEXT(SLASH_CAST1) .. " " .. spellName .. "(" .. subSpellName .. ")");
-                else
-                    MacroFrame_AddMacroLine(TEXT(SLASH_CAST1) .. " " .. spellName);
-                end
-            end
-        elseif ChatFrameEditBox:IsVisible() and spellName then
-            local spell = "|cFF71D5FF|Hspell:" .. id .. ":0:" .. UnitName("player") .. ":|h[" .. spellName .. "]|h|r"
-            ChatFrameEditBox:Insert(spell)
-        else
-            PickupSpell(id, SpellBookFrame.bookType);
-        end
-    elseif (arg1 ~= "LeftButton" and SpellBookFrame.bookType == BOOKTYPE_PET) then
-        ToggleSpellAutocast(id, SpellBookFrame.bookType);
-    else
-        CastSpell(id, SpellBookFrame.bookType);
-        SpellButton_UpdateSelection();
-    end
+	local id = SpellBook_GetSpellID(this:GetID())
+	if (id > MAX_SPELLS) then
+		return
+	end
+	this:SetChecked("false")
+	if (drag) then
+		PickupSpell(id, SpellBookFrame.bookType)
+	elseif (IsShiftKeyDown()) then
+		local spellName, subSpellName = GetSpellName(id, SpellBookFrame.bookType)
+		if (MacroFrame and MacroFrame:IsVisible()) then
+			if (spellName and not IsSpellPassive(id, SpellBookFrame.bookType)) then
+				if (subSpellName and (string.len(subSpellName) > 0)) then
+					MacroFrame_AddMacroLine(TEXT(SLASH_CAST1) .. " " .. spellName .. "(" .. subSpellName .. ")")
+				else
+					MacroFrame_AddMacroLine(TEXT(SLASH_CAST1) .. " " .. spellName)
+				end
+			end
+		elseif ChatFrameEditBox:IsVisible() and spellName then
+			local spell = "|cFF71D5FF|Hspell:" .. id .. ":0:" .. UnitName("player") .. ":|h[" .. spellName .. "]|h|r"
+			ChatFrameEditBox:Insert(spell)
+		else
+			PickupSpell(id, SpellBookFrame.bookType)
+		end
+	elseif (arg1 ~= "LeftButton" and SpellBookFrame.bookType == BOOKTYPE_PET) then
+		ToggleSpellAutocast(id, SpellBookFrame.bookType)
+	else
+		CastSpell(id, SpellBookFrame.bookType)
+		SpellButton_UpdateSelection()
+	end
 end
 
-function spellCom.hookFunctions()
-    local talent_click = TalentFrameTalent_OnClick
+function spellCom.HookFunctions()
+	local talent_click = TalentFrameTalent_OnClick
 
-    if talent_click then
-        TalentFrameTalent_OnClick = function(...)
-            if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-                local name = GetTalentInfo(PanelTemplates_GetSelectedTab(TalentFrame), this:GetID());
-                local talent = "|cFF71D5FF|Htalent:" .. PanelTemplates_GetSelectedTab(TalentFrame) .. ":" .. this:GetID() .. ":" .. UnitName("player") .. ":|h[" .. name .. "]|h|r"
-                ChatFrameEditBox:Insert(talent)
-                return
-            end
-            talent_click(unpack(arg))
-        end
-    end
+	if talent_click then
+		TalentFrameTalent_OnClick = function()
+			if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
+				local name = GetTalentInfo(PanelTemplates_GetSelectedTab(TalentFrame), this:GetID())
+				local talent = "|cFF71D5FF|Htalent:" .. PanelTemplates_GetSelectedTab(TalentFrame) .. ":" .. this:GetID() .. ":" .. UnitName("player") .. ":|h[" .. name .. "]|h|r"
+				ChatFrameEditBox:Insert(talent)
+				return
+			end
+			talent_click()
+		end
+	end
 
-    local hyperlink_show = ChatFrame_OnHyperlinkShow
+	local hyperlink_show = ChatFrame_OnHyperlinkShow
 
-    if hyperlink_show then
-        ChatFrame_OnHyperlinkShow = function(link, text, button, ...)
-            if string.find(link, 'spell:', 1, true) then
+	if hyperlink_show then
+		ChatFrame_OnHyperlinkShow = function(link, text, button)
+			if string.sub(link, 1, 5) == "spell" then
 
-                if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-                    ChatFrameEditBox:Insert(text);
-                    return
-                end
+				if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
+					ChatFrameEditBox:Insert(text)
+					return
+				end
 
-                local textEx = spellCom.explode(link, ":")
-                if textEx[2] and textEx[4] then
-                    SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. textEx[4] .. ">", ":SpellInfoRequest_" .. textEx[2], "GUILD")
-                end
+				local _, _, index, player = string.find(link, "spell:(%d+):%d+:(%w+)")
+				if index and player then
+					Send(player, ":SpellInfoRequest_" .. index)
+				end
 
-                return
-            elseif string.find(link, 'talent', 1, true) then
-                if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-                    ChatFrameEditBox:Insert(text);
-                    return
-                end
+				return
+			elseif string.sub(link, 1, 6) == "talent" then
+				if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
+					ChatFrameEditBox:Insert(text)
+					return
+				end
 
-                local textEx = spellCom.explode(link, ":")
-                if textEx[2] and textEx[3] and textEx[4] then
-                    SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. textEx[4] .. ">", ":TalentInfoRequest_" .. textEx[2] .. "_" .. textEx[3], "GUILD")
-                end
+				local _, _, tree, index, player = string.find(link, "talent:(%d+):(%d+):(%w+)")
 
-                return
-            end
+				if tree and index and player then
+					Send(player, ":TalentInfoRequest_" .. tree .. "_" .. index)
+				end
 
-            hyperlink_show(link, text, button, unpack(arg))
-        end
-    end
-end
+				return
+			end
 
-function showSpellTooltip(arg)
-
-    local spellInfo = spellCom.explode(arg, "_")
-
-    if spellInfo[2] then
-
-        local blankSpellId = nil
-        for id = 1, 100 do
-            local name = GetSpellName(id, BOOKTYPE_SPELL);
-            if name and name == "Attack" then
-                blankSpellId = id
-                break
-            end
-        end
-
-        if not blankSpellId then
-            return false
-        end
-
-        ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
-        ItemRefTooltip:SetSpell(blankSpellId, SpellBookFrame.bookType)
-        ItemRefTooltip:ClearLines()
-
-        for i = 1, 30 do
-            getglobal('ItemRefTooltipTextLeft' .. i):Hide()
-            getglobal('ItemRefTooltipTextRight' .. i):Hide()
-        end
-
-        local sDet = spellCom.explode(spellInfo[2], "@")
-        for _, s in sDet do
-            local data = spellCom.explode(s, ";")
-
-            if string.find(data[1], "L", 1, true) then
-
-                data[2] = spellCom.replace(data[2], '*dd*', ':')
-
-                if string.find(data[2], ".", 1, true) then
-                    getglobal('ItemRefTooltip'):AddLine("|cffffd200" .. data[2], 1, 1, 1, 1)
-                else
-                    getglobal('ItemRefTooltip'):AddLine(data[2], 1, 1, 1)
-                end
-                getglobal('ItemRefTooltipTextLeft' .. string.sub(data[1], 2)):Show()
-
-            end
-            if string.find(data[1], "R", 1, true) then
-
-                data[2] = spellCom.replace(data[2], '*dd*', ':')
-
-                getglobal('ItemRefTooltipTextRight' .. string.sub(data[1], 2)):SetText(data[2])
-                getglobal('ItemRefTooltipTextRight' .. string.sub(data[1], 2)):Show()
-            end
-        end
-        ItemRefTooltip:Show()
-    end
+			hyperlink_show(link, text, button)
+		end
+	end
 end

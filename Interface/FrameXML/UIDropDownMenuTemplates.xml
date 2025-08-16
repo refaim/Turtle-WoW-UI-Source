@@ -90,7 +90,7 @@
 						<Offset>
 							<AbsDimension x="-6" y="0"/>
 						</Offset>
-					</Anchor>                   
+					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
@@ -220,6 +220,14 @@
 			<Button name="$parentButton30" inherits="UIDropDownMenuButtonTemplate" id="30"/>
 			<Button name="$parentButton31" inherits="UIDropDownMenuButtonTemplate" id="31"/>
 			<Button name="$parentButton32" inherits="UIDropDownMenuButtonTemplate" id="32"/>
+			<Button name="$parentButton33" inherits="UIDropDownMenuButtonTemplate" id="33"/>
+			<Button name="$parentButton34" inherits="UIDropDownMenuButtonTemplate" id="34"/>
+			<Button name="$parentButton35" inherits="UIDropDownMenuButtonTemplate" id="35"/>
+			<Button name="$parentButton36" inherits="UIDropDownMenuButtonTemplate" id="36"/>
+			<Button name="$parentButton37" inherits="UIDropDownMenuButtonTemplate" id="37"/>
+			<Button name="$parentButton38" inherits="UIDropDownMenuButtonTemplate" id="38"/>
+			<Button name="$parentButton39" inherits="UIDropDownMenuButtonTemplate" id="39"/>
+			<Button name="$parentButton40" inherits="UIDropDownMenuButtonTemplate" id="40"/>
 		</Frames>
 		<Scripts>
 			<OnClick>

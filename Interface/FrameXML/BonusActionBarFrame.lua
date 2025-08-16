@@ -94,7 +94,6 @@ function HideBonusActionBar()
 		BonusActionBarFrame.yTarget = BONUSACTIONBAR_YPOS;
 		BonusActionBarFrame.mode = "hide";
 	end
-	
 end
 
 function BonusActionButton_OnEvent()
@@ -154,9 +153,6 @@ end
 
 function ShapeshiftBar_Update()
 	local numForms = GetNumShapeshiftForms();
-	local fileName, name, isActive, isCastable;
-	local button, icon, cooldown;
-	local start, duration, enable;
 
 	if ( numForms > 0 ) then
 		--Setup the shapeshift bar to display the appropriate number of slots
@@ -173,23 +169,28 @@ function ShapeshiftBar_Update()
 			ShapeshiftBarMiddle:SetTexCoord(0, numForms-2, 0, 1);
 			ShapeshiftBarRight:SetPoint("LEFT", "ShapeshiftBarMiddle", "RIGHT", 0, 0);
 		end
-		
+
 		ShapeshiftBarFrame:Show();
 	else
 		ShapeshiftBarFrame:Hide();
 	end
 	ShapeshiftBar_UpdateState();
+	UIParent_ManageFramePositions();
 end
 
 function ShapeshiftBar_UpdateState()
 	local numForms = GetNumShapeshiftForms();
+	local texture, name, isActive, isCastable;
+	local button, icon, cooldown;
+	local start, duration, enable;
+
 	for i=1, NUM_SHAPESHIFT_SLOTS do
 		button = getglobal("ShapeshiftButton"..i);
 		icon = getglobal("ShapeshiftButton"..i.."Icon");
 		if ( i <= numForms ) then
 			texture, name, isActive, isCastable = GetShapeshiftFormInfo(i);
 			icon:SetTexture(texture);
-			
+
 			--Cooldown stuffs
 			cooldown = getglobal("ShapeshiftButton"..i.."Cooldown");
 			if ( texture ) then
@@ -199,7 +200,7 @@ function ShapeshiftBar_UpdateState()
 			end
 			start, duration, enable = GetShapeshiftFormCooldown(i);
 			CooldownFrame_SetTimer(cooldown, start, duration, enable);
-			
+
 			if ( isActive ) then
 				ShapeshiftBarFrame.lastSelected = button:GetID();
 				button:SetChecked(1);
@@ -222,7 +223,6 @@ end
 
 function ShapeshiftBar_ChangeForm(id)
 	ShapeshiftBarFrame.lastSelected = id;
-	local check = 1;
 	CastShapeshiftForm(id);
 end
 

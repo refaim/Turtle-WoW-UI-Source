@@ -1176,6 +1176,7 @@ end
 function ChatFrame_OnLoad()
 	this.flashTimer = 0;
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("UPDATE_CHAT_COLOR");
 	this:RegisterEvent("UPDATE_CHAT_WINDOWS");
 	this:RegisterEvent("CHAT_MSG_CHANNEL");
@@ -1315,6 +1316,9 @@ function ChatFrame_OnEvent(event)
 	end
 	if ( event == "PLAYER_ENTERING_WORLD" ) then
 		this.defaultLanguage = GetDefaultLanguage();
+		return;
+	end
+	if ( event == "PLAYER_LOGIN" ) then
         FCF_SelectDockFrame(DEFAULT_CHAT_FRAME);
 		return;
 	end

@@ -1,4 +1,4 @@
-UIDROPDOWNMENU_MAXBUTTONS = 32;
+UIDROPDOWNMENU_MAXBUTTONS = 40;
 UIDROPDOWNMENU_MAXLEVELS = 3;
 UIDROPDOWNMENU_BUTTON_HEIGHT = 16;
 UIDROPDOWNMENU_BORDER_HEIGHT = 15;
@@ -134,6 +134,17 @@ info.arg1 = [ANYTHING] -- This is the first argument used by info.func
 info.arg2 = [ANYTHING] -- This is the second argument used by info.func
 info.textHeight = [NUMBER] -- font height for button text
 ]]
+
+local UIDropDownMenu_ButtonInfo = {};
+
+function UIDropDownMenu_CreateInfo()
+	-- Reuse the same table to prevent memory churn
+	for k in pairs(UIDropDownMenu_ButtonInfo) do
+		UIDropDownMenu_ButtonInfo[k] = nil;
+	end
+
+	return UIDropDownMenu_ButtonInfo;
+end
 
 function UIDropDownMenu_AddButton(info, level)
 	--[[
@@ -352,7 +363,7 @@ function UIDropDownMenu_AddButton(info, level)
 end
 
 function UIDropDownMenu_Refresh(frame, useValue, dropdownLevel)
-	local button, checked, checkImage, normalText;
+	local button, checked, checkImage, normalText, width;
 	local maxWidth = 0;
 	if ( not frame ) then
 		frame = this;
@@ -395,10 +406,6 @@ function UIDropDownMenu_Refresh(frame, useValue, dropdownLevel)
 			checkImage:Hide();
 		end
 
-		if ( not level ) then
-			level = 1;
-		end
-		
 		if ( button:IsShown() ) then
 			normalText = getglobal(button:GetName().."NormalText");
 			-- Determine the maximum width of a button
@@ -634,12 +641,13 @@ function ToggleDropDownMenu(level, value, dropDownFrame, anchorName, xOffset, yO
 		if ( (y - listFrame:GetHeight()/2) < 0 ) then
 			offscreenY = 1;
 		end
-		if ( listFrame:GetRight() > GetScreenWidth() ) then
+		if ( listFrame:GetRight() > GetScreenWidth() * UIParent:GetEffectiveScale() ) then
 			offscreenX = 1;	
 		end
 		
 		--  If level 1 can only go off the bottom of the screen
 		if ( level == 1 ) then
+			local anchorPoint
 			if ( offscreenY and offscreenX ) then
 				anchorPoint = "BOTTOMRIGHT";
 				relativePoint = "BOTTOMLEFT";

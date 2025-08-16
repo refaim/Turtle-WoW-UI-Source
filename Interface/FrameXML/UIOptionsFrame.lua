@@ -28,6 +28,7 @@ UIOptionsFrameCheckButtons["SHOW_OWN_NAME"] =				{ index = 67, cvar = "UnitNameO
 UIOptionsFrameCheckButtons["SHOW_PARTY_BACKGROUND_TEXT"] =		{ index = 43, uvar = "SHOW_PARTY_BACKGROUND"};
 UIOptionsFrameCheckButtons["HIDE_OUTDOOR_WORLD_STATE_TEXT"] =		{ index = 62, uvar = "HIDE_OUTDOOR_WORLD_STATE", default = "0"};
 UIOptionsFrameCheckButtons["AUTO_QUEST_WATCH_TEXT"] =			{ index = 66, uvar = "AUTO_QUEST_WATCH", default = "1"};
+UIOptionsFrameCheckButtons["SHOW_PLAYER_CHALLENGES_TEXT"] =			{ index = 71, uvar = "PLAYER_CHALLENGES", default = "0"};
 
 -- Camera Controls
 UIOptionsFrameCheckButtons["FOLLOW_TERRAIN"] =				{ index = 24, cvar = "cameraTerrainTilt"};
@@ -92,6 +93,8 @@ UIOptionsFrameSliders = {
 };
 
 function UIOptionsFrame_Init()
+	PLAYER_CHALLENGES = "0";
+	RegisterForSave("PLAYER_CHALLENGES");
 	LOOT_WINDOW_AT_CURSOR = "0";
 	RegisterForSave("LOOT_WINDOW_AT_CURSOR");
 	SIMPLE_CHAT = "0";
@@ -177,12 +180,12 @@ function UIOptionsFrame_Init()
 	AdvancedOptionsCombatText:SetPoint("TOPLEFT", AdvancedOptionsActionBars, "BOTTOMLEFT", BasicOptions:GetWidth()*0.65, -20);
 	AdvancedOptionsCombatText:SetPoint("TOPRIGHT", AdvancedOptionsActionBars, "BOTTOMRIGHT", 0, -20);
 	AdvancedOptionsCombatText:SetPoint("BOTTOMLEFT", AdvancedOptionsRaid, "BOTTOMRIGHT", 0, 0);
-	UIOptionsFrameTitle:SetPoint("TOP", AdvancedOptions, "TOP", 0, -5);
+	-- UIOptionsFrameTitle:SetPoint("TOP", AdvancedOptions, "TOP", 0, -5);
 
 	-- Variables not displayed in the ui options but they needed a home
 	RegisterForSave("NAMEPLATES_ON");
 	NAMEPLATES_ON = nil;
-	RegisterForSave("NAMEPLATES_ON");
+	RegisterForSave("FRIENDNAMEPLATES_ON");
 	FRIENDNAMEPLATES_ON = nil;
 end
 
@@ -393,37 +396,28 @@ end
 
 function UIOptionsFrameClickCameraDropDown_Initialize()
 	local selectedValue = UIDropDownMenu_GetSelectedValue(UIOptionsFrameClickCameraDropDown);
-	local info;
+	local info = UIDropDownMenu_CreateInfo();
 
-	info = {};
 	info.text = CAMERA_SMART;
 	info.func = UIOptionsFrameClickCameraDropDown_OnClick;
 	info.value = "1"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_SMART;
 	info.tooltipText = OPTION_TOOLTIP_CLICKCAMERA_SMART;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = CAMERA_LOCKED;
 	info.func = UIOptionsFrameClickCameraDropDown_OnClick;
 	info.value = "2"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_LOCKED;
 	info.tooltipText = OPTION_TOOLTIP_CLICKCAMERA_LOCKED;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = CAMERA_NEVER;
 	info.func = UIOptionsFrameClickCameraDropDown_OnClick;
 	info.value = "0"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_NEVER;
 	info.tooltipText = OPTION_TOOLTIP_CLICKCAMERA_NEVER;
 	UIDropDownMenu_AddButton(info);
@@ -443,64 +437,49 @@ end
 
 function UIOptionsFrameTargetofTargetDropDown_Initialize()
 	local selectedValue = UIDropDownMenu_GetSelectedValue(UIOptionsFrameTargetofTargetDropDown);
-	local info;
+	local info = UIDropDownMenu_CreateInfo();
 
-	info = {};
 	info.text = RAID;
 	info.func = UIOptionsFrameTargetofTargetDropDown_OnClick;
 	info.value = "1"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = RAID;
 	info.tooltipText = OPTION_TOOLTIP_TARGETOFTARGET_RAID;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = PARTY;
 	info.func = UIOptionsFrameTargetofTargetDropDown_OnClick;
 	info.value = "2"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = PARTY;
 	info.tooltipText = OPTION_TOOLTIP_TARGETOFTARGET_PARTY;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = SOLO;
 	info.func = UIOptionsFrameTargetofTargetDropDown_OnClick;
 	info.value = "3"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = PARTY;
 	info.tooltipText = OPTION_TOOLTIP_TARGETOFTARGET_SOLO;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = RAID_AND_PARTY;
 	info.func = UIOptionsFrameTargetofTargetDropDown_OnClick;
 	info.value = "4"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = RAID_AND_PARTY;
 	info.tooltipText = OPTION_TOOLTIP_TARGETOFTARGET_RAID_AND_PARTY;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = ALWAYS;
 	info.func = UIOptionsFrameTargetofTargetDropDown_OnClick;
 	info.value = "5"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = ALWAYS;
 	info.tooltipText = OPTION_TOOLTIP_TARGETOFTARGET_ALWAYS;
 	UIDropDownMenu_AddButton(info);
-
 end
+
 function UIOptionsFrameCameraDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, UIOptionsFrameCameraDropDown_Initialize);
 	UIDropDownMenu_SetSelectedValue(this, GetCVar("cameraSmoothStyle"));
@@ -520,37 +499,28 @@ end
 
 function UIOptionsFrameCameraDropDown_Initialize()
 	local selectedValue = UIDropDownMenu_GetSelectedValue(UIOptionsFrameCameraDropDown);
-	local info;
+	local info = UIDropDownMenu_CreateInfo();
 
-	info = {};
 	info.text = CAMERA_SMART;
 	info.func = UIOptionsFrameCameraDropDown_OnClick;
 	info.value = "1"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_SMART;
 	info.tooltipText = OPTION_TOOLTIP_CAMERA_SMART;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = CAMERA_ALWAYS;
 	info.func = UIOptionsFrameCameraDropDown_OnClick;
 	info.value = "2"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_ALWAYS;
 	info.tooltipText = OPTION_TOOLTIP_CAMERA_ALWAYS;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = CAMERA_NEVER;
 	info.func = UIOptionsFrameCameraDropDown_OnClick;
 	info.value = "0"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = CAMERA_NEVER;
 	info.tooltipText = OPTION_TOOLTIP_CAMERA_NEVER;
 	UIDropDownMenu_AddButton(info);
@@ -572,37 +542,28 @@ end
 
 function UIOptionsFrameCombatTextDropDown_Initialize()
 	local selectedValue = UIDropDownMenu_GetSelectedValue(UIOptionsFrameCombatTextDropDown);
-	local info;
+	local info = UIDropDownMenu_CreateInfo();
 
-	info = {};
 	info.text = COMBAT_TEXT_SCROLL_UP;
 	info.func = UIOptionsFrameCombatTextDropDown_OnClick;
 	info.value = "1"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = COMBAT_TEXT_SCROLL_UP;
 	info.tooltipText = OPTION_TOOLTIP_SCROLL_UP;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = COMBAT_TEXT_SCROLL_DOWN;
 	info.func = UIOptionsFrameCombatTextDropDown_OnClick;
 	info.value = "2"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = COMBAT_TEXT_SCROLL_DOWN;
 	info.tooltipText = OPTION_TOOLTIP_SCROLL_DOWN;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
 	info.text = COMBAT_TEXT_SCROLL_ARC;
 	info.func = UIOptionsFrameCombatTextDropDown_OnClick;
 	info.value = "3"
-	if ( info.value == selectedValue ) then
-		info.checked = 1;
-	end
+	info.checked = info.value == selectedValue;
 	info.tooltipTitle = COMBAT_TEXT_SCROLL_ARC;
 	info.tooltipText = OPTION_TOOLTIP_SCROLL_ARC;
 	UIDropDownMenu_AddButton(info);
@@ -766,7 +727,6 @@ function UIOptionsFrame_UpdateDependencies()
 	end
 end
 
-
 -- Nameplate display function -- It is not used by the options ui, but I put it here since this is the most closely related file.
 function UpdateNameplates()
 	if ( NAMEPLATES_ON ) then
@@ -776,7 +736,6 @@ function UpdateNameplates()
 	end
 	if ( FRIENDNAMEPLATES_ON ) then
 		ShowFriendNameplates();
-		HideFriendNameplates();
 	else
 		HideFriendNameplates();
 	end

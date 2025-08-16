@@ -1,0 +1,425 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Button name="ArenaQueueButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="315" y="16" />
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <FontString name="$parentStatus" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-10" y="0" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                getglobal(this:GetName() .. "Highlight"):SetVertexColor(1.0, 0.82, 0)
+            </OnLoad>
+            <OnClick>
+                ArenaQueueButton_OnClick()
+            </OnClick>
+        </Scripts>
+        <HighlightTexture name="$parentHighlight" file="Interface\Buttons\UI-Listbox-Highlight2" alphaMode="ADD" />
+        <ButtonText name="$parentText">
+            <Anchors>
+                <Anchor point="LEFT">
+                    <Offset>
+                        <AbsDimension x="5" y="1" />
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </ButtonText>
+        <NormalFont inherits="GameFontNormal" justifyH="LEFT" />
+        <HighlightFont inherits="GameFontHighlight" justifyH="LEFT" />
+    </Button>
+    <Button name="ArenaTeamTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="300" y="94" />
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTop" file="Interface\ArenaFrame\UI-Character-PVP-Elements">
+                    <Size>
+                        <AbsDimension x="300" y="11" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="-1" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.544921875" top="0.849609375" bottom="0.87109375" />
+                </Texture>
+                <Texture name="$parentLeft" file="Interface\ArenaFrame\UI-Character-PVP-Elements">
+                    <Size>
+                        <AbsDimension x="10" y="72" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentTop" relativePoint="BOTTOMLEFT" />
+                    </Anchors>
+                    <TexCoords left="0.556640625" right="0.576171875" top="0.705078125" bottom="0.82421875" />
+                </Texture>
+                <Texture name="$parentBackground">
+                    <Size>
+                        <AbsDimension x="286" y="80" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentLeft" relativePoint="TOPRIGHT">
+                            <Offset>
+                                <AbsDimension x="-1" y="4" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" />
+                </Texture>
+                <Texture name="$parentRight" file="Interface\ArenaFrame\UI-Character-PVP-Elements">
+                    <Size>
+                        <AbsDimension x="10" y="72" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeTo="$parentTop" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                    <TexCoords left="0.576171875" right="0.595703125" top="0.705078125" bottom="0.82421875" />
+                </Texture>
+                <Texture name="$parentBottom" file="Interface\ArenaFrame\UI-Character-PVP-Elements">
+                    <Size>
+                        <AbsDimension x="300" y="17" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parentLeft" relativePoint="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="1" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.544921875" top="0.87109375" bottom="0.90625" />
+                </Texture>
+                <FontString name="$parentText" inherits="GameFontDisableLarge">
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="-6" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentDetails" hidden="true">
+                <Size>
+                    <AbsDimension x="280" y="70" />
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <FontString name="$parentName" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size>
+                                <AbsDimension x="150" y="12" />
+                            </Size>
+                        </FontString>
+                        <FontString name="$parentRatingLabel" inherits="GameFontDisableSmall" text="ARENA_TEAM_RATING" justifyH="RIGHT">
+                            <Size>
+                                <AbsDimension x="75" y="12" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-24" y="-16" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentRating" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size>
+                                <AbsDimension x="40" y="12" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentRatingLabel" relativePoint="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="2" y="0" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <Texture file="Interface\ArenaFrame\UI-Character-PVP-Elements">
+                            <Size>
+                                <AbsDimension x="270" y="2" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="18" y="-32" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="0.4140625" top="0.76171875" bottom="0.765625" />
+                        </Texture>
+                        <FontString name="$parentWeekLabel" inherits="GameFontHighlightSmall" text="ARENA_TEAM_WEEK" justifyH="LEFT" justifyV="BOTTOM">
+                            <Size>
+                                <AbsDimension x="63" y="24" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="18" y="-42" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonLabel" inherits="GameFontHighlightSmall" text="ARENA_TEAM_SEASON" justifyH="LEFT" justifyV="BOTTOM">
+                            <Size>
+                                <AbsDimension x="63" y="24" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativeTo="$parentWeekLabel" relativePoint="BOTTOMLEFT">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-16" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentGamesLabel" inherits="GameFontDisableSmall" text="ARENA_TEAM_GAMES" justifyH="CENTER">
+                            <Size>
+                                <AbsDimension x="55" y="12" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativeTo="$parentWeekLabel" relativePoint="BOTTOMRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="4" y="16" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWeekGames" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentGamesLabel" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonGames" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentWeekGames" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWinLossLabel" inherits="GameFontDisableSmall" text="ARENA_TEAM_WINLOSS" justifyH="CENTER">
+                            <Size>
+                                <AbsDimension x="75" y="12" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentGamesLabel" relativePoint="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="4" y="0" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWeekSeparator" inherits="GameFontHighlightSmall" text=" - ">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentWinLossLabel" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="-2" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWeekWins" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeTo="$parentWeekSeparator" relativePoint="LEFT" />
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWeekLoss" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentWeekSeparator" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonSeparator" inherits="GameFontHighlightSmall" text=" - ">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentWeekSeparator" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonWins" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeTo="$parentSeasonSeparator" relativePoint="LEFT" />
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonLoss" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentSeasonSeparator" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentRankLabel" inherits="GameFontDisableSmall" text="ARENA_TEAM_RANK" justifyH="CENTER">
+                            <Size>
+                                <AbsDimension x="67" y="12" />
+                            </Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentWinLossLabel" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentWeekRank" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentRankLabel" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentSeasonRank" inherits="GameFontHighlightSmall" text="0">
+                            <Anchors>
+                                <Anchor point="TOP" relativeTo="$parentWeekRank" relativePoint="BOTTOM">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-6" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button name="$parentDisbandButton">
+                        <Size>
+                            <AbsDimension x="32" y="32" />
+                        </Size>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeTo="$parentName" relativePoint="LEFT">
+                                <Offset>
+                                    <AbsDimension x="2" y="-1" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <NormalTexture file="Interface\Buttons\CancelButton-Up" />
+                        <PushedTexture file="Interface\Buttons\CancelButton-Down" />
+                        <HighlightTexture file="Interface\Buttons\CancelButton-Highlight" alphaMode="ADD" />
+                        <Scripts>
+                            <OnClick>
+                                ArenaFrameDetailsDisbandButton_OnClick()
+                            </OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(ARENA_TEAM_DISBAND)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+            <Frame name="$parentHighlight" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentTop">
+                        <Offset>
+                            <AbsDimension x="-3" y="7" />
+                        </Offset>
+                    </Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parentBottom">
+                        <Offset>
+                            <AbsDimension x="8" y="-4" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop edgeFile="Interface\ArenaFrame\UI-Character-PVP-Highlight" tile="true">
+                    <EdgeSize>
+                        <AbsValue val="32" />
+                    </EdgeSize>
+                    <BorderColor r="1" g="0.82" b="0" a="0.7" />
+                </Backdrop>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                this:SetAlpha(0.4)
+            </OnLoad>
+            <OnClick>
+                ArenaTeam_OnClick()
+            </OnClick>
+            <OnEnter>
+                getglobal(this:GetName() .. "Highlight"):Show()
+            </OnEnter>
+            <OnLeave>
+                getglobal(this:GetName() .. "Highlight"):Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+    <Frame name="ArenaMemberFrameTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="224" y="24" />
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <FontString name="$parentName" inherits="GameFontHighlight" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="16" y="0" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture name="$parentCaptainIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
+                    <Size>
+                        <AbsDimension x="16" y="16" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT">
+                            <Offset>
+                                <AbsDimension x="4" y="-1" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentKickButton">
+                <Size>
+                    <AbsDimension x="32" y="32" />
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentName">
+                        <Offset>
+                            <AbsDimension x="142" y="-1" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <NormalTexture file="Interface\Buttons\CancelButton-Up" />
+                <PushedTexture file="Interface\Buttons\CancelButton-Down" />
+                <HighlightTexture file="Interface\Buttons\CancelButton-Highlight" alphaMode="ADD" />
+                <Scripts>
+                    <OnClick>
+                        ArenaMemberFrameKickButton_OnClick()
+                    </OnClick>
+                    <OnEnter>
+                        GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+                        GameTooltip:SetText(ARENA_TEAM_KICK_MEMBER)
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
+</Ui>

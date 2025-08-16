@@ -94,6 +94,15 @@
 										</Anchor>
 									</Anchors>
 								</FontString>
+								<FontString name="PlayerFrameAlternatePowerBarText" inherits="TextStatusBarText">
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset>
+												<AbsDimension x="50" y="-20"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
 							</Layer>
 							<Layer level="ARTWORK">
 								<Texture name="PlayerStatusTexture" file="Interface\CharacterFrame\UI-Player-Status" alphaMode="ADD" hidden="true">
@@ -328,6 +337,67 @@
 					<OnLoad>
 						TextStatusBar_Initialize();
 						this.textLockable = 1;
+					</OnLoad>
+					<OnEvent>
+						UnitFrameManaBar_Update(this, arg1);
+					</OnEvent>
+					<OnMouseUp>
+						PlayerFrame_OnClick(arg1);
+					</OnMouseUp>
+				</Scripts>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0" g="0" b="1.0"/>
+			</StatusBar>
+			<StatusBar name="PlayerFrameAlternatePowerBar" inherits="TextStatusBar" hidden="true">
+				<Size>
+					<AbsDimension x="78" y="12" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="128" y="23" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBackground">
+							<Size>
+								<AbsDimension x="78" y="12" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+							</Anchors>
+							<Color r="0" g="0" b="0" a="0.5" />
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="$parentBorder" file="Interface\CharacterFrame\UI-CharacterFrame-GroupIndicator">
+							<Size>
+								<AbsDimension x="97" y="16" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="-10" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.0234375" right="0.6875" top="1.0" bottom="0.0" />
+						</Texture>
+						<FontString name="$parentText" inherits="TextStatusBarText">
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						TextStatusBar_Initialize();
+						this.textLockable = 1;
+
+						SetTextStatusBarText(this, PlayerFrameAlternatePowerBarText);
 					</OnLoad>
 					<OnEvent>
 						UnitFrameManaBar_Update(this, arg1);

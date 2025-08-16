@@ -14,7 +14,7 @@ BATTLEFIELD_TAB_OFFSET_Y = 0;
 UIPanelWindows = {};
 UIPanelWindows["GameMenuFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["OptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
-UIPanelWindows["SoundOptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
+UIPanelWindows["SoundOptionsFrame"] =	{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["UIOptionsFrame"] =		{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["CharacterFrame"] =		{ area = "left",	pushable = 2 ,	whileDead = 1};
 UIPanelWindows["ItemTextFrame"] =		{ area = "left",	pushable = 0 };
@@ -30,14 +30,14 @@ UIPanelWindows["FriendsFrame"] =		{ area = "left",	pushable = 0,	whileDead = 1 }
 UIPanelWindows["WorldMapFrame"] =		{ area = "full",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["CinematicFrame"] =		{ area = "full",	pushable = 0 };
 UIPanelWindows["TabardFrame"] =			{ area = "left",	pushable = 0 };
-UIPanelWindows["GuildRegistrarFrame"] =		{ area = "left",	pushable = 0 };
+UIPanelWindows["GuildRegistrarFrame"] =	{ area = "left",	pushable = 0 };
 UIPanelWindows["PetitionFrame"] =		{ area = "left",	pushable = 0 };
 UIPanelWindows["HelpFrame"] =			{ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["GossipFrame"] =			{ area = "left",	pushable = 0 };
 UIPanelWindows["MailFrame"] =			{ area = "left",	pushable = 0 };
-UIPanelWindows["BattlefieldFrame"] =		{ area = "left",	pushable = 0 };
+UIPanelWindows["BattlefieldFrame"] =	{ area = "left",	pushable = 0 };
 UIPanelWindows["PetStableFrame"] =		{ area = "left",	pushable = 0 };
-UIPanelWindows["WorldStateScoreFrame"] =	{ area = "center",	pushable = 0,	whileDead = 1 };
+UIPanelWindows["WorldStateScoreFrame"] ={ area = "center",	pushable = 0,	whileDead = 1 };
 UIPanelWindows["DressUpFrame"] =		{ area = "left",	pushable = 2 };
 UIPanelWindows["MinigameFrame"] =		{ area = "left",	pushable = 0 };
 
@@ -242,7 +242,7 @@ function UIParent_OnEvent(event)
 			end
 		end
 		return;
-	end	
+	end
 	if ( event == "PLAYER_ALIVE" ) then
 		StaticPopup_Hide("DEATH");
 		StaticPopup_Hide("RESURRECT_NO_SICKNESS");
@@ -279,7 +279,7 @@ function UIParent_OnEvent(event)
 		end
 		]]
 		UIErrorsFrame:AddMessage(DEATH_CORPSE_SKINNED, 1.0, 0.1, 0.1, 1.0);
-		return;		
+		return;
 	end
 	if ( event == "TRADE_REQUEST" ) then
 		StaticPopup_Show("TRADE", arg1);
@@ -476,11 +476,11 @@ function UIParent_OnEvent(event)
 			return;
 		end
 		CloseAllWindows_WithExceptions();
-		
+
 		--[[
 		-- Disable all microbuttons except the main menu
 		SetDesaturation(MicroButtonPortrait, 1);
-		
+
 		Designers previously wanted these disabled when feared, they seem to have changed their minds
 		CharacterMicroButton:Disable();
 		SpellbookMicroButton:Disable();
@@ -606,7 +606,7 @@ function UIParent_OnEvent(event)
 	if ( event == "TRADE_SKILL_SHOW" ) then
 		TradeSkillFrame_LoadUI();
 		if ( TradeSkillFrame_Show ) then
-			TradeSkillFrame_Show();						
+			TradeSkillFrame_Show();
 		end
 		return;
 	end
@@ -646,11 +646,11 @@ function UIParentLoadAddOn(name)
 	return loaded;
 end
 
-function ShowUIPanel(frame, force)	
+function ShowUIPanel(frame, force)
 	if ( not frame or frame:IsVisible() ) then
 		return;
 	end
-	
+
 	local info = UIPanelWindows[frame:GetName()];
 	if ( not CanOpenPanels() and info and info.area ~= "center" ) then
 		return;
@@ -687,14 +687,14 @@ function ShowUIPanel(frame, force)
 			end
 		end
 	end
-	
+
 	-- Full-screen frames just replace each other
 	if ( info.area == "full" ) then
 		CloseAllWindows();
 		SetFullScreenFrame(frame);
 		return;
 	end
-	
+
 	-- Native "center" frames just replace each other, and they take priority over pushed frames
 	if ( info.area == "center" ) then
 		CloseWindows();
@@ -708,13 +708,13 @@ function ShowUIPanel(frame, force)
 		SetDoublewideFrame(frame);
 		return;
 	end
-	
+
 	-- Close any doublewide frames
 	local doublewideFrame = GetDoublewideFrame();
 	if ( doublewideFrame ) then
 		doublewideFrame:Hide();
 	end
-	
+
 	-- Try to put it on the left
 	local leftFrame = GetLeftFrame();
 	if ( not leftFrame ) then
@@ -723,7 +723,7 @@ function ShowUIPanel(frame, force)
 	end
 
 	-- If there's only one open...
-	leftInfo = UIPanelWindows[leftFrame:GetName()];
+	local leftInfo = UIPanelWindows[leftFrame:GetName()];
 	if ( not centerFrame ) then
 		-- If neither is pushable, replace
 		if ( (leftInfo.pushable == 0) and (info.pushable == 0) ) then
@@ -767,7 +767,7 @@ function HideUIPanel(frame)
 		SetCenterFrame(nil);
 		return;
 	end
-	
+
 	-- If we're hiding the left frame, move the center frame back left, unless it's a native center frame
 	if ( frame == GetLeftFrame() ) then
 		local centerFrame = GetCenterFrame();
@@ -795,7 +795,7 @@ function SetDoublewideFrame(frame)
 	if ( oldFrame1 ) then
 		oldFrame1:Hide();
 	end
-	
+
 	if ( oldFrame2 ) then
 		oldFrame2:Hide();
 	end
@@ -812,7 +812,7 @@ function SetLeftFrame(frame)
 
 	if ( oldFrame ) then
 		oldFrame:Hide();
-	end	
+	end
 
 	if ( frame ) then
 		frame:SetPoint("TOPLEFT", "UIParent", "TOPLEFT", 0, -104);
@@ -846,7 +846,7 @@ function SetCenterFrame(frame, skipSetPoint)
 		end
 	end
 
-	
+
 end
 
 function SetFullScreenFrame(frame)
@@ -889,7 +889,7 @@ function CanOpenPanels()
 	if ( UnitIsDead("player") ) then
 		return nil;
 	end
-	
+
 	Previously couldn't open frames if player was out of control i.e. feared
 	if ( UnitIsDead("player") or UIParent.isOutOfControl ) then
 		return nil;
@@ -941,7 +941,7 @@ function CloseWindows(ignoreCenter)
 		local info = UIPanelWindows[centerFrame:GetName()];
 		if ( not info or (info.area ~= "center") or not ignoreCenter ) then
 			HideUIPanel(centerFrame);
-		end	
+		end
 	end
 
 	local frame;
@@ -984,7 +984,7 @@ end
 function CloseMenus()
 	local menusVisible = nil;
 	for index, value in UIMenus do
-		menu = getglobal(value);
+		local menu = getglobal(value);
 		if ( menu and menu:IsVisible() ) then
 			menu:Hide();
 			menusVisible = 1;
@@ -1192,7 +1192,7 @@ function UIFrameFadeUpdate(elapsed)
 		end
 		fadeInfo.fadeTimer = fadeInfo.fadeTimer + elapsed;
 
-		-- If the fadeTimer is less then the desired fade time then set the alpha otherwise hold the fade state, call the finished function, or just finish the fade 
+		-- If the fadeTimer is less then the desired fade time then set the alpha otherwise hold the fade state, call the finished function, or just finish the fade
 		if ( fadeInfo.fadeTimer < fadeInfo.timeToFade ) then
 			if ( fadeInfo.mode == "IN" ) then
 				frame:SetAlpha((fadeInfo.fadeTimer / fadeInfo.timeToFade) * (fadeInfo.endAlpha - fadeInfo.startAlpha) + fadeInfo.startAlpha);
@@ -1213,7 +1213,7 @@ function UIFrameFadeUpdate(elapsed)
 				end
 			end
 		end
-		
+
 		index = index + 1;
 	end
 end
@@ -1238,7 +1238,7 @@ function UIFrameFlash(frame, fadeInTime, fadeOutTime, flashDuration, showWhenDon
 			end
 			index = index + 1;
 		end
-		
+
 		-- Time it takes to fade in a flashing frame
 		frame.fadeInTime = fadeInTime;
 		-- Time it takes to fade out a flashing frame
@@ -1255,7 +1255,7 @@ function UIFrameFlash(frame, fadeInTime, fadeOutTime, flashDuration, showWhenDon
 		frame.flashInHoldTime = flashInHoldTime;
 		-- How long to hold the faded out state
 		frame.flashOutHoldTime = flashOutHoldTime;
-		
+
 		tinsert(FLASHFRAMES, frame);
 	end
 end
@@ -1303,7 +1303,7 @@ function UIFrameFlashUpdate(elapsed)
 				frame.flashMode = nil;
 			end
 		end
-		
+
 		index = index + 1;
 	end
 end
@@ -1361,8 +1361,8 @@ function ButtonPulse_OnUpdate(elapsed)
 			button.pulseOn = 0;
 			tDeleteItem(PULSEBUTTONS, button);
 		end
-		
-	end 
+
+	end
 end
 
 function ButtonPulse_StopPulse(button)
@@ -1400,7 +1400,7 @@ function MouseIsOver(frame, topOffset, bottomOffset, leftOffset, rightOffset)
 		leftOffset = 0;
 		rightOffset = 0;
 	end
-	
+
 	-- Hack to fix a symptom not the real issue
 	if ( not left ) then
 		return;
@@ -1505,7 +1505,7 @@ function SetDesaturation(texture, desaturation)
 		else
 			texture:SetVertexColor(1.0, 1.0, 1.0);
 		end
-		
+
 	end
 end
 
@@ -1524,7 +1524,7 @@ function ValidateFramePosition(frame, offscreenPadding, returnOffscreen)
 	end
 	if ( top < (0 + MainMenuBar:GetHeight() + offscreenPadding)) then
 		-- Off the bottom of the screen
-		newAnchorY = MainMenuBar:GetHeight() + frame:GetHeight() - GetScreenHeight(); 
+		newAnchorY = MainMenuBar:GetHeight() + frame:GetHeight() - GetScreenHeight();
 	elseif ( bottom > GetScreenHeight() ) then
 		-- Off the top of the screen
 		newAnchorY =  0;
@@ -1548,8 +1548,8 @@ function ValidateFramePosition(frame, offscreenPadding, returnOffscreen)
 			frame:ClearAllPoints();
 			frame:SetPoint("TOPLEFT", nil, "TOPLEFT", newAnchorX, newAnchorY);
 		end
-		
-		
+
+
 	else
 		if ( returnOffscreen ) then
 			return nil;
@@ -1557,8 +1557,8 @@ function ValidateFramePosition(frame, offscreenPadding, returnOffscreen)
 	end
 end
 
---[[ 
-UIPARENT_MANAGED_FRAME_POSITIONS stores all the frames that have positioning dependencies based on other frames.  
+--[[
+UIPARENT_MANAGED_FRAME_POSITIONS stores all the frames that have positioning dependencies based on other frames.
 
 UIPARENT_MANAGED_FRAME_POSITIONS["FRAME"] = {
 	none = This value is used if no dependent frames are shown
@@ -1586,7 +1586,7 @@ UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = {baseY = 0, bottomLeft 
 UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_X"] = {baseX = 0, rightLeft = 90, rightRight = 45, isVar = "xAxis"};
 UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_Y"] = {baseY = 70, bottomEither = 27, bottomRight = 0, reputation = 9, isVar = "yAxis", pet = 23};
 UIPARENT_MANAGED_FRAME_POSITIONS["BATTLEFIELD_TAB_OFFSET_Y"] = {baseY = 210, bottomRight = 40, reputation = 9, isVar = "yAxis"};
-UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = {baseY = 97, bottomLeft = 43, reputation = 9, maxLevel = -5, isVar = "yAxis"};
+UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = {baseY = 97, reputation = 9, maxLevel = -5, isVar = "yAxis"};
 
 -- Call this function to update the positions of all frames that can appear on the right side of the screen
 function UIParent_ManageFramePositions()
@@ -1594,7 +1594,7 @@ function UIParent_ManageFramePositions()
 	local yOffsetFrames = {};
 	-- Frames that affect offsets in x axis
 	local xOffsetFrames = {};
-	
+
 	-- Set up flags
 	if ( SHOW_MULTI_ACTIONBAR_1 or SHOW_MULTI_ACTIONBAR_2 ) then
 		tinsert(yOffsetFrames, "bottomEither");
@@ -1605,7 +1605,7 @@ function UIParent_ManageFramePositions()
 	if ( SHOW_MULTI_ACTIONBAR_1 ) then
 		tinsert(yOffsetFrames, "bottomLeft");
 	end
-		
+
 	if ( MultiBarLeft:IsShown() ) then
 		tinsert(xOffsetFrames, "rightLeft");
 	elseif ( MultiBarRight:IsShown() ) then
@@ -1621,7 +1621,7 @@ function UIParent_ManageFramePositions()
 	if ( MainMenuBarMaxLevelBar:IsShown() ) then
 		tinsert(yOffsetFrames, "maxLevel");
 	end
-	
+
 	-- Iterate through frames and set anchors according to the flags set
 	local frame, xOffset, yOffset, anchorTo, point, rpoint;
 	for index, value in UIPARENT_MANAGED_FRAME_POSITIONS do
@@ -1638,9 +1638,9 @@ function UIParent_ManageFramePositions()
 			if ( value["baseY"] ) then
 				yOffset = value["baseY"];
 			end
-			
+
 			-- Iterate through frames that affect y offsets
-			local hasBottomLeft, hasPetBar;
+			local hasBottomLeft, hasPetBar, hasBottomRight;
 			for flag, flagValue in yOffsetFrames do
 				if ( value[flagValue] ) then
 					if ( flagValue == "bottomLeft" ) then
@@ -1664,7 +1664,7 @@ function UIParent_ManageFramePositions()
 					xOffset = xOffset + value[flagValue];
 				end
 			end
-			
+
 			-- Set up anchoring info
 			anchorTo = value["anchorTo"];
 			point = value["point"];
@@ -1678,7 +1678,7 @@ function UIParent_ManageFramePositions()
 			if ( not rpoint ) then
 				rpoint = "BOTTOM";
 			end
-			
+
 			-- Anchor frame
 			if ( value["isVar"] ) then
 				if ( value["isVar"] == "xAxis" ) then
@@ -1695,7 +1695,7 @@ function UIParent_ManageFramePositions()
 			end
 		end
 	end
-	
+
 	-- Custom positioning not handled by the loop
 	-- Set battlefield minimap position
 	if ( BattlefieldMinimapTab and not BattlefieldMinimapTab:IsUserPlaced() ) then
@@ -1704,8 +1704,6 @@ function UIParent_ManageFramePositions()
 
 	-- Update shapeshift bar appearance
 	if ( MultiBarBottomLeft:IsShown() ) then
-		SlidingActionBarTexture0:Hide();
-		SlidingActionBarTexture1:Hide();
 		if ( ShapeshiftBarFrame ) then
 			ShapeshiftBarLeft:Hide();
 			ShapeshiftBarRight:Hide();
@@ -1716,12 +1714,10 @@ function UIParent_ManageFramePositions()
 			end
 		end
 	else
-		if ( GetNumShapeshiftForms() > 2 ) then
-			ShapeshiftBarMiddle:Show();
-		end
-		SlidingActionBarTexture0:Show();
-		SlidingActionBarTexture1:Show();
 		if ( ShapeshiftBarFrame ) then
+			if ( GetNumShapeshiftForms() > 2 ) then
+				ShapeshiftBarMiddle:Show();
+			end
 			ShapeshiftBarLeft:Show();
 			ShapeshiftBarRight:Show();
 			for i=1, GetNumShapeshiftForms() do
@@ -1733,6 +1729,23 @@ function UIParent_ManageFramePositions()
 
 	-- If petactionbar is already shown have to set its point is addition to changing its y target
 	if ( PetActionBarFrame:IsShown() ) then
+		SlidingActionBarTexture0:Show();
+		SlidingActionBarTexture1:Show();
+		if ( ShapeshiftBarFrame and ShapeshiftBarFrame:IsShown() ) then
+			PETACTIONBAR_XPOS = 539;
+			if ( MultiBarBottomRight:IsShown() ) then
+				PETACTIONBAR_YPOS = PETACTIONBAR_YPOS + 43;
+				SlidingActionBarTexture0:Hide();
+				SlidingActionBarTexture1:Hide();
+			end
+		else
+			PETACTIONBAR_XPOS = 36;
+			if ( MultiBarBottomLeft:IsShown() ) then
+				PETACTIONBAR_YPOS = PETACTIONBAR_YPOS + 43;
+				SlidingActionBarTexture0:Hide();
+				SlidingActionBarTexture1:Hide();
+			end
+		end
 		PetActionBarFrame:SetPoint("TOPLEFT", MainMenuBar, "BOTTOMLEFT", PETACTIONBAR_XPOS, PETACTIONBAR_YPOS);
 	end
 
@@ -1748,7 +1761,7 @@ function UIParent_ManageFramePositions()
 				captureBar:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", -CONTAINER_OFFSET_X, anchorY);
 				anchorY = anchorY - captureBar:GetHeight();
 			end
-		end	
+		end
 	end
 	-- Quest timers
 	QuestTimerFrame:SetPoint("TOPRIGHT", "MinimapCluster", "BOTTOMRIGHT", -CONTAINER_OFFSET_X, anchorY);
@@ -1766,7 +1779,7 @@ function UIParent_ManageFramePositions()
 			anchorY = anchorY - DurabilityFrame:GetHeight();
 		end
 	end
-	
+
 	QuestWatchFrame:SetPoint("TOPRIGHT", "MinimapCluster", "BOTTOMRIGHT", -CONTAINER_OFFSET_X, anchorY);
 
 	-- Update chat dock since the dock could have moved
@@ -1852,7 +1865,7 @@ function GetBindingText(name, prefix, returnAbbr)
 	if ( returnAbbr ) then
 		if ( count > 1 ) then
 			return "·";
-		else 
+		else
 			modKeys = gsub(modKeys, "CTRL", "c");
 			modKeys = gsub(modKeys, "SHIFT", "s");
 			modKeys = gsub(modKeys, "ALT", "a");

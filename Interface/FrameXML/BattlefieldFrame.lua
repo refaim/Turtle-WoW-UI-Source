@@ -11,7 +11,6 @@ MAX_BATTLEFIELD_QUEUES = 3;
 CURRENT_BATTLEFIELD_QUEUES = {};
 PREVIOUS_BATTLEFIELD_QUEUES = {};
 
-
 function BattlefieldFrame_OnLoad()
 	this:RegisterEvent("BATTLEFIELDS_SHOW");
 	this:RegisterEvent("BATTLEFIELDS_CLOSED");
@@ -24,7 +23,7 @@ end
 function BattlefieldFrame_OnEvent()
 	if ( event == "BATTLEFIELDS_SHOW" ) then
 		ShowUIPanel(BattlefieldFrame);
-		
+
 		-- Default to first available
 		SetSelectedBattlefield(0);
 
@@ -59,7 +58,7 @@ function BattlefieldFrame_OnUpdate(elapsed)
 	else
 		BattlefieldFrame.timerDelay = 0
 	end
-	
+
 	local threshold = BATTLEFIELD_TIMER_THRESHOLDS[BATTLEFIELD_TIMER_THRESHOLD_INDEX];
 	if ( BATTLEFIELD_SHUTDOWN_TIMER > 0 ) then
 		if ( BATTLEFIELD_SHUTDOWN_TIMER < threshold and BATTLEFIELD_TIMER_THRESHOLD_INDEX ~= getn(BATTLEFIELD_TIMER_THRESHOLDS) ) then
@@ -79,7 +78,7 @@ function BattlefieldFrame_OnUpdate(elapsed)
 				end
 				DEFAULT_CHAT_FRAME:AddMessage(string, info.r, info.g, info.b, info.id);
 				PREVIOUS_BATTLEFIELD_MOD = currentMod;
-				
+
 			end
 		end
 	else
@@ -99,7 +98,7 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 	MiniMapBattlefieldFrame.tooltip = nil;
 	MiniMapBattlefieldFrame.waitTime = {};
 	MiniMapBattlefieldFrame.status = nil;
-	
+
 	-- Copy current queues into previous queues
 	if ( not tooltipOnly ) then
 		PREVIOUS_BATTLEFIELD_QUEUES = {};
@@ -128,14 +127,14 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 				timeInQueue = GetBattlefieldTimeWaited(i)/1000;
 				if ( waitTime == 0 ) then
 					waitTime = QUEUE_TIME_UNAVAILABLE;
-				elseif ( waitTime < 60000 ) then 
+				elseif ( waitTime < 60000 ) then
 					waitTime = LESS_THAN_ONE_MINUTE;
 				else
 					waitTime = SecondsToTime(waitTime/1000, 1);
 				end
 				MiniMapBattlefieldFrame.waitTime[i] = waitTime;
 				tooltip = format(BATTLEFIELD_IN_QUEUE, mapName, waitTime, SecondsToTime(timeInQueue));
-				
+
 				if ( not tooltipOnly ) then
 					if ( not IsAlreadyInQueue(mapName) ) then
 						PlaySound("PVPENTERQUEUE");
@@ -160,7 +159,7 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 			elseif ( status == "active" ) then
 				-- In the battleground
 				tooltip = format(BATTLEFIELD_IN_BATTLEFIELD, mapName);
-				
+
 				BATTLEFIELD_SHUTDOWN_TIMER = GetBattlefieldInstanceExpiration()/1000;
 				BATTLEFIELD_TIMER_THRESHOLD_INDEX = 1;
 				PREVIOUS_BATTLEFIELD_MOD = 0;
@@ -181,7 +180,7 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 	if ( MiniMapBattlefieldFrame.tooltip and showRightClickText ) then
 		MiniMapBattlefieldFrame.tooltip = MiniMapBattlefieldFrame.tooltip.."\n"..RIGHT_CLICK_MESSAGE;
 	end
-	
+
 	if ( not tooltipOnly ) then
 		if ( numberQueues == 0 ) then
 			-- Clear everything out
@@ -189,7 +188,7 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 		else
 			MiniMapBattlefieldFrame:Show();
 		end
-		
+
 		-- Set minimap icon here since it bugs out on login
 		if ( UnitFactionGroup("player") ) then
 			MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-"..UnitFactionGroup("player"));
@@ -204,7 +203,7 @@ function BattlefieldFrame_Update()
 	local button, buttonStatus;
 	local instanceID;
 	local mapName, mapDescription, minLevel, maxLevel, mapID, mapX, mapY, mapFull = GetBattlefieldInfo();
-	
+
 	-- Set title text
 	BattlefieldFrameFrameLabel:SetText(mapName);
 
@@ -233,7 +232,7 @@ function BattlefieldFrame_Update()
 			button.tooltip = NEWBIE_TOOLTIP_ENTER_BATTLEGROUND;
 			button:Show();
 		end
-		
+
 		-- Set queued status
 		buttonStatus:SetText("");
 		local queueStatus, queueMapName, queueInstanceID;
@@ -251,7 +250,7 @@ function BattlefieldFrame_Update()
 				end
 			end
 		end
-		
+
 		-- Set selected instance
 		if ( zoneIndex == 1 and GetSelectedBattlefield() == 0 ) then
 			button:LockHighlight();
@@ -261,7 +260,7 @@ function BattlefieldFrame_Update()
 			button:UnlockHighlight();
 		end
 	end
-	
+
 	BattlefieldFrameZoneDescription:SetText(mapDescription);
 
 	-- Enable or disable the group join button
@@ -276,8 +275,8 @@ function BattlefieldFrame_Update()
 	else
 		BattlefieldFrameGroupJoinButton:Hide();
 	end
-	
-	
+
+
 
 	FauxScrollFrame_Update(BattlefieldListScrollFrame, numBattlefields, BATTLEFIELD_ZONES_DISPLAYED, BATTLEFIELD_ZONES_HEIGHT, "BattlefieldZone", 293, 315);
 end
@@ -293,7 +292,7 @@ function BattlefieldFrameJoinButton_OnClick(joinAsGroup)
 	else
 		JoinBattlefield(GetSelectedBattlefield());
 	end
-	
+
 	HideUIPanel(BattlefieldFrame);
 end
 
@@ -307,52 +306,51 @@ function MiniMapBattlefieldDropDown_Initialize()
 	local numQueued = 0;
 	for i=1, MAX_BATTLEFIELD_QUEUES do
 		status, mapName, instanceID = GetBattlefieldStatus(i);
+
 		if ( status == "queued" or status == "confirm" ) then
 			numQueued = numQueued+1;
 			-- Add a spacer if there were dropdown items before this
 			if ( numQueued > 1 ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = "";
 				info.isTitle = 1;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
 			end
-			
-			info = {};
+
+			info = UIDropDownMenu_CreateInfo();
 			info.text = mapName;
 			info.isTitle = 1;
 			info.notCheckable = 1;
 			UIDropDownMenu_AddButton(info);
 			if ( status == "queued" ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = CHANGE_INSTANCE;
 				info.func = ShowBattlefieldList;
 				info.arg1 = i;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-				info = {};
 				info.text = LEAVE_QUEUE;
-				info.func = AcceptBattlefieldPort;
+				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = nil;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
 			elseif ( status == "confirm" ) then
-				info = {};
+				info = UIDropDownMenu_CreateInfo();
 				info.text = ENTER_BATTLE;
 				info.func = AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = 1;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-				info = {};
 				info.text = LEAVE_QUEUE;
-				info.func = AcceptBattlefieldPort;
+				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
 				info.arg1 = i;
 				info.arg2 = nil;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-			end			
+			end
 		end
 	end
 end

@@ -1435,6 +1435,33 @@ StaticPopupDialogs["GOSSIP_ENTER_CODE"] = {
 	hideOnEscape = 1
 };
 
+StaticPopupDialogs["DISABLE_OPTION_WARNING"] = {
+	text = WARNING_DO_NOT_DISABLE,
+	button1 = CONFIRM,
+	button2 = CANCEL,
+	OnCancel = function()
+		OptionsFrameCheckButton8:SetChecked(true)
+	end,
+	timeout = 0,
+	whileDead = true,
+	showAlert = true,
+};
+
+StaticPopupDialogs["DISABLE_OPTION_WARNING2"] = {
+	text = WARNING_DO_NOT_DISABLE2,
+	button1 = CONFIRM,
+	button2 = CANCEL,
+	OnCancel = function()
+		OptionsFrameCheckButton10:SetChecked(true)
+		OptionsFrame_UpdateCheckboxes();
+		OptionsFrame_UpdateGammaControls();
+		OptionsFrame_UpdateRefreshRatesDropdown();
+	end,
+	timeout = 0,
+	whileDead = true,
+	showAlert = true,
+};
+
 function StaticPopup_FindVisible(which, data)
 	local info = StaticPopupDialogs[which];
 	if ( not info ) then

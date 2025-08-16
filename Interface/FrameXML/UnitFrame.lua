@@ -6,6 +6,12 @@ ManaBarColor[2] = { r = 1.00, g = 0.50, b = 0.25, prefix = TEXT(FOCUS_POINTS) };
 ManaBarColor[3] = { r = 1.00, g = 1.00, b = 0.00, prefix = TEXT(ENERGY_POINTS) };
 ManaBarColor[4] = { r = 0.00, g = 1.00, b = 1.00, prefix = TEXT(HAPPINESS_POINTS) };
 
+local isDruid = false
+local _, class = UnitClass("player")
+if class == "DRUID" then
+    isDruid = true
+end
+
 function UnitFrame_Initialize(unit, name, portrait, healthbar, healthtext, manabar, manatext)
 	this.unit = unit;
 	this.name = name;
@@ -119,6 +125,14 @@ function UnitFrame_UpdateManaType(unitFrame)
 	if ( not unitFrame.manabar ) then
 		return;
 	end
+   -- Druid mana bar
+    if unitFrame.unit == "player" and isDruid then
+        if UnitPowerType("player") ~= 0 then
+            PlayerFrameAlternatePowerBar:Show()
+        else
+            PlayerFrameAlternatePowerBar:Hide()
+        end
+    end
 	local info = ManaBarColor[UnitPowerType(unitFrame.unit)];
 	unitFrame.manabar:SetStatusBarColor(info.r, info.g, info.b);
 	--Hack for pets
@@ -206,20 +220,28 @@ function UnitFrameManaBar_Update(statusbar, unit)
 	end
 	local cvar = arg1;
 	local value = arg2;
-	
+
 	if ( unit == statusbar.unit ) then
-		local maxValue = UnitManaMax(unit);
+		local maxValue, casterMaxValue = UnitManaMax(unit);
 		statusbar:SetMinMaxValues(0, maxValue);
 		-- If disconnected
 		if ( not UnitIsConnected(unit) ) then
 			statusbar:SetValue(maxValue);
 			statusbar:SetStatusBarColor(0.5, 0.5, 0.5);
 		else
-			local currValue = UnitMana(unit);
+			local currValue, casterValue = UnitMana(unit);
 			statusbar:SetValue(currValue);
 			UnitFrame_UpdateManaType(statusbar:GetParent());
-		end
+
+            if unit == "player" and PlayerFrameAlternatePowerBar:IsShown() then
+                if casterValue and casterMaxValue then
+                    PlayerFrameAlternatePowerBar:SetMinMaxValues(0, casterMaxValue)
+                    PlayerFrameAlternatePowerBar:SetValue(casterValue)
+                end
+		    end
+        end
 	end
+
 	TextStatusBar_OnEvent(cvar, value);
 end
 

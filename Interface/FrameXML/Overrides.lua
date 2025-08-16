@@ -1,51 +1,76 @@
-local continents = { 'Kalimdor', 'Eastern Kingdoms' }
-continentsLength = table.getn(continents);
-
-function Set(list)
-  local set = {}
-  for _, l in ipairs(list) do set[l] = true end
-  return set
-end
-
-local hiddenMaps = Set {
-  'Gates of Ahn\'Qiraj', 'Blackrock Mountain', 'Gnomeregan',
-  'Scarlet Monastery', 'The Deadmines', 'Uldaman', 'Maraudon',
-  'Wailing Caverns', 'Caverns of Time', 'GM Island',
-}
+CONTINENTS_LENGTH = 2
 
 local _GetMapContinents = GetMapContinents
-function GetMapContinents() return unpack(continents) end
-
-function GetCustomMapZones(continentId)
-  local zones = { GetMapZones(continentId) }
-
-  local filtered = {};
-  for i, v in ipairs(zones) do
-    if (not hiddenMaps[v]) then table.insert(filtered, v) end
-  end
-  return unpack(filtered);
+function GetMapContinents()
+	local kalimdor, azeroth = _GetMapContinents()
+	return kalimdor, azeroth
 end
 
-function GetFullListZoneId()
-  local id = this:GetID();
-  local zones = { GetMapZones(GetCurrentMapContinent()) }
-
-  local diff = 0
-  for i = 1, id do
-    while hiddenMaps[zones[i + diff]] do
-        diff = diff + 1
-    end
-  end
-
-  return id + diff
-end
-
-function GetListUpdateZoneId()
-  local id = GetCurrentMapZone();
-  local zones = { GetMapZones(GetCurrentMapContinent()) }
-
-  if (hiddenMaps[zones[id]]) then return 0 end
-  local diff = 0;
-  for i = 1, id do if (hiddenMaps[zones[i]]) then diff = diff + 1 end end
-  return id - diff
-end
+TW_CLASS_TOKEN = {
+	enUS = {
+		["Warrior"] = "WARRIOR",
+		["Paladin"] = "PALADIN",
+		["Hunter"] = "HUNTER",
+		["Rogue"] = "ROGUE",
+		["Priest"] = "PRIEST",
+		["Shaman"] = "SHAMAN",
+		["Mage"] = "MAGE",
+		["Warlock"] = "WARLOCK",
+		["Druid"] = "DRUID",
+	},
+	deDE = {
+		["Krieger"] = "WARRIOR",
+		["Paladin"] = "PALADIN",
+		["Jäger"] = "HUNTER",
+		["Schurke"] = "ROGUE",
+		["Priester"] = "PRIEST",
+		["Schamane"] = "SHAMAN",
+		["Magier"] = "MAGE",
+		["Hexenmeister"] = "WARLOCK",
+		["Druide"] = "DRUID",
+	},
+	zhCN = {
+		["战士"] = "WARRIOR",
+		["圣骑士"] = "PALADIN",
+		["猎人"] = "HUNTER",
+		["盗贼"] = "ROGUE",
+		["牧师"] = "PRIEST",
+		["萨满祭司"] = "SHAMAN",
+		["法师"] = "MAGE",
+		["术士"] = "WARLOCK",
+		["德鲁伊"] = "DRUID",
+	},
+	ruRU = {
+		["Воин"] = "WARRIOR",
+		["Паладин"] = "PALADIN",
+		["Охотник"] = "HUNTER",
+		["Разбойник"] = "ROGUE",
+		["Жрец"] = "PRIEST",
+		["Шаман"] = "SHAMAN",
+		["Маг"] = "MAGE",
+		["Чернокнижник"] = "WARLOCK",
+		["Друид"] = "DRUID",
+	},
+	esES = {
+		["Guerrero"] = "WARRIOR",
+		["Paladín"] = "PALADIN",
+		["Cazador"] = "HUNTER",
+		["Pícaro"] = "ROGUE",
+		["Sacerdote"] = "PRIEST",
+		["Chamán"] = "SHAMAN",
+		["Mago"] = "MAGE",
+		["Brujo"] = "WARLOCK",
+		["Druida"] = "DRUID",
+	},
+	ptBR = {
+		["Guerreiro"] = "WARRIOR",
+		["Paladino"] = "PALADIN",
+		["Caçador"] = "HUNTER",
+		["Ladino"] = "ROGUE",
+		["Sarcedote"] = "PRIEST",
+		["Xamã"] = "SHAMAN",
+		["Mago"] = "MAGE",
+		["Bruxo"] = "WARLOCK",
+		["Druída"] = "DRUID",
+	},
+}

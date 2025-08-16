@@ -165,13 +165,6 @@ function ShowPetActionBar()
 		PetActionBarFrame.timeToSlide = PETACTIONBAR_SLIDETIME;
 		PetActionBarFrame.yTarget = PETACTIONBAR_YPOS;
 		PetActionBarFrame.mode = "show";
-
-		-- Rare case
-		if ( GetNumShapeshiftForms() > 0 ) then
-			PETACTIONBAR_XPOS = getglobal("ShapeshiftButton"..GetNumShapeshiftForms()):GetRight() +20;
-		else
-			PETACTIONBAR_XPOS = 36
-		end
 		if ( ChatFrameEditBox:IsShown() ) then
 			ChatFrameEditBox:Raise();
 		end
@@ -209,10 +202,10 @@ function PetActionBar_HideGrid()
 			if ( not name ) then
 				getglobal("PetActionButton"..i):Hide();
 			end
-			
+
 		end
 	end
-	
+
 end
 
 function PetActionButtonDown(id)

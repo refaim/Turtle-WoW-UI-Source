@@ -290,7 +290,6 @@ function MacroPopupOkayButton_OnClick()
 	MacroFrame_SelectMacro(index);
 	MacroFrame_Update();
 
-	MacroPopupFrameSearchBox:SetText(SEARCH)
 	MacroPopupFrameSearchBox:SetTextColor(0.5, 0.5, 0.5, 1);
 end
 

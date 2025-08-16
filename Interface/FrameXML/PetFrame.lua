@@ -34,7 +34,7 @@ function PetFrame_Update()
 		PetAttackModeTexture:Hide();
 
 		PetFrame_SetHappiness();
-		RefreshBuffs(getglobal("PetFrame"), 1, "pet");
+		RefreshBuffs(getglobal("PetFrame"), 0, "pet");
 	else
 		this:Hide();
 	end
@@ -53,7 +53,7 @@ function PetFrame_OnEvent(event)
 		end
 	elseif ( event == "UNIT_AURA" ) then
 		if ( arg1 == "pet" ) then
-			RefreshBuffs(this, 1, "pet");
+			RefreshBuffs(this, 0, "pet");
 		end
 	elseif ( event == "PET_ATTACK_START" ) then
 		PetAttackModeTexture:SetVertexColor(1.0, 1.0, 1.0, 1.0);

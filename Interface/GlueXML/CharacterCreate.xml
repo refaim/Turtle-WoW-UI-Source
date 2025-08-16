@@ -23,40 +23,6 @@
 		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
 		-->
 	</CheckButton>
-    <Button name="ChallengeIconTemplate" virtual="true" hidden="true">
-        <Size x="48" y="48"/>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays">
-					<Size x="48" y="46"/>
-					<Anchors>
-						<Anchor point="CENTER">
-                            <Offset x="0" y="0"/>
-                        </Anchor>
-					</Anchors>
-					<TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
-                    <Color r="1" g="0.82" b="0"/>
-				</Texture>
-			</Layer>
-		</Layers>
-		<HighlightTexture alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square"/>
-        <NormalTexture file="Interface\Icons\attribute_up"/>
-        <Scripts>
-            <OnEnter>
-                if this.tooltip then
-                    ChallengesTooltip:SetPoint("TOPRIGHT", this, "TOPLEFT", -14, 0)
-                    ChallengesTooltip_Update(this.name, this.tooltip)
-                    ChallengesTooltip:Show()
-                end
-            </OnEnter>
-            <OnLeave>
-                ChallengesTooltip:Hide()
-            </OnLeave>
-            <OnClick>
-                ChallengeList:Show()
-            </OnClick>
-        </Scripts>
-    </Button>
 	<CheckButton name="CharacterCreateRaceButtonTemplate" inherits="CharacterCreateIconButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
@@ -96,7 +62,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				CharacterClass_OnClick(this:GetID());	
+				CharacterClass_OnClick(this:GetID());
 				GlueTooltip:Hide();
 			</OnClick>
 			<OnEnter>
@@ -1293,80 +1259,6 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-                    <Button name="ChallengeIconsHeader" inherits="ChallengeIconTemplate" hidden="false">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="CharacterCreateFactionIconFrame" relativePoint="TOPLEFT">
-								<Offset x="-15" y="0"/>
-							</Anchor>
-						</Anchors>
-                        <Layers>
-                            <Layer level="ARTWORK">
-                                <FontString inherits="GlueFontNormalLarge" justifyH="RIGHT" text="CHALLENGES">
-                                    <Anchors>
-                                        <Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT">
-                                            <Offset x="-6" y="0"/>
-                                        </Anchor>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </Button>
-                    <Button name="ChallengeIcon1" inherits="ChallengeIconTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIconsHeader" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon2" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon1" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon3" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon2" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon4" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon3" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon5" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon4" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon6" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon5" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon7" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon6" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
-                    <Button name="ChallengeIcon8" inherits="ChallengeIconTemplate">
-                        <Anchors>
-							<Anchor point="TOP" relativeTo="ChallengeIcon7" relativePoint="BOTTOM">
-								<Offset x="0" y="-5"/>
-							</Anchor>
-						</Anchors>
-                    </Button>
 				</Frames>
 				<Scripts>
 					<OnMouseDown>

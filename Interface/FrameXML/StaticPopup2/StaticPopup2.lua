@@ -9,7 +9,7 @@ function StaticPopup2_FindVisible(which, data)
         return nil;
     end
     for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-        local frame = getglobal("StaticPopup2"..index);
+        local frame = _G["StaticPopup2"..index];
         if ( frame:IsShown() and (frame.which == which) and (not info.multiple or (frame.data == data)) ) then
             return frame;
         end
@@ -18,9 +18,9 @@ function StaticPopup2_FindVisible(which, data)
 end
 
 function StaticPopup2_Resize(dialog, which)
-    local text = getglobal(dialog:GetName().."Text");
-    local editBox = getglobal(dialog:GetName().."EditBox");
-    local button1 = getglobal(dialog:GetName().."Button1");
+    local text = _G[dialog:GetName().."Text"];
+    local editBox = _G[dialog:GetName().."EditBox"];
+    local button1 = _G[dialog:GetName().."Button1"];
 
     local width = 320;
     dialog:SetWidth(320);
@@ -50,7 +50,7 @@ function StaticPopup2_Resize(dialog, which)
     end
 end
 
-function StaticPopup2_Show(which, text_arg1, text_arg2, data)
+function StaticPopup2_Show(which, text_arg1, text_arg2, text_arg3, data)
     local info = StaticPopup2Dialogs[which];
     if ( not info ) then
         return nil;
@@ -72,7 +72,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     if ( info.exclusive ) then
         for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-            local frame = getglobal("StaticPopup2"..index);
+            local frame = _G["StaticPopup2"..index];
             if ( frame:IsShown() and StaticPopup2Dialogs[frame.which].exclusive ) then
                 frame:Hide();
                 local OnCancel = StaticPopup2Dialogs[frame.which].OnCancel;
@@ -86,7 +86,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     if ( info.cancels ) then
         for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-            local frame = getglobal("StaticPopup2"..index);
+            local frame = _G["StaticPopup2"..index];
             if ( frame:IsShown() and (frame.which == info.cancels) ) then
                 frame:Hide();
                 local OnCancel = StaticPopup2Dialogs[frame.which].OnCancel;
@@ -99,7 +99,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     if ( (which == "CAMP") or (which == "QUIT") ) then
         for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-            local frame = getglobal("StaticPopup2"..index);
+            local frame = _G["StaticPopup2"..index];
             if ( frame:IsShown() and not StaticPopup2Dialogs[frame.which].notClosableByLogout ) then
                 frame:Hide();
                 local OnCancel = StaticPopup2Dialogs[frame.which].OnCancel;
@@ -112,7 +112,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     if ( which == "DEATH" ) then
         for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-            local frame = getglobal("StaticPopup2"..index);
+            local frame = _G["StaticPopup2"..index];
             if ( frame:IsShown() and not StaticPopup2Dialogs[frame.which].whileDead ) then
                 frame:Hide();
                 local OnCancel = StaticPopup2Dialogs[frame.which].OnCancel;
@@ -141,7 +141,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
             index = StaticPopup2Dialogs[which].preferredIndex;
         end
         for i = index, STATICPOPUP2_NUMDIALOGS do
-            local frame = getglobal("StaticPopup2"..i);
+            local frame = _G["StaticPopup2"..i];
             if ( not frame:IsShown() ) then
                 dialog = frame;
                 break;
@@ -151,7 +151,7 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
         --If dialog not found and there's a preferredIndex then try to find an available frame before the preferredIndex
         if ( not dialog and StaticPopup2Dialogs[which].preferredIndex ) then
             for i = 1, StaticPopup2Dialogs[which].preferredIndex do
-                local frame = getglobal("StaticPopup2"..i);
+                local frame = _G["StaticPopup2"..i];
                 if ( not frame:IsShown() ) then
                     dialog = frame;
                     break;
@@ -167,7 +167,10 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
     end
 
     -- Set the text of the dialog
-    local text = getglobal(dialog:GetName().."Text");
+    local text = _G[dialog:GetName().."Text"];
+	text.text_arg1 = text_arg1;
+	text.text_arg2 = text_arg2;
+	text.text_arg3 = text_arg3;
     if ( (which == "DEATH") or
             (which == "CAMP") or
             (which == "QUIT") or
@@ -179,19 +182,16 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
             (which == "CONFIRM_SUMMON") or
             (which == "AREA_SPIRIT_HEAL") ) then
         text:SetText(" ");	-- The text will be filled in later.
-        text.text_arg1 = text_arg1;
-        text.text_arg2 = text_arg2;
     elseif ( which == "BILLING_NAG" ) then
-        text:SetFormattedText(StaticPopup2Dialogs[which].text, text_arg1, GetText("MINUTES", nil, text_arg1));
+        text:SetText(format(StaticPopup2Dialogs[which].text, text_arg1, GetText("MINUTES", nil, text_arg1)));
     else
-        --text:SetFormattedText(StaticPopup2Dialogs[which].text, text_arg1, text_arg2);
-        text:SetText(format(StaticPopup2Dialogs[which].text, text_arg1, text_arg2));
+        text:SetText(format(StaticPopup2Dialogs[which].text, text_arg1, text_arg2, text_arg3));
     end
 
     -- If is any of the guild message popups
-    local wideEditBox = getglobal(dialog:GetName().."WideEditBox");
-    local editBox = getglobal(dialog:GetName().."EditBox");
-    local alertIcon = getglobal(dialog:GetName().."AlertIcon");
+    local wideEditBox = _G[dialog:GetName().."WideEditBox"];
+    local editBox = _G[dialog:GetName().."EditBox"];
+    local alertIcon = _G[dialog:GetName().."AlertIcon"];
     if ( info.showAlert ) then
         alertIcon:Show();
     else
@@ -200,9 +200,9 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     -- If is the ticket edit dialog then show the close button
     if ( which == "HELP_TICKET" ) then
-        getglobal(dialog:GetName().."CloseButton"):Show();
+        _G[dialog:GetName().."CloseButton"]:Show();
     else
-        getglobal(dialog:GetName().."CloseButton"):Hide();
+        _G[dialog:GetName().."CloseButton"]:Hide();
     end
 
     -- Set the editbox of the dialog
@@ -235,55 +235,55 @@ function StaticPopup2_Show(which, text_arg1, text_arg2, data)
 
     -- Show or hide money frame
     if ( StaticPopup2Dialogs[which].hasMoneyFrame ) then
-        getglobal(dialog:GetName().."MoneyFrame"):Show();
-        getglobal(dialog:GetName().."MoneyInputFrame"):Hide();
+        _G[dialog:GetName().."MoneyFrame"]:Show();
+        _G[dialog:GetName().."MoneyInputFrame"]:Hide();
     elseif ( StaticPopup2Dialogs[which].hasMoneyInputFrame ) then
-        getglobal(dialog:GetName().."MoneyInputFrame"):Show();
-        getglobal(dialog:GetName().."MoneyFrame"):Hide();
+        _G[dialog:GetName().."MoneyInputFrame"]:Show();
+        _G[dialog:GetName().."MoneyFrame"]:Hide();
 
-        getglobal(dialog:GetName().."MoneyInputFrameGold"):SetMaxLetters(6)
-        getglobal(dialog:GetName().."MoneyInputFrameSilver"):SetMaxLetters(6)
-        getglobal(dialog:GetName().."MoneyInputFrameCopper"):SetMaxLetters(6)
+        _G[dialog:GetName().."MoneyInputFrameGold"]:SetMaxLetters(6)
+        _G[dialog:GetName().."MoneyInputFrameSilver"]:SetMaxLetters(6)
+        _G[dialog:GetName().."MoneyInputFrameCopper"]:SetMaxLetters(6)
 
         -- Set OnEnterPress for money input frames
         if ( StaticPopup2Dialogs[which].EditBoxOnEnterPressed ) then
-            getglobal(dialog:GetName().."MoneyInputFrameGold"):SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
-            getglobal(dialog:GetName().."MoneyInputFrameSilver"):SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
-            getglobal(dialog:GetName().."MoneyInputFrameCopper"):SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
+            _G[dialog:GetName().."MoneyInputFrameGold"]:SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
+            _G[dialog:GetName().."MoneyInputFrameSilver"]:SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
+            _G[dialog:GetName().."MoneyInputFrameCopper"]:SetScript("OnEnterPressed", StaticPopup2_EditBoxOnEnterPressed);
         else
-            getglobal(dialog:GetName().."MoneyInputFrameGold"):SetScript("OnEnterPressed", nil);
-            getglobal(dialog:GetName().."MoneyInputFrameSilver"):SetScript("OnEnterPressed", nil);
-            getglobal(dialog:GetName().."MoneyInputFrameCopper"):SetScript("OnEnterPressed", nil);
+            _G[dialog:GetName().."MoneyInputFrameGold"]:SetScript("OnEnterPressed", nil);
+            _G[dialog:GetName().."MoneyInputFrameSilver"]:SetScript("OnEnterPressed", nil);
+            _G[dialog:GetName().."MoneyInputFrameCopper"]:SetScript("OnEnterPressed", nil);
         end
     else
-        getglobal(dialog:GetName().."MoneyFrame"):Hide();
-        getglobal(dialog:GetName().."MoneyInputFrame"):Hide();
+        _G[dialog:GetName().."MoneyFrame"]:Hide();
+        _G[dialog:GetName().."MoneyInputFrame"]:Hide();
     end
 
     -- Show or hide item button
     if ( StaticPopup2Dialogs[which].hasItemFrame ) then
-        getglobal(dialog:GetName().."ItemFrame"):Show();
+        _G[dialog:GetName().."ItemFrame"]:Show();
         if ( data and type(data) == "table" ) then
-            getglobal(dialog:GetName().."ItemFrame").link = data.link
-            getglobal(dialog:GetName().."ItemFrameIconTexture"):SetTexture(data.texture);
-            local nameText = getglobal(dialog:GetName().."ItemFrameText");
+            _G[dialog:GetName().."ItemFrame"].link = data.link
+            _G[dialog:GetName().."ItemFrameIconTexture"]:SetTexture(data.texture);
+            local nameText = _G[dialog:GetName().."ItemFrameText"];
             nameText:SetTextColor(unpack(data.color or {1, 1, 1, 1}));
             nameText:SetText(data.name);
             if ( data.count and data.count > 1 ) then
-                getglobal(dialog:GetName().."ItemFrameCount"):SetText(data.count);
-                getglobal(dialog:GetName().."ItemFrameCount"):Show();
+                _G[dialog:GetName().."ItemFrameCount"]:SetText(data.count);
+                _G[dialog:GetName().."ItemFrameCount"]:Show();
             else
-                getglobal(dialog:GetName().."ItemFrameCount"):Hide();
+                _G[dialog:GetName().."ItemFrameCount"]:Hide();
             end
         end
     else
-        getglobal(dialog:GetName().."ItemFrame"):Hide();
+        _G[dialog:GetName().."ItemFrame"]:Hide();
     end
 
     -- Set the buttons of the dialog
-    local button1 = getglobal(dialog:GetName().."Button1");
-    local button2 = getglobal(dialog:GetName().."Button2");
-    local button3 = getglobal(dialog:GetName().."Button3");
+    local button1 = _G[dialog:GetName().."Button1"];
+    local button2 = _G[dialog:GetName().."Button2"];
+    local button3 = _G[dialog:GetName().."Button3"];
     if ( StaticPopup2Dialogs[which].button3 and ( not StaticPopup2Dialogs[which].DisplayButton3 or StaticPopup2Dialogs[which].DisplayButton3() ) ) then
         button1:ClearAllPoints();
         button2:ClearAllPoints();
@@ -410,7 +410,7 @@ end
 
 function StaticPopup2_Hide(which, data)
     for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-        local dialog = getglobal("StaticPopup2"..index);
+        local dialog = _G["StaticPopup2"..index];
         if ( (dialog.which == which) and (not data or (data == dialog.data)) ) then
             dialog:Hide();
         end
@@ -439,7 +439,7 @@ function StaticPopup2_OnUpdate(dialog, elapsed)
                 (which == "INSTANCE_BOOT") or
                 (which == "CONFIRM_SUMMON") or
                 (which == "AREA_SPIRIT_HEAL") ) then
-            local text = getglobal(dialog:GetName().."Text");
+            local text = _G[dialog:GetName().."Text"];
             local hasText = nil;
             if ( text:GetText() ~= " " ) then
                 hasText = 1;
@@ -447,21 +447,21 @@ function StaticPopup2_OnUpdate(dialog, elapsed)
             timeleft = ceil(timeleft);
             if ( which == "INSTANCE_BOOT" ) then
                 if ( timeleft < 60 ) then
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, GetBindLocation(), timeleft, GetText("SECONDS_P1", nil, timeleft));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, GetBindLocation(), timeleft, GetText("SECONDS_P1", nil, timeleft)));
                 else
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, GetBindLocation(), ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60)));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, GetBindLocation(), ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60))));
                 end
             elseif ( which == "CONFIRM_SUMMON" ) then
                 if ( timeleft < 60 ) then
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, GetSummonConfirmSummoner(), GetSummonConfirmAreaName(), timeleft, GetText("SECONDS_P1", nil, timeleft));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, GetSummonConfirmSummoner(), GetSummonConfirmAreaName(), timeleft, GetText("SECONDS_P1", nil, timeleft)));
                 else
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, GetSummonConfirmSummoner(), GetSummonConfirmAreaName(), ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60)));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, GetSummonConfirmSummoner(), GetSummonConfirmAreaName(), ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60))));
                 end
             else
                 if ( timeleft < 60 ) then
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, timeleft, GetText("SECONDS_P1", nil, timeleft));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, timeleft, GetText("SECONDS_P1", nil, timeleft)));
                 else
-                    text:SetFormattedText(StaticPopup2Dialogs[which].text, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60)));
+                    text:SetText(format(StaticPopup2Dialogs[which].text, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60))));
                 end
             end
             if ( not hasText ) then
@@ -474,9 +474,9 @@ function StaticPopup2_OnUpdate(dialog, elapsed)
         local timeleft = dialog.startDelay - elapsed;
         if ( timeleft <= 0 ) then
             dialog.startDelay = nil;
-            local text = getglobal(dialog:GetName().."Text");
-            text:SetFormattedText(StaticPopup2Dialogs[which].text, text.text_arg1, text.text_arg2);
-            local button1 = getglobal(dialog:GetName().."Button1");
+            local text = _G[dialog:GetName().."Text"];
+            text:SetText(format(StaticPopup2Dialogs[which].text, text.text_arg1, text.text_arg2, text.text_arg3));
+            local button1 = _G[dialog:GetName().."Button1"];
             button1:Enable();
             StaticPopup2_Resize(dialog, which);
             return;
@@ -484,7 +484,7 @@ function StaticPopup2_OnUpdate(dialog, elapsed)
         dialog.startDelay = timeleft;
 
         if ( which == "RECOVER_CORPSE" or (which == "RESURRECT") or (which == "RESURRECT_NO_SICKNESS") ) then
-            local text = getglobal(dialog:GetName().."Text");
+            local text = _G[dialog:GetName().."Text"];
             local hasText = nil;
             if ( text:GetText() ~= " " ) then
                 hasText = 1;
@@ -492,15 +492,15 @@ function StaticPopup2_OnUpdate(dialog, elapsed)
             timeleft = ceil(timeleft);
             if ( (which == "RESURRECT") or (which == "RESURRECT_NO_SICKNESS") ) then
                 if ( timeleft < 60 ) then
-                    text:SetFormattedText(StaticPopup2Dialogs[which].delayText, text.text_arg1, timeleft, GetText("SECONDS_P1", nil, timeleft));
+                    text:SetText(format(StaticPopup2Dialogs[which].delayText, text.text_arg1, timeleft, GetText("SECONDS_P1", nil, timeleft)));
                 else
-                    text:SetFormattedText(StaticPopup2Dialogs[which].delayText, text.text_arg1, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60)));
+                    text:SetText(format(StaticPopup2Dialogs[which].delayText, text.text_arg1, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60))));
                 end
             else
                 if ( timeleft < 60 ) then
-                    text:SetFormattedText(StaticPopup2Dialogs[which].delayText, timeleft, GetText("SECONDS_P1", nil, timeleft));
+                    text:SetText(format(StaticPopup2Dialogs[which].delayText, timeleft, GetText("SECONDS_P1", nil, timeleft)));
                 else
-                    text:SetFormattedText(StaticPopup2Dialogs[which].delayText, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60)));
+                    text:SetText(format(StaticPopup2Dialogs[which].delayText, ceil(timeleft / 60), GetText("MINUTES_P1", nil, ceil(timeleft / 60))));
                 end
             end
             if ( not hasText ) then
@@ -553,7 +553,7 @@ function StaticPopup2_OnShow()
         OnShow(this.data);
     end
     if ( StaticPopup2Dialogs[this.which].hasMoneyInputFrame ) then
-        getglobal(this:GetName().."MoneyInputFrameGold"):SetFocus();
+        _G[this:GetName().."MoneyInputFrameGold"]:SetFocus();
     end
 end
 
@@ -593,7 +593,7 @@ end
 
 function StaticPopup2_Visible(which)
     for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-        local frame = getglobal("StaticPopup2"..index);
+        local frame = _G["StaticPopup2"..index];
         if( frame:IsShown() and (frame.which == which) ) then
             return frame:GetName();
         end
@@ -604,7 +604,7 @@ end
 function StaticPopup2_EscapePressed()
     local closed = nil;
     for index = 1, STATICPOPUP2_NUMDIALOGS, 1 do
-        local frame = getglobal("StaticPopup2"..index);
+        local frame = _G["StaticPopup2"..index];
         if( frame:IsShown() and frame.hideOnEscape ) then
             local OnCancel = StaticPopup2Dialogs[frame.which].OnCancel;
             if ( OnCancel ) then
