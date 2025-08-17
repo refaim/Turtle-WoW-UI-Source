@@ -63,6 +63,7 @@ ANIMATION = "Animation";
 ANISOTROPIC = "Anisotropic Filtering";
 AREA_SPIRIT_HEAL = "Resurrection in %d %s";
 ARENA = "Arena";
+ARENA_ARENA_POINTS = "Arena Points: %d";
 ARENA_QUEUE_DESCRIPTION = "Let the games begin! The door is open to all who wish to find glory in the arena, and the Steamwheedle Blood Ring is prepared to accept your entry into the games. If victory is your destiny, then register a team with an Arena Team Registration official, or join one that has already been registered!";
 ARENA_QUEUE_JOINED = "Your group has joined the queue for %s arenas.";
 ARENA_QUEUE_RATED = "Rated";
