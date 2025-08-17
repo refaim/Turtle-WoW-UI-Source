@@ -257,7 +257,7 @@ function GroupLootDropDown_Initialize()
 	if ( UIDROPDOWNMENU_MENU_LEVEL == 2 ) then
 		for _, player in ipairs(GroupRoster[UIDROPDOWNMENU_MENU_VALUE]) do
 			for i = 1, MAX_RAID_MEMBERS do
-				if player == GetMasterLootCandidate(i) then
+				if ( player == GetMasterLootCandidate(i) )then
 					info = UIDropDownMenu_CreateInfo()
 					info.value = i
 					info.text = player
@@ -300,7 +300,7 @@ function GroupLootDropDown_Initialize()
 				UIDropDownMenu_AddButton(info)
 			end
 		end
-	else
+	elseif ( GetNumPartyMembers() > 0 ) then
 		-- In a party
 		for i=1, MAX_PARTY_MEMBERS+1, 1 do
 			candidate = GetMasterLootCandidate(i);
@@ -308,27 +308,29 @@ function GroupLootDropDown_Initialize()
 				-- Add candidate button
 				local class
 				local unit
-				if candidate == UnitName("player") then
+				if ( candidate == UnitName("player") ) then
 					unit = "player"
 				else
 					for j = 1, 4 do
-						if candidate == UnitName("party"..j) then
+						if ( candidate == UnitName("party"..j) )then
 							unit = "party"..j
 							break
 						end
 					end
 				end
-				_, class = UnitClass(unit)
-				info = UIDropDownMenu_CreateInfo();
-				info.text = candidate;
-				info.textR = RAID_CLASS_COLORS[class].r
-				info.textG = RAID_CLASS_COLORS[class].g
-				info.textB = RAID_CLASS_COLORS[class].b
-				info.textHeight = 12;
-				info.value = i;
-				info.notCheckable = 1;
-				info.func = GroupLootDropDown_GiveLoot;
-				UIDropDownMenu_AddButton(info);
+				if ( unit ) then
+					_, class = UnitClass(unit)
+					info = UIDropDownMenu_CreateInfo();
+					info.text = candidate;
+					info.textR = RAID_CLASS_COLORS[class].r
+					info.textG = RAID_CLASS_COLORS[class].g
+					info.textB = RAID_CLASS_COLORS[class].b
+					info.textHeight = 12;
+					info.value = i;
+					info.notCheckable = 1;
+					info.func = GroupLootDropDown_GiveLoot;
+					UIDropDownMenu_AddButton(info);
+				end
 			end
 		end
 	end

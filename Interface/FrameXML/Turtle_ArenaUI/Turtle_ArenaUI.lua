@@ -48,6 +48,12 @@ local function LeaveTeam()
     SendAddonMessage(ADDON_PREFIX, "S2C_LEAVE_TEAM" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
 end
 
+local function UpdateArenaPoints(data)
+    local points = data or 0
+
+    ArenaFrameArenaPoints:SetText(format(ARENA_ARENA_POINTS, points))
+end
+
 local function UpdateArenaTeams(data)
     local details = {}
     local teams
@@ -244,12 +250,13 @@ listener:SetScript("OnEvent", function()
                 end
 
                 print(string.format(GAME_YELLOW .. ARENA_TEAM_MEMBER_LEFT, args[2], args[4]))
+            elseif args[1] == "S2C_ARENAPOINTS" then
+                UpdateArenaPoints(args[2])
             elseif args[1] == "S2C_QUEUE_SUCCESS" then
                 print(string.format(GAME_YELLOW .. ARENA_QUEUE_JOINED, args[2]))
             elseif args[1] == "S2C_ROSTER" then
                 UpdateArenaTeamRoster(args[4])
             elseif args[1] == "S2C_SCOREBOARD" then
-                print(arg2)
                 WorldStateScoreFrame.arenaData = arg2
             end
         end
@@ -276,7 +283,12 @@ listener:SetScript("OnEvent", function()
     end
 end)
 
+function ArenaFrame_OnLoad()
+    UpdateArenaPoints(0)
+end
+
 function ArenaFrame_OnShow()
+    SendAddonMessage(ADDON_PREFIX, "C2S_ARENAPOINTS", ADDON_CHANNEL)
     SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
 
     PlaySound("igCharacterInfoOpen")

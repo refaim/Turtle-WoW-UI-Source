@@ -51,6 +51,31 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="$parentArenaPoints" inherits="GameFontNormal" text="ARENA_ARENA_POINTS">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="134" y="-84" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+                <Texture file="Interface\BattlefieldFrame\UI-Battlefield-Bar">
+                    <Size>
+                        <AbsDimension x="513" y="40" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="LEFT">
+                            <Offset>
+                                <AbsDimension x="16" y="152" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
 		</Layers>
 		<Frames>
 			<Button name="$parentTab1" inherits="TabButtonTemplate" text="HONOR" id="7">
@@ -93,7 +118,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="30" y="-92" />
+							<AbsDimension x="30" y="-128" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -107,7 +132,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTeam1" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="0" y="-12" />
+							<AbsDimension x="0" y="-4" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -121,7 +146,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTeam2" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="0" y="-12" />
+							<AbsDimension x="0" y="-4" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -257,6 +282,9 @@
 			</Frame>
 		</Frames>
 		<Scripts>
+			<OnLoad>
+				ArenaFrame_OnLoad()
+			</OnLoad>
 			<OnShow>
 				ArenaFrame_OnShow()
 			</OnShow>

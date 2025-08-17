@@ -1235,6 +1235,7 @@ function LFT_UpdateGroupsList()
 	else
 		LFTFrameNewGroupButton:SetText(LFT_NEW_GROUP)
 	end
+	LFTFrameInstancesList:UpdateScrollChildRect()
 end
 
 function LFT_RefreshButton_OnClick()

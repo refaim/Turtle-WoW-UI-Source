@@ -200,8 +200,7 @@
 								</Texture>
 							</Layer>
 							<Layer level="OVERLAY">
-								<Texture name="MiniMapMeetingStoneBorder"
-									file="Interface\Minimap\MiniMap-TrackingBorder">
+								<Texture name="MiniMapMeetingStoneBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
 									<Size>
 										<AbsDimension x="52" y="52" />
 									</Size>
@@ -312,10 +311,9 @@
 						</Anchors>
 						<Layers>
 							<Layer level="BACKGROUND">
-								<Texture name="MiniMapBattlefieldIcon"
-									file="Interface\BattlefieldFrame\UI-Battlefield-Icon">
+								<Texture name="MiniMapBattlefieldIcon" file="Interface\BattlefieldFrame\UI-Battlefield-Icon">
 									<Size>
-										<AbsDimension x="18" y="18" />
+										<AbsDimension x="32" y="32" />
 									</Size>
 									<Anchors>
 										<Anchor point="CENTER">
@@ -327,8 +325,7 @@
 								</Texture>
 							</Layer>
 							<Layer level="ARTWORK">
-								<Texture name="MiniMapBattlefieldBorder"
-									file="Interface\Minimap\MiniMap-TrackingBorder">
+								<Texture name="MiniMapBattlefieldBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
 									<Size>
 										<AbsDimension x="52" y="52" />
 									</Size>
@@ -338,8 +335,7 @@
 								</Texture>
 							</Layer>
 							<Layer level="BORDER">
-								<Texture name="BattlegroundShine" file="Interface\ComboFrame\ComboPoint"
-									alphaMode="ADD">
+								<Texture name="BattlegroundShine" file="Interface\ComboFrame\ComboPoint" alphaMode="ADD">
 									<Size>
 										<AbsDimension x="32" y="32" />
 									</Size>
@@ -355,8 +351,7 @@
 							</Layer>
 						</Layers>
 						<Frames>
-							<Frame name="MiniMapBattlefieldDropDown" inherits="UIDropDownMenuTemplate" id="1"
-								hidden="true">
+							<Frame name="MiniMapBattlefieldDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
 								<Scripts>
 									<OnLoad>
 										MiniMapBattlefieldDropDown_OnLoad();
@@ -431,8 +426,7 @@
 								</Texture>
 							</Layer>
 							<Layer level="OVERLAY">
-								<Texture name="TWMiniMapBattlefieldFrameBorder"
-									file="Interface\Minimap\MiniMap-TrackingBorder">
+								<Texture name="TWMiniMapBattlefieldFrameBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
 									<Size>
 										<AbsDimension x="52" y="52" />
 									</Size>
