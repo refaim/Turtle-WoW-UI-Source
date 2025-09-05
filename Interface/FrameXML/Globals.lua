@@ -22,21 +22,6 @@ Turtle_AvailableChallenges = {
 GAME_YELLOW = "|cffffff00"
 
 -- utils
-function explode(str, delimiter, t)
-	wipe(t)
-
-	local result = t or {}
-	local from = 1
-	local delim_from, delim_to = string.find(str, delimiter, from, true)
-	while delim_from do
-		table.insert(result, string.sub(str, from, delim_from - 1))
-		from = delim_to + 1
-		delim_from, delim_to = string.find(str, delimiter, from, true)
-	end
-	table.insert(result, string.sub(str, from))
-	return result
-end
-
 function print(...)
 	local size = getn(arg)
 	for i = 1, size do
@@ -72,4 +57,19 @@ function wipe(t)
 	for k in next, t do
 		rawset(t, k, nil)
 	end
+end
+
+local wipe = wipe
+function explode(str, delimiter, t)
+	wipe(t)
+	local result = t or {}
+	local from = 1
+	local delim_from, delim_to = string.find(str, delimiter, from, true)
+	while delim_from do
+		table.insert(result, string.sub(str, from, delim_from - 1))
+		from = delim_to + 1
+		delim_from, delim_to = string.find(str, delimiter, from, true)
+	end
+	table.insert(result, string.sub(str, from))
+	return result
 end

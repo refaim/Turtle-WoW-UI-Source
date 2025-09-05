@@ -221,9 +221,14 @@ function WorldStateScoreFrame_Update()
 		WorldStateScoreFrameTimerLabel:Show();
 		WorldStateScoreFrameTimer:Show();
 
+		if WorldStateScoreFrame:GetWidth() < 540 then
+			WorldStateScoreFrameLeaveButton:SetPoint("BOTTOM", WorldStateScoreFrame, -30, 94)
+		else
+			WorldStateScoreFrameLeaveButton:SetPoint("BOTTOM", WorldStateScoreFrame, -30, 76)
+		end
+
 		-- Show winner
 		if inArena then
-			print(arenaData[2], firstTeam)
 			if arenaData[2] == firstTeam then
 				WorldStateScoreWinnerFrameText:SetText(getglobal(ARENA_TEAM_GOLD_WIN));
 				WorldStateScoreWinnerFrameText:SetVertexColor(0.1, 1.0, 0.1);
@@ -350,12 +355,8 @@ function WorldStateScoreFrame_Update()
 			if ( not class ) then
 				class = "";
 			end
-			local classToken = TW_CLASS_TOKEN[GetLocale()][class]
-			local classColor = ""
-			if classToken and RAID_CLASS_COLORS[classToken] then
-				classColor = RAID_CLASS_COLORS[classToken].hex or ""
-			end
-			buttonName:SetText(classColor..name);
+
+			buttonName:SetText(name);
 			nameButton:SetWidth(buttonName:GetWidth());
 			nameButton.name = name;
 			nameButton.tooltip = race.." "..class;
@@ -421,6 +422,10 @@ function WorldStateScoreFrame_Update()
 			end
 			lastButtonShown = scoreButton:GetName();
 			scoreButton:Show();
+			local classToken = TW_CLASS_TOKEN[GetLocale()] and TW_CLASS_TOKEN[GetLocale()][class]
+			if classToken and RAID_CLASS_COLORS[classToken] then
+				buttonName:SetTextColor(RAID_CLASS_COLORS[classToken].r, RAID_CLASS_COLORS[classToken].g, RAID_CLASS_COLORS[classToken].b)
+			end
 		else
 			scoreButton:Hide();
 		end

@@ -57,7 +57,7 @@ end
 local function UpdateArenaTeams(data)
 	local details = {}
 	local teams
-	if data ~= "No teams found" then
+	if not strfind(data, "No teams found") then
 		teams = explode(data, ADDON_MSG_SUBFIELD_DELIMITER)
 	end
 
@@ -174,7 +174,6 @@ listener:SetScript("OnEvent", function()
 	if event == "CHAT_MSG_ADDON" then
 		if arg1 == ADDON_PREFIX then
 			local args = explode(arg2, ADDON_MSG_FIELD_DELIMITER)
-
 			if args[1] == "S2C_ERROR" and args[2] then
 				print(GAME_YELLOW .. args[2])
 			elseif args[1] == "S2C_CREATE_SUCCESS" then
@@ -193,7 +192,7 @@ listener:SetScript("OnEvent", function()
 				end
 
 				print(GAME_YELLOW .. ARENA_TEAM_DISBANDED)
-			elseif args[1] == "S2C_INFO" then
+			elseif args[1] == "S2C_INFO" and args[2] ~= UnitName("target") then
 				UpdateArenaTeams(args[2])
 			elseif args[1] == "S2C_INVITE_ACCEPTED" then
 				if ArenaFrame:IsShown() then

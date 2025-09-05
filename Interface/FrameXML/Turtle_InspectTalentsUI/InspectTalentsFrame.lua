@@ -56,7 +56,7 @@ end
 
 local TWTalent = {}
 
-local inspectCom = CreateFrame("Frame")
+local inspectCom = CreateFrame("Frame", "InspectTalentsComFrame")
 inspectCom.SPEC = {}
 for i = 1, 3 do
 	inspectCom.SPEC[i] = { name = "", iconTexture = "", pointsSpent = 0, numTalents = 0 }
@@ -173,7 +173,7 @@ inspectCom:SetScript("OnEvent", function()
 
 				local ptier = nil
 				local pcolumn = nil
-				local isLearnable = true --WTF??
+				local isLearnable = nil
 
 				if talentEx[10] ~= '-1' then
 					ptier = tonumber(talentEx[10])
@@ -181,9 +181,9 @@ inspectCom:SetScript("OnEvent", function()
 				if talentEx[11] ~= '-1' then
 					pcolumn = tonumber(talentEx[11])
 				end
-				--if talentEx[12] == '-1' then
-				--    isLearnable = true
-				--end
+				if talentEx[12] ~= '-1' then
+					isLearnable = 1
+				end
 
 				if not inspectCom.SPEC[tree][i] then
 					inspectCom.SPEC[tree][i] = {}
@@ -297,11 +297,10 @@ end
 
 function TWTalentFrame_Update()
 	-- Setup Tabs
-	local tab, name, iconTexture, pointsSpent, button
 	local numTabs = 3
 	for i = 1, numTabs do
-		tab = _G['TWTalentFrameTab' .. i]
-		name, iconTexture, pointsSpent = TWTalent.GetTalentTabInfo(i)
+		local tab = _G['TWTalentFrameTab' .. i]
+		local name, iconTexture, pointsSpent = TWTalent.GetTalentTabInfo(i)
 		if i == TWTalentFrame.selectedTab then
 			-- If tab is the selected tab set the points spent info
 			TWTalentFrame.pointsSpent = pointsSpent
@@ -318,9 +317,8 @@ function TWTalentFrame_Update()
 
 	TWTalentFrame.talentPoints = UnitLevel('target') - 9 - inspectCom.SPEC[1].pointsSpent - inspectCom.SPEC[2].pointsSpent - inspectCom.SPEC[3].pointsSpent
 
-	local talentTabName = TWTalent.GetTalentTabInfo(TWTalentFrame.selectedTab)
 	local base
-	local name, texture, points, fileName = TWTalent.GetTalentTabInfo(TWTalentFrame.selectedTab)
+	local talentTabName, texture, points, fileName = TWTalent.GetTalentTabInfo(TWTalentFrame.selectedTab)
 	if talentTabName then
 		base = "Interface\\TalentFrame\\" .. fileName .. "-"
 	else
@@ -340,13 +338,12 @@ function TWTalentFrame_Update()
 
 	TWTalent.TalentFrame_ResetBranches()
 
-	local tier, column, rank, maxRank, isLearnable, meetsPrereq
 	local forceDesaturated, tierUnlocked
 	for i = 1, MAX_NUM_TALENTS do
-		button = _G['TWTalentFrameTalent' .. i]
+		local button = _G['TWTalentFrameTalent' .. i]
 		if i <= numTalents then
 			-- Set the button info
-			name, iconTexture, tier, column, rank, maxRank, meetsPrereq = TWTalent.GetTalentInfo(TWTalentFrame.selectedTab, i)
+			local name, iconTexture, tier, column, rank, maxRank, meetsPrereq = TWTalent.GetTalentInfo(TWTalentFrame.selectedTab, i)
 			_G['TWTalentFrameTalent' .. i .. 'Rank']:SetText(rank)
 			SetTalentButtonLocation(button, tier, column)
 			TWTalent.TALENT_BRANCH_ARRAY[tier][column].id = button:GetID()
@@ -368,8 +365,8 @@ function TWTalentFrame_Update()
 			SetItemButtonTexture(button, iconTexture)
 
 			-- Talent must meet prereqs or the player must have no points to spend
-			local a5, a6, a7 = TWTalent.GetTalentPrereqs(TWTalentFrame.selectedTab, i)
-			if TWTalent.TalentFrame_SetPrereqs(tier, column, forceDesaturated, tierUnlocked, a5, a6, a7) and meetsPrereq then
+			local pTier, pColumn, isLearnable = TWTalent.GetTalentPrereqs(TWTalentFrame.selectedTab, i)
+			if TWTalent.TalentFrame_SetPrereqs(tier, column, forceDesaturated, tierUnlocked, pTier, pColumn, isLearnable) and meetsPrereq then
 
 				SetItemButtonDesaturated(button, nil)
 
@@ -404,15 +401,12 @@ function TWTalentFrame_Update()
 
 	-- Draw the prerq branches
 	local node
-	local textureIndex = 1
 	local xOffset, yOffset
-	local texCoords
 	-- Variable that decides whether or not to ignore drawing pieces
 	local ignoreUp
 	local tempNode
 
 	TWTalentFrame.textureIndex = 1
-
 	TWTalentFrame.arrowIndex = 1
 
 	for i = 1, MAX_NUM_TALENT_TIERS do
@@ -571,26 +565,18 @@ function TWTalent.TalentFrame_SetArrowTexture(tier, column, texCoords, xOffset, 
 	arrowTexture:SetPoint("TOPLEFT", "TWTalentFrameArrowFrame", "TOPLEFT", xOffset, yOffset)
 end
 
-function TWTalent.TalentFrame_SetPrereqs(t, c, fd, tu, a5, a6, a7)
-	local buttonTier = t
-	local buttonColumn = c
-	local forceDesaturated = fd
-	local tierUnlocked = tu
-	local tier, column, isLearnable
+function TWTalent.TalentFrame_SetPrereqs(buttonTier, buttonColumn, forceDesaturated, tierUnlocked, pTier, pColumn, isLearnable)
 	local requirementsMet
 	if tierUnlocked and not forceDesaturated then
 		requirementsMet = 1
 	else
 		requirementsMet = nil
 	end
-	if a5 and a6 and a7 then
-		tier = a5
-		column = a6
-		isLearnable = a7
+	if pTier and pColumn then
 		if not isLearnable or forceDesaturated then
 			requirementsMet = nil
 		end
-		TWTalent.TalentFrame_DrawLines(buttonTier, buttonColumn, tier, column, requirementsMet)
+		TWTalent.TalentFrame_DrawLines(buttonTier, buttonColumn, pTier, pColumn, requirementsMet)
 	end
 	return requirementsMet
 end
@@ -730,8 +716,6 @@ function TWTalentFrameTab_OnClick()
 	PanelTemplates_SetTab(TWTalentFrame, this:GetID())
 	TWTalentFrame_Update()
 	PlaySound("igCharacterInfoTab")
-
-	TWTalentFrameScrollFrame:SetVerticalScroll(0)
 end
 
 local paperDollFrames = {

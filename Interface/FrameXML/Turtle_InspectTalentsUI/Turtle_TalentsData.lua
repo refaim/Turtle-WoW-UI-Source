@@ -980,6 +980,14 @@ Turtle_TalentsData = {
 			}
 		},
 		[3] = {
+			name = "Improved Eyes of the Beast",
+			icon = "ability_eyeoftheowl",
+			desc = {
+			"Increases the duration of your Eyes of the Beast by 30 sec.\n\nWhile channeling Eyes of the Beast, your pet deals 15% additional damage and gains 15% increased Focus regeneration.",
+			"Increases the duration of your Eyes of the Beast by 60 sec.\n\nWhile channeling Eyes of the Beast, your pet deals 30% additional damage and gains 30% increased Focus regeneration."
+			}
+		},
+		[4] = {
 			name = "Improved Primal Aspects",
 			icon = "ability_hunter_aspectofthemonkey",
 			desc = {
@@ -988,7 +996,7 @@ Turtle_TalentsData = {
 			"Increases the Dodge bonus of your Aspect of the Monkey by 6%. While Aspect of the Wolf is active, you're healed for 6% of your melee damage."
 			}
 		},
-		[4] = {
+		[5] = {
 			name = "Thick Hide",
 			icon = "inv_misc_pelt_bear_03",
 			desc = {
@@ -997,7 +1005,7 @@ Turtle_TalentsData = {
 			"Adds 36% of your armor value from items to the armor value of your pets and increases the armor value of your pets by 10%."
 			}
 		},
-		[5] = {
+		[6] = {
 			name = "Improved Revive Pet",
 			icon = "ability_hunter_beastsoothe",
 			desc = {
@@ -1005,7 +1013,7 @@ Turtle_TalentsData = {
 			"Revive Pet's casting time is reduced by 6 sec, mana cost is reduced by 40%, and increases the health your pet returns with by an additional 30%."
 			}
 		},
-		[6] = {
+		[7] = {
 			name = "Pathfinding",
 			icon = "ability_mount_jungletiger",
 			desc = {
@@ -1013,14 +1021,14 @@ Turtle_TalentsData = {
 			"Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 6% and increases your pet's movement speed by 30%. "
 			}
 		},
-		[7] = {
+		[8] = {
 			name = "Coordinated Assault",
 			icon = "spell_coordinated_assault_1",
 			desc = {
 			"Hitting an enemy with Arcane Shot, Steady Shot or Raptor Strike causes your pet's next attack within 6 sec to also perform an attack that deals Physical damage equal to 30% of its Attack Power.  This effect can trigger only once every 3 sec."
 			}
 		},
-		[8] = {
+		[9] = {
 			name = "Unleashed Fury",
 			icon = "ability_bullrush",
 			desc = {
@@ -1031,15 +1039,15 @@ Turtle_TalentsData = {
 			"Increases the damage done by your pets by 20%."
 			}
 		},
-		[9] = {
+		[10] = {
 			name = "Bestial Discipline",
 			icon = "spell_nature_abolishmagic",
 			desc = {
 			"Increases the Focus regeneration of your pets by 2 each tick and reduces the cooldown of your pets' special ability by 10%.",
-			""
+			"Increases the Focus regeneration of your pets by 5 each tick and reduces the cooldown of your pets' special ability by 20%."
 			}
 		},
-		[10] = {
+		[11] = {
 			name = "Improved Mend Pet",
 			icon = "ability_hunter_mendpet",
 			desc = {
@@ -1047,7 +1055,7 @@ Turtle_TalentsData = {
 			"Increases amount you heal your pet with Mend Pet by 40% and gives the spell a 50% chance of cleansing 1 Curse, Disease, Magic or Poison effect from the pet each tick."
 			}
 		},
-		[11] = {
+		[12] = {
 			name = "Ferocity",
 			icon = "inv_misc_monsterclaw_04",
 			desc = {
@@ -1058,21 +1066,21 @@ Turtle_TalentsData = {
 			"Increases the critical strike chance of your pets by 15%."
 			}
 		},
-		[12] = {
+		[13] = {
 			name = "Intimidation",
 			icon = "ability_devour",
 			desc = {
 			"Command your pet to intimidate the target on the next successful melee attack, stunning the target for 3 sec, and increasing the pet's threat generation by 50% for 8 sec."
 			}
 		},
-		[13] = {
+		[14] = {
 			name = "Kill Command",
 			icon = "ability_hunter_killcommand",
 			desc = {
 			"Give the command to kill, removing any crowd control effects from your pet and causing your pet's next 2 abilities within 10 sec to be guaranteed to critically strike with 50% increased critical strike damage if that ability is capable of striking critically."
 			}
 		},
-		[14] = {
+		[15] = {
 			name = "Bestial Precision",
 			icon = "ability_druid_rake",
 			desc = {
@@ -1080,7 +1088,7 @@ Turtle_TalentsData = {
 			"Increases the physical hit chance of your pets by 8% and the spell hit chance of your pets by 18%. In addition, increases the weapon skill of your pets by 10."
 			}
 		},
-		[15] = {
+		[16] = {
 			name = "Spirit Bond",
 			icon = "ability_druid_demoralizingroar",
 			desc = {
@@ -1088,7 +1096,7 @@ Turtle_TalentsData = {
 			"Your pet gains melee attack power equal to 25% of your ranged attack power and spell power equal to 15% of your ranged attack power. While your pet is active, you and your pet will regenerate 2% of total health every 5 sec."
 			}
 		},
-		[16] = {
+		[17] = {
 			name = "Frenzy",
 			icon = "inv_misc_monsterclaw_03",
 			desc = {
@@ -1099,7 +1107,7 @@ Turtle_TalentsData = {
 			"Gives your pet a 100% chance to gain a 30% attack speed increase for 8 sec after dealing a critical strike."
 			}
 		},
-		[17] = {
+		[18] = {
 			name = "Baited Shot",
 			icon = "inv_misc_food_66",
 			desc = {
@@ -1409,8 +1417,8 @@ Turtle_TalentsData = {
 			name = "Vicious Strikes",
 			icon = "ability_hunter_swiftstrike",
 			desc = {
-			"The cooldown of your Raptor Strike and Mongoose Bite abilities is reduced by 0.5 sec, and they deal 5% additional weapon damage and the additional damage is increased by 5.",
-			"The cooldown of your Raptor Strike and Mongoose Bite abilities is reduced by 1 sec, and they deal 10% additional weapon damage and the additional damage is increased by 10."
+			"Reduces the cooldown of your Raptor Strike and Mongoose Bite abilities by 0 sec.",
+			"Reduces the cooldown of your Raptor Strike and Mongoose Bite abilities by 1 sec."
 			}
 		},
 		[18] = {
@@ -1587,7 +1595,7 @@ Turtle_TalentsData = {
 			}
 		},
 		[18] = {
-			name = "Double Dose",
+			name = "Noxious Assault",
 			icon = "spell_double_dose_3",
 			desc = {
 			"Strikes with both weapons, dealing 30 damage plus 35% of your Attack Power and applies poisons from both weapons. Awards 1 combo point."
@@ -1598,23 +1606,17 @@ Turtle_TalentsData = {
 		},
 		{
 		[1] = {
-			name = "Improved Gouge",
-			icon = "ability_gouge",
+			name = "Opportunity",
+			icon = "ability_warrior_warcry",
 			desc = {
-			"Increases the effect duration of your Gouge ability by 0.5 sec.",
-			"Increases the effect duration of your Gouge ability by 1 sec.",
-			"Increases the effect duration of your Gouge ability by 1.5 sec."
+			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 4%.",
+			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 8%.",
+			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 12%.",
+			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 16%.",
+			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 20%."
 			}
 		},
 		[2] = {
-			name = "Improved Expose Armor",
-			icon = "ability_warrior_riposte",
-			desc = {
-			"Increases the armor reduced by your Expose Armor ability by 25%.",
-			"Increases the armor reduced by your Expose Armor ability by 50%."
-			}
-		},
-		[3] = {
 			name = "Lightning Reflexes",
 			icon = "spell_nature_invisibilty",
 			desc = {
@@ -1625,7 +1627,7 @@ Turtle_TalentsData = {
 			"Increases your Dodge chance by 5%."
 			}
 		},
-		[4] = {
+		[3] = {
 			name = "Deflection",
 			icon = "ability_parry",
 			desc = {
@@ -1636,7 +1638,7 @@ Turtle_TalentsData = {
 			"Increases your Parry chance by 5%."
 			}
 		},
-		[5] = {
+		[4] = {
 			name = "Improved Backstab",
 			icon = "ability_backstab",
 			desc = {
@@ -1645,7 +1647,7 @@ Turtle_TalentsData = {
 			"Increases the critical strike chance of your Backstab ability by 30% and gives your Backstab a 45% chance to award an additional combo point."
 			}
 		},
-		[6] = {
+		[5] = {
 			name = "Precision",
 			icon = "ability_marksmanship",
 			desc = {
@@ -1656,14 +1658,14 @@ Turtle_TalentsData = {
 			"Increases your chance to hit with melee weapons by 5%."
 			}
 		},
-		[7] = {
+		[6] = {
 			name = "Riposte",
 			icon = "ability_warrior_challange",
 			desc = {
 			"A strike that becomes active after parrying an opponent's attack.  This attack deals 150% weapon damage and disarms the target for 6 sec."
 			}
 		},
-		[8] = {
+		[7] = {
 			name = "Improved Sprint",
 			icon = "ability_rogue_sprint",
 			desc = {
@@ -1671,7 +1673,7 @@ Turtle_TalentsData = {
 			"Gives a 100% chance to remove all movement impairing effects when you activate your Sprint ability."
 			}
 		},
-		[9] = {
+		[8] = {
 			name = "Setup",
 			icon = "spell_nature_mirrorimage",
 			desc = {
@@ -1680,7 +1682,7 @@ Turtle_TalentsData = {
 			"Gives you a 45% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells."
 			}
 		},
-		[10] = {
+		[9] = {
 			name = "Improved Kick",
 			icon = "ability_kick",
 			desc = {
@@ -1688,7 +1690,7 @@ Turtle_TalentsData = {
 			"Gives your Kick ability a 100% chance to silence the target for 2 sec."
 			}
 		},
-		[11] = {
+		[10] = {
 			name = "Concussive Blows",
 			icon = "inv_mace_01",
 			desc = {
@@ -1699,7 +1701,7 @@ Turtle_TalentsData = {
 			"Gives you a 6% chance to stun your target for 3 sec with a mace."
 			}
 		},
-		[12] = {
+		[11] = {
 			name = "Dual Wield Specialization",
 			icon = "ability_dualwield",
 			desc = {
@@ -1710,7 +1712,7 @@ Turtle_TalentsData = {
 			"Increases the damage done by your offhand weapon by 50%."
 			}
 		},
-		[13] = {
+		[12] = {
 			name = "Close Quarters Combat",
 			icon = "inv_weapon_shortblade_05",
 			desc = {
@@ -1718,14 +1720,14 @@ Turtle_TalentsData = {
 			"Increases your chance to get a critical strike with Maces, Daggers and Fist Weapons by 5%."
 			}
 		},
-		[14] = {
+		[13] = {
 			name = "Surprise Attack",
 			icon = "ability_rogue_surpriseattack",
 			desc = {
 			"A surprise strike that deals 25% of your Attack Power as damage.\nOnly useable after the target dodges and cannot be blocked, dodged or parried by the target.  Awards 1 combo points."
 			}
 		},
-		[15] = {
+		[14] = {
 			name = "Hack and Slash",
 			icon = "inv_sword_27",
 			desc = {
@@ -1733,7 +1735,7 @@ Turtle_TalentsData = {
 			"Gives you a 5% chance to get an extra attack on the same target after dealing damage with your Axe or Sword."
 			}
 		},
-		[16] = {
+		[15] = {
 			name = "Weapon Expertise",
 			icon = "spell_holy_blessingofstrength",
 			desc = {
@@ -1741,7 +1743,7 @@ Turtle_TalentsData = {
 			"Increases your skill with Axe, Dagger, Fist, Mace and Sword weapons by 5."
 			}
 		},
-		[17] = {
+		[16] = {
 			name = "Blade Rush",
 			icon = "ability_warrior_weaponmastery",
 			desc = {
@@ -1749,7 +1751,7 @@ Turtle_TalentsData = {
 			"Increases your melee attack speed by 5% and reduces the time between your Energy regeneration ticks by an amount equal to your Agility. More effective than Blade Rush (Rank 1)."
 			}
 		},
-		[18] = {
+		[17] = {
 			name = "Aggression",
 			icon = "ability_racial_avatar",
 			desc = {
@@ -1758,7 +1760,7 @@ Turtle_TalentsData = {
 			"Increases the damage of your Sinister Strike, Eviscerate, Riposte and Surprise Attack abilities by 10%."
 			}
 		},
-		[19] = {
+		[18] = {
 			name = "Adrenaline Rush",
 			icon = "spell_shadow_shadowworddominate",
 			desc = {
@@ -1781,17 +1783,23 @@ Turtle_TalentsData = {
 			}
 		},
 		[2] = {
-			name = "Opportunity",
-			icon = "ability_warrior_warcry",
+			name = "Improved Expose Armor",
+			icon = "ability_warrior_riposte",
 			desc = {
-			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 4%.",
-			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 8%.",
-			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 12%.",
-			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 16%.",
-			"Increases the damage dealt when striking from behind with your Backstab, Garrote, or Ambush abilities by 20%."
+			"Increases the armor reduced by your Expose Armor ability by 25%.",
+			"Increases the armor reduced by your Expose Armor ability by 50%."
 			}
 		},
 		[3] = {
+			name = "Improved Gouge",
+			icon = "ability_gouge",
+			desc = {
+			"Increases the effect duration of your Gouge ability by 0.5 sec.",
+			"Increases the effect duration of your Gouge ability by 1 sec.",
+			"Increases the effect duration of your Gouge ability by 1.5 sec."
+			}
+		},
+		[4] = {
 			name = "Improved Ambush",
 			icon = "ability_rogue_ambush",
 			desc = {
@@ -1800,7 +1808,7 @@ Turtle_TalentsData = {
 			"Increases the critical strike chance of your Ambush ability by 45%.  Your Ambush will refund 15 Energy if it does not result in a critical strike."
 			}
 		},
-		[4] = {
+		[5] = {
 			name = "Elusiveness",
 			icon = "spell_magic_lesserinvisibilty",
 			desc = {
@@ -1808,7 +1816,7 @@ Turtle_TalentsData = {
 			"Reduces the cooldown of your Vanish and Blind abilities by 1.5 min."
 			}
 		},
-		[5] = {
+		[6] = {
 			name = "Serrated Blades",
 			icon = "inv_sword_17",
 			desc = {
@@ -1817,7 +1825,7 @@ Turtle_TalentsData = {
 			"Causes your attacks to ignore 5 of your target's Armor per level and increases the damage dealt by your Rupture and Garrote abilities by 30%."
 			}
 		},
-		[6] = {
+		[7] = {
 			name = "Initiative",
 			icon = "spell_shadow_fumble",
 			desc = {
@@ -1826,7 +1834,7 @@ Turtle_TalentsData = {
 			"Gives you a 100% chance to add an additional combo point to your target when using your Ambush, Garrote, or Cheap Shot ability."
 			}
 		},
-		[7] = {
+		[8] = {
 			name = "Improved Ghostly Strike",
 			icon = "inv_sword_02",
 			desc = {
@@ -1835,21 +1843,21 @@ Turtle_TalentsData = {
 			"Your Ghostly Strike increases your movement speed by 15% and increases your party members' movement speed by 6% within 30 yards for 5 sec. In addition, reduces the Energy cost of your Ghostly Strike by 10."
 			}
 		},
-		[8] = {
+		[9] = {
 			name = "Smoke Bomb",
 			icon = "spell_smoke_bomb_5",
 			desc = {
 			"Creates a cloud of thick smoke in 8 yards around you for 8 sec. All targets inside the smoke have a 20% reduced chance of being hit by attacks and spells for the duration."
 			}
 		},
-		[9] = {
+		[10] = {
 			name = "Hemorrhage",
 			icon = "spell_shadow_lifedrain",
 			desc = {
 			"An instant strike that deals 110% weapon damage and causes the target to hemorrhage, increasing any Physical damage dealt to the target by 2%.  Lasts 50 charges or 15 sec.  Awards 1 combo point."
 			}
 		},
-		[10] = {
+		[11] = {
 			name = "Cloaked in Shadows",
 			icon = "spell_cloaked_in_shadows_2",
 			desc = {
@@ -1857,7 +1865,7 @@ Turtle_TalentsData = {
 			"Whenever you Vanish, you and nearby party members within 20 yards are cloaked in shadows, gaining a barrier that absorbs up to 12% of your maximum health for 20 sec."
 			}
 		},
-		[11] = {
+		[12] = {
 			name = "Blackjack",
 			icon = "ability_sap",
 			desc = {
@@ -1865,7 +1873,7 @@ Turtle_TalentsData = {
 			"Your Sap and Blind abilities reduce the target's damage dealt by 10% for 8 sec when their effect ends or fails to apply. In addition, you have a 100% chance to return to stealth after using your Sap ability."
 			}
 		},
-		[12] = {
+		[13] = {
 			name = "Blinding Haze",
 			icon = "ability_rogue_shadowstep",
 			desc = {
@@ -1874,7 +1882,7 @@ Turtle_TalentsData = {
 			"Reduces the Energy cost of your Distract by 15. In addition, targets hit by your Distract have their chance to hit reduced by 6% for 6 sec. This effect is guaranteed to be applied."
 			}
 		},
-		[13] = {
+		[14] = {
 			name = "Dirty Deeds",
 			icon = "spell_shadow_summonsuccubus",
 			desc = {
@@ -1882,21 +1890,21 @@ Turtle_TalentsData = {
 			"Reduces the Energy cost of your Cheap Shot and Garrote abilities by 20."
 			}
 		},
-		[14] = {
+		[15] = {
 			name = "Preparation",
 			icon = "spell_shadow_antishadow",
 			desc = {
 			"When activated, this ability immediately finishes the cooldown on your other Rogue abilities."
 			}
 		},
-		[15] = {
-			name = "[Deprecated] Dust of Disappearance",
-			icon = "inv_misc_dust_infinite",
+		[16] = {
+			name = "Shadow of Death",
+			icon = "spell_shadow_of_death_3b",
 			desc = {
-			"Throw a pouch of vanishing powder at a friendly player, reducing their threat by 20% and decreasing the chance of being detected by enemies for 5 sec.  When the effect ends or is cancelled, their next damaging spell or ability deals 15% increased damage."
+			"A finishing move that etches a sigil onto the target for 6 sec. The sigil accumulates damage equal to a percentage of all damage the target takes during its duration, up to a percentage of your Attack Power. When the maximum capacity is reached or the sigil expires, the stored damage is unleashed as Physical damage. Both values increase with each combo point:\n   1 point : 10% of damage accumulated, up to 50% of Attack Power\n   2 points: 20% of damage accumulated, up to 100% of Attack Power\n   3 points: 30% of damage accumulated, up to 150% of Attack Power\n   4 points: 40% of damage accumulated, up to 200% of Attack Power\n   5 points: 50% of damage accumulated, up to 250% of Attack Power"
 			}
 		},
-		[16] = {
+		[17] = {
 			name = "Bloody Mess",
 			icon = "spell_shadow_bloodboil",
 			desc = {
@@ -1904,7 +1912,7 @@ Turtle_TalentsData = {
 			"Reduces the Energy cost of your Hemorrhage by 5 and increases the Physical damage dealt bonus of your Hemorrhage by 100%."
 			}
 		},
-		[17] = {
+		[18] = {
 			name = "Honor Among Thieves",
 			icon = "inv_throwingknife_05",
 			desc = {
@@ -1912,7 +1920,7 @@ Turtle_TalentsData = {
 			"Physical critical strikes by you or party members within 20 yards grant you 5 Energy."
 			}
 		},
-		[18] = {
+		[19] = {
 			name = "Tricks of the Trade",
 			icon = "inv_misc_key_03",
 			desc = {
@@ -1923,7 +1931,7 @@ Turtle_TalentsData = {
 			"Your opening moves have a 100% chance and your finishing moves have a 20% chance per combo point to increase your party members' critical strike chance by 2% for 12 sec. This effect stacks up to 2 times."
 			}
 		},
-		[19] = {
+		[20] = {
 			name = "Mark for Death",
 			icon = "ability_creature_cursed_02",
 			desc = {
@@ -2039,9 +2047,9 @@ Turtle_TalentsData = {
 			name = "Searing Light",
 			icon = "spell_holy_searinglightpriest",
 			desc = {
-			"Your damaging Holy and Discipline spell critical strikes have a 33% chance to cause your next Smite spell to be instant cast and cost 20% less mana.  Lasts 10 sec.",
-			"Your damaging Holy and Discipline spell critical strikes have a 66% chance to cause your next Smite spell to be instant cast and cost 20% less mana.  Lasts 10 sec.",
-			"Your damaging Holy and Discipline spell critical strikes have a 100% chance to cause your next Smite spell to be instant cast and cost 20% less mana.  Lasts 10 sec."
+			"Your damaging Holy and Discipline spell critical strikes have a 33% chance to cause your next Smite spell to be instant cast and cost 50% less mana.  Lasts 10 sec.",
+			"Your damaging Holy and Discipline spell critical strikes have a 66% chance to cause your next Smite spell to be instant cast and cost 50% less mana.  Lasts 10 sec.",
+			"Your damaging Holy and Discipline spell critical strikes have a 100% chance to cause your next Smite spell to be instant cast and cost 50% less mana.  Lasts 10 sec."
 			}
 		},
 		[13] = {
@@ -2461,9 +2469,9 @@ Turtle_TalentsData = {
 			name = "Reverberation",
 			icon = "spell_frost_frostward",
 			desc = {
-			"Reduces the cooldown of your Shock spells by 0.2 sec.",
-			"Reduces the cooldown of your Shock spells by 0.4 sec.",
-			"Reduces the cooldown of your Shock spells by 0.6 sec."
+			"Reduces the cooldown of your Shock spells by 0.3 sec.",
+			"Reduces the cooldown of your Shock spells by 0.7 sec.",
+			"Reduces the cooldown of your Shock spells by 1 sec."
 			}
 		},
 		[8] = {
@@ -2497,9 +2505,9 @@ Turtle_TalentsData = {
 			name = "Eye of the Storm",
 			icon = "spell_nature_eyeofthestorm",
 			desc = {
-			"Gives you a 33% chance to gain the Focused Casting effect that lasts for 6 sec after being the victim of a melee or ranged critical strike.  The Focused Casting effect prevents you from losing casting time when taking damage.",
-			"Gives you a 66% chance to gain the Focused Casting effect that lasts for 6 sec after being the victim of a melee or ranged critical strike.  The Focused Casting effect prevents you from losing casting time when taking damage.",
-			"Gives you a 100% chance to gain the Focused Casting effect that lasts for 6 sec after being the victim of a melee or ranged critical strike.  The Focused Casting effect prevents you from losing casting time when taking damage."
+			"Gives you a 33% chance to gain the Focused Casting effect for 6 sec after being hit by a melee or ranged critical strike. While active, Focused Casting prevents you from losing casting time when taking damage while casting Elemental spells.",
+			"Gives you a 66% chance to gain the Focused Casting effect for 6 sec after being hit by a melee or ranged critical strike. While active, Focused Casting prevents you from losing casting time when taking damage while casting Elemental spells.",
+			"Gives you a 100% chance to gain the Focused Casting effect for 6 sec after being hit by a melee or ranged critical strike. While active, Focused Casting prevents you from losing casting time when taking damage while casting Elemental spells."
 			}
 		},
 		[12] = {
@@ -2618,9 +2626,9 @@ Turtle_TalentsData = {
 			name = "Calming Winds",
 			icon = "spell_nature_tranquility",
 			desc = {
-			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 5%. This effect does not apply while Rockbiter Weapon is active.",
-			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 10%. This effect does not apply while Rockbiter Weapon is active.",
-			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 15%. This effect does not apply while Rockbiter Weapon is active."
+			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 8%. This effect does not apply while Rockbiter Weapon is active.",
+			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 16%. This effect does not apply while Rockbiter Weapon is active.",
+			"Reduces threat generated by your physical attacks, weapon imbue effects, and your Lightning Strike and Stormstrike abilities by 25%. This effect does not apply while Rockbiter Weapon is active."
 			}
 		},
 		[8] = {
@@ -2670,9 +2678,9 @@ Turtle_TalentsData = {
 			name = "Elemental Weapons",
 			icon = "spell_fire_flametounge",
 			desc = {
-			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 10%.\r\n\r\nRockbiter: Reduces your damage taken by 4%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 8% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: Gaining extra attacks increases your movement speed by 3% for 5 sec. This stacks with other movement speed increasing effects.",
-			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 20%.\r\n\r\nRockbiter: Reduces your damage taken by 7%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 16% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: Gaining extra attacks increases your movement speed by 6% for 5 sec. This stacks with other movement speed increasing effects.",
-			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 30%.\r\n\r\nRockbiter: Reduces your damage taken by 10%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 25% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: Gaining extra attacks increases your movement speed by 10% for 5 sec. This stacks with other movement speed increasing effects."
+			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 10%.\r\n\r\nRockbiter: Reduces your damage taken by 4%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 8% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: If one of the bonus attacks doesn't land, your attack speed is increased by 10% for your next strike.",
+			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 20%.\r\n\r\nRockbiter: Reduces your damage taken by 7%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 16% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: If one of the bonus attacks doesn't land, your attack speed is increased by 20% for your next strike.",
+			"Imbuing your weapon gives you a special benefit based on the imbue.\r\n\r\nFlametongue: Increases the damage done by your Fire Totems and spells by 30%.\r\n\r\nRockbiter: Reduces your damage taken by 10%.\r\n\r\nFrostbrand: Increases the chance to proc the effect by 25% and becomes guaranteed to critically hit if the target is afflicted with Frost Shock.\r\n\r\nWindfury: If one of the bonus attacks doesn't land, your attack speed is increased by 30% for your next strike."
 			}
 		},
 		[14] = {
@@ -2758,9 +2766,9 @@ Turtle_TalentsData = {
 			name = "Healing Way",
 			icon = "spell_nature_healingway",
 			desc = {
-			"Your Healing Wave and Lesser Healing Wave spells have a 33% chance to increase the healing of your next Healing Wave or Lesser Healing Wave on that target by 6% for 15 sec. Stacks up to 3 times.",
-			"Your Healing Wave and Lesser Healing Wave spells have a 66% chance to increase the healing of your next Healing Wave or Lesser Healing Wave on that target by 6% for 15 sec. Stacks up to 3 times.",
-			"Your Healing Wave and Lesser Healing Wave spells have a 100% chance to increase the healing of your next Healing Wave or Lesser Healing Wave on that target by 6% for 15 sec. Stacks up to 3 times."
+			"Your Healing Wave and Lesser Healing Wave spells each have a 33% chance, and your Chain Heal spell has a 11% chance to increase the healing of your next Healing Wave or Chain Heal on that target by 6% for 15 sec. This effect stacks up to 3 times.",
+			"Your Healing Wave and Lesser Healing Wave spells each have a 66% chance, and your Chain Heal spell has a 22% chance to increase the healing of your next Healing Wave or Chain Heal on that target by 6% for 15 sec. This effect stacks up to 3 times.",
+			"Your Healing Wave and Lesser Healing Wave spells each have a 100% chance, and your Chain Heal spell has a 33% chance to increase the healing of your next Healing Wave or Chain Heal on that target by 6% for 15 sec. This effect stacks up to 3 times."
 			}
 		},
 		[7] = {
@@ -2775,7 +2783,7 @@ Turtle_TalentsData = {
 			name = "Totemic Mastery",
 			icon = "spell_nature_nullward",
 			desc = {
-			"Increase the duration of your totems that affect friendly targets by 20% and the amount of mana refunded by Totemic Recall by an additional 15%."
+			"Increases the duration of your helpful totems by 20% and the amount of mana refunded by Totemic Recall by an additional 15%."
 			}
 		},
 		[9] = {
@@ -2816,10 +2824,10 @@ Turtle_TalentsData = {
 			}
 		},
 		[13] = {
-			name = "Nature's Swiftness",
+			name = "Ancestral Swiftness",
 			icon = "spell_nature_ravenform",
 			desc = {
-			"When activated, your next Nature spell with a casting time less than 10 sec becomes an instant cast spell."
+			"When activated, your next Nature spell with a casting time less than 10 sec becomes an instant cast spell. Affected damaging spells have 25% reduced effectiveness."
 			}
 		},
 		[14] = {
@@ -3105,12 +3113,12 @@ Turtle_TalentsData = {
 			}
 		},
 		[10] = {
-			name = "Improved Scorch",
+			name = "Fire Vulnerability",
 			icon = "spell_fire_soulburn",
 			desc = {
-			"Your Scorch spells have a 33% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times.",
-			"Your Scorch spells have a 66% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times.",
-			"Your Scorch spells have a 100% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times."
+			"Your Scorch and Fire Blast spells have a 33% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times.",
+			"Your Scorch and Fire Blast spells have a 66% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times.",
+			"Your Scorch and Fire Blast spells have a 100% chance to cause your target to be vulnerable to Fire damage.  This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec.  Stacks up to 5 times."
 			}
 		},
 		[11] = {
@@ -3372,6 +3380,15 @@ Turtle_TalentsData = {
 			}
 		},
 		[3] = {
+			name = "Sinister Pursuit",
+			icon = "ability_rogue_envelopingshadows",
+			desc = {
+			"Increases the movement speed of your demons by 5% for 3 sec after they attack a target affected by Affliction effects.",
+			"Increases the movement speed of your demons by 10% for 3 sec after they attack a target affected by Affliction effects.",
+			"Increases the movement speed of your demons by 15% for 3 sec after they attack a target affected by Affliction effects."
+			}
+		},
+		[4] = {
 			name = "Improved Curse of Weakness",
 			icon = "spell_shadow_curseofmannoroth",
 			desc = {
@@ -3379,7 +3396,7 @@ Turtle_TalentsData = {
 			"Increases the attack speed reduction of your Curse of Weakness by 5%."
 			}
 		},
-		[4] = {
+		[5] = {
 			name = "Resilient Shadows",
 			icon = "spell_shadow_soulleech_1",
 			desc = {
@@ -3388,7 +3405,7 @@ Turtle_TalentsData = {
 			"Reduces the chance your Affliction spells will be dispelled by an additional 15%."
 			}
 		},
-		[5] = {
+		[6] = {
 			name = "Improved Life Tap",
 			icon = "spell_shadow_burningspirit",
 			desc = {
@@ -3396,7 +3413,7 @@ Turtle_TalentsData = {
 			"Increases the amount of Mana awarded by your Life Tap spell by 20%."
 			}
 		},
-		[6] = {
+		[7] = {
 			name = "Improved Drains",
 			icon = "spell_shadow_lifedrain02",
 			desc = {
@@ -3404,7 +3421,7 @@ Turtle_TalentsData = {
 			"Increases the effectiveness of your Drain Soul, Drain Life and Drain Mana by 10%."
 			}
 		},
-		[7] = {
+		[8] = {
 			name = "Improved Curse of Agony",
 			icon = "spell_shadow_curseofsargeras",
 			desc = {
@@ -3413,7 +3430,7 @@ Turtle_TalentsData = {
 			"Increases the damage done by your Curse of Agony by 10%."
 			}
 		},
-		[8] = {
+		[9] = {
 			name = "Fel Concentration",
 			icon = "spell_shadow_fingerofdeath",
 			desc = {
@@ -3421,20 +3438,11 @@ Turtle_TalentsData = {
 			"Gives your Affliction spells a 70% chance to not lose casting time when you take damage."
 			}
 		},
-		[9] = {
+		[10] = {
 			name = "Curse of Exhaustion",
 			icon = "spell_shadow_grimward",
 			desc = {
 			"Reduces the target's movement speed by 10% for 12 sec.  Only one Curse per Warlock can be active on any one target."
-			}
-		},
-		[10] = {
-			name = "Sinister Pursuit",
-			icon = "ability_rogue_envelopingshadows",
-			desc = {
-			"Increases the movement speed of your demons by 5% for 3 sec after they attack a target affected by Affliction effects.",
-			"Increases the movement speed of your demons by 10% for 3 sec after they attack a target affected by Affliction effects.",
-			"Increases the movement speed of your demons by 15% for 3 sec after they attack a target affected by Affliction effects."
 			}
 		},
 		[11] = {
@@ -3597,8 +3605,8 @@ Turtle_TalentsData = {
 			name = "Improved Stones",
 			icon = "inv_jewelry_talisman_fireice",
 			desc = {
-			"Increases the effects of your Felstone, Wrathstone and Spellstone by 25% and the critical strike chance bonus of your Firestone by 50%.",
-			"Increases the effects of your Felstone, Wrathstone and Spellstone by 50% and the critical strike chance bonus of your Firestone by 100%."
+			"Increases the effectiveness of your Felstone, Wrathstone, Voidstone, and Spellstone by 25%, and increases the critical strike chance bonus of your Firestone by 50%.",
+			"Increases the effectiveness of your Felstone, Wrathstone, Voidstone, and Spellstone by 50%, and increases the critical strike chance bonus of your Firestone by 100%."
 			}
 		},
 		[11] = {
@@ -3647,11 +3655,11 @@ Turtle_TalentsData = {
 			name = "Master Demonologist",
 			icon = "spell_shadow_shadowpact",
 			desc = {
-			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 4%.\n\nVoidwalker - Reduces physical damage taken by 2%.\n\nSuccubus - Increases all damage done by 2%.\n\nFelhunter - Increases all resistances by 0.\n\nGreater Demons - Increases spell critical chance by 2%, but reduces healing received by 8%.\n",
-			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 8%.\n\nVoidwalker - Reduces physical damage taken by 4%.\n\nSuccubus - Increases all damage done by 4%.\n\nFelhunter - Increases all resistances by 0.\n\nGreater Demons - Increases spell critical chance by 4%, but reduces healing received by 16%.\n",
-			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 12%.\n\nVoidwalker - Reduces physical damage taken by 6%.\n\nSuccubus - Increases all damage done by 6%.\n\nFelhunter - Increases all resistances by 0.\n\nGreater Demons - Increases spell critical chance by 6%, but reduces healing received by 24%.\n",
-			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 16%.\n\nVoidwalker - Reduces physical damage taken by 8%.\n\nSuccubus - Increases all damage done by 8%.\n\nFelhunter - Increases all resistances by 0.\n\nGreater Demons - Increases spell critical chance by 8%, but reduces healing received by 32%.\n",
-			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 20%.\n\nVoidwalker - Reduces physical damage taken by 10%.\n\nSuccubus - Increases all damage done by 10%.\n\nFelhunter - Increases all resistances by 0.\n\nGreater Demons - Increases spell critical chance by 10%, but reduces healing received by 40%.\n"
+			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 3%.\n\nVoidwalker - Reduces physical damage taken by 2%.\n\nSuccubus - Increases all damage done by 2%.\n\nFelhunter - Increases all resistances by 12.\n\nGreater Demons - Increases spell critical chance by 2%, but reduces healing received by 8%.\n",
+			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 6%.\n\nVoidwalker - Reduces physical damage taken by 4%.\n\nSuccubus - Increases all damage done by 4%.\n\nFelhunter - Increases all resistances by 24.\n\nGreater Demons - Increases spell critical chance by 4%, but reduces healing received by 16%.\n",
+			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 9%.\n\nVoidwalker - Reduces physical damage taken by 6%.\n\nSuccubus - Increases all damage done by 6%.\n\nFelhunter - Increases all resistances by 36.\n\nGreater Demons - Increases spell critical chance by 6%, but reduces healing received by 24%.\n",
+			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 12%.\n\nVoidwalker - Reduces physical damage taken by 8%.\n\nSuccubus - Increases all damage done by 8%.\n\nFelhunter - Increases all resistances by 48.\n\nGreater Demons - Increases spell critical chance by 8%, but reduces healing received by 32%.\n",
+			"Grants both the Warlock and the summoned demon an effect as long as that demon is active.\n\nImp - Reduces spell costs by 15%.\n\nVoidwalker - Reduces physical damage taken by 10%.\n\nSuccubus - Increases all damage done by 10%.\n\nFelhunter - Increases all resistances by 60.\n\nGreater Demons - Increases spell critical chance by 10%, but reduces healing received by 40%.\n"
 			}
 		},
 		[17] = {
@@ -4053,6 +4061,15 @@ Turtle_TalentsData = {
 			}
 		},
 		[6] = {
+			name = "Open Wounds",
+			icon = "ability_druid_disembowel",
+			desc = {
+			"Increases the damage of Rip by 5%. In addition, increases the damage of Claw by 10% for each active Bleed effect on the target.",
+			"Increases the damage of Rip by 10%. In addition, increases the damage of Claw by 20% for each active Bleed effect on the target.",
+			"Increases the damage of Rip by 15%. In addition, increases the damage of Claw by 30% for each active Bleed effect on the target."
+			}
+		},
+		[7] = {
 			name = "Feral Swiftness",
 			icon = "spell_nature_spiritwolf",
 			desc = {
@@ -4060,14 +4077,14 @@ Turtle_TalentsData = {
 			"Increases your movement speed by 30% while outdoors in Cat Form and increases your chance to dodge while in Bear, Dire Bear and Cat Form by 4%."
 			}
 		},
-		[7] = {
+		[8] = {
 			name = "Feral Charge",
 			icon = "ability_hunter_pet_bear",
 			desc = {
 			"Causes you to charge an enemy, immobilizing and interrupting any spell being cast for 4 sec."
 			}
 		},
-		[8] = {
+		[9] = {
 			name = "Sharpened Claws",
 			icon = "inv_misc_monsterclaw_04",
 			desc = {
@@ -4076,7 +4093,7 @@ Turtle_TalentsData = {
 			"Increases your critical strike chance while in Bear, Dire Bear or Cat Form by 6%."
 			}
 		},
-		[9] = {
+		[10] = {
 			name = "Primal Fury",
 			icon = "ability_racial_cannibalize",
 			desc = {
@@ -4084,7 +4101,7 @@ Turtle_TalentsData = {
 			"Gives you a 100% chance to gain an additional 5 Rage anytime you get a critical strike while in Bear and Dire Bear Form and your critical strikes from Cat Form abilities that add combo points have a chance to add an additional combo point."
 			}
 		},
-		[10] = {
+		[11] = {
 			name = "Predatory Strikes",
 			icon = "ability_hunter_pet_cat",
 			desc = {
@@ -4093,7 +4110,7 @@ Turtle_TalentsData = {
 			"Increases your melee attack power in Cat, Bear, and Dire Bear Forms by 10%. In addition, increases the damage caused by your Claw, Rake, Maul, Swipe, and Savage Bite abilities by 20%."
 			}
 		},
-		[11] = {
+		[12] = {
 			name = "Blood Frenzy",
 			icon = "ability_ghoulfrenzy",
 			desc = {
@@ -4101,7 +4118,7 @@ Turtle_TalentsData = {
 			"Increases the duration of Tiger's Fury by 12 sec, and causes Enrage to instantly generate 10 Rage. In addition, Tiger's Fury and Enrage increase your attack speed by 20% for 18 sec."
 			}
 		},
-		[12] = {
+		[13] = {
 			name = "Improved Shred",
 			icon = "spell_shadow_vampiricaura",
 			desc = {
@@ -4109,7 +4126,7 @@ Turtle_TalentsData = {
 			"Increases the damage of Shred by 10% and reduces its Energy cost by 12."
 			}
 		},
-		[13] = {
+		[14] = {
 			name = "Ancient Brutality",
 			icon = "spell_shadow_unholyfrenzy",
 			desc = {
@@ -4117,20 +4134,11 @@ Turtle_TalentsData = {
 			"Dodging an attack while in Bear or Dire Bear Form imbues you with the spirit of the Ancients, generating 4 Rage per second for 5 sec. This effect can only occur once every 9 seconds.  While in Cat Form, periodic ticks of your Bleed effects restore 5 Energy."
 			}
 		},
-		[14] = {
+		[15] = {
 			name = "Berserk",
 			icon = "ability_druid_berserk",
 			desc = {
 			"Removes all Fear effects and increases your energy regeneration rate by 100% while in Cat form, and increases your total health by 20% while in Bear form. After the effect ends, the health is lost. Effect lasts 20 seconds."
-			}
-		},
-		[15] = {
-			name = "Open Wounds",
-			icon = "ability_druid_disembowel",
-			desc = {
-			"Increases the damage of Rip by 5%. In addition, increases the damage of Claw by 10% for each active Bleed effect on the target.",
-			"Increases the damage of Rip by 10%. In addition, increases the damage of Claw by 20% for each active Bleed effect on the target.",
-			"Increases the damage of Rip by 15%. In addition, increases the damage of Claw by 30% for each active Bleed effect on the target."
 			}
 		},
 		[16] = {

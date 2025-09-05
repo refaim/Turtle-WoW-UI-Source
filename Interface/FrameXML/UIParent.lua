@@ -1584,7 +1584,7 @@ UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = {baseY = 0, bottomLeft 
 
 -- Vars
 UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_X"] = {baseX = 0, rightLeft = 90, rightRight = 45, isVar = "xAxis"};
-UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_Y"] = {baseY = 70, bottomEither = 27, bottomRight = 0, reputation = 9, isVar = "yAxis", pet = 23};
+UIPARENT_MANAGED_FRAME_POSITIONS["CONTAINER_OFFSET_Y"] = {baseY = 70, bottomEither = 27, bottomRight = 0, reputation = 9, isVar = "yAxis", pet = 28};
 UIPARENT_MANAGED_FRAME_POSITIONS["BATTLEFIELD_TAB_OFFSET_Y"] = {baseY = 210, bottomRight = 40, reputation = 9, isVar = "yAxis"};
 UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = {baseY = 97, reputation = 9, maxLevel = -5, isVar = "yAxis"};
 
@@ -1750,7 +1750,7 @@ function UIParent_ManageFramePositions()
 	end
 
 	-- Setup y anchors
-	local anchorY = 0;
+	local anchorY = -80;
 	-- Capture bars
 	if ( NUM_EXTENDED_UI_FRAMES ) then
 		local captureBar;

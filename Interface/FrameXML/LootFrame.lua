@@ -5,9 +5,11 @@ MASTER_LOOT_THREHOLD = 4;
 local GroupRoster = {}
 for k in pairs(RAID_CLASS_COLORS) do
 	GroupRoster[k] = {}
-	for k2, v2 in pairs(TW_CLASS_TOKEN[GetLocale()]) do
-		if v2 == k then
-			GroupRoster[k].class = k2
+	if TW_CLASS_TOKEN and TW_CLASS_TOKEN[GetLocale()] then
+		for k2, v2 in pairs(TW_CLASS_TOKEN[GetLocale()]) do
+			if v2 == k then
+				GroupRoster[k].class = k2
+			end
 		end
 	end
 end

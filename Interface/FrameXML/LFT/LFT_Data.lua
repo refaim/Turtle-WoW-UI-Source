@@ -11,7 +11,7 @@ LFT_Instances = {
 	},
 	["wc"] = {
 		name = LFT_DUNGEON_WC,
-		minLevel = 18,
+		minLevel = 16,
 		maxLevel = 25,
 		background = "wailingcaverns",
 		-- bosses = {
@@ -21,7 +21,7 @@ LFT_Instances = {
 	},
 	["dm"] = {
 		name = LFT_DUNGEON_DM,
-		minLevel = 17,
+		minLevel = 16,
 		maxLevel = 24,
 		background = "deadmines",
 		-- bosses = {
@@ -30,7 +30,7 @@ LFT_Instances = {
 	},
 	["sfk"] = {
 		name = LFT_DUNGEON_SFK,
-		minLevel = 22,
+		minLevel = 20,
 		maxLevel = 28,
 		background = "shadowfangkeep",
 		-- bosses = {
@@ -40,7 +40,7 @@ LFT_Instances = {
 	},
 	["stocks"] = {
 		name = LFT_DUNGEON_STOCKS,
-		minLevel = 25,
+		minLevel = 23,
 		maxLevel = 32,
 		background = "stormwindstockades",
 		-- bosses = {
@@ -49,7 +49,7 @@ LFT_Instances = {
 	},
 	["bfd"] = {
 		name = LFT_DUNGEON_BFD,
-		minLevel = 24,
+		minLevel = 22,
 		maxLevel = 31,
 		background = "blackfathomdeeps",
 		-- bosses = {
@@ -68,7 +68,7 @@ LFT_Instances = {
 	},
 	["smlib"] = {
 		name = LFT_DUNGEON_SMLIB,
-		minLevel = 33,
+		minLevel = 32,
 		maxLevel = 40,
 		background = "scarletmonastery",
 		-- bosses = {
@@ -77,7 +77,7 @@ LFT_Instances = {
 	},
 	["gnomer"] = {
 		name = LFT_DUNGEON_GNOMER,
-		minLevel = 30,
+		minLevel = 28,
 		maxLevel = 37,
 		background = "gnomeregan",
 		-- bosses = {
@@ -96,8 +96,8 @@ LFT_Instances = {
 	},
 	["tcg"] = {
 		name = LFT_DUNGEON_TCG,
-		minLevel = 34,
-		maxLevel = 41,
+		minLevel = 33,
+		maxLevel = 39,
 		background = "tcg",
 		-- bosses = {
 		--	 "Grovetender Engryss", "Keeper Ranathos", "High Priestess A'lathea", "Fenektis the Deceiver",
@@ -106,8 +106,8 @@ LFT_Instances = {
 	},
 	["smarmory"] = {
 		name = LFT_DUNGEON_SMARM,
-		minLevel = 36,
-		maxLevel = 43,
+		minLevel = 34,
+		maxLevel = 42,
 		background = "scarletmonastery",
 		-- bosses = {
 		--	 "Herod",
@@ -115,7 +115,7 @@ LFT_Instances = {
 	},
 	["smcath"] = {
 		name = LFT_DUNGEON_SMCATH,
-		minLevel = 38,
+		minLevel = 35,
 		maxLevel = 45,
 		background = "scarletmonastery",
 		-- bosses = {
@@ -124,7 +124,7 @@ LFT_Instances = {
 	},
 	["rfd"] = {
 		name = LFT_DUNGEON_RFD,
-		minLevel = 37,
+		minLevel = 35,
 		maxLevel = 44,
 		background = "razorfendowns",
 		-- bosses = {
@@ -133,7 +133,7 @@ LFT_Instances = {
 	},
 	["ulda"] = {
 		name = LFT_DUNGEON_ULDA,
-		minLevel = 43,
+		minLevel = 41,
 		maxLevel = 50,
 		background = "uldaman",
 		-- bosses = {
@@ -143,7 +143,7 @@ LFT_Instances = {
 	},
 	["gilneas"] = {
 		name = LFT_DUNGEON_GILNEAS,
-		minLevel = 45,
+		minLevel = 43,
 		maxLevel = 52,
 		background = "gilneas",
 		-- bosses = {
@@ -153,7 +153,7 @@ LFT_Instances = {
 	},
 	["zf"] = {
 		name = LFT_DUNGEON_ZF,
-		minLevel = 44,
+		minLevel = 42,
 		maxLevel = 51,
 		background = "zulfarak",
 		-- bosses = {
@@ -163,7 +163,7 @@ LFT_Instances = {
 	},
 	["maraorange"] = {
 		name = LFT_DUNGEON_MARAORANGE,
-		minLevel = 44,
+		minLevel = 43,
 		maxLevel = 51,
 		background = "maraudon",
 		-- bosses = {
@@ -181,7 +181,7 @@ LFT_Instances = {
 	},
 	["maraprincess"] = {
 		name = LFT_DUNGEON_MARAPRINCESS,
-		minLevel = 47,
+		minLevel = 46,
 		maxLevel = 54,
 		background = "maraudon",
 		-- bosses = {
@@ -190,7 +190,7 @@ LFT_Instances = {
 	},
 	["st"] = {
 		name = LFT_DUNGEON_ST,
-		minLevel = 51,
+		minLevel = 49,
 		maxLevel = 58,
 		background = "sunkentemple",
 		-- bosses = {
@@ -200,7 +200,7 @@ LFT_Instances = {
 	},
 	["hfq"] = {
 		name = LFT_DUNGEON_HFC,
-		minLevel = 53,
+		minLevel = 51,
 		maxLevel = 60,
 		background = "hfq",
 		-- bosses = {
@@ -222,7 +222,7 @@ LFT_Instances = {
 	},
 	["brdarena"] = {
 		name = LFT_DUNGEON_BRDARENA,
-		minLevel = 52,
+		minLevel = 50,
 		maxLevel = 60,
 		background = "blackrockdepths",
 		-- bosses = {
@@ -356,7 +356,7 @@ LFT_Instances = {
 	},
 	["dmr"] = {
 		name = LFT_DUNGEON_DMR,
-		minLevel = 28,
+		minLevel = 26,
 		maxLevel = 35,
 		background = "dmr",
 	},

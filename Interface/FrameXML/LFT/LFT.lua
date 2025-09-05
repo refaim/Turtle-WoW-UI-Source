@@ -1,12 +1,13 @@
-local Prefix = "TW_LFG"
-local Channel = "GUILD"
-local ArrayDelimiter = ":"
-local FieldDelimiter = ";"
+LFT_ADDON_PREFIX = "TW_LFG"
+LFT_ADDON_CHANNEL = "GUILD"
+LFT_ADDON_ARRAY_DELIMITER = ":"
+LFT_ADDON_FIELD_DELIMITER = ";"
+LFT_MIN_FINDER_LEVEL = 13
+
 local Red = "|cffff222a"
 local Yellow = "|cffffff00"
 local White = "|cffffffff"
 
-local MinFinderLevel = 13
 local MaxOfferAcceptTime = 90
 local MaxRolecheckTime = 90
 local RefreshButtonTick = 5
@@ -160,7 +161,7 @@ local function IsIgnored(name)
 end
 
 local function Send(msg)
-	SendAddonMessage(Prefix, msg, Channel)
+	SendAddonMessage(LFT_ADDON_PREFIX, msg, LFT_ADDON_CHANNEL)
 end
 
 -- handle various messages sent by the server via
@@ -181,7 +182,7 @@ local function LFT_HandleMessageFromServer(message)
 	-- sent when a group has been found and the player
 	-- has to confirm that they're ready
 	if strfind(message, "S2C_OFFER_NEW") then
-		local params = explode(message, FieldDelimiter)
+		local params = explode(message, LFT_ADDON_FIELD_DELIMITER)
 
 		LFT_GroupReadyShow(params[2], params[3])
 	end
@@ -190,7 +191,7 @@ local function LFT_HandleMessageFromServer(message)
 	-- during a ready check
 	if strfind(message, "S2C_OFFER_UPDATE_COUNT") then
 		local params = strsub(message, strlen("S2C_OFFER_UPDATE_COUNT") + 2) -- remove message type
-		params = explode(params, ":") -- get confirmed roles
+		params = explode(params, LFT_ADDON_ARRAY_DELIMITER) -- get confirmed roles
 
 		LFT_GroupReadyStatusUpdate(false, params[1], params[2], params[3])
 	end
@@ -204,7 +205,7 @@ local function LFT_HandleMessageFromServer(message)
 	-- sent when a party leader initiates a role check
 	if strfind(message, "S2C_ROLECHECK_START") then
 		local params = strsub(message, strlen("S2C_ROLECHECK_START") + 2) -- remove message type
-		params = explode(params, ":") -- get queued instances
+		params = explode(params, LFT_ADDON_ARRAY_DELIMITER) -- get queued instances
 
 		LFT_RoleCheckStart(params)
 	end
@@ -213,10 +214,10 @@ local function LFT_HandleMessageFromServer(message)
 	-- during a role check
 	if strfind(message, "S2C_ROLECHECK_INFO") then
 		if GetNumPartyMembers() > 0 then
-			local params = explode(message, FieldDelimiter)
+			local params = explode(message, LFT_ADDON_FIELD_DELIMITER)
 			local member = params[2] -- name of the group member who confirmed their role
 			local roles = ""
-			params = explode(params[3], ":") -- get confirmed roles
+			params = explode(params[3], LFT_ADDON_ARRAY_DELIMITER) -- get confirmed roles
 			for i = 1, getn(params) do
 				roles = roles .. Yellow .. GetRoleFromCode(params[i]) .. White .. ", "
 			end
@@ -239,10 +240,10 @@ local function LFT_HandleMessageFromServer(message)
 	-- about the queue (not true atm - sent only once)
 	if strfind(message, "S2C_UPDATE_QUEUE_STATUS") then
 		message = strsub(message, strlen("S2C_UPDATE_QUEUE_STATUS") + 2) -- remove message type
-		local params = explode(message, FieldDelimiter)
+		local params = explode(message, LFT_ADDON_FIELD_DELIMITER)
 		if strfind(params[1], "queued") then
 			InQueue = true
-			local instances = explode(params[2], ArrayDelimiter)
+			local instances = explode(params[2], LFT_ADDON_ARRAY_DELIMITER)
 			for k in pairs(SelectedInstances) do
 				SelectedInstances[k] = false
 			end
@@ -283,7 +284,8 @@ local function LFT_HandleMessageFromServer(message)
 		if InGroupOrRaid() then
 			return
 		end
-		local _, _, leader, groupTitle, roleIndex, id = strfind(message, "S2C_INVITE_ROLE;(.+);(.+);(%d+);(%d+)")
+		local _, _, leader, groupTitle, roleIndex, id = strfind(message, "S2C_INVITE_ROLE"..LFT_ADDON_FIELD_DELIMITER..
+			"(.+)"..LFT_ADDON_FIELD_DELIMITER.."(.+)"..LFT_ADDON_FIELD_DELIMITER.."(%d+)"..LFT_ADDON_FIELD_DELIMITER.."(%d+)")
 		OfferedGroup.leader = leader
 		OfferedGroup.title = groupTitle
 		OfferedGroup.role = roleIndex
@@ -292,7 +294,7 @@ local function LFT_HandleMessageFromServer(message)
 	end
 
 	if strfind(message, "S2C_GROUPS_STATUS", 1, true) then
-		local _, _, status = strfind(message, "S2C_GROUPS_STATUS;(%d)")
+		local _, _, status = strfind(message, "S2C_GROUPS_STATUS"..LFT_ADDON_FIELD_DELIMITER.."(%d)")
 		if tonumber(status) ~= 1 then
 			-- PanelTemplates_SetTab(LFTFrame, 1)
 			LFTFrameTab1:Click()
@@ -314,22 +316,22 @@ local function LFT_HandleMessageFromServer(message)
 	end
 
 	if strfind(message, "S2C_GROUPS_LIST_UPDATE", 1, true) then
-		if strfind(message, "S2C_GROUPS_LIST_UPDATE;start", 1, true) then
+		if strfind(message, "S2C_GROUPS_LIST_UPDATE"..LFT_ADDON_FIELD_DELIMITER.."start", 1, true) then
 			for i = getn(Groups), 1, -1 do
 				tremove(Groups, i)
 			end
 			MyGroupCategory = nil
-		elseif strfind(message, "S2C_GROUPS_LIST_UPDATE;end", 1, true) then
+		elseif strfind(message, "S2C_GROUPS_LIST_UPDATE"..LFT_ADDON_FIELD_DELIMITER.."end", 1, true) then
 			LFT_UpdateGroupsList()
 			if LFTGroupDetailsFrame:IsShown() then
 				if LFTGroupDetailsFrame.data and LFTGroupDetailsFrame.data.id then
-					Send("C2S_GET_GROUP_DETAILS;"..LFTGroupDetailsFrame.data.id)
+					Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..LFTGroupDetailsFrame.data.id)
 					LFTGroupDetailsFrame.time = 0
 					LFTGroupDetailsFrame.refreshTime = DetailsFrameFirstTick
 				end
 			end
 		else
-			local _, _, data = strfind(message, "S2C_GROUPS_LIST_UPDATE;(.+)")
+			local _, _, data = strfind(message, "S2C_GROUPS_LIST_UPDATE"..LFT_ADDON_FIELD_DELIMITER.."(.+)")
 			local NewGroup = json.decode(data)
 			if type(NewGroup) == "table" then
 				for k, v in pairs(Groups) do
@@ -351,7 +353,8 @@ local function LFT_HandleMessageFromServer(message)
 	end
 
 	if strfind(message, "S2C_UPDATE_GROUP", 1, true) then
-		local _, _, groupID, code, data = strfind(message, "S2C_UPDATE_GROUP;(%d+);([%a%d]+);?(.*)")
+		local _, _, groupID, code, data = strfind(message, "S2C_UPDATE_GROUP"..LFT_ADDON_FIELD_DELIMITER..
+			"(%d+)"..LFT_ADDON_FIELD_DELIMITER.."([%a%d]+)"..LFT_ADDON_FIELD_DELIMITER.."?(.*)")
 		-- code can be "start", "end" or a role index (0,1,2 or 3)
 		groupID = tonumber(groupID)
 		if groupID and code then
@@ -406,10 +409,10 @@ local function LFT_HandleMessageFromServer(message)
 		if not MyGroupCategory then
 			return
 		end
-		local _, _, name, roles = strfind(message, "S2C_NEW_SIGNUP;(.+);(.*)")
+		local _, _, name, roles = strfind(message, "S2C_NEW_SIGNUP"..LFT_ADDON_FIELD_DELIMITER.."(.+)"..LFT_ADDON_FIELD_DELIMITER.."(.*)")
 		if name and name ~= UnitName("player") then
 			local rolesStr = ""
-			local params = explode(roles or "", ":")
+			local params = explode(roles or "", LFT_ADDON_ARRAY_DELIMITER)
 
 			for i = 1, getn(params) do
 				rolesStr = rolesStr .. GetRoleFromCode(params[i]) .. ", "
@@ -423,7 +426,7 @@ local function LFT_HandleMessageFromServer(message)
 			end
 			if LFTGroupDetailsFrame:IsShown() then
 				if LFTGroupDetailsFrame.data and LFTGroupDetailsFrame.data.id then
-					Send("C2S_GET_GROUP_DETAILS;"..LFTGroupDetailsFrame.data.id)
+					Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..LFTGroupDetailsFrame.data.id)
 					LFTGroupDetailsFrame.time = 0
 					LFTGroupDetailsFrame.refreshTime = DetailsFrameFirstTick
 				end
@@ -578,14 +581,14 @@ function LFT_MainButtonClick()
 		local instances = ""
 		for instanceName in pairs(SelectedInstances) do
 			if SelectedInstances[instanceName] then
-				instances = instances .. instanceName .. ArrayDelimiter
+				instances = instances .. instanceName .. LFT_ADDON_ARRAY_DELIMITER
 			end
 		end
 
 		local roles = ""
 		for roleName in pairs(SelectedRoles) do
 			if SelectedRoles[roleName] == true then
-				roles = roles .. strsub(roleName, 1, 1) .. ArrayDelimiter
+				roles = roles .. strsub(roleName, 1, 1) .. LFT_ADDON_ARRAY_DELIMITER
 			end
 		end
 
@@ -593,7 +596,7 @@ function LFT_MainButtonClick()
 		instances = strlower(strsub(instances, 1, -2))
 		roles = strlower(strsub(roles, 1, -2))
 
-		Send("C2S_QUEUE_JOIN" .. FieldDelimiter .. instances .. FieldDelimiter .. roles)
+		Send("C2S_QUEUE_JOIN" .. LFT_ADDON_FIELD_DELIMITER .. instances .. LFT_ADDON_FIELD_DELIMITER .. roles)
 	else
 		-- player wants to leave queue
 		Send("C2S_QUEUE_LEAVE")
@@ -704,13 +707,13 @@ function LFT_RoleCheckClick(confirm)
 		local roles = ""
 		for roleName in pairs(SelectedRoles) do
 			if SelectedRoles[roleName] then
-				roles = roles .. strsub(roleName, 1, 1) .. ArrayDelimiter
+				roles = roles .. strsub(roleName, 1, 1) .. LFT_ADDON_ARRAY_DELIMITER
 			end
 		end
 
 		roles = strlower(strsub(roles, 1, -2))
 
-		local message = "C2S_ROLECHECK_RESPONSE" .. FieldDelimiter .. roles
+		local message = "C2S_ROLECHECK_RESPONSE" .. LFT_ADDON_FIELD_DELIMITER .. roles
 		Send(message)
 
 		PlaySound("gsTitleOptionOK")
@@ -774,7 +777,7 @@ function LFT_UpdateInstances()
 
 	LFTFrameWarningText:SetText("")
 	-- show low level text if player's level doesn't meet the criteria
-	if level and level < MinFinderLevel then
+	if level and level < LFT_MIN_FINDER_LEVEL then
 		LFTFrameWarningText:SetText(LFT_GENERAL_LOW_LEVEL_TEXT)
 		-- end here, player level is too low
 		return
@@ -1046,7 +1049,7 @@ function LFTFrame_OnEvent()
 	if event == "VARIABLES_LOADED" then
 		LFT_Init()
 	elseif event == "CHAT_MSG_ADDON" then
-		if arg1 == Prefix then
+		if arg1 == LFT_ADDON_PREFIX then
 			LFT_HandleMessageFromServer(arg2)
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
@@ -1271,11 +1274,11 @@ function LFTFrameSignUp_OnClick(skipDialog)
 		local myRoles = isTank and needTanks and 1 or 0
 		myRoles = isHealer and needHealers and myRoles + 2 or myRoles
 		myRoles = isDamage and needDamage and myRoles + 4 or myRoles
-		Send("C2S_SIGNUP;true;"..data.id..FieldDelimiter..myRoles)
+		Send("C2S_SIGNUP"..LFT_ADDON_FIELD_DELIMITER.."true"..LFT_ADDON_FIELD_DELIMITER..data.id..LFT_ADDON_FIELD_DELIMITER..myRoles)
 	else
 		-- player wants to cancel sign-up
-		Send("C2S_SIGNUP;false;"..data.id)
-		Send("C2S_GET_GROUP_DETAILS;"..data.id)
+		Send("C2S_SIGNUP"..LFT_ADDON_FIELD_DELIMITER.."false"..LFT_ADDON_FIELD_DELIMITER..data.id)
+		Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..data.id)
 	end
 	LFTFrameSignUpButton:Disable()
 	LFTFrameSignUpButton.time = 0
@@ -1317,7 +1320,7 @@ function LFTGroupEntry_OnClick()
 		this:LockHighlight()
 		_G[this:GetName().."Highlight"]:Show()
 		LFTGroupDetailsFrame.data = SelectedGroupFrame.data
-		Send("C2S_GET_GROUP_DETAILS;"..SelectedGroupFrame.data.id)
+		Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..SelectedGroupFrame.data.id)
 		LFTGroupDetailsFrame.time = 0
 		LFTGroupDetailsFrame.refreshTime = DetailsFrameFirstTick
 		LFTGroupDetailsFrame:Show()
@@ -1413,15 +1416,15 @@ function LFT_GroupDetailsSaveChanges_OnClick()
 		roleIndex = not LFTGroupDetailsFrame.usingRoles and 0 or k
 		for k2, v2 in pairs(data.signups[k]) do
 			if v2.confirmed then
-				confirmedPlayers = confirmedPlayers..v2.name..ArrayDelimiter..roleIndex..FieldDelimiter
+				confirmedPlayers = confirmedPlayers..v2.name..LFT_ADDON_ARRAY_DELIMITER..roleIndex..LFT_ADDON_FIELD_DELIMITER
 			end
 		end
 	end
 	LFTGroupDetailsSaveChangesButton:Disable()
 	LFTGroupDetailsFrame.pauseUpdates = false
-	Send("C2S_UPDATE_GROUP;"..data.id..FieldDelimiter..data.title..FieldDelimiter..data.description..FieldDelimiter..
-		data.limit[1]..ArrayDelimiter..data.limit[2]..ArrayDelimiter..data.limit[3]..FieldDelimiter..confirmedPlayers)
-	Send("C2S_GET_GROUP_DETAILS;"..data.id)
+	Send("C2S_UPDATE_GROUP"..LFT_ADDON_FIELD_DELIMITER..data.id..LFT_ADDON_FIELD_DELIMITER..data.title..LFT_ADDON_FIELD_DELIMITER..data.description..LFT_ADDON_FIELD_DELIMITER..
+		data.limit[1]..LFT_ADDON_ARRAY_DELIMITER..data.limit[2]..LFT_ADDON_ARRAY_DELIMITER..data.limit[3]..LFT_ADDON_FIELD_DELIMITER..confirmedPlayers)
+	Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..data.id)
 	LFTGroupDetailsFrame.time = 0
 	LFTGroupDetailsFrame.refreshTime = DetailsFrameFirstTick
 end
@@ -1471,7 +1474,7 @@ function LFTGroupDetailsFrame_OnUpdate(elapsed)
 		this.time = 0
 		this.refreshTime = DetailsFrameTick
 		if SelectedGroupFrame then
-			Send("C2S_GET_GROUP_DETAILS;"..SelectedGroupFrame.data.id)
+			Send("C2S_GET_GROUP_DETAILS"..LFT_ADDON_FIELD_DELIMITER..SelectedGroupFrame.data.id)
 		end
 	end
 end
@@ -1748,14 +1751,14 @@ function LFT_Invite(name, roleID)
 	if not LFTGroupDetailsFrame.data or name == UnitName("player") then
 		return
 	end
-	Send("C2S_INVITE_ROLE;"..LFTGroupDetailsFrame.data.id..FieldDelimiter..name..FieldDelimiter..roleID)
+	Send("C2S_INVITE_ROLE"..LFT_ADDON_FIELD_DELIMITER..LFTGroupDetailsFrame.data.id..LFT_ADDON_FIELD_DELIMITER..name..LFT_ADDON_FIELD_DELIMITER..roleID)
 end
 
 function LFT_RemoveSignup(name)
 	if InGroupWith(name) then
 		UninviteByName(name)
 	else
-		Send("C2S_REMOVE_SIGNUP;"..name)
+		Send("C2S_REMOVE_SIGNUP"..LFT_ADDON_FIELD_DELIMITER..name)
 	end
 end
 
@@ -1920,7 +1923,7 @@ function LFTNewGroupOkButton_OnClick()
 				if v2 then
 					for k3, v3 in pairs(v2) do
 						if v3.name == UnitName("player") then
-							Send("C2S_SIGNUP;false;"..v.id)
+							Send("C2S_SIGNUP"..LFT_ADDON_FIELD_DELIMITER.."false"..LFT_ADDON_FIELD_DELIMITER..v.id)
 							i = 1
 							break
 						end
@@ -1928,8 +1931,8 @@ function LFTNewGroupOkButton_OnClick()
 				end
 			end
 		end
-		Send("C2S_NEW_GROUP;"..title..FieldDelimiter..description..FieldDelimiter..CurrentDropDownValue[2]..FieldDelimiter..
-			tanks..ArrayDelimiter..healers..ArrayDelimiter..damage..FieldDelimiter..myRoles)
+		Send("C2S_NEW_GROUP"..LFT_ADDON_FIELD_DELIMITER..title..LFT_ADDON_FIELD_DELIMITER..description..LFT_ADDON_FIELD_DELIMITER..CurrentDropDownValue[2]..LFT_ADDON_FIELD_DELIMITER..
+			tanks..LFT_ADDON_ARRAY_DELIMITER..healers..LFT_ADDON_ARRAY_DELIMITER..damage..LFT_ADDON_FIELD_DELIMITER..myRoles)
 	end
 	LFTNewGroupFrame:Hide()
 end
@@ -2022,7 +2025,7 @@ StaticPopupDialogs["LFT_CONFIRM_DELETE_GROUP"] = {
 		if not UnitFactionGroup("player") then
 			SendChatMessage(".lft listing delete "..LFTGroupDetailsFrame.data.id)
 		else
-			Send("C2S_DELETE_GROUP;"..LFTGroupDetailsFrame.data.id)
+			Send("C2S_DELETE_GROUP"..LFT_ADDON_FIELD_DELIMITER..LFTGroupDetailsFrame.data.id)
 		end
 		LFTGroupDetailsFrame:Hide()
 	end,
