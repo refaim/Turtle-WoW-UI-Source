@@ -276,6 +276,9 @@
 			<OnLoad>
 				GameTooltip_OnLoad();
 			</OnLoad>
+			<OnHide>
+				this.unit = nil;
+			</OnHide>
 		</Scripts>
 	</Frame>
 	<Frame name="PartyMemberBackground" parent="UIParent" frameStrata="LOW" enableMouse="true" hidden="true">

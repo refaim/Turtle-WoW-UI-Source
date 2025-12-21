@@ -13,45 +13,6 @@ UnitReactionColor = {
 	{ r = 0.0, g = 1.0, b = 0.0 },
 };
 
-function DispelTypeToDebuffType(type)
-	if ( type == 2 ) then
-		return "Curse";
-	elseif ( type == 3 ) then
-		return "Disease";
-	elseif ( type == 1 ) then
-		return "Magic";
-	elseif ( type == 4 ) then
-		return "Poison";
-	end
-	return "";
-end
-
--- Hook the addon chat messages
-local customDebuffs = {};
-local customDebuffIds = {};
-
-local UnitDebuff_orig = UnitDebuff;
-UnitDebuff = function(unit, index, filter)
-	if (index <= MAX_TARGET_DEBUFFS) then
-		return UnitDebuff_orig(unit, index, filter);
-	end
-
-	local id = index - MAX_TARGET_DEBUFFS;
-	if (customDebuffs[id] == nil) then
-		return nil;
-	end
-	return customDebuffs[id].texture, customDebuffs[id].stackAmount, DispelTypeToDebuffType(customDebuffs[id].dispel);
-end
-
-local GameTooltip_setdebuff_orig = GameTooltip.SetUnitDebuff;
-
-GameTooltip.SetUnitDebuff = function(self, unitId, buffIndex)
-	if (buffIndex <= MAX_TARGET_DEBUFFS) then
-		return GameTooltip_setdebuff_orig(self, unitId, buffIndex);
-	end
-	CheckCustomDebuffs(buffIndex);
-end
-
 function TargetFrame_OnLoad()
 	this.statusCounter = 0;
 	this.statusSign = -1;
@@ -73,21 +34,6 @@ function TargetFrame_OnLoad()
 	local frameLevel = TargetFrameTextureFrame:GetFrameLevel();
 	TargetFrameHealthBar:SetFrameLevel(frameLevel-1);
 	TargetFrameManaBar:SetFrameLevel(frameLevel-1);
-
-	-- local listener = CreateFrame("Frame");
-	-- listener:RegisterEvent("PLAYER_TARGET_CHANGED");
-	-- listener:RegisterEvent("CHAT_MSG_ADDON")
-	-- listener:SetScript("OnEvent", function ()
-	-- 	if (event == "PLAYER_TARGET_CHANGED") then
-	-- 		ClearCustomBuffs();
-	-- 	end
-
-	-- 	if (event == "CHAT_MSG_ADDON") then
-	-- 		if ( arg1 == "TW_Debuff" ) then
-	-- 			HandleMessage(arg2);
-	-- 		end
-	-- 	end
-	-- end)
 end
 
 function TargetFrame_Update()
@@ -110,12 +56,6 @@ function TargetFrame_Update()
 	else
 		this:Hide();
 	end
-end
-
--- Clear table customBuffs after target PLAYER_TARGET_CHANGED
-function ClearCustomBuffs()
-	customDebuffs = {};
-	customDebuffIds = {};
 end
 
 function TargetFrame_OnEvent(event)
@@ -172,25 +112,6 @@ function TargetFrame_OnEvent(event)
 			TargetFrame_UpdateChallenges(player)
 		end
 	end
-end
-
--- Handle message
-function HandleMessage(msg)
-	local message = json.decode(msg);
-	if (message.opcode == "ADD") then
-		table.insert(customDebuffs, message.data);
-		TargetDebuffButton_Update();
-	end
-
-	if (message.opcode == "REMOVE") then
-		for k,v in pairs(customDebuffs) do
-			if (v.id == message.data.id) then
-				table.remove(customDebuffs, k);
-			end
-		end
-		TargetDebuffButton_Update();
-	end
-	-- SendAddonMessage("TW_Debuff", json.encode({ 1, 2, 3, { x = 10 } }), "GUILD");
 end
 
 function TargetFrame_UpdateChallenges(player)
@@ -468,54 +389,14 @@ function TargetDebuffButton_Update()
 		end
 	end
 
-	-- Loop over table and display them
-	local buttonIndex = 17;
-	for k,v in pairs(customDebuffs) do
-		if (buttonIndex > 24) then
-			break;
-		end
-
-		local debuffBorder = getglobal("TargetFrameDebuff".. buttonIndex .."Border");
-		debuff = v.texture;
-		debuffStack = v.stackAmount;
-		button = getglobal("TargetFrameDebuff"..buttonIndex);
-		if ( debuff ) then
-			getglobal("TargetFrameDebuff"..  buttonIndex.."Icon"):SetTexture(debuff);
-			debuffCount = getglobal("TargetFrameDebuff".. buttonIndex .."Count");
-			local debuffType = DispelTypeToDebuffType(v.dispel);
-			if ( debuffType == "") then
-				debuffType = "none";
-			end
-			color = DebuffTypeColor[debuffType];
-			if ( debuffStack > 1 ) then
-				debuffCount:SetText(debuffStack);
-				debuffCount:Show();
-			else
-				debuffCount:Hide();
-			end
-			debuffBorder:SetVertexColor(color.r, color.g, color.b);
-			button:Show();
-			numDebuffs = numDebuffs + 1;
-			customDebuffIds[buttonIndex] = v;
-		else
-			button:Hide();
-		end
-		button.id = buttonIndex;
-		buttonIndex = buttonIndex + 1;
-	end
-
-	for i=buttonIndex, 24 do
-		getglobal("TargetFrameDebuff"..i):Hide();
-	end
-
-	-- Set the wrap point for the rows of de/buffs.
+	-- set the wrap point for the rows of de/buffs.
 	if ( targetofTarget ) then
 		debuffWrap = 5;
 	else
 		debuffWrap = 6;
 	end
 
-	-- And shrinks the debuffs if they begin to overlap the TargetFrame
+	-- and shrinks the debuffs if they begin to overlap the TargetFrame
 	if ( ( targetofTarget and ( numBuffs == 5 ) ) or ( numDebuffs >= debuffWrap ) ) then
 		debuffSize = 17;
 		debuffFrameSize = 19;
@@ -524,7 +405,7 @@ function TargetDebuffButton_Update()
 		debuffFrameSize = 23;
 	end
 
-	-- Resize Buffs
+	-- resize Buffs
 	for i=1, 5 do
 		button = getglobal("TargetFrameBuff"..i);
 		if ( button ) then
@@ -533,7 +414,7 @@ function TargetDebuffButton_Update()
 		end
 	end
 
-	-- Resize Debuffs
+	-- resize Debuffs
 	for i=1, 6 do
 		button = getglobal("TargetFrameDebuff"..i);
 		debuffFrame = getglobal("TargetFrameDebuff"..i.."Border");
@@ -569,7 +450,7 @@ function TargetFrame_HealthUpdate(elapsed, unit)
 		if ( (this.unitHPPercent > 0) and (this.unitHPPercent <= 0.2) ) then
 			local alpha = 255;
 			local counter = this.statusCounter + elapsed;
-			local sign	 = this.statusSign;
+			local sign    = this.statusSign;
 
 			if ( counter > 0.5 ) then
 				sign = -sign;
@@ -604,8 +485,9 @@ end
 
 function TargetHealthCheck()
 	if ( UnitIsPlayer("target") ) then
-		local unitHPMin, unitHPMax = this:GetMinMaxValues();
-		local unitCurrHP = this:GetValue();
+		local unitHPMin, unitHPMax, unitCurrHP;
+		unitHPMin, unitHPMax = this:GetMinMaxValues();
+		unitCurrHP = this:GetValue();
 		this:GetParent().unitHPPercent = unitCurrHP / unitHPMax;
 		if ( UnitIsDead("target") ) then
 			TargetPortrait:SetVertexColor(0.35, 0.35, 0.35, 1.0);
@@ -653,6 +535,8 @@ function TargetFrameDropDown_Initialize()
 	end
 end
 
+
+
 -- Raid target icon function
 RAID_TARGET_ICON_DIMENSION = 64;
 RAID_TARGET_TEXTURE_DIMENSION = 256;
@@ -668,21 +552,6 @@ function TargetFrame_UpdateRaidTargetIcon()
 	end
 end
 
-function CheckCustomDebuffs(id)
-	if id <= 16 then
-		return;
-	end
-
-	local customDebuff = customDebuffIds[id];
-	if (customDebuff == nil) then
-		return;
-	end
-
-	GameTooltip:ClearLines();
-	GameTooltip:AddDoubleLine(customDebuff.name, DispelTypeToDebuffType(customDebuff.dispel));
-	GameTooltip:AddLine(customDebuff.tooltip, 1, 1, 1, 1);
-	GameTooltip:Show();
-end
 
 function SetRaidTargetIconTexture(texture, raidTargetIconIndex)
 	raidTargetIconIndex = raidTargetIconIndex - 1;
@@ -751,6 +620,7 @@ function TargetofTarget_Update()
 	end
 end
 
+
 function TargetofTarget_OnClick(button)
 	if ( SpellIsTargeting() and button == "RightButton" ) then
 		SpellStopTargeting();
@@ -779,8 +649,9 @@ end
 
 function TargetofTargetHealthCheck()
 	if ( UnitIsPlayer("targettarget") ) then
-		local unitHPMin, unitHPMax = this:GetMinMaxValues();
-		local unitCurrHP = this:GetValue();
+		local unitHPMin, unitHPMax, unitCurrHP;
+		unitHPMin, unitHPMax = this:GetMinMaxValues();
+		unitCurrHP = this:GetValue();
 		this:GetParent().unitHPPercent = unitCurrHP / unitHPMax;
 		if ( UnitIsDead("targettarget") ) then
 			TargetofTargetPortrait:SetVertexColor(0.35, 0.35, 0.35, 1.0);
@@ -793,3 +664,5 @@ function TargetofTargetHealthCheck()
 		end
 	end
 end
+
+

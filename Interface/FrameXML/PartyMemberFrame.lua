@@ -1,7 +1,7 @@
 MAX_PARTY_MEMBERS = 4;
 MAX_PARTY_DEBUFFS = 4;
-MAX_PARTY_TOOLTIP_BUFFS = 16;
-MAX_PARTY_TOOLTIP_DEBUFFS = 8;
+MAX_PARTY_TOOLTIP_BUFFS = 32;
+MAX_PARTY_TOOLTIP_DEBUFFS = 16;
 
 function HidePartyFrame()
 	for i=1, MAX_PARTY_MEMBERS, 1 do
@@ -174,7 +174,7 @@ function PartyMemberFrame_OnEvent(event)
 		local unit = "party"..this:GetID();
 		if ( arg1 == unit ) then
 			RefreshBuffs(this, 0, unit);
-			if ( PartyMemberBuffTooltip:IsVisible() ) then
+			if ( PartyMemberBuffTooltip:IsVisible() and PartyMemberBuffTooltip.unit == unit ) then
 				PartyMemberBuffTooltip_Update();
 			end
 		else
@@ -260,18 +260,28 @@ function PartyMemberFrame_RefreshPetBuffs(id)
 end
 
 function PartyMemberBuffTooltip_Update(isPet)
-	local buff;
+	local texture, buffButton;
 	local numBuffs = 0;
 	local numDebuffs = 0;
 	local index = 1;
 	for i=1, MAX_PARTY_TOOLTIP_BUFFS do
 		if ( isPet ) then
-			buff = UnitBuff("pet", i);
+			texture = UnitBuff("pet", i);
 		else
-			buff = UnitBuff("party"..this:GetID(), i);
+			texture = UnitBuff("party"..this:GetID(), i);
 		end
-		if ( buff ) then
-			getglobal("PartyMemberBuffTooltipBuff"..index.."Icon"):SetTexture(buff);
+		if ( texture ) then
+			buffButton = getglobal("PartyMemberBuffTooltipBuff"..index)
+			if ( not buffButton ) then
+				buffButton = CreateFrame("Button", "PartyMemberBuffTooltipBuff"..index, PartyMemberBuffTooltip, "PartyBuffButtonTemplate")
+				local point, relativeTo, relativePoint, x, y = "LEFT", "PartyMemberBuffTooltipBuff"..(index - 1), "RIGHT", 2, 0
+				if ( index == 17 or index == 25 ) then
+					point, relativeTo, relativePoint, x, y = "TOP", "PartyMemberBuffTooltipBuff"..(index - 8),"BOTTOM", 0, -2
+				end
+				buffButton:SetPoint(point, relativeTo, relativePoint, x, y)
+			end
+			getglobal("PartyMemberBuffTooltipBuff"..index.."Icon"):SetTexture(texture);
+			getglobal("PartyMemberBuffTooltipBuff"..index.."Icon"):SetTexCoord(0.078125, 0.90625, 0.078125, 0.90625)
 			getglobal("PartyMemberBuffTooltipBuff"..index.."Border"):Hide();
 			getglobal("PartyMemberBuffTooltipBuff"..index):Show();
 			index = index + 1;
@@ -279,45 +289,63 @@ function PartyMemberBuffTooltip_Update(isPet)
 		end
 	end
 	for i=index, MAX_PARTY_TOOLTIP_BUFFS do
-		getglobal("PartyMemberBuffTooltipBuff"..i):Hide();
+		if ( getglobal("PartyMemberBuffTooltipBuff"..i) ) then
+			getglobal("PartyMemberBuffTooltipBuff"..i):Hide();
+		end
 	end
 
 	if ( numBuffs == 0 ) then
 		PartyMemberBuffTooltipDebuff1:SetPoint("TOP", "PartyMemberBuffTooltipBuff1", "TOP", 0, 0);
 	elseif ( numBuffs <= 8 ) then
 		PartyMemberBuffTooltipDebuff1:SetPoint("TOP", "PartyMemberBuffTooltipBuff1", "BOTTOM", 0, -2);
-	else
+	elseif ( numBuffs <= 16 ) then
 		PartyMemberBuffTooltipDebuff1:SetPoint("TOP", "PartyMemberBuffTooltipBuff9", "BOTTOM", 0, -2);
+	elseif ( numBuffs <= 24 ) then
+		PartyMemberBuffTooltipDebuff1:SetPoint("TOP", "PartyMemberBuffTooltipBuff17", "BOTTOM", 0, -2);
+	else
+		PartyMemberBuffTooltipDebuff1:SetPoint("TOP", "PartyMemberBuffTooltipBuff25", "BOTTOM", 0, -2);
 	end
 
 	index = 1;
 
 	local debuffButton, debuffStack, debuffType, color, countdown;
 	for i=1, MAX_PARTY_TOOLTIP_DEBUFFS do
-		local debuffBorder = getglobal("PartyMemberBuffTooltipDebuff"..index.."Border")
-		local partyDebuff = getglobal("PartyMemberBuffTooltipDebuff"..index.."Icon");
-		buff, debuffStack, debuffType = UnitDebuff("party"..this:GetID(), i);
+		texture, debuffStack, debuffType = UnitDebuff("party"..this:GetID(), i);
 		if ( isPet ) then
-			buff, debuffStack, debuffType = UnitDebuff("pet", i);
+			texture, debuffStack, debuffType = UnitDebuff("pet", i);
 		else
-			buff, debuffStack, debuffType = UnitDebuff("party"..this:GetID(), i);
+			texture, debuffStack, debuffType = UnitDebuff("party"..this:GetID(), i);
 		end
 
-		if ( buff ) then
-			partyDebuff:SetTexture(buff);
+		if ( texture ) then
+			debuffButton = getglobal("PartyMemberBuffTooltipDebuff"..index)
+			if ( not debuffButton ) then
+				debuffButton = CreateFrame("Button", "PartyMemberBuffTooltipDebuff"..index, PartyMemberBuffTooltip, "PartyBuffButtonTemplate")
+				local point, relativeTo, relativePoint, x, y = "LEFT", "PartyMemberBuffTooltipDebuff"..(index - 1), "RIGHT", 2, 0
+				if ( index == 9 ) then
+					point, relativeTo, relativePoint, x, y = "TOP", "PartyMemberBuffTooltipDebuff1", "BOTTOM", 0, -2
+				end
+				debuffButton:SetPoint(point, relativeTo, relativePoint, x, y)
+			end
+			local debuffBorder = getglobal("PartyMemberBuffTooltipDebuff"..index.."Border")
+			local partyDebuff = getglobal("PartyMemberBuffTooltipDebuff"..index.."Icon");
+			partyDebuff:SetTexture(texture);
+			partyDebuff:SetTexCoord(0.078125, 0.90625, 0.078125, 0.90625)
 			if ( debuffType ) then
 				color = DebuffTypeColor[debuffType];
 			else
 				color = DebuffTypeColor["none"];
 			end
 			debuffBorder:SetVertexColor(color.r, color.g, color.b);
-			getglobal("PartyMemberBuffTooltipDebuff"..index):Show();
+			debuffButton:Show();
 			numDebuffs = numDebuffs + 1;
 			index = index + 1;
 		end
 	end
 	for i=index, MAX_PARTY_TOOLTIP_DEBUFFS do
-		getglobal("PartyMemberBuffTooltipDebuff"..i):Hide();
+		if ( getglobal("PartyMemberBuffTooltipDebuff"..i) ) then
+			getglobal("PartyMemberBuffTooltipDebuff"..i):Hide();
+		end
 	end
 
 	-- Size the tooltip
@@ -334,7 +362,7 @@ end
 
 function PartyMemberHealthCheck()
 	local prefix = this:GetParent():GetName();
-	local unitMinHP, unitMaxHP, unitCurrHP;
+	local unitHPMin, unitHPMax, unitCurrHP;
 	unitHPMin, unitHPMax = this:GetMinMaxValues();
 	-- Handle disconnected state
 	if ( not UnitIsConnected("party"..this:GetParent():GetID()) ) then

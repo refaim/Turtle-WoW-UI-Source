@@ -60,7 +60,6 @@
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT", 15, -25);
 				GameTooltip:SetUnitDebuff("target", this.id);
-				CheckCustomDebuffs(this.id);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -481,78 +480,6 @@
 			<Button name="TargetFrameDebuff16" inherits="TargetDebuffButtonTemplate" id="16">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="TargetFrameDebuff15" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff17" inherits="TargetDebuffButtonTemplate" id="17">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="TargetFrameDebuff7" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-3"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff18" inherits="TargetDebuffButtonTemplate" id="18">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff17" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff19" inherits="TargetDebuffButtonTemplate" id="19">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff18" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff20" inherits="TargetDebuffButtonTemplate" id="20">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff19" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff21" inherits="TargetDebuffButtonTemplate" id="21">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff20" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff22" inherits="TargetDebuffButtonTemplate" id="22">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff21" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff23" inherits="TargetDebuffButtonTemplate" id="23">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff22" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="TargetFrameDebuff24" inherits="TargetDebuffButtonTemplate" id="24">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="TargetFrameDebuff23" relativePoint="RIGHT">
 						<Offset>
 							<AbsDimension x="3" y="0"/>
 						</Offset>

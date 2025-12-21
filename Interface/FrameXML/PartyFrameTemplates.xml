@@ -430,6 +430,7 @@
 			<OnEnter>
 				UnitFrame_OnEnter();
 				PartyMemberBuffTooltip:SetPoint("TOPLEFT", this, "TOPLEFT", 47, -30);
+				PartyMemberBuffTooltip.unit = "party"..this:GetID();
 				PartyMemberBuffTooltip_Update();
 			</OnEnter>
 			<OnLeave>

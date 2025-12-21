@@ -1,7 +1,8 @@
 # Do not delete the following line!
 ## Interface: 11200
-Overrides.lua
 GlobalStrings.lua
+Globals.lua
+Overrides.lua
 Fonts.xml
 Localization.xml
 BasicControls.xml
@@ -93,8 +94,6 @@ DressUpFrame.xml
 RaidWarning.xml
 ClassTrainerFrameTemplates.xml
 
-Globals.lua
-
 # Arena
 Turtle_ArenaUI\Turtle_ArenaUI.lua
 Turtle_ArenaUI\Turtle_ArenaUITemplates.xml
@@ -132,7 +131,6 @@ Hooks.lua
 
 # LFT
 # Author: Xerron/Er, modified by Lexie, Luke
-LFT\ChatThrottleLib\ChatThrottleLib.lua
 LFT\LFT_Data.lua
 LFT\LFT.lua
 LFT\LFTTemplates.xml

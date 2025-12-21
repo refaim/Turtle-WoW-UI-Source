@@ -2,7 +2,29 @@ local strfind = string.find
 local gsub = string.gsub
 local strsub = string.sub
 
-ChatFrame_OnEvent_Original = ChatFrame_OnEvent
+local tooltip = CreateFrame("Frame", nil, GameTooltip)
+tooltip:SetScript("OnShow", function()
+	if this.hint then
+		GameTooltip:AddLine(HELP_SHIFT_CLICK_HINT, 0.25, 0.78, 0.92)
+		GameTooltip:Show()
+
+		this.hint = false
+	end
+end)
+
+local _SetBagItem = GameTooltip.SetBagItem
+function GameTooltip.SetBagItem(self, container, slot)
+	if TradeFrame:IsShown()
+		or (AuctionFrame and AuctionFrame:IsShown() and AuctionFrameAuctions and AuctionFrameAuctions:IsShown())
+		or (AuctionFrame and AuctionFrame:IsShown() and AuctionFrameBrowse and AuctionFrameBrowse:IsShown())
+		or (MailFrame and MailFrame:IsShown() and SendMailFrame:IsShown())
+	then
+		tooltip.hint = true
+	end
+	return _SetBagItem(self, container, slot)
+end
+
+local ChatFrame_OnEvent_Original = ChatFrame_OnEvent
 
 function ChatFrame_OnEvent(event)
 	if event == "CHAT_MSG_HARDCORE" then
@@ -40,7 +62,7 @@ function ChatFrame_OnEvent(event)
 end
 
 -- Extends SendAddonMessage() to support a "HARDCORE" type.
-SendAddonMessage_Original = SendAddonMessage
+local SendAddonMessage_Original = SendAddonMessage
 
 function SendAddonMessage(prefix, text, msgType, target)
 	if msgType == "HARDCORE" then

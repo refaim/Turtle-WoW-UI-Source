@@ -73,9 +73,9 @@ UnitPopupButtons["RAID_TARGET_NONE"] = { text = TEXT(NONE), dist = 0, checkable 
 UnitPopupMenus = { };
 UnitPopupMenus["SELF"] = { "LOOT_METHOD", "LOOT_THRESHOLD", "LOOT_PROMOTE", "LEAVE", "RESET_INSTANCES", "RAID_TARGET_ICON", "XP", "MOVE", "MOVE_RESET", "CANCEL" };
 UnitPopupMenus["PET"] = { "PET_PAPERDOLL", "PET_RENAME", "PET_ABANDON", "PET_DISMISS", "CANCEL" };
-UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "CANCEL" };
-UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "CANCEL" };
-UnitPopupMenus["RAID"] = { "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "REPORT", "IGNORE", "CANCEL" };
+UnitPopupMenus["PARTY"] = { "WHISPER", "PROMOTE", "LOOT_PROMOTE", "UNINVITE", "INSPECT", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "MOVE", "MOVE_RESET", "CANCEL" };
+UnitPopupMenus["PLAYER"] = { "WHISPER", "LOOT_PROMOTE", "INSPECT", "INVITE", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "REPORT", "IGNORE", "MOVE", "MOVE_RESET", "CANCEL" };
+UnitPopupMenus["RAID"] = { "RAID_LEADER", "LOOT_PROMOTE", "RAID_PROMOTE", "RAID_DEMOTE", "RAID_REMOVE", "REPORT", "IGNORE", "CANCEL" };
 UnitPopupMenus["FRIEND"] = { "WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "REPORT", "IGNORE", "CANCEL" };
 UnitPopupMenus["RAID_TARGET_ICON"] = { "RAID_TARGET_1", "RAID_TARGET_2", "RAID_TARGET_3", "RAID_TARGET_4", "RAID_TARGET_5", "RAID_TARGET_6", "RAID_TARGET_7", "RAID_TARGET_8", "RAID_TARGET_NONE" };
 
@@ -283,7 +283,7 @@ function UnitPopup_ShowMenu(dropdownMenu, which, unit, name, userData)
 			end
 
 			-- Setup newbie tooltips
-			info.tooltipTitle = UnitPopupButtons[value].text;
+			info.tooltipTitle = info.text;
 			tooltipText = getglobal("NEWBIE_TOOLTIP_UNIT_"..value);
 			if ( not tooltipText ) then
 				tooltipText = UnitPopupButtons[value].tooltipText;
@@ -395,7 +395,10 @@ function UnitPopup_HideButtons()
 			local lootMethod;
 			local lootMaster;
 			lootMethod, lootMaster = GetLootMethod();
-			if ( (inParty == 0) or (isLeader == 0) or (lootMethod ~= "master") or (lootMaster and (dropdownMenu.unit == "party"..lootMaster)) or ((dropdownMenu.unit == "player") and lootMaster and (lootMaster == 0)) ) then
+			if ( (inParty == 0) or (isLeader == 0) or (lootMethod ~= "master")
+				or (lootMaster and (dropdownMenu.unit == "party"..lootMaster))
+				or ((dropdownMenu.unit == "player") and lootMaster and (lootMaster == 0))
+				or (not (UnitInRaid(dropdownMenu.unit) or UnitInParty(dropdownMenu.unit))) ) then
 				UnitPopupShown[index] = 0;
 			end
 		elseif ( value == "LOOT_METHOD" ) then
@@ -448,6 +451,10 @@ function UnitPopup_HideButtons()
 						UnitPopupShown[index] = 0;
 					end
 				end
+			end
+		elseif ( value == "MOVE" or value == "MOVE_RESET" ) then
+			if ( dropdownMenu ~= PlayerFrameDropDown and dropdownMenu ~= TargetFrameDropDown ) then
+				UnitPopupShown[index] = 0;
 			end
 		end
 	end
@@ -540,7 +547,7 @@ function UnitPopup_OnUpdate(elapsed)
 								masterName = "party"..lootMaster;
 							end
 							if ( dropdownFrame.unit and UnitIsUnit(dropdownFrame.unit, masterName) ) then
-								enable = 0;
+								-- enable = 0;
 							end
 						end
 					end
