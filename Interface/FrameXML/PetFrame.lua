@@ -34,7 +34,7 @@ function PetFrame_Update()
 		PetAttackModeTexture:Hide();
 
 		PetFrame_SetHappiness();
-		RefreshBuffs(getglobal("PetFrame"), 0, "pet");
+		RefreshBuffs(PetFrame, 0, "pet");
 	else
 		this:Hide();
 	end
@@ -54,6 +54,9 @@ function PetFrame_OnEvent(event)
 	elseif ( event == "UNIT_AURA" ) then
 		if ( arg1 == "pet" ) then
 			RefreshBuffs(this, 0, "pet");
+			if ( PartyMemberBuffTooltip:IsVisible() and PartyMemberBuffTooltip.unit == "pet" ) then
+				PartyMemberBuffTooltip_Update("pet");
+			end
 		end
 	elseif ( event == "PET_ATTACK_START" ) then
 		PetAttackModeTexture:SetVertexColor(1.0, 1.0, 1.0, 1.0);
@@ -144,12 +147,12 @@ function PetFrame_SetHappiness()
 	elseif ( happiness == 3 ) then
 		PetFrameHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
 	end
-	PetFrameHappiness.tooltip = getglobal("PET_HAPPINESS"..happiness);
+	PetFrameHappiness.tooltip = _G["PET_HAPPINESS"..happiness];
 	PetFrameHappiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage);
 	if ( loyaltyRate < 0 ) then
-		PetFrameHappiness.tooltipLoyalty = getglobal("LOSING_LOYALTY");
+		PetFrameHappiness.tooltipLoyalty = LOSING_LOYALTY;
 	elseif ( loyaltyRate > 0 ) then
-		PetFrameHappiness.tooltipLoyalty = getglobal("GAINING_LOYALTY");
+		PetFrameHappiness.tooltipLoyalty = GAINING_LOYALTY;
 	else
 		PetFrameHappiness.tooltipLoyalty = nil;
 	end

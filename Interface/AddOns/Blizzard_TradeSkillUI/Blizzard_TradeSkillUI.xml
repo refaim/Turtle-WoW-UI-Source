@@ -246,7 +246,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName()):SetText(ALL);
+								this:SetText(ALL);
 							</OnLoad>
 							<OnClick>
 								TradeSkillCollapseAllButton_OnClick();
@@ -523,7 +523,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. 'Text'):SetText(HAVE_MATERIALS);
+						_G[this:GetName() .. "Text"]:SetText(HAVE_MATERIALS);
 					</OnLoad>
 					<OnClick>
 						TradeSkillFrame_Search();
@@ -538,13 +538,13 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="TradeSkillMatsCheckButton" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="80" y="0" />
+							<AbsDimension x="100" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. 'Text'):SetText(IMPROVES_SKILL);
+						_G[this:GetName() .. "Text"]:SetText(IMPROVES_SKILL);
 					</OnLoad>
 					<OnClick>
 						TradeSkillFrame_Search();

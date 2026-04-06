@@ -1,12 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	<Model name="ShopEntryModelTemplate" virtual="true">
 		<Scripts>
-			<OnLoad>
-				this:SetID(-1)
-			</OnLoad>
-			<OnShow>
-				this.elapsed = 0
-			</OnShow>
 			<OnEnter>
 				ShopFrameEntryModel_OnEnter()
 			</OnEnter>
@@ -292,6 +286,18 @@
 				_G[this:GetName() .. "ItemBorder"]:Hide()
 				_G[this:GetName() .. "ItemTexture"]:Hide()
 			</OnHide>
+			<OnEnter>
+				if not this.itemLink then
+					return
+				end
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 10, 0)
+				GameTooltip:SetHyperlink(this.itemLink)
+				GameTooltip:Show()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+				ResetCursor()
+			</OnLeave>
 		</Scripts>
 	</Button>
 </Ui>

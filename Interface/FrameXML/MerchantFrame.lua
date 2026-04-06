@@ -67,20 +67,20 @@ function MerchantFrame_UpdateMerchantInfo()
 	MerchantNameText:SetText(UnitName("NPC"));
 	SetPortraitTexture(MerchantFramePortrait, "NPC");
 
-	MerchantPageText:SetText(format(TEXT(PAGE_NUMBER), MerchantFrame.page));
 	local numMerchantItems = GetMerchantNumItems();
+	MerchantPageText:SetText(format(MERCHANT_PAGE_NUMBER, MerchantFrame.page, ceil(numMerchantItems / MERCHANT_ITEMS_PER_PAGE)));
 	local name, texture, price, quantity, numAvailable, isUsable;
 	for i=1, MERCHANT_ITEMS_PER_PAGE, 1 do
 		local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i);
-		local itemButton = getglobal("MerchantItem"..i.."ItemButton");
-		local merchantButton = getglobal("MerchantItem"..i);
+		local itemButton = _G["MerchantItem"..i.."ItemButton"];
+		local merchantButton = _G["MerchantItem"..i];
 		if ( index <= numMerchantItems ) then
 			name, texture, price, quantity, numAvailable, isUsable = GetMerchantItemInfo(index);
-			getglobal("MerchantItem"..i.."Name"):SetText(name);
+			_G["MerchantItem"..i.."Name"]:SetText(name);
 			SetItemButtonCount(itemButton, quantity);
 			SetItemButtonStock(itemButton, numAvailable);
 			SetItemButtonTexture(itemButton, texture);
-			getglobal("MerchantItem"..i.."MoneyFrame"):Show();
+			_G["MerchantItem"..i.."MoneyFrame"]:Show();
 			MoneyFrame_Update("MerchantItem"..i.."MoneyFrame", price);
 			itemButton:SetID(index);
 			itemButton:Show();
@@ -113,8 +113,8 @@ function MerchantFrame_UpdateMerchantInfo()
 			itemButton:Hide();
 			SetItemButtonNameFrameVertexColor(merchantButton, 0.5, 0.5, 0.5);
 			SetItemButtonSlotVertexColor(merchantButton,0.4, 0.4, 0.4);
-			getglobal("MerchantItem"..i.."Name"):SetText("");
-			getglobal("MerchantItem"..i.."MoneyFrame"):Hide();
+			_G["MerchantItem"..i.."Name"]:SetText("");
+			_G["MerchantItem"..i.."MoneyFrame"]:Hide();
 		end
 	end
 
@@ -214,15 +214,15 @@ function MerchantFrame_UpdateBuybackInfo()
 	local itemButton, buybackButton;
 	local buybackName, buybackTexture, buybackPrice, buybackQuantity, buybackNumAvailable, buybackIsUsable;
 	for i=1, BUYBACK_ITEMS_PER_PAGE do
-		itemButton = getglobal("MerchantItem"..i.."ItemButton");
-		buybackButton = getglobal("MerchantItem"..i);
+		itemButton = _G["MerchantItem"..i.."ItemButton"];
+		buybackButton = _G["MerchantItem"..i];
 		if ( i <= numBuybackItems ) then
 			buybackName, buybackTexture, buybackPrice, buybackQuantity, buybackNumAvailable, buybackIsUsable = GetBuybackItemInfo(i);
-			getglobal("MerchantItem"..i.."Name"):SetText(buybackName);
+			_G["MerchantItem"..i.."Name"]:SetText(buybackName);
 			SetItemButtonCount(itemButton, buybackQuantity);
 			SetItemButtonStock(itemButton, buybackNumAvailable);
 			SetItemButtonTexture(itemButton, buybackTexture);
-			getglobal("MerchantItem"..i.."MoneyFrame"):Show();
+			_G["MerchantItem"..i.."MoneyFrame"]:Show();
 			MoneyFrame_Update("MerchantItem"..i.."MoneyFrame", buybackPrice);
 			itemButton:SetID(i);
 			itemButton:Show();
@@ -254,8 +254,8 @@ function MerchantFrame_UpdateBuybackInfo()
 		else
 			SetItemButtonNameFrameVertexColor(buybackButton, 0.5, 0.5, 0.5);
 			SetItemButtonSlotVertexColor(buybackButton,0.4, 0.4, 0.4);
-			getglobal("MerchantItem"..i.."Name"):SetText("");
-			getglobal("MerchantItem"..i.."MoneyFrame"):Hide();
+			_G["MerchantItem"..i.."Name"]:SetText("");
+			_G["MerchantItem"..i.."MoneyFrame"]:Hide();
 			itemButton:Hide();
 		end
 	end
@@ -290,7 +290,7 @@ function MerchantItemButton_OnLoad()
 
 	this.SplitStack = function(button, split)
 		if ( split > 0 ) then
-			BuyMerchantItem(button:GetID(), split);
+			BuyMerchantItem(button:GetID(), split / (button.count or 1));
 		end
 	end
 end
@@ -310,20 +310,31 @@ function MerchantItemButton_OnClick(button, ignoreModifiers)
 						return;
 					end
 
-					local maxStack = GetMerchantItemMaxStack(this:GetID());
-					if ( maxStack <= 1 ) then
+					local maxStack;
+					if ( this.count and this.count > 1 ) then
+						local _, _, id = strfind(GetMerchantItemLink(this:GetID()) or "", "item:(%d+)");
+						_, _, _, _, _, _, maxStack = GetItemInfo(id or 0);
+					else
+						maxStack = GetMerchantItemMaxStack(this:GetID());
+					end
+
+					if ( maxStack <= 1 or (this.numInStock and this.numInStock == 0)) then
 						MerchantItemButton_OnClick(arg1, 1);
 						return;
 					end
 
-					if ( price and (price > 0) ) then
-						local canAfford = floor(GetMoney() / price);
-						if ( canAfford < maxStack ) then
-							maxStack = canAfford;
-						end
+					local canAfford;
+					if ( price and price > 0 ) then
+						canAfford = floor(GetMoney() / (price / this.count));
+						canAfford = canAfford - mod(canAfford, this.count);
+					else
+						canAfford = maxStack;
 					end
 
-					OpenStackSplitFrame(maxStack, this, "BOTTOMLEFT", "TOPLEFT");
+					if ( maxStack > 1 ) then
+						local maxPurchasable = min(maxStack, canAfford);
+						OpenStackSplitFrame(maxPurchasable, this, "BOTTOMLEFT", "TOPLEFT", this.count);
+					end
 				end
 			else
 				PickupMerchantItem(this:GetID());
@@ -337,20 +348,31 @@ function MerchantItemButton_OnClick(button, ignoreModifiers)
 					return;
 				end
 
-				local maxStack = GetMerchantItemMaxStack(this:GetID());
-				if ( maxStack <= 1 ) then
+				local maxStack;
+				if ( this.count and this.count > 1 ) then
+					local _, _, id = strfind(GetMerchantItemLink(this:GetID()) or "", "item:(%d+)");
+					_, _, _, _, _, _, maxStack = GetItemInfo(id or 0);
+				else
+					maxStack = GetMerchantItemMaxStack(this:GetID());
+				end
+
+				if ( maxStack <= 1 or (this.numInStock and this.numInStock == 0) ) then
 					MerchantItemButton_OnClick(arg1, 1);
 					return;
 				end
 
-				if ( price and (price > 0) ) then
-					local canAfford = floor(GetMoney() / price);
-					if ( canAfford < maxStack ) then
-						maxStack = canAfford;
-					end
+				local canAfford;
+				if ( price and price > 0 ) then
+					canAfford = floor(GetMoney() / (price / this.count));
+					canAfford = canAfford - mod(canAfford, this.count);
+				else
+					canAfford = maxStack;
 				end
 
-				OpenStackSplitFrame(maxStack, this, "BOTTOMLEFT", "TOPLEFT");
+				if ( maxStack > 1 ) then
+					local maxPurchasable = min(maxStack, canAfford);
+					OpenStackSplitFrame(maxPurchasable, this, "BOTTOMLEFT", "TOPLEFT", this.count);
+				end
 			else
 				BuyMerchantItem(this:GetID());
 			end

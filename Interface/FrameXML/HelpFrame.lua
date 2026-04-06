@@ -161,7 +161,7 @@ MAX_GENERAL_BULLETS = 10;
 NUM_GM_CATEGORIES_TO_DISPLAY = 10;
 GMTICKET_CHECK_INTERVAL = 600;		-- 10 Minutes
 
-elapsedTime = 0;
+local refreshTime = nil;
 
 PETITION_QUEUE_ACTIVE = 1;
 
@@ -215,9 +215,9 @@ function HelpFrame_ShowFrame(key, ticketType)
 			-- Setup the frame if its a general frame
 			HelpFrame_SetupGeneralFrame(key);
 		end
-		frame = getglobal(targetName);
+		frame = _G[targetName];
 	else
-		frame = getglobal(HELPFRAME_FRAMES["OpenTicket"].name);
+		frame = _G[HELPFRAME_FRAMES["OpenTicket"].name];
 	end
 	frame:Show();
 	HelpFrame.openFrame = frame;
@@ -248,9 +248,9 @@ function HelpFrame_SetupGeneralFrame(key)
 	local bullet;
 	if ( info.bullets1 ) then
 		for index, value in  info.bullets1 do
-			bullet = getglobal("HelpFrameGeneralBullet"..bulletIndex);
+			bullet = _G["HelpFrameGeneralBullet"..bulletIndex];
 			if ( bullet ) then
-				getglobal("HelpFrameGeneralBullet"..bulletIndex.."Text"):SetText(value);
+				_G["HelpFrameGeneralBullet"..bulletIndex.."Text"]:SetText(value);
 				bullet:Show();
 				if ( index > 1 ) then
 					bullet:SetPoint("TOPLEFT", "HelpFrameGeneralBullet"..(bulletIndex-1), "BOTTOMLEFT", 0, HELPFRAME_BULLET_SPACING);
@@ -270,9 +270,9 @@ function HelpFrame_SetupGeneralFrame(key)
 	end
 	if ( info.bullets2 ) then
 		for index, value in  info.bullets2 do
-			bullet = getglobal("HelpFrameGeneralBullet"..bulletIndex);
+			bullet = _G["HelpFrameGeneralBullet"..bulletIndex];
 			if ( bullet ) then
-				getglobal("HelpFrameGeneralBullet"..bulletIndex.."Text"):SetText(value);
+				_G["HelpFrameGeneralBullet"..bulletIndex.."Text"]:SetText(value);
 				bullet:Show();
 				if ( index == 1 ) then
 					bullet:SetPoint("TOPLEFT", "HelpFrameBulletTitle2", "BOTTOMLEFT", 5, HELPFRAME_BULLET_SPACING);
@@ -287,7 +287,7 @@ function HelpFrame_SetupGeneralFrame(key)
 	end
 	-- Hide all remaining bullets
 	for i=bulletIndex, MAX_GENERAL_BULLETS do
-		getglobal("HelpFrameGeneralBullet"..i):Hide();
+		_G["HelpFrameGeneralBullet"..i]:Hide();
 	end
 	-- Set bullet index to at least one
 	bulletIndex = max(bulletIndex, 2);
@@ -365,16 +365,16 @@ end
 
 function HelpFrameOpenTicketDropDown_Initialize()
 	local index = 1;
-	local ticketType = getglobal("TICKET_TYPE"..index);
+	local ticketType = _G["TICKET_TYPE"..index];
 	local info;
 	while (ticketType) do
-		info = {};
+		info = UIDropDownMenu_CreateInfo();
 		info.text = ticketType;
 		info.func = HelpFrameOpenTicketDropDown_OnClick;
-		info.checked = checked;
+		info.checked = nil;
 		UIDropDownMenu_AddButton(info);
 		index = index + 1;
-		ticketType = getglobal("TICKET_TYPE"..index);
+		ticketType = _G["TICKET_TYPE"..index];
 	end
 end
 
@@ -517,12 +517,12 @@ function HelpFrameGM_UpdateCategories(...)
 	local index, button, text;
 	local categoryCount = 1;
 	for i=1, NUM_GM_CATEGORIES_TO_DISPLAY do
-		getglobal("HelpFrameButton"..i):Hide();
+		_G["HelpFrameButton"..i]:Hide();
 	end
 	for i=1, NUM_GM_CATEGORIES_TO_DISPLAY do
 		index = 2 * (offset + i) - 1;
-		button = getglobal("HelpFrameButton"..categoryCount);
-		text = getglobal("HelpFrameButton"..categoryCount.."Text");
+		button = _G["HelpFrameButton"..categoryCount];
+		text = _G["HelpFrameButton"..categoryCount.."Text"];
 		if ( index <= arg.n  ) then
 			text:SetText(arg[index+1]);
 			button.key = arg[index];

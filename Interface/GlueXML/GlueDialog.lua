@@ -2,9 +2,9 @@
 GlueDialogTypes = { };
 
 GlueDialogTypes["REALM_IS_FULL"] = {
-	text = TEXT(REALM_IS_FULL_WARNING),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
+	text = REALM_IS_FULL_WARNING,
+	button1 = YES,
+	button2 = NO,
 	showAlert = 1,
 	OnAccept = function()
 		SetGlueScreen("charselect");
@@ -16,9 +16,9 @@ GlueDialogTypes["REALM_IS_FULL"] = {
 }
 
 GlueDialogTypes["SUGGEST_REALM"] = {
-	text = TEXT(format(SUGGESTED_REALM_TEXT,"UNKNOWN REALM")),
-	button1 = TEXT(ACCEPT),
-	button2 = TEXT(VIEW_ALL_REALMS),
+	text = format(SUGGESTED_REALM_TEXT,"UNKNOWN REALM"),
+	button1 = ACCEPT,
+	button2 = VIEW_ALL_REALMS,
 	OnShow = function()
 		GlueDialogText:SetText(format(SUGGESTED_REALM_TEXT, RealmWizard.suggestedRealmName));
 	end,
@@ -33,8 +33,8 @@ GlueDialogTypes["SUGGEST_REALM"] = {
 }
 
 GlueDialogTypes["DISCONNECTED"] = {
-	text = TEXT(DISCONNECTED),
-	button1 = TEXT(OKAY),
+	text = DISCONNECTED,
+	button1 = OKAY,
 	button2 = nil,
 	OnShow = function()
 		RealmList:Hide();
@@ -48,8 +48,8 @@ GlueDialogTypes["DISCONNECTED"] = {
 }
 
 GlueDialogTypes["INVALID_NAME"] = {
-	text = TEXT(CHAR_CREATE_INVALID_NAME),
-	button1 = TEXT(OKAY),
+	text = CHAR_CREATE_INVALID_NAME,
+	button1 = OKAY,
 	button2 = nil,
 	OnAccept = function()
 	end,
@@ -59,7 +59,7 @@ GlueDialogTypes["INVALID_NAME"] = {
 
 GlueDialogTypes["CANCEL"] = {
 	text = "",
-	button1 = TEXT(CANCEL),
+	button1 = CANCEL,
 	button2 = nil,
 	OnAccept = function()
 		StatusDialogClick();
@@ -70,7 +70,7 @@ GlueDialogTypes["CANCEL"] = {
 
 GlueDialogTypes["OKAY"] = {
 	text = "",
-	button1 = TEXT(OKAY),
+	button1 = OKAY,
 	button2 = nil,
 	OnShow = function()
 		VirtualKeypadFrame:Hide();
@@ -85,10 +85,10 @@ GlueDialogTypes["OKAY"] = {
 
 GlueDialogTypes["OKAY_WITH_URL"] = {
 	text = "",
-	button1 = TEXT(HELP),
-	button2 = TEXT(OKAY),
+	button1 = HELP,
+	button2 = OKAY,
 	OnAccept = function()
-		LaunchURL(getglobal(GlueDialog.data));
+		LaunchURL(_G[GlueDialog.data]);
 	end,
 	OnCancel = function()
 		StatusDialogClick();
@@ -97,8 +97,8 @@ GlueDialogTypes["OKAY_WITH_URL"] = {
 
 GlueDialogTypes["CONNECTION_HELP"] = {
 	text = "",
-	button1 = TEXT(HELP),
-	button2 = TEXT(OKAY),
+	button1 = HELP,
+	button2 = OKAY,
 	OnShow = function()
 		VirtualKeypadFrame:Hide();
 		StatusDialogClick();

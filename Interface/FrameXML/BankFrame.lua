@@ -30,7 +30,7 @@ function ButtonInventorySlot()
 end
 
 function BankFrameItemButton_OnUpdate()
-	local texture = getglobal(this:GetName().."IconTexture");
+	local texture = _G[this:GetName().."IconTexture"];
 	local inventoryID = this:GetInventorySlot();
 	local textureName = GetInventoryItemTexture("player",inventoryID);
 	local slotName = this:GetName();
@@ -60,7 +60,7 @@ function BankFrameItemButton_OnUpdate()
 		if ( textureName ) then
 			if ( not GameTooltip:SetInventoryItem("player", this:GetInventorySlot()) ) then
 				if ( this.isBag ) then
-					GameTooltip:SetText(TEXT(BANK_BAG));
+					GameTooltip:SetText(BANK_BAG);
 				end
 			end
 		else
@@ -87,7 +87,7 @@ function UpdateBagSlotStatus()
 	local numSlots,full = GetNumBankSlots();
 	local button;
 	for i=1, NUM_BANKBAGSLOTS, 1 do
-		button = getglobal("BankFrameBag"..i);
+		button = _G["BankFrameBag"..i];
 		if ( button ) then
 			if ( i <= numSlots ) then
 				SetItemButtonTextureVertexColor(button, 1.0,1.0,1.0);
@@ -169,13 +169,13 @@ function BankFrameItemButtonGeneric_OnClick(button)
 end
 
 function UpdateBagButtonHighlight(id)
-	local texture = getglobal("BankFrameBag"..(id - NUM_BAG_SLOTS).."HighlightFrameTexture");
+	local texture = _G["BankFrameBag"..(id - NUM_BAG_SLOTS).."HighlightFrameTexture"];
 	if ( not texture ) then
 		return;
 	end
 
 	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = getglobal("ContainerFrame"..i);
+		local frame = _G["ContainerFrame"..i];
 		if ( ( frame:GetID() == id ) and frame:IsVisible() ) then
 			texture:Show();
 			return;

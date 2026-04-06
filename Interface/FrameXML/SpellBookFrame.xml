@@ -46,7 +46,7 @@
 		</HitRectInsets>
 		<Scripts>
 			<OnClick>
-				ToggleSpellBook(this.bookType);
+				SpellBookFrameTabButton_OnClick();
 			</OnClick>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
@@ -164,8 +164,11 @@
 				SpellButton_OnClick();
 			</OnClick>
 			<OnShow>
-				SpellButton_UpdateButton();
+				SpellButton_OnShow();
 			</OnShow>
+			<OnHide>
+				SpellButton_OnHide();
+			</OnHide>
 			<OnDragStart>
 				SpellButton_OnClick(1);
 			</OnDragStart>

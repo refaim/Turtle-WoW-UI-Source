@@ -79,7 +79,7 @@ end
 
 -- Function for raid options
 function RaidOptionsFrame_UpdatePartyFrames()
-	if ( HIDE_PARTY_INTERFACE == "1" and GetNumRaidMembers() > 0) then
+	if ( HIDE_PARTY_INTERFACE == "1" and GetNumRaidMembers() > 0) or GROUP_REPLACE_PARTY == "1" then
 		HidePartyFrame();
 	else
 		HidePartyFrame();
@@ -96,12 +96,12 @@ function RaidInfoFrame_Update()
 		for i=1, MAX_RAID_INFOS do
 			if ( i <=  savedInstances) then
 				instanceName, instanceID, instanceReset = GetSavedInstanceInfo(i);
-				getglobal("RaidInfoInstance"..i.."Name"):SetText(instanceName);
-				getglobal("RaidInfoInstance"..i.."ID"):SetText(instanceID);
-				getglobal("RaidInfoInstance"..i.."Reset"):SetText(RESETS_IN.." "..SecondsToTime(instanceReset));
-				getglobal("RaidInfoInstance"..i):Show();
+				_G["RaidInfoInstance"..i.."Name"]:SetText(instanceName);
+				_G["RaidInfoInstance"..i.."ID"]:SetText(instanceID);
+				_G["RaidInfoInstance"..i.."Reset"]:SetText(RESETS_IN.." "..SecondsToTime(instanceReset));
+				_G["RaidInfoInstance"..i]:Show();
 			else
-				getglobal("RaidInfoInstance"..i):Hide();
+				_G["RaidInfoInstance"..i]:Hide();
 			end
 
 		end

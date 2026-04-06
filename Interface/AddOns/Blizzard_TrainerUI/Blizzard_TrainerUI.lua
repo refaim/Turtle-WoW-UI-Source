@@ -12,25 +12,25 @@ TRAINER_FILTER_USED = 0;
 UIPanelWindows["ClassTrainerFrame"] = { area = "left", pushable = 0 };
 
 StaticPopupDialogs["CONFIRM_PROFESSION"] = {
-	text = TEXT(format(PROFESSION_CONFIRMATION1, "XXX")),
-	button1 = TEXT(ACCEPT),
-	button2 = TEXT(CANCEL),
+	text = format(PROFESSION_CONFIRMATION1, "XXX"),
+	button1 = ACCEPT,
+	button2 = CANCEL,
 	OnAccept = function()
 		BuyTrainerService(ClassTrainerFrame.selectedService);
-		ClassTrainerFrame.showSkillDetails = nil;
+		ClassTrainerFrame.showSkillDetails = 1;
+		ClassTrainerFrame.showDialog = nil;
 		ClassTrainer_SetSelection(ClassTrainerFrame.selectedService);
 		ClassTrainerFrame_Update();
 	end,
 	OnShow = function()
 		local cp1, cp2 = UnitCharacterPoints("player");
 		if ( cp2 < MAX_LEARNABLE_PROFESSIONS ) then
-			getglobal(this:GetName().."Text"):SetText(format(PROFESSION_CONFIRMATION2, GetTrainerServiceSkillLine(ClassTrainerFrame.selectedService)));
+			_G[this:GetName().."Text"]:SetText(format(PROFESSION_CONFIRMATION2, GetTrainerServiceSkillLine(ClassTrainerFrame.selectedService)));
 		else
-			getglobal(this:GetName().."Text"):SetText(format(PROFESSION_CONFIRMATION1, GetTrainerServiceSkillLine(ClassTrainerFrame.selectedService)));
+			_G[this:GetName().."Text"]:SetText(format(PROFESSION_CONFIRMATION1, GetTrainerServiceSkillLine(ClassTrainerFrame.selectedService)));
 		end
 	end,
 	showAlert = 1,
-	timeout = 0,
 	hideOnEscape = 1
 };
 
@@ -44,12 +44,10 @@ function ClassTrainerFrame_Show()
 	ClassTrainerTrainButton:Disable();
 	--Reset scrollbar
 	ClassTrainerListScrollFrameScrollBar:SetMinMaxValues(0, 0);
-	ClassTrainerListScrollFrameScrollBar:SetValue(0);
 
 	ClassTrainer_SelectFirstLearnableSkill();
 	ClassTrainerFrame_Update();
 	UpdateMicroButtons();
-
 end
 
 function ClassTrainerFrame_Hide()
@@ -60,6 +58,8 @@ function ClassTrainerFrame_OnLoad()
 	this:RegisterEvent("TRAINER_UPDATE");
 	this:RegisterEvent("ADDON_LOADED");
 	ClassTrainerDetailScrollFrame.scrollBarHideable = 1;
+	ClassTrainerFrame.selectedService = 2;
+	ClassTrainerFrame.showSkillDetails = 1;
 end
 
 function ClassTrainerFrame_OnEvent()
@@ -72,12 +72,17 @@ function ClassTrainerFrame_OnEvent()
 		return;
 	end
 	if ( event == "TRAINER_UPDATE" ) then
-		if ( GetTrainerSelectionIndex() > 1 ) then
-			if ( GetTrainerSelectionIndex() > GetNumTrainerServices() ) then
-				FauxScrollFrame_SetOffset(ClassTrainerListScrollFrame, 0);
-				ClassTrainerListScrollFrameScrollBar:SetValue(0);
+		local selectionIndex = GetTrainerSelectionIndex();
+		if ( selectionIndex > 1 ) then
+			if ( selectionIndex > GetNumTrainerServices() ) then
+				local selected = ClassTrainerFrame.selectedService or 2;
+				local serviceName, serviceSubText, serviceType, isExpanded = GetTrainerServiceInfo(selected);
+				if serviceName and serviceType ~= "header" then
+					ClassTrainer_SetSelection(selected);
+				end
+			else
+				ClassTrainer_SetSelection(selectionIndex);
 			end
-			ClassTrainer_SetSelection(GetTrainerSelectionIndex());
 		else
 			ClassTrainer_SelectFirstLearnableSkill();
 		end
@@ -90,7 +95,7 @@ function ClassTrainerFrame_Update()
 	ClassTrainerNameText:SetText(UnitName("npc"));
 	ClassTrainerGreetingText:SetText(GetTrainerGreetingText());
 	local numTrainerServices = GetNumTrainerServices();
-	local skillOffset = FauxScrollFrame_GetOffset(ClassTrainerListScrollFrame);
+	local skillOffset = FauxScrollFrame_GetOffset(ClassTrainerListScrollFrame) or 0;
 
 	-- If no spells then clear everything out
 	if ( numTrainerServices == 0 ) then
@@ -117,18 +122,19 @@ function ClassTrainerFrame_Update()
 	--ClassTrainerUsedButton:Show();
 	ClassTrainerMoneyFrame:Show();
 
+	local selected = GetTrainerSelectionIndex();
 
 	ClassTrainerSkillHighlightFrame:Hide();
 	-- Fill in the skill buttons
 	for i=1, CLASS_TRAINER_SKILLS_DISPLAYED, 1 do
 		local skillIndex = i + skillOffset;
-		local skillButton = getglobal("ClassTrainerSkill"..i);
+		local skillButton = _G["ClassTrainerSkill"..i];
 		local serviceName, serviceSubText, serviceType, isExpanded;
 		local moneyCost, cpCost1, cpCost2;
 		if ( skillIndex <= numTrainerServices ) then
 			serviceName, serviceSubText, serviceType, isExpanded = GetTrainerServiceInfo(skillIndex);
 			if ( not serviceName ) then
-				serviceName = TEXT(UNKNOWN);
+				serviceName = UNKNOWN;
 			end
 			-- Set button widths if scrollbar is shown or hidden
 			if ( ClassTrainerListScrollFrame:IsVisible() ) then
@@ -136,7 +142,7 @@ function ClassTrainerFrame_Update()
 			else
 				skillButton:SetWidth(323);
 			end
-			local skillSubText = getglobal("ClassTrainerSkill"..i.."SubText");
+			local skillSubText = _G["ClassTrainerSkill"..i.."SubText"];
 			-- Type stuff
 			if ( serviceType == "header" ) then
 				skillButton:SetText(serviceName);
@@ -147,13 +153,13 @@ function ClassTrainerFrame_Update()
 				else
 					skillButton:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-Up");
 				end
-				getglobal("ClassTrainerSkill"..i.."Highlight"):SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
+				_G["ClassTrainerSkill"..i.."Highlight"]:SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
 			else
 				skillButton:SetNormalTexture("");
-				getglobal("ClassTrainerSkill"..i.."Highlight"):SetTexture("");
+				_G["ClassTrainerSkill"..i.."Highlight"]:SetTexture("");
 				skillButton:SetText("  "..serviceName);
 				if ( serviceSubText and serviceSubText ~= "" ) then
-					skillSubText:SetText(format(TEXT(PARENS_TEMPLATE), serviceSubText));
+					skillSubText:SetText(format(PARENS_TEMPLATE, serviceSubText));
 					skillSubText:SetPoint("LEFT", "ClassTrainerSkill"..i.."Text", "RIGHT", 10, 0);
 					skillSubText:Show();
 				else
@@ -177,7 +183,7 @@ function ClassTrainerFrame_Update()
 			skillButton:SetID(skillIndex);
 			skillButton:Show();
 			-- Place the highlight and lock the highlight state
-			if ( ClassTrainerFrame.selectedService and GetTrainerSelectionIndex() == skillIndex ) then
+			if ( ClassTrainerFrame.selectedService and selected == skillIndex ) then
 				ClassTrainerSkillHighlightFrame:SetPoint("TOPLEFT", "ClassTrainerSkill"..i, "TOPLEFT", 0, 0);
 				ClassTrainerSkillHighlightFrame:Show();
 				skillButton:LockHighlight();
@@ -207,7 +213,7 @@ function ClassTrainerFrame_Update()
 			end
 		end
 		-- Show details if selected skill is visible
-		if ( ClassTrainerFrame.selectedService and GetTrainerSelectionIndex() == i ) then
+		if ( ClassTrainerFrame.selectedService and selected == i ) then
 			showDetails = 1;
 		end
 	end
@@ -265,6 +271,12 @@ function ClassTrainer_SetSelection(id)
 		end
 		return;
 	end
+
+	ClassTrainerSubSkillName:SetText(format(PARENS_TEMPLATE, serviceSubText));
+	ClassTrainerFrame.selectedService = id;
+	SelectTrainerService(id);
+	ClassTrainerSkillIcon:SetNormalTexture(GetTrainerServiceIcon(id));
+
 	if ( ClassTrainerFrame.showSkillDetails ) then
 		ClassTrainer_ShowSkillDetails();
 	else
@@ -273,16 +285,12 @@ function ClassTrainer_SetSelection(id)
 	end
 
 	if ( not serviceName ) then
-		serviceName = TEXT(UNKNOWN);
+		serviceName = UNKNOWN;
 	end
 	ClassTrainerSkillName:SetText(serviceName);
 	if ( not serviceSubText ) then
 		serviceSubText = "";
 	end
-	ClassTrainerSubSkillName:SetText(format(TEXT(PARENS_TEMPLATE), serviceSubText));
-	ClassTrainerFrame.selectedService = id;
-	SelectTrainerService(id);
-	ClassTrainerSkillIcon:SetNormalTexture(GetTrainerServiceIcon(id));
 	-- Build up the requirements string
 	local requirements = "";
 	-- Level Requirements
@@ -290,27 +298,19 @@ function ClassTrainer_SetSelection(id)
 	local separator = "";
 	if ( reqLevel > 1 ) then
 		separator = ", ";
-		if ( isPetLearnSpell ) then
-			if ( UnitLevel("pet") >= reqLevel ) then
-				requirements = requirements..format(TEXT(TRAINER_PET_LEVEL), reqLevel);
-			else
-				requirements = requirements..format(TEXT(TRAINER_PET_LEVEL_RED), reqLevel);
-			end
+		if ( UnitLevel("player") >= reqLevel ) then
+			requirements = requirements..format(TRAINER_REQ_LEVEL, reqLevel);
 		else
-			if ( UnitLevel("player") >= reqLevel ) then
-				requirements = requirements..format(TEXT(TRAINER_REQ_LEVEL), reqLevel);
-			else
-				requirements = requirements..format(TEXT(TRAINER_REQ_LEVEL_RED), reqLevel);
-			end
+			requirements = requirements..format(TRAINER_REQ_LEVEL_RED, reqLevel);
 		end
 	end
 	-- Skill Requirements
 	local skill, rank, hasReq = GetTrainerServiceSkillReq(id);
 	if ( skill ) then
 		if ( hasReq ) then
-			requirements = requirements..separator..format(TEXT(TRAINER_REQ_SKILL_RANK), skill, rank );
+			requirements = requirements..separator..format(TRAINER_REQ_SKILL_RANK, skill, rank );
 		else
-			requirements = requirements..separator..format(TEXT(TRAINER_REQ_SKILL_RANK_RED), skill, rank );
+			requirements = requirements..separator..format(TRAINER_REQ_SKILL_RANK_RED, skill, rank );
 		end
 		separator = ", ";
 	end
@@ -322,9 +322,9 @@ function ClassTrainer_SetSelection(id)
 			ability, hasReq = GetTrainerServiceAbilityReq(id, i);
 			abilityName, abilitySubText, abilityType = GetTrainerServiceInfo(id);
 			if ( hasReq or (abilityType == "used") ) then
-				requirements = requirements..separator..format(TEXT(TRAINER_REQ_ABILITY), ability );
+				requirements = requirements..separator..format(TRAINER_REQ_ABILITY, ability );
 			else
-				requirements = requirements..separator..format(TEXT(TRAINER_REQ_ABILITY_RED), ability );
+				requirements = requirements..separator..format(TRAINER_REQ_ABILITY_RED, ability );
 			end
 			separator = ", ";
 		end
@@ -333,9 +333,9 @@ function ClassTrainer_SetSelection(id)
 	local step, met = GetTrainerServiceStepReq(id);
 	if ( step ) then
 		if ( met ) then
-			requirements = requirements..separator..format(TEXT(TRAINER_REQ_ABILITY), step );
+			requirements = requirements..separator..format(TRAINER_REQ_ABILITY, step );
 		else
-			requirements = requirements..separator..format(TEXT(TRAINER_REQ_ABILITY_RED), step );
+			requirements = requirements..separator..format(TRAINER_REQ_ABILITY_RED, step );
 		end
 	end
 	if ( requirements ~= "" ) then
@@ -385,12 +385,10 @@ function ClassTrainer_SetSelection(id)
 	end
 
 	-- Determine what type of spell to display
-	local isLearnSpell;
-	local isPetLearnSpell;
-	isLearnSpell, isPetLearnSpell = IsTrainerServiceLearnSpell(id);
+	local isLearnSpell, isPetLearnSpell = IsTrainerServiceLearnSpell(id);
 	if ( isLearnSpell ) then
 		if ( isPetLearnSpell ) then
-			ClassTrainerSkillName:SetText(ClassTrainerSkillName:GetText() ..TEXT(TRAINER_PET_SPELL_LABEL));
+			ClassTrainerSkillName:SetText(ClassTrainerSkillName:GetText() ..TRAINER_PET_SPELL_LABEL);
 		end
 	end
 	ClassTrainerDetailScrollFrame:UpdateScrollChildRect();
@@ -415,7 +413,7 @@ function ClassTrainerTrainButton_OnClick()
 		StaticPopup_Show("CONFIRM_PROFESSION");
 	else
 		BuyTrainerService(ClassTrainerFrame.selectedService);
-		ClassTrainerFrame.showSkillDetails = nil;
+		ClassTrainerFrame.showSkillDetails = 1;
 		ClassTrainer_SetSelection(ClassTrainerFrame.selectedService);
 		ClassTrainerFrame_Update();
 	end
@@ -425,11 +423,11 @@ function ClassTrainer_SetSubTextColor(button, r, g, b)
 	button.r = r;
 	button.g = g;
 	button.b = b;
-	getglobal(button:GetName().."SubText"):SetTextColor(r, g, b);
+	_G[button:GetName().."SubText"]:SetTextColor(r, g, b);
 end
 
 function ClassTrainerCollapseAllButton_OnClick()
-	if (this.collapsed) then
+	if ( this.collapsed ) then
 		this.collapsed = nil;
 		ExpandTrainerSkillLine(0);
 	else
@@ -440,12 +438,14 @@ function ClassTrainerCollapseAllButton_OnClick()
 end
 
 function ClassTrainer_HideSkillDetails()
+	ClassTrainerFrame.showSkillDetails = nil;
 	ClassTrainerSkillName:Hide();
 	ClassTrainerSkillIcon:Hide();
 	ClassTrainerSkillRequirements:Hide();
 	ClassTrainerSkillDescription:Hide();
 	ClassTrainerDetailMoneyFrame:Hide();
 	ClassTrainerCostLabel:Hide();
+	ClassTrainerTrainButton:Disable();
 end
 
 function ClassTrainer_ShowSkillDetails()
@@ -454,7 +454,6 @@ function ClassTrainer_ShowSkillDetails()
 	ClassTrainerSkillRequirements:Show();
 	ClassTrainerSkillDescription:Show();
 	ClassTrainerDetailMoneyFrame:Show();
-	--ClassTrainerCostLabel:Show();
 end
 
 function ClassTrainer_SetToTradeSkillTrainer()
@@ -462,7 +461,6 @@ function ClassTrainer_SetToTradeSkillTrainer()
 	ClassTrainerSkill11:Hide();
 	ClassTrainerListScrollFrame:SetHeight(168);
 	ClassTrainerDetailScrollFrame:SetHeight(135);
-	local cp1, cp2 = UnitCharacterPoints("player");
 	ClassTrainerHorizontalBarLeft:SetPoint("TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 15, -259);
 end
 
@@ -482,53 +480,38 @@ end
 
 function ClassTrainerFrameFilterDropDown_Initialize()
 	-- Available button
-	local info = {};
-	local checked = nil;
-	if ( GetTrainerServiceTypeFilter("available") ) then
-		checked = 1;
-	end
+	local info = UIDropDownMenu_CreateInfo();
 	info.text = GREEN_FONT_COLOR_CODE..AVAILABLE..FONT_COLOR_CODE_CLOSE;
 	info.value = "available";
 	info.func = ClassTrainerFrameFilterDropDown_OnClick;
-	info.checked = checked;
+	info.checked = GetTrainerServiceTypeFilter("available");
 	info.keepShownOnClick = 1;
 	UIDropDownMenu_AddButton(info);
 
 	-- Unavailable button
-	info = {};
-	checked = nil;
-	if ( GetTrainerServiceTypeFilter("unavailable") ) then
-		checked = 1;
-	end
 	info.text = RED_FONT_COLOR_CODE..UNAVAILABLE..FONT_COLOR_CODE_CLOSE;
 	info.value = "unavailable";
 	info.func = ClassTrainerFrameFilterDropDown_OnClick;
-	info.checked = checked;
+	info.checked = GetTrainerServiceTypeFilter("unavailable");
 	info.keepShownOnClick = 1;
 	UIDropDownMenu_AddButton(info);
 
 	-- Unavailable button
-	info = {};
-	checked = nil;
-	if ( GetTrainerServiceTypeFilter("used") ) then
-		checked = 1;
-	end
 	info.text = GRAY_FONT_COLOR_CODE..USED..FONT_COLOR_CODE_CLOSE;
 	info.value = "used";
 	info.func = ClassTrainerFrameFilterDropDown_OnClick;
-	info.checked = checked;
+	info.checked = GetTrainerServiceTypeFilter("used");
 	info.keepShownOnClick = 1;
 	UIDropDownMenu_AddButton(info);
 end
 
 function ClassTrainerFrameFilterDropDown_OnClick()
+	ClassTrainerListScrollFrameScrollBar:SetValue(0);
 	if ( UIDropDownMenuButton_GetChecked() ) then
-		setglobal("TRAINER_FILTER_"..strupper(this.value), 0);
+		_G["TRAINER_FILTER_"..strupper(this.value)] = 0;
 		SetTrainerServiceTypeFilter(this.value, 0);
 	else
-		setglobal("TRAINER_FILTER_"..strupper(this.value), 1);
+		_G["TRAINER_FILTER_"..strupper(this.value)] = 1;
 		SetTrainerServiceTypeFilter(this.value, 1);
 	end
-
-	ClassTrainerListScrollFrameScrollBar:SetValue(0);
 end

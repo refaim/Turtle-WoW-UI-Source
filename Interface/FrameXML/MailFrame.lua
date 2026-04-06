@@ -19,6 +19,7 @@ function MailFrame_Onload()
 	this:RegisterEvent("MAIL_SEND_SUCCESS");
 	this:RegisterEvent("MAIL_FAILED");
 	this:RegisterEvent("CLOSE_INBOX_ITEM");
+	this:RegisterEvent("PLAYER_ENTERING_WORLD")
 	-- Set previous and next fields
 	MoneyInputFrame_SetPreviousFocus(SendMailMoney, SendMailBodyEditBox);
 end
@@ -58,6 +59,8 @@ function MailFrame_OnEvent()
 		HideUIPanel(MailFrame);
 	elseif ( (event == "CLOSE_INBOX_ITEM") and (InboxFrame.openMailID == arg1) ) then
 		HideUIPanel(OpenMailFrame);
+	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
+		HideUIPanel(MailFrame);
 	end
 end
 
@@ -97,7 +100,7 @@ end
 function InboxFrame_Update()
 	local numItems = GetInboxNumItems();
 	local index = ((InboxFrame.pageNum - 1) * INBOXITEMS_TO_DISPLAY) + 1;
-	local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, isGM;
+	local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, isGM, x, y, z;
 	local icon, button, expireTime, senderText, subjectText, buttonIcon;
 	for i=1, INBOXITEMS_TO_DISPLAY do
 		if ( index <= numItems ) then
@@ -116,27 +119,27 @@ function InboxFrame_Update()
 			if ( not sender ) then
 				sender = UNKNOWN;
 			end
-			button = getglobal("MailItem"..i.."Button");
+			button = _G["MailItem"..i.."Button"];
 			button:Show();
 			button.index = index;
 			button.hasItem = hasItem;
-			buttonIcon = getglobal("MailItem"..i.."ButtonIcon");
+			buttonIcon = _G["MailItem"..i.."ButtonIcon"];
 			buttonIcon:SetTexture(icon);
-			subjectText = getglobal("MailItem"..i.."Subject");
+			subjectText = _G["MailItem"..i.."Subject"];
 			subjectText:SetText(subject);
-			senderText = getglobal("MailItem"..i.."Sender");
+			senderText = _G["MailItem"..i.."Sender"];
 			senderText:SetText(sender);
 
 			-- If hasn't been read color the button yellow
 			if ( wasRead ) then
 				senderText:SetTextColor(0.75, 0.75, 0.75);
 				subjectText:SetTextColor(0.75, 0.75, 0.75);
-				getglobal("MailItem"..i.."ButtonSlot"):SetVertexColor(0.5, 0.5, 0.5);
+				_G["MailItem"..i.."ButtonSlot"]:SetVertexColor(0.5, 0.5, 0.5);
 				SetDesaturation(buttonIcon, 1);
 			else
 				senderText:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 				subjectText:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-				getglobal("MailItem"..i.."ButtonSlot"):SetVertexColor(1.0, 0.82, 0);
+				_G["MailItem"..i.."ButtonSlot"]:SetVertexColor(1.0, 0.82, 0);
 				SetDesaturation(buttonIcon, nil);
 			end
 			-- Format expiration time
@@ -145,7 +148,7 @@ function InboxFrame_Update()
 			else
 				daysLeft = RED_FONT_COLOR_CODE..SecondsToTime(floor(daysLeft * 24 * 60 * 60))..FONT_COLOR_CODE_CLOSE;
 			end
-			expireTime = getglobal("MailItem"..i.."ExpireTime");
+			expireTime = _G["MailItem"..i.."ExpireTime"];
 			expireTime:SetText(daysLeft);
 			-- Set expiration time tooltip
 			if ( InboxItemCanDelete(index) ) then
@@ -156,10 +159,10 @@ function InboxFrame_Update()
 			expireTime:Show();
 			-- Is a C.O.D. package
 			if ( CODAmount > 0 ) then
-				getglobal("MailItem"..i.."ButtonCOD"):Show();
+				_G["MailItem"..i.."ButtonCOD"]:Show();
 				button.cod = CODAmount;
 			else
-				getglobal("MailItem"..i.."ButtonCOD"):Hide();
+				_G["MailItem"..i.."ButtonCOD"]:Hide();
 				button.cod = nil;
 			end
 			-- Contains money
@@ -177,10 +180,10 @@ function InboxFrame_Update()
 			end
 		else
 			-- Clear everything
-			getglobal("MailItem"..i.."Button"):Hide();
-			getglobal("MailItem"..i.."Sender"):SetText("");
-			getglobal("MailItem"..i.."Subject"):SetText("");
-			getglobal("MailItem"..i.."ExpireTime"):Hide();
+			_G["MailItem"..i.."Button"]:Hide();
+			_G["MailItem"..i.."Sender"]:SetText("");
+			_G["MailItem"..i.."Subject"]:SetText("");
+			_G["MailItem"..i.."ExpireTime"]:Hide();
 		end
 		index = index + 1;
 	end
@@ -221,14 +224,14 @@ function InboxFrameItem_OnEnter()
 		if ( this.hasItem ) then
 			GameTooltip:AddLine(" ");
 		end
-		GameTooltip:AddLine(ENCLOSED_MONEY, "", 1, 1, 1);
+		GameTooltip:AddLine(ENCLOSED_MONEY);
 		SetTooltipMoney(GameTooltip, this.money);
 		SetMoneyFrameColor("GameTooltipMoneyFrame", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	elseif (this.cod) then
 		if ( this.hasItem ) then
 			GameTooltip:AddLine(" ");
 		end
-		GameTooltip:AddLine(COD_AMOUNT, "", 1, 1, 1);
+		GameTooltip:AddLine(COD_AMOUNT);
 		SetTooltipMoney(GameTooltip, this.cod);
 		if ( this.cod > GetMoney() ) then
 			SetMoneyFrameColor("GameTooltipMoneyFrame", RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
@@ -252,8 +255,15 @@ function InboxPrevPage()
 end
 
 -- Open Mail functions
+function OpenMailFrame_OnShow()
+	UIPanelWindows["MailFrame"].width = MailFrame:GetWidth() + OpenMailFrame:GetWidth() - 20;
+	UpdateUIPanelPositions(MailFrame);
+end
 
 function OpenMailFrame_OnHide()
+	UIPanelWindows["MailFrame"].width = MailFrame:GetWidth();
+	UpdateUIPanelPositions();
+
 	StaticPopup_Hide("DELETE_MAIL");
 	if ( not InboxFrame.openMailID ) then
 		InboxFrame_Update();
@@ -650,10 +660,10 @@ function StationeryPopupFrame_Update()
 	local name, texture, cost;
 	local button;
 	for i=1, STATIONERYITEMS_TO_DISPLAY do
-		button = getglobal("StationeryPopupButton"..i);
+		button = _G["StationeryPopupButton"..i];
 		if ( index <= numStationeries ) then
 			name, texture, cost = GetStationeryInfo(index);
-			getglobal("StationeryPopupButton"..i.."Name"):SetText(name);
+			_G["StationeryPopupButton"..i.."Name"]:SetText(name);
 			if ( cost ) then
 				MoneyFrame_Update("StationeryPopupButton"..i.."MoneyFrame", cost);
 				-- If player can't afford
@@ -668,12 +678,12 @@ function StationeryPopupFrame_Update()
 				-- Is a stationery in player's inventory or is free
 				MoneyFrame_Update("StationeryPopupButton"..i.."MoneyFrame", 0);
 			end
-			getglobal("StationeryPopupButton"..i.."Icon"):SetTexture(texture);
+			_G["StationeryPopupButton"..i.."Icon"]:SetTexture(texture);
 			button:Show();
 		else
-			getglobal("StationeryPopupButton"..i.."Name"):SetText("");
+			_G["StationeryPopupButton"..i.."Name"]:SetText("");
 			MoneyFrame_Update("StationeryPopupButton"..i.."MoneyFrame", 0);
-			getglobal("StationeryPopupButton"..i.."Icon"):SetTexture("");
+			_G["StationeryPopupButton"..i.."Icon"]:SetTexture("");
 			button:Hide();
 		end
 

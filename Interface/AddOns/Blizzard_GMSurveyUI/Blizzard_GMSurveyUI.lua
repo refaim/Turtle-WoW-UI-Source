@@ -11,15 +11,15 @@ function GMSurveyFrame_Update()
 	local questionFrame;
 	for i=1, MAX_SURVEY_QUESTIONS do
 		surveyQuestion = GMSurveyQuestion(i);
-		questionFrame = getglobal("GMSurveyQuestion"..i);
+		questionFrame = _G["GMSurveyQuestion"..i];
 		if ( surveyQuestion ) then
 			GMSurveyFrame.numQuestions = GMSurveyFrame.numQuestions + 1;
-			getglobal("GMSurveyQuestion"..i.."Text"):SetText(surveyQuestion);
+			_G["GMSurveyQuestion"..i.."Text"]:SetText(surveyQuestion);
 			questionFrame:Show();
 		else
 			questionFrame:Hide();
 		end
-		questionFrame:SetHeight(getglobal("GMSurveyQuestion"..i.."Text"):GetHeight() + 55);
+		questionFrame:SetHeight(_G["GMSurveyQuestion"..i.."Text"]:GetHeight() + 55);
 	end
 
 	if ( GMSurveyFrame.numQuestions == 0 ) then
@@ -40,7 +40,7 @@ function GMSurveyFrame_Update()
 	GMSurveyCommentScrollFrame:SetWidth(505+scrollBarOffset);
 	GMSurveyFrameComment:SetWidth(505+scrollBarOffset);
 	for i=1, GMSurveyFrame.numQuestions do
-		questionFrame = getglobal("GMSurveyQuestion"..i);
+		questionFrame = _G["GMSurveyQuestion"..i];
 		questionFrame:SetWidth(543+scrollBarOffset);
 	end
 end
@@ -59,7 +59,7 @@ function GMSurveyRadioButton_OnClick(owner, id)
 	end
 	local radioButton;
 	for i=0, MAX_RADIO_BUTTONS do
-		radioButton = getglobal(owner:GetName().."RadioButton"..i);
+		radioButton = _G[owner:GetName().."RadioButton"..i];
 		if ( i == owner.selectedRadioButton ) then
 			radioButton:SetChecked(1);
 			radioButton:Disable();
@@ -72,7 +72,7 @@ end
 
 function GMSurveySubmitButton_OnClick()
 	for i=1, GMSurveyFrame.numQuestions do
-		GMSurveyAnswerSubmit(i, getglobal("GMSurveyQuestion"..i).selectedRadioButton, "");
+		GMSurveyAnswerSubmit(i, _G["GMSurveyQuestion"..i].selectedRadioButton, "");
 	end
 	GMSurveyCommentSubmit(GMSurveyFrameComment:GetText());
 	GMSurveySubmit();

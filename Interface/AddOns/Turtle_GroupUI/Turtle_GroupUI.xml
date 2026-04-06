@@ -1,0 +1,83 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Script file="Turtle_GroupUI.lua" />
+	<Include file="Turtle_GroupUITemplates.xml" />
+	<Button name="GroupClusterFrame1" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame2" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame3" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame4" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame5" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame6" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame7" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupClusterFrame8" parent="UIParent" inherits="GroupClusterFrameTemplate" />
+	<Button name="GroupPetsClusterFrame" parent="UIParent" movable="true" clampedToScreen="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentHeader" inherits="GameFontNormalSmall" text="PETS">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="20" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this.header = GroupPetsClusterFrameHeader
+				this:RegisterForDrag("LeftButton")
+				this:RegisterForClicks("RightButtonUp")
+			</OnLoad>
+			<OnClick>
+				ToggleDropDownMenu(1, nil, GroupClusterDropDown, "cursor", 2, -2)
+			</OnClick>
+			<OnEnter>
+				this.header:SetVertexColor(1, 1, 1)
+				this.header:Show()
+				if GroupFrame:IsMouseEnabled() then
+					this.r, this.g, this.b, this.a = this:GetBackdropColor()
+					this:SetBackdropColor(1, 1, 1, 0.5)
+				end
+			</OnEnter>
+			<OnLeave>
+				this.header:SetVertexColor(1, .82, 0)
+				if GROUP_HEADERS == "0" then
+					this.header:Hide()
+				end
+				if GroupFrame:IsMouseEnabled() then
+					this:SetBackdropColor(this.r, this.g, this.b, this.a)
+				end
+			</OnLeave>
+			<OnDragStart>
+				if not this.isMoving then
+					this:SetFrameStrata("HIGH")
+					StartSnapMoveFrame(this)
+				end
+			</OnDragStart>
+			<OnDragStop>
+				if this.isMoving then
+					this:SetFrameStrata("MEDIUM")
+					StopSnapMoveFrame(this)
+				end
+			</OnDragStop>
+		</Scripts>
+	</Button>
+	<Button name="GroupFrame" parent="UIParent" frameStrata="HIGH" movable="true" hidden="true">
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+				this:EnableMouse(0)
+			</OnLoad>
+			<OnEvent>
+				GroupFrame_OnEvent()
+			</OnEvent>
+		</Scripts>
+	</Button>
+	<Frame name="GroupClusterDropDown" inherits="UIDropDownMenuTemplate">
+		<Scripts>
+			<OnLoad>
+				UIDropDownMenu_Initialize(this, GroupClusterDropDown_Init, "MENU");
+			</OnLoad>
+		</Scripts>
+	</Frame>
+</Ui>

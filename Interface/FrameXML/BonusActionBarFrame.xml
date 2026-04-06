@@ -7,17 +7,13 @@
 		</Size>
 		<Scripts>
 			<OnLoad>
-				ActionButton_OnLoad();
 				this.isBonus = 1;
-				this.inTransition = nil;
+				ActionButton_OnLoad();
+				this:RegisterEvent("UPDATE_BONUS_ACTIONBAR");
 				this:SetFrameLevel(this:GetFrameLevel() + 2);
-				local cooldown = getglobal(this:GetName().."Cooldown");
+				local cooldown = _G[this:GetName().."Cooldown"];
 				cooldown:SetFrameLevel(cooldown:GetFrameLevel() + 2);
 			</OnLoad>
-			<OnEvent>
-				ActionButton_OnEvent(event);
-				BonusActionButton_OnEvent(event);
-			</OnEvent>
 		</Scripts>
 	</CheckButton>
 	<CheckButton name="ShapeshiftButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
@@ -26,7 +22,7 @@
 		</Size>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."Cooldown"):SetScale(.83);
+				_G[this:GetName().."Cooldown"]:SetScale(.83);
 			</OnLoad>
 			<OnClick>
 				local check = 1;
@@ -48,9 +44,7 @@
 				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
-
 	</CheckButton>
-
 	<Frame name="BonusActionBarFrame" frameStrata="HIGH" parent="MainMenuBar" enableMouse="true" toplevel="true" hidden="true">
 		<Size>
 			<AbsDimension x="505" y="43"/>

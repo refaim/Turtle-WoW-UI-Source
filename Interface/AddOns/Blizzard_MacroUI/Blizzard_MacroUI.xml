@@ -409,7 +409,7 @@
 								end
 								MacroFrameCharLimitText:SetText(this:GetNumLetters() .. "/" .. this:GetMaxLetters());
 
-								local scrollBar = getglobal(this:GetParent():GetName().."ScrollBar")
+								local scrollBar = _G[this:GetParent():GetName().."ScrollBar"];
 								this:GetParent():UpdateScrollChildRect();
 								local min;
 								local max;
@@ -488,18 +488,18 @@
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Button name="MacroFrameTab1" inherits="TabButtonTemplate" text="GENERAL_MACROS" id="1">
+			<Button name="MacroFrameTab1" inherits="TabButtonTemplate" text="GENERAL" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="65" y="-39"/>
+							<AbsDimension x="75" y="-39"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						PanelTemplates_TabResize(-15);
-						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
+						PanelTemplates_TabResize(0);
+						_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 31);
 					</OnLoad>
 					<OnClick>
 						PanelTemplates_SetTab(MacroFrame, this:GetID());
@@ -509,7 +509,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="MacroFrameTab2" inherits="TabButtonTemplate" id="2">
+			<Button name="MacroFrameTab2" inherits="TabButtonTemplate" text="CHARACTER" id="2">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="MacroFrameTab1" relativePoint="RIGHT">
 						<Offset>
@@ -519,9 +519,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						this:SetText(format(CHARACTER_SPECIFIC_MACROS, UnitName("player")));
-						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
-						PanelTemplates_TabResize(-15, nil, nil, 150);
+						_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 31);
+						PanelTemplates_TabResize(0);
 					</OnLoad>
 					<OnClick>
 						PanelTemplates_SetTab(MacroFrame, this:GetID());
@@ -561,16 +560,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						local tab = PanelTemplates_GetSelectedTab(MacroFrame)
-
-						DeleteMacro(MacroFrame.selectedMacro);
-						MacroFrame_OnLoad();
-						MacroFrame_Update();
-						MacroFrameText:ClearFocus();
-
-						if tab == 2 then
-							MacroFrameTab2:Click()
-						end
+						MacroDeleteButton_OnClick();
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -624,11 +614,9 @@
 			</OnLoad>
 			<OnShow>
 				MacroFrame_OnShow();
-				UpdateMicroButtons();
 			</OnShow>
 			<OnHide>
 				MacroFrame_OnHide();
-				UpdateMicroButtons();
 			</OnHide>
 			<OnMouseWheel>
 				return;
@@ -731,7 +719,7 @@
 						MacroFrameSelectedMacroName:SetText(this:GetText());
 					</OnTextChanged>
 					<OnEscapePressed>
-						MacroPopupFrame:Hide();
+						MacroPopupFrame_CancelEdit();
 					</OnEscapePressed>
 					<OnEnterPressed>
 						if ( MacroPopupOkayButton:IsEnabled() ~= 0 ) then
@@ -794,186 +782,6 @@
 					</OnVerticalScroll>
 				</Scripts>
 			</ScrollFrame>
-			<CheckButton name="MacroPopupButton1" inherits="MacroPopupButtonTemplate" id="1">
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="24" y="-85"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton2" inherits="MacroPopupButtonTemplate" id="2">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton1" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton3" inherits="MacroPopupButtonTemplate" id="3">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton2" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton4" inherits="MacroPopupButtonTemplate" id="4">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton3" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton5" inherits="MacroPopupButtonTemplate" id="5">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton4" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton6" inherits="MacroPopupButtonTemplate" id="6">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="MacroPopupButton1" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-8"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton7" inherits="MacroPopupButtonTemplate" id="7">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton6" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton8" inherits="MacroPopupButtonTemplate" id="8">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton7" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton9" inherits="MacroPopupButtonTemplate" id="9">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton8" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton10" inherits="MacroPopupButtonTemplate" id="10">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton9" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton11" inherits="MacroPopupButtonTemplate" id="11">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="MacroPopupButton6" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-8"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton12" inherits="MacroPopupButtonTemplate" id="12">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton11" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton13" inherits="MacroPopupButtonTemplate" id="13">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton12" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton14" inherits="MacroPopupButtonTemplate" id="14">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton13" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton15" inherits="MacroPopupButtonTemplate" id="15">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton14" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton16" inherits="MacroPopupButtonTemplate" id="16">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="MacroPopupButton11" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-8"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton17" inherits="MacroPopupButtonTemplate" id="17">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton16" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton18" inherits="MacroPopupButtonTemplate" id="18">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton17" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton19" inherits="MacroPopupButtonTemplate" id="19">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton18" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="MacroPopupButton20" inherits="MacroPopupButtonTemplate" id="20">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="MacroPopupButton19" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="10" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
 			<Button name="MacroPopupCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
 				<Size>
 					<AbsDimension x="78" y="22"/>
@@ -987,8 +795,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						this:GetParent():Hide();
-						MacroFrame_Update();
+						MacroPopupFrame_CancelEdit();
 						PlaySound("gsTitleOptionOK");
 					</OnClick>
 				</Scripts>

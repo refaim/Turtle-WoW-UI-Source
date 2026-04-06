@@ -53,7 +53,7 @@ end
 
 function TradeFrame_UpdatePlayerItem(id)
 	local name, texture, numItems, isUsable, enchantment = GetTradePlayerItemInfo(id);
-	local buttonText = getglobal("TradePlayerItem"..id.."Name");
+	local buttonText = _G["TradePlayerItem"..id.."Name"];
 
 	-- See if its the enchant slot
 	if ( id == 7 ) then
@@ -70,7 +70,7 @@ function TradeFrame_UpdatePlayerItem(id)
 	else
 		buttonText:SetText(name);
 	end
-	local tradeItemButton = getglobal("TradePlayerItem"..id.."ItemButton");
+	local tradeItemButton = _G["TradePlayerItem"..id.."ItemButton"];
 	SetItemButtonTexture(tradeItemButton, texture);
 	SetItemButtonCount(tradeItemButton, numItems);
 	if ( texture ) then
@@ -82,7 +82,7 @@ end
 
 function TradeFrame_UpdateTargetItem(id)
 	local name, texture, numItems, quality, isUsable, enchantment = GetTradeTargetItemInfo(id);
-	local buttonText = getglobal("TradeRecipientItem"..id.."Name");
+	local buttonText = _G["TradeRecipientItem"..id.."Name"];
 	-- See if its the enchant slot
 	if ( id == 7 ) then
 		if ( name ) then
@@ -98,8 +98,8 @@ function TradeFrame_UpdateTargetItem(id)
 	else
 		buttonText:SetText(name);
 	end
-	local tradeItemButton = getglobal("TradeRecipientItem"..id.."ItemButton");
-	local tradeItem = getglobal("TradeRecipientItem"..id);
+	local tradeItemButton = _G["TradeRecipientItem"..id.."ItemButton"];
+	local tradeItem = _G["TradeRecipientItem"..id];
 	SetItemButtonTexture(tradeItemButton, texture);
 	SetItemButtonCount(tradeItemButton, numItems);
 	if ( isUsable or not name ) then
@@ -176,7 +176,7 @@ end
 function TradeFrame_GetAvailableSlot()
 	local tradeItemButton;
 	for i=1, MAX_TRADABLE_ITEMS do
-		tradeItemButton = getglobal("TradePlayerItem"..i.."ItemButton");
+		tradeItemButton = _G["TradePlayerItem"..i.."ItemButton"];
 		if ( not tradeItemButton.hasItem ) then
 			return i;
 		end

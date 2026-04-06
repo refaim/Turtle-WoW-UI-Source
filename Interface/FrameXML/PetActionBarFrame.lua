@@ -90,17 +90,17 @@ function PetActionBar_Update()
 	local petActionButton, petActionIcon;
 	local petActionsUsable = GetPetActionsUsable();
 	for i=1, NUM_PET_ACTION_SLOTS, 1 do
-		petActionButton = getglobal("PetActionButton"..i);
-		petActionIcon = getglobal("PetActionButton"..i.."Icon");
-		petAutoCastableTexture = getglobal("PetActionButton"..i.."AutoCastable");
-		petAutoCastModel = getglobal("PetActionButton"..i.."AutoCast");
+		petActionButton = _G["PetActionButton"..i];
+		petActionIcon = _G["PetActionButton"..i.."Icon"];
+		local petAutoCastableTexture = _G["PetActionButton"..i.."AutoCastable"];
+		local petAutoCastModel = _G["PetActionButton"..i.."AutoCast"];
 		local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i);
 		if ( not isToken ) then
 			petActionIcon:SetTexture(texture);
 			petActionButton.tooltipName = name;
 		else
-			petActionIcon:SetTexture(getglobal(texture));
-			petActionButton.tooltipName = TEXT(getglobal(name));
+			petActionIcon:SetTexture(_G[texture]);
+			petActionButton.tooltipName = _G[name];
 		end
 		petActionButton.isToken = isToken;
 		petActionButton.tooltipSubtext = subtext;
@@ -149,7 +149,7 @@ end
 function PetActionBar_UpdateCooldowns()
 	local cooldown;
 	for i=1, NUM_PET_ACTION_SLOTS, 1 do
-		cooldown = getglobal("PetActionButton"..i.."Cooldown");
+		cooldown = _G["PetActionButton"..i.."Cooldown"];
 		local start, duration, enable = GetPetActionCooldown(i);
 		CooldownFrame_SetTimer(cooldown, start, duration, enable);
 	end
@@ -186,7 +186,7 @@ function PetActionBar_ShowGrid()
 	ShowPetActionBar();
 	PetActionBarFrame.showgrid = PetActionBarFrame.showgrid + 1;
 	for i=1, NUM_PET_ACTION_SLOTS, 1 do
-		getglobal("PetActionButton"..i):Show();
+		_G["PetActionButton"..i]:Show();
 	end
 end
 
@@ -200,23 +200,21 @@ function PetActionBar_HideGrid()
 		for i=1, NUM_PET_ACTION_SLOTS, 1 do
 			name = GetPetActionInfo(i);
 			if ( not name ) then
-				getglobal("PetActionButton"..i):Hide();
+				_G["PetActionButton"..i]:Hide();
 			end
-
 		end
 	end
-
 end
 
 function PetActionButtonDown(id)
-	local button = getglobal("PetActionButton"..id);
+	local button = _G["PetActionButton"..id];
 	if ( button:GetButtonState() == "NORMAL" ) then
 		button:SetButtonState("PUSHED");
 	end
 end
 
 function PetActionButtonUp(id)
-	local button = getglobal("PetActionButton"..id);
+	local button = _G["PetActionButton"..id];
 	if ( button:GetButtonState() == "PUSHED" ) then
 		button:SetButtonState("NORMAL");
 		CastPetAction(id);
@@ -227,11 +225,11 @@ function PetActionButton_OnLoad()
 	this:RegisterForDrag("LeftButton", "RightButton");
 	this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 	this:RegisterEvent("UPDATE_BINDINGS");
-	getglobal(this:GetName().."Cooldown"):SetScale(1);
-	getglobal(this:GetName().."Cooldown"):ClearAllPoints();
-	getglobal(this:GetName().."Cooldown"):SetWidth(33);
-	getglobal(this:GetName().."Cooldown"):SetHeight(33);
-	getglobal(this:GetName().."Cooldown"):SetPoint("CENTER", this, "CENTER", -2, -1);
+	_G[this:GetName().."Cooldown"]:SetScale(1);
+	_G[this:GetName().."Cooldown"]:ClearAllPoints();
+	_G[this:GetName().."Cooldown"]:SetWidth(33);
+	_G[this:GetName().."Cooldown"]:SetHeight(33);
+	_G[this:GetName().."Cooldown"]:SetPoint("CENTER", this, "CENTER", -2, -1);
 	PetActionButton_SetHotkeys();
 end
 
@@ -286,9 +284,13 @@ function PetActionButton_OnEnter()
 		else
 			GameTooltip_SetDefaultAnchor(GameTooltip, this);
 		end
-		GameTooltip:SetText(this.tooltipName..NORMAL_FONT_COLOR_CODE.." ("..GetBindingText(GetBindingKey("BONUSACTIONBUTTON"..this:GetID()), "KEY_")..")"..FONT_COLOR_CODE_CLOSE, 1.0, 1.0, 1.0);
+		GameTooltip:SetText(this.tooltipName, 1, 1, 1);
+		local key = GetBindingText(GetBindingKey("BONUSACTIONBUTTON"..this:GetID()), "KEY_");
+		if ( key ~= "" ) then
+			GameTooltip:AppendText(NORMAL_FONT_COLOR_CODE.." ("..key..")"..FONT_COLOR_CODE_CLOSE);
+		end
 		if ( this.tooltipSubtext ) then
-			GameTooltip:AddLine(this.tooltipSubtext, "", 0.5, 0.5, 0.5);
+			GameTooltip:AddLine(this.tooltipSubtext);
 		end
 		GameTooltip:Show();
 	else
@@ -304,7 +306,7 @@ end
 function PetActionButton_SetHotkeys()
 	local binding = GetBindingText(GetBindingKey("BONUSACTIONBUTTON"..this:GetID()), 1);
 	local bindingSuffix = gsub(binding, ".*%-", "");
-	local hotkey = getglobal(this:GetName().."HotKey");
+	local hotkey = _G[this:GetName().."HotKey"];
 	if ( bindingSuffix == this:GetID() ) then
 		hotkey:SetText(this:GetID());
 	else
@@ -320,7 +322,7 @@ end
 
 function PetActionButton_StopFlash()
 	this.flashing = 0;
-	getglobal(this:GetName().."Flash"):Hide();
+	_G[this:GetName().."Flash"]:Hide();
 	ActionButton_UpdateState();
 end
 

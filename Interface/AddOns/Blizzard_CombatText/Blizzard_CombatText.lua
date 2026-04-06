@@ -241,9 +241,9 @@ function CombatText_OnEvent(event)
 	elseif ( messageType == "COMBO_POINTS" ) then
 		message = format(GetText("COMBAT_TEXT_COMBO_POINTS", nil, data), data);
 	else
-		message = getglobal(messageType);
+		message = _G[messageType];
 		if ( not message ) then
-			message = getglobal("COMBAT_TEXT_"..messageType);
+			message = _G["COMBAT_TEXT_"..messageType];
 		end
 	end
 
@@ -382,7 +382,7 @@ end
 function CombatText_GetAvailableString()
 	local string;
 	for i=1, NUM_COMBAT_TEXT_LINES do
-		string = getglobal("CombatText"..i);
+		string = _G["CombatText"..i];
 		if ( not string:IsShown() ) then
 			return string;
 		end
@@ -399,7 +399,7 @@ end
 function CombatText_ClearAnimationList()
 	local string;
 	for i=1, NUM_COMBAT_TEXT_LINES do
-		string = getglobal("CombatText"..i);
+		string = _G["CombatText"..i];
 		string:SetAlpha(0);
 		string:Hide();
 		string:SetPoint("TOP", UIParent, "BOTTOM", COMBAT_TEXT_LOCATIONS.startX, COMBAT_TEXT_LOCATIONS.startY);
@@ -427,7 +427,7 @@ function CombatText_UpdateDisplayedMessages()
 	-- Update shown messages
 	for index, value in COMBAT_TEXT_TYPE_INFO do
 		if ( value.var ) then
-			if ( getglobal(value.var) == "1" ) then
+			if ( _G[value.var] == "1" ) then
 				value.show = 1;
 			else
 				value.show = nil;

@@ -1,42 +1,26 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
-	<Script file="Turtle_TransmogUI.lua" />
-	<GameTooltip name="FashionTooltip" inherits="GameTooltipTemplate" parent="UIParent" hidden="true" />
-	<Frame name="NewTransmogAlertFrame" hidden="false" toplevel="true" parent="UIParent" movable="true"
-		enableMouse="true">
-		<Size>
-			<AbsDimension x="250" y="20" />
-		</Size>
+	<Script file="Turtle_TransmogUI.lua"/>
+	<Frame name="NewTransmogAlertFrame" toplevel="true" parent="UIParent" movable="true" enableMouse="true">
+		<Size x="250" y="20"/>
+		<Anchors>
+			<Anchor point="BOTTOM">
+				<Offset x="0" y="300"/>
+			</Anchor>
+		</Anchors>
 		<Layers>
 			<Layer level="OVERLAY">
 				<FontString name="$parentTitle" inherits="GameFontNormal" text="[New Transmog] ANCHOR">
 					<Anchors>
-						<Anchor point="CENTER">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="CENTER"/>
 					</Anchors>
 				</FontString>
 			</Layer>
 		</Layers>
-		<Anchors>
-			<Anchor point="BOTTOM">
-				<Offset>
-					<AbsDimension x="0" y="300" />
-				</Offset>
-			</Anchor>
-		</Anchors>
 		<Frames>
 			<Button name="$parentTestPlacement" inherits="UIPanelButtonTemplate2" text="Test">
-				<Size>
-					<AbsDimension x="50" y="40" />
-				</Size>
+				<Size x="50" y="40"/>
 				<Anchors>
-					<Anchor point="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
-					</Anchor>
+					<Anchor point="LEFT"/>
 				</Anchors>
 				<Scripts>
 					<OnClick>
@@ -44,16 +28,10 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="$parentClosePlacement" inherits="UIPanelButtonTemplate2" text="Close">
-				<Size>
-					<AbsDimension x="50" y="40" />
-				</Size>
+			<Button name="$parentClosePlacement" inherits="UIPanelButtonTemplate2" text="CLOSE">
+				<Size x="50" y="40"/>
 				<Anchors>
-					<Anchor point="RIGHT">
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
-					</Anchor>
+					<Anchor point="RIGHT"/>
 				</Anchors>
 				<Scripts>
 					<OnClick>
@@ -79,162 +57,97 @@
 		</Scripts>
 	</Frame>
 	<Frame name="TransmogFrame" frameStrata="MEDIUM" hidden="true" toplevel="true" parent="UIParent" movable="true" enableMouse="true" clampedToScreen="true">
-		<Size>
-			<AbsDimension x="750" y="506" />
-		</Size>
+		<Size x="750" y="506"/>
 		<Anchors>
-			<Anchor point="CENTER">
-				<Offset>
-					<AbsDimension x="0" y="0" />
-				</Offset>
-			</Anchor>
+			<Anchor point="CENTER"/>
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentPortrait">
-					<Size>
-						<AbsDimension x="60" y="60" />
-					</Size>
+					<Size x="60" y="60"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="7" y="-6" />
-							</Offset>
+							<Offset x="7" y="-6"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentRaceBackground">
-					<Size>
-						<AbsDimension x="442" y="442" />
-					</Size>
+					<Size x="442" y="442"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="18" y="-70" />
-							</Offset>
+							<Offset x="18" y="-70"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
 			</Layer>
 			<Layer level="BORDER">
 				<Texture name="$parentBackground1" file="Interface\TransmogFrame\ui1">
-					<Size>
-						<AbsDimension x="512" y="512" />
-					</Size>
+					<Size x="512" y="512"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentBackground2" file="Interface\TransmogFrame\ui2">
-					<Size>
-						<AbsDimension x="512" y="512" />
-					</Size>
+					<Size x="512" y="512"/>
 					<Anchors>
-						<Anchor point="TOPRIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPRIGHT"/>
 					</Anchors>
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture name="$parentSplash" file="Interface\TransmogFrame\splash">
-					<Size>
-						<AbsDimension x="512" y="512" />
-					</Size>
+					<Size x="512" y="512"/>
 					<Anchors>
 						<Anchor point="TOPRIGHT">
-							<Offset>
-								<AbsDimension x="-12" y="0" />
-							</Offset>
+							<Offset x="-12" y="0"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parentTitleText" inherits="GameFontNormal" text="TRANSMOGRIFY">
-					<Size>
-						<AbsDimension x="512" y="14" />
-					</Size>
+				<FontString name="$parentTitleText" inherits="GameFontNormal" justifyH="CENTER" text="TRANSMOGRIFY">
+					<Size x="512" y="14"/>
 					<Anchors>
-						<Anchor point="TOP" relativePoint="TOP">
-							<Offset>
-								<AbsDimension x="0" y="-17" />
-							</Offset>
+						<Anchor point="TOP">
+							<Offset x="0" y="-17"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentInstructions" justifyH="center" inherits="GameFontNormal" text="">
-					<Size>
-						<AbsDimension x="370" y="36" />
-					</Size>
+				<FontString name="$parentInstructions" inherits="GameFontNormal" justifyH="CENTER" text="TRANSMOG_INSTRUCTIONS">
+					<Size x="370" y="36"/>
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="$parentTitleText" relativePoint="BOTTOM">
-							<Offset>
-								<AbsDimension x="110" y="-400" />
-							</Offset>
+							<Offset x="110" y="-400"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentSetBonus" justifyH="center" inherits="GameFontNormal"
-					text="">
-					<Size>
-						<AbsDimension x="370" y="36" />
-					</Size>
-					<Anchors>
-						<Anchor point="TOP" relativeTo="$parentInstructions" relativePoint="BOTTOM">
-							<Offset>
-								<AbsDimension x="0" y="-10" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentNoTransmogs" hidden="true" justifyH="center" inherits="GameFontNormal"
-					text="test">
-					<Size>
-						<AbsDimension x="370" y="36" />
-					</Size>
+				<FontString name="$parentNoTransmogs" hidden="true" inherits="GameFontNormal" justifyH="CENTER" text="TRANSMOG_NO_MOGS">
+					<Size x="370" y="36"/>
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="$parentTitleText" relativePoint="TOP">
-							<Offset>
-								<AbsDimension x="110" y="-250" />
-							</Offset>
+							<Offset x="110" y="-250"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentPageText" hidden="true" inherits="GameFontHighlightSmall" text="Page 1"
-					justifyH="CENTER">
-					<Size>
-						<AbsDimension x="80" y="36" />
-					</Size>
+				<FontString name="$parentPageText" hidden="true" inherits="GameFontHighlightSmall" justifyH="CENTER">
+					<Size x="80" y="36"/>
 					<Anchors>
 						<Anchor point="BOTTOM">
-							<Offset>
-								<AbsDimension x="80" y="10" />
-							</Offset>
+							<Offset x="80" y="10"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
 				<FontString name="$parentCurrencyText" inherits="GameFontNormal" justifyH="LEFT" text="0">
-					<Size>
-						<AbsDimension x="64" y="12" />
-					</Size>
+					<Size x="64" y="12"/>
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
-							<Offset>
-								<AbsDimension x="38" y="14" />
-							</Offset>
+							<Offset x="38" y="14"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
-			<EditBox name="TransmogFrameSearch" inherits="SearchBoxTemplate" letters="120" hidden="false">
-				<Size x="130" y="32" />
+			<EditBox name="TransmogFrameSearch" inherits="SearchBoxTemplate" letters="120">
+				<Size x="130" y="32"/>
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="92" y="-40"/>
@@ -246,17 +159,13 @@
 					</OnTextChanged>
 				</Scripts>
 			</EditBox>
-			<Button name="$parentOutfits" inherits="UIDropDownMenuTemplate" text="Outfits">
+			<Frame name="$parentOutfits" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="5" y="-75" />
-						</Offset>
+						<Offset x="5" y="-75"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnLoad>
-					</OnLoad>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT")
 						GameTooltip:SetText(TRANSMOG_SELECT_OUTFIT, nil, nil, nil, nil, 1)
@@ -265,16 +174,12 @@
 						GameTooltip:Hide()
 					</OnLeave>
 				</Scripts>
-			</Button>
+			</Frame>
 			<Button name="$parentSaveOutfit" inherits="UIPanelButtonTemplate" text="SAVE" topLevel="true">
-				<Size>
-					<AbsDimension x="60" y="24" />
-				</Size>
+				<Size x="60" y="24"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentOutfits" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="-15" y="2" />
-						</Offset>
+						<Offset x="-15" y="2"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -285,19 +190,13 @@
 				</Scripts>
 			</Button>
 			<Button name="$parentDeleteOutfit" hidden="true">
-				<Size>
-					<AbsDimension x="32" y="32" />
-				</Size>
+				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentSaveOutfit" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="-7" y="-1" />
-						</Offset>
+						<Offset x="-7" y="-1"/>
 					</Anchor>
 				</Anchors>
-				<HitRectInsets>
-					<AbsInset left="9" right="7" top="-7" bottom="10" />
-				</HitRectInsets>
+				<HitRectInsets left="9" right="7" top="-7" bottom="10"/>
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4), -(this:GetHeight() / 4))
@@ -310,24 +209,20 @@
 						StaticPopup_Show("CONFIRM_DELETE_OUTFIT")
 					</OnClick>
 				</Scripts>
-				<NormalTexture file="Interface\Buttons\CancelButton-Up" />
-				<PushedTexture file="Interface\Buttons\CancelButton-Down" />
-				<HighlightTexture file="Interface\Buttons\CancelButton-Highlight" alphaMode="ADD" />
+				<NormalTexture file="Interface\Buttons\CancelButton-Up"/>
+				<PushedTexture file="Interface\Buttons\CancelButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\CancelButton-Highlight" alphaMode="ADD"/>
 			</Button>
-			<Button name="$parentRevert" hidden="false" text="" topLevel="true">
+			<Button name="$parentRevert" topLevel="true">
+				<Size x="24" y="24"/>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="208" y="-120"/>
+					</Anchor>
+				</Anchors>
 				<NormalTexture file="Interface\TransmogFrame\revert"/>
 				<PushedTexture file="Interface\TransmogFrame\revert_pushed"/>
 				<HighlightTexture name="$parentHighlight" file="Interface\TransmogFrame\revert_highlight" alphaMode="ADD"/>
-				<Size>
-					<AbsDimension x="24" y="24" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="208" y="-120" />
-						</Offset>
-					</Anchor>
-				</Anchors>
 				<Scripts>
 					<OnLoad>
 						this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -342,44 +237,41 @@
 						Transmog_Revert()
 						PlaySound("igMainMenuOption")
 					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(RESET, 1, 1, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
 				</Scripts>
 			</Button>
-
-			<Button name="$parentItemsButton" inherits="UIPanelButtonTemplate" text="">
+			<Button name="$parentItemsButton" inherits="UIPanelButtonTemplate" text="TRANSMOG_ITEMS">
+				<Size x="81" y="32"/>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="250" y="-47"/>
+					</Anchor>
+				</Anchors>
 				<NormalTexture name="$parentNormalTexture" file="Interface\TransmogFrame\tab_active">
-					<Size>
-						<AbsDimension x="128" y="32" />
-					</Size>
+					<Size x="128" y="32"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</NormalTexture>
 				<PushedTexture name="$parentPushedTexture" file="Interface\TransmogFrame\tab_active">
-					<Size>
-						<AbsDimension x="128" y="32" />
-					</Size>
+					<Size x="128" y="32"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</PushedTexture>
-				<Size>
-					<AbsDimension x="81" y="32" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="250" y="-47" />
-						</Offset>
-					</Anchor>
-				</Anchors>
+				<DisabledTexture name="$parentPushedTexture" file="Interface\TransmogFrame\tab_inactive">
+					<Size x="128" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</DisabledTexture>
 				<Scripts>
 					<OnClick>
 						Transmog_SwitchTab("items")
@@ -387,41 +279,31 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="$parentSetsButton" inherits="UIPanelButtonTemplate">
+			<Button name="$parentSetsButton" inherits="UIPanelButtonTemplate" text="TRANSMOG_OUTFITS">
+				<Size x="81" y="32"/>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="332" y="-47"/>
+					</Anchor>
+				</Anchors>
 				<NormalTexture name="$parentNormalTexture" file="Interface\TransmogFrame\tab_inactive">
-					<Size>
-						<AbsDimension x="128" y="32" />
-					</Size>
+					<Size x="128" y="32"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</NormalTexture>
 				<PushedTexture name="$parentPushedTexture" file="Interface\TransmogFrame\tab_inactive">
-					<Size>
-						<AbsDimension x="128" y="32" />
-					</Size>
+					<Size x="128" y="32"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</PushedTexture>
-				<Size>
-					<AbsDimension x="81" y="32" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="332" y="-47" />
-						</Offset>
-					</Anchor>
-				</Anchors>
+				<DisabledTexture name="$parentPushedTexture" file="Interface\TransmogFrame\tab_inactive">
+					<Size x="128" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</DisabledTexture>
 				<Scripts>
 					<OnClick>
 						Transmog_SwitchTab("sets")
@@ -429,79 +311,18 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<StatusBar name="$parentCollectedBar" drawLayer="BACKGROUND" minValue="0" maxValue="1" defaultValue="0">
-				<Size>
-					<AbsDimension x="271" y="15" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="440" y="-49" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<FontString name="$parentText" inherits="GameFontHighlightSmall" text="0/0">
-							<Size>
-								<AbsDimension x="128" y="1" />
-							</Size>
-						</FontString>
-					</Layer>
-					<Layer level="BORDER">
-						<Texture name="$parentFillBar">
-							<Size>
-								<AbsDimension x="0" y="15" />
-							</Size>
-							<Color r="1.0" g="1.0" b="1.0" a="0.5" />
-						</Texture>
-					</Layer>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentBackground">
-							<Color r="1.0" g="1.0" b="1.0" a="0.2" />
-						</Texture>
-					</Layer>
-				</Layers>
-				<Frames>
-					<Button name="$parentBorder">
-						<Size>
-							<AbsDimension x="281" y="32" />
-						</Size>
-						<Anchors>
-							<Anchor point="LEFT">
-								<Offset>
-									<AbsDimension x="-5" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<HitRectInsets>
-							<AbsInset left="0" right="0" top="7" bottom="7" />
-						</HitRectInsets>
-						<NormalTexture name="$parentNormal" file="Interface\PaperDollInfoFrame\UI-Character-Skills-BarBorder" />
-						<HighlightTexture name="$parentHighlight" file="Interface\PaperDollInfoFrame\UI-Character-Skills-BarBorderHighlight" />
-					</Button>
-				</Frames>
-				<BarTexture name="$parentBar" file="Interface\PaperDollInfoFrame\UI-Character-Skills-Bar" />
-				<BarColor r="0.25" g="0.25" b="0.75" />
-			</StatusBar>
 			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="-29" y="-25" />
-						</Offset>
+						<Offset x="-29" y="-25"/>
 					</Anchor>
 				</Anchors>
 			</Button>
 			<Button name="$parentApplyButton" inherits="StaticPopupButtonTemplate" text="GENERIC_APPLY">
-				<Size>
-					<AbsDimension x="128" y="20" />
-				</Size>
+				<Size x="128" y="20"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="112" y="11" />
-						</Offset>
+						<Offset x="112" y="11"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -510,21 +331,17 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Frame name="$parentCurrencyIcon" hidden="false">
-				<Size>
-					<AbsDimension x="12" y="12" />
-				</Size>
+			<Frame name="$parentCurrencyIcon">
+				<Size x="12" y="12"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="24" y="14" />
-						</Offset>
+						<Offset x="24" y="14"/>
 					</Anchor>
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
 						<Texture file="Interface\Icons\INV_Misc_Ribbon_01" setAllPoints="true">
-							<TexCoords left="0.08" right="0.92" top="0.08" bottom="0.92" />
+							<TexCoords left="0.08" right="0.92" top="0.08" bottom="0.92"/>
 						</Texture>
 					</Layer>
 				</Layers>
@@ -541,14 +358,10 @@
 				</Scripts>
 			</Frame>
 			<DressUpModel name="$parentPlayerModel" scale="2.0" enableMouse="true">
-				<Size>
-					<AbsDimension x="221" y="362" />
-				</Size>
+				<Size x="221" y="362"/>
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="20" y="-111" />
-						</Offset>
+						<Offset x="20" y="-111"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -560,158 +373,110 @@
 					<OnMouseWheel>
 					</OnMouseWheel>
 				</Scripts>
-				<Frames>
-				</Frames>
 			</DressUpModel>
-
-			<Button name="HeadSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="HeadSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="30" y="-150" />
-						</Offset>
+						<Offset x="30" y="-150"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="ShoulderSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="ShoulderSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="HeadSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="BackSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="BackSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="ShoulderSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="ChestSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="ChestSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="BackSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="ShirtSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="ShirtSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="ChestSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="TabardSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="TabardSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="ShirtSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="WristSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="WristSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="TabardSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="HandsSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="HandsSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="205" y="-150" />
-						</Offset>
+						<Offset x="205" y="-150"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="WaistSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="WaistSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="HandsSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="LegsSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="LegsSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="WaistSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="FeetSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="FeetSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="LegsSlot" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="-5" />
-						</Offset>
+						<Offset x="0" y="-5"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-
-			<Button name="MainHandSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="MainHandSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="80" y="-425" />
-						</Offset>
+						<Offset x="80" y="-425"/>
 					</Anchor>
 				</Anchors>
-				<Frames>
-					<Button name="$parentSmall" hidden="true" inherits="TransmogPlayerSlotSmall" text="">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="MainHandSlot" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="17" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-				</Frames>
 			</Button>
-			<Button name="SecondaryHandSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="SecondaryHandSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="MainHandSlot">
-						<Offset>
-							<AbsDimension x="38" y="0" />
-						</Offset>
+						<Offset x="38" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="RangedSlot" hidden="false" inherits="TransmogPlayerSlotTemplate" text="">
+			<Button name="RangedSlot" inherits="TransmogPlayerSlotTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="SecondaryHandSlot">
-						<Offset>
-							<AbsDimension x="38" y="0" />
-						</Offset>
+						<Offset x="38" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-
 			<Button name="$parentLeftArrow" hidden="true">
-				<Size>
-					<AbsDimension x="32" y="32" />
-				</Size>
+				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="RIGHT" relativeTo="$parentPageText" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="40" y="0" />
-						</Offset>
+						<Offset x="40" y="0"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -720,21 +485,15 @@
 						PlaySound("igMainMenuOptionCheckBoxOn")
 					</OnClick>
 				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
-				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
-				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
-				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 			</Button>
 			<Button name="$parentRightArrow" hidden="true">
-				<Size>
-					<AbsDimension x="32" y="32" />
-				</Size>
+				<Size x="32" y="32"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parentLeftArrow" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
-					</Anchor>
+					<Anchor point="LEFT" relativeTo="$parentLeftArrow" relativePoint="RIGHT"/>
 				</Anchors>
 				<Scripts>
 					<OnClick>
@@ -742,12 +501,11 @@
 						PlaySound("igMainMenuOptionCheckBoxOn")
 					</OnClick>
 				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
-				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
-				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
-				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 			</Button>
-
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -780,5 +538,4 @@
 			</OnMouseDown>
 		</Scripts>
 	</Frame>
-
 </Ui>

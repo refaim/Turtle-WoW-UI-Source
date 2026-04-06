@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 	<Script file="StackSplitFrame.lua"/>
-	<Frame name="StackSplitFrame" frameStrata="HIGH" parent="UIParent" toplevel="true" enableMouse="true" enableKeyboard="true" hidden="true">
+	<Frame name="StackSplitFrame" frameStrata="HIGH" parent="UIParent" toplevel="true" enableMouse="true" enableKeyboard="true" hidden="true" clampedToScreen="true">
 		<Size>
 			<AbsDimension x="172" y="96"/>
 		</Size>
@@ -19,6 +19,13 @@
 							<Offset>
 								<AbsDimension x="-50" y="18"/>
 							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="StackItemCountText" inherits="GameFontDisableSmall" justifyH="LEFT" hidden="true">
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset x="50" y="18"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -110,6 +117,9 @@
 			<OnKeyDown>
 				StackSplitFrame_OnKeyDown();
 			</OnKeyDown>
+			<OnMouseWheel>
+				StackSplitFrame_OnMouseWheel();
+			</OnMouseWheel>
 		</Scripts>
 	</Frame>
 </Ui>

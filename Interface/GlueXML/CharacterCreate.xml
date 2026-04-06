@@ -283,19 +283,19 @@
 								</Layers>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable();
-										getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable();
+										_G[this:GetName().."ScrollBarScrollDownButton"]:Disable();
+										_G[this:GetName().."ScrollBarScrollUpButton"]:Disable();
 										this.scrollBarHideable = 1;
 										GlueScrollFrame_OnScrollRangeChanged();
 									</OnLoad>
 									<OnScrollRangeChanged>
 										GlueScrollFrame_OnScrollRangeChanged(arg2);
 										if ( this:GetVerticalScrollRange() == 0 ) then
-											getglobal(this:GetName().."Top"):Hide();
-											getglobal(this:GetName().."Bottom"):Hide();
+											_G[this:GetName().."Top"]:Hide();
+											_G[this:GetName().."Bottom"]:Hide();
 										else
-											getglobal(this:GetName().."Top"):Show();
-											getglobal(this:GetName().."Bottom"):Show();
+											_G[this:GetName().."Top"]:Show();
+											_G[this:GetName().."Bottom"]:Show();
 										end
 									</OnScrollRangeChanged>
 								</Scripts>
@@ -444,19 +444,19 @@
 								</Layers>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable();
-										getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable();
+										_G[this:GetName().."ScrollBarScrollDownButton"]:Disable();
+										_G[this:GetName().."ScrollBarScrollUpButton"]:Disable();
 										this.scrollBarHideable = 1;
 										GlueScrollFrame_OnScrollRangeChanged();
 									</OnLoad>
 									<OnScrollRangeChanged>
 										GlueScrollFrame_OnScrollRangeChanged(arg2);
 										if ( this:GetVerticalScrollRange() == 0 ) then
-											getglobal(this:GetName().."Top"):Hide();
-											getglobal(this:GetName().."Bottom"):Hide();
+											_G[this:GetName().."Top"]:Hide();
+											_G[this:GetName().."Bottom"]:Hide();
 										else
-											getglobal(this:GetName().."Top"):Show();
-											getglobal(this:GetName().."Bottom"):Show();
+											_G[this:GetName().."Top"]:Show();
+											_G[this:GetName().."Bottom"]:Show();
 										end
 									</OnScrollRangeChanged>
 								</Scripts>
@@ -605,19 +605,19 @@
 								</Layers>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable();
-										getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable();
+										_G[this:GetName().."ScrollBarScrollDownButton"]:Disable();
+										_G[this:GetName().."ScrollBarScrollUpButton"]:Disable();
 										this.scrollBarHideable = 1;
 										GlueScrollFrame_OnScrollRangeChanged();
 									</OnLoad>
 									<OnScrollRangeChanged>
 										GlueScrollFrame_OnScrollRangeChanged(arg2);
 										if ( this:GetVerticalScrollRange() == 0 ) then
-											getglobal(this:GetName().."Top"):Hide();
-											getglobal(this:GetName().."Bottom"):Hide();
+											_G[this:GetName().."Top"]:Hide();
+											_G[this:GetName().."Bottom"]:Hide();
 										else
-											getglobal(this:GetName().."Top"):Show();
-											getglobal(this:GetName().."Bottom"):Show();
+											_G[this:GetName().."Top"]:Show();
+											_G[this:GetName().."Bottom"]:Show();
 										end
 									</OnScrollRangeChanged>
 								</Scripts>
@@ -902,7 +902,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."NormalTexture"):SetTexCoord(0, 0.5, 0, 1.0);
+										_G[this:GetName().."NormalTexture"]:SetTexCoord(0, 0.5, 0, 1.0);
 									</OnLoad>
 									<OnClick>
 										SetCharacterGender(1);
@@ -927,7 +927,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."NormalTexture"):SetTexCoord(0.5, 1.0, 0, 1.0);
+										_G[this:GetName().."NormalTexture"]:SetTexCoord(0.5, 1.0, 0, 1.0);
 									</OnLoad>
 									<OnClick>
 										SetCharacterGender(2);

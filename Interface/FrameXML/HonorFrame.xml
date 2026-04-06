@@ -126,9 +126,9 @@
 				</Texture>
 				<FontString name="HonorFrameCurrentPVPTitle" inherits="GameFontNormal">
 					<Anchors>
-						<Anchor point="TOP">
+						<Anchor point="TOPLEFT">
 							<Offset>
-								<AbsDimension x="0" y="-87"/>
+								<AbsDimension x="63" y="-84"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -138,6 +138,15 @@
 						<Anchor point="LEFT" relativeTo="HonorFrameCurrentPVPTitle" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="5" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="HonorFrameCurrentHonor" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="HonorFrameCurrentPVPRank" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="40" y="0"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -202,6 +211,20 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="HonorFrameHonorIcon">
+					<Size>
+						<AbsDimension x="24" y="24"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativeTo="HonorFrameCurrentHonor" relativePoint="LEFT">
+							<Offset>
+								<AbsDimension x="5" y="-5"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
 		</Layers>
 		<Frames>
 			<Button name="$parentTab1" inherits="TabButtonTemplate" text="HONOR" id="7">
@@ -216,7 +239,7 @@
 					<OnLoad>
 						PanelTemplates_SelectTab(this);
 						PanelTemplates_TabResize(10);
-						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 36)
+						_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 36)
 					</OnLoad>
 				</Scripts>
 			</Button>
@@ -232,7 +255,7 @@
 					<OnLoad>
 						PanelTemplates_DeselectTab(this);
 						PanelTemplates_TabResize(10)
-						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 36)
+						_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 36)
 					</OnLoad>
 					<OnClick>
 						HonorFrame:Hide()
@@ -325,7 +348,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="HonorFrameLifeTimeTitle" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="10" y="-4"/>
+							<AbsDimension x="10" y="-3"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -334,7 +357,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="HonorFrameLifeTimeHK" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="0" y="-4"/>
+							<AbsDimension x="0" y="-3"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -343,7 +366,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="HonorFrameLifeTimeDK" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="0" y="-4"/>
+							<AbsDimension x="0" y="-3"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -368,6 +391,28 @@
 					</OnLeave>
 				</Scripts>
 			</Frame>
+
+			<Frame name="HonorFrameCurrentHonorButton" enableMouse="true" hidden="false">
+				<Size>
+					<AbsDimension x="10" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="HonorFrameHonorIcon"/>
+					<Anchor point="RIGHT" relativeTo="HonorFrameCurrentHonor"/>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(HONOR_CONTRIBUTION_POINTS, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+						GameTooltip:AddLine(NEWBIE_TOOLTIP_HONOR_CONTRIBUTION_POINTS, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Frame>
+
 			<StatusBar name="HonorFrameProgressBar" drawLayer="BORDER" minValue="0" maxValue="1" defaultValue="0">
 				<Size>
 					<AbsDimension x="315" y="29"/>
@@ -409,17 +454,12 @@
 			<OnLoad>
 				HonorFrame_OnLoad();
 			</OnLoad>
+			<OnShow>
+				HonorFrame_OnShow();
+			</OnShow>
 			<OnEvent>
 				HonorFrame_OnEvent(event);
 			</OnEvent>
-			<OnShow>
-				HonorGuildText:Hide()
-				HonorLevelText:Hide()
-			</OnShow>
-			<OnHide>
-				HonorGuildText:Show()
-				HonorLevelText:Show()
-			</OnHide>
 		</Scripts>
 	</Frame>
 </Ui>

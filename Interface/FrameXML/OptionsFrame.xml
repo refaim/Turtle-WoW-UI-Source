@@ -1,717 +1,672 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-	<Script file="OptionsFrame.lua"/>
-	<Include file="OptionsFrameTemplates.xml"/>
-	<Frame name="OptionsFrame" toplevel="true" frameStrata="DIALOG" movable="true" enableMouse="true" hidden="true" parent="UIParent">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+		<Include file="Options\Options.lua" />
+		<Include file="Options\Functions.lua" />
+	<Include file="OptionsFrameTemplates.xml" />
+		<Script file="OptionsFrame.lua" />
+	<Frame name="OptionsFrame" frameStrata="HIGH" movable="true" enableMouse="true" hidden="true" parent="UIParent">
 		<Size>
-			<AbsDimension x="450" y="665"/>
+			<AbsDimension x="648" y="520" />
 		</Size>
 		<Anchors>
-			<Anchor point="CENTER"/>
+			<Anchor point="CENTER" />
 		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-		</Backdrop>
 		<Layers>
-			<Layer level="ARTWORK">
-				<Texture name="OptionsFrameHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTopLeft" file="Interface\OptionsFrame\UI-OptionsFrame-TopLeft">
 					<Size>
-						<AbsDimension x="256" y="64"/>
+						<AbsDimension x="256" y="256 " />
 					</Size>
 					<Anchors>
-						<Anchor point="TOP">
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTopRight" file="Interface\OptionsFrame\UI-OptionsFrame-TopRight">
+					<Size>
+						<AbsDimension x="256" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
 							<Offset>
-								<AbsDimension x="0" y="12"/>
+								<AbsDimension x="128" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="VIDEOOPTIONS_MENU">
+				<Texture name="$parentTop" file="Interface\OptionsFrame\UI-OptionsFrame-Top">
 					<Anchors>
-						<Anchor point="TOP" relativeTo="OptionsFrameHeader">
-							<Offset>
-								<AbsDimension x="0" y="-14"/>
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="TOPRIGHT" />
+						<Anchor point="TOPRIGHT" relativeTo="$parentTopRight" relativePoint="TOPLEFT" />
 					</Anchors>
-				</FontString>
-				<Texture file="Interface\OptionsFrame\NvidiaLogo">
+				</Texture>
+				<Texture name="$parentBottomLeft" file="Interface\OptionsFrame\UI-OptionsFrame-BotLeft">
 					<Size>
-						<AbsDimension x="128" y="64"/>
+						<AbsDimension x="256" y="256 " />
 					</Size>
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
 							<Offset>
-								<AbsDimension x="10" y="8"/>
+								<AbsDimension x="0" y="8" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</Texture>
+				<Texture name="$parentBottomRight" file="Interface\OptionsFrame\UI-OptionsFrame-BotRight">
+					<Size>
+						<AbsDimension x="256" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="128" y="8" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentBottom" file="Interface\OptionsFrame\UI-OptionsFrame-Bot">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentBottomLeft" relativePoint="TOPRIGHT" />
+						<Anchor point="TOPRIGHT" relativeTo="$parentBottomRight" relativePoint="TOPLEFT" />
+					</Anchors>
+				</Texture>
+				<FontString name="$parentPlaceholder" inherits="GameFontNormal" hidden="true" />
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame name="OptionsFrameDisplay" inherits="OptionFrameBoxTemplate">
+			<Frame name="$parentHeader">
 				<Size>
-					<AbsDimension x="425" y="100"/>
+					<AbsDimension x="300" y="68" />
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT">
+					<Anchor point="TOP">
 						<Offset>
-							<AbsDimension x="12" y="-35"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Frames>
-					<Frame name="OptionsFrameResolutionDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="-8" y="-20"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="RESOLUTION">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
-											<Offset>
-												<AbsDimension x="21" y="0"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								OptionsFrameResolutionDropDown_OnLoad();
-							</OnLoad>
-							<OnShow>
-								OptionsFrameResolutionDropDown_OnLoad();
-							</OnShow>
-							<OnEnter>
-								GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-								GameTooltip:SetText(OPTION_TOOLTIP_USE_RESOLUTION, nil, nil, nil, nil, 1);
-							</OnEnter>
-							<OnLeave>
-								GameTooltip:Hide();
-							</OnLeave>
-						</Scripts>
-					</Frame>
-					<Frame name="OptionsFrameRefreshDropDown" inherits="UIDropDownMenuTemplate" id="2">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameResolutionDropDown" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="0" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="REFRESH_RATE">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
-											<Offset>
-												<AbsDimension x="21" y="0"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								OptionsFrameRefreshDropDown_OnLoad();
-							</OnLoad>
-							<OnShow>
-								OptionsFrameRefreshDropDown_OnLoad();
-							</OnShow>
-							<OnEnter>
-								GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-								GameTooltip:SetText(OPTION_TOOLTIP_USE_REFRESH, nil, nil, nil, nil, 1);
-							</OnEnter>
-							<OnLeave>
-								GameTooltip:Hide();
-							</OnLeave>
-						</Scripts>
-					</Frame>
-					<Frame name="OptionsFrameMultiSampleDropDown" inherits="UIDropDownMenuTemplate" id="4">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameRefreshDropDown" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="1"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="MULTISAMPLE">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
-											<Offset>
-												<AbsDimension x="21" y="0"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								OptionsFrameMultiSampleDropDown_OnLoad();
-							</OnLoad>
-							<OnShow>
-								OptionsFrameMultiSampleDropDown_OnLoad();
-							</OnShow>
-							<OnEnter>
-								GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
-								GameTooltip:SetText(OPTION_TOOLTIP_MULTISAMPLING, nil, nil, nil, nil, 1);
-							</OnEnter>
-							<OnLeave>
-								GameTooltip:Hide();
-							</OnLeave>
-						</Scripts>
-					</Frame>
-					<CheckButton name="OptionsFrameCheckButton10" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="OptionsFrameMultiSampleDropDown" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="15" y="5"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									StaticPopup_Show("DISABLE_OPTION_WARNING2")
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateCheckboxes();
-								OptionsFrame_UpdateGammaControls();
-								OptionsFrame_UpdateRefreshRatesDropdown();
-							</OnClick>
-						</Scripts>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton17" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton10" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="5" y="4"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton9" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="OptionsFrameResolutionDropDown" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="17" y="-5"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateUIScaleControls();
-							</OnClick>
-						</Scripts>
-					</CheckButton>
-					<Slider name="OptionsFrameSlider1" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameCheckButton9" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="110" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								getglobal(this:GetName().."High"):SetText(1.0);
-								getglobal(this:GetName().."Low"):SetText(0.64);
-							</OnLoad>
-						</Scripts>
-					</Slider>
-				</Frames>
-				<Scripts>
-					<OnLoad>
-						this:SetBackdropBorderColor(0.4, 0.4, 0.4);
-						this:SetBackdropColor(0.15, 0.15, 0.15);
-						getglobal(this:GetName().."Title"):SetText(DISPLAY);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-			<Frame name="OptionsFrameWorldAppearance" inherits="OptionFrameBoxTemplate">
-				<Size>
-					<AbsDimension x="425" y="140"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="OptionsFrameDisplay" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-15"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Frames>
-					<Slider name="OptionsFrameSlider2" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="9" y="-24"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<Slider name="OptionsFrameSlider3" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameSlider2" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<Slider name="OptionsFrameSlider4" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameSlider2" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="-23"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<Slider name="OptionsFrameSlider5" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameSlider4" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<Slider name="OptionsFrameSlider7" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameSlider3" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<CheckButton name="OptionsFrameCheckButton7" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameSlider5" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<Slider name="OptionsFrameSlider8" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameSlider4" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="-23"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-					<Slider name="OptionsFrameSlider9" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="OptionsFrameSlider8" relativePoint="RIGHT">
-								<Offset>
-									<AbsDimension x="10" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Slider>
-				</Frames>
-				<Scripts>
-					<OnLoad>
-						this:SetBackdropBorderColor(0.4, 0.4, 0.4);
-						this:SetBackdropColor(0.15, 0.15, 0.15);
-						getglobal(this:GetName().."Title"):SetText(WORLD_APPEARANCE);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-			<Frame name="OptionsFrameBrightness" inherits="OptionFrameBoxTemplate">
-				<Size>
-					<AbsDimension x="425" y="82"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="OptionsFrameWorldAppearance" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-15"/>
+							<AbsDimension x="0" y="12" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<Texture file="Interface\OptionsFrame\21stepgrayscale">
-							<Size>
-								<AbsDimension x="256" y="32"/>
-							</Size>
+						<Texture file="Interface\DialogFrame\UI-DialogBox-Header" setAllPoints="true" />
+						<FontString inherits="GameFontNormal" text="OPTIONS">
 							<Anchors>
-								<Anchor point="RIGHT">
+								<Anchor point="TOP">
 									<Offset>
-										<AbsDimension x="-10" y="0"/>
+										<AbsDimension x="0" y="-14" />
 									</Offset>
 								</Anchor>
 							</Anchors>
-						</Texture>
+						</FontString>
 					</Layer>
 				</Layers>
-				<Frames>
-					<CheckButton name="OptionsFrameCheckButton1" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="10" y="-5"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnShow>
-								if ( GetCVar("desktopGamma") == "1" ) then
-									this:SetChecked(1);
-								else
-									this:SetChecked(nil);
-								end
-								OptionsFrame_UpdateGammaControls();
-							</OnShow>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateGammaControls();
-							</OnClick>
-						</Scripts>
-					</CheckButton>
-					<Slider name="OptionsFrameSlider6" inherits="OptionsSliderTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="OptionsFrameCheckButton1" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="-10"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnValueChanged>
-								SetGamma(arg1);
-							</OnValueChanged>
-						</Scripts>
-					</Slider>
-				</Frames>
 				<Scripts>
 					<OnLoad>
-						this:SetBackdropBorderColor(0.4, 0.4, 0.4);
-						this:SetBackdropColor(0.15, 0.15, 0.15);
-						getglobal(this:GetName().."Title"):SetText(OPTIONS_BRIGHTNESS);
+						this:RegisterForDrag("LeftButton")
 					</OnLoad>
+					<OnDragStart>
+						OptionsFrame:StartMoving()
+					</OnDragStart>
+					<OnDragStop>
+						OptionsFrame:StopMovingOrSizing()
+						OptionsFrame:SetUserPlaced(false)
+					</OnDragStop>
 				</Scripts>
 			</Frame>
-			<Frame name="OptionsFramePixelShaders" inherits="OptionFrameBoxTemplate">
+			<Frame name="$parentCategoryList">
 				<Size>
-					<AbsDimension x="212" y="195"/>
+					<AbsDimension x="198" y="428" />
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="OptionsFrameBrightness" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="0" y="-15"/>
+							<AbsDimension x="22" y="-40" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<CheckButton name="OptionsFrameCheckButton11" inherits="OptionsCheckButtonTemplate">
+					<Button name="$parentCategory1" inherits="OptionsListButtonTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="10" y="-5"/>
+									<AbsDimension x="0" y="-4" />
 								</Offset>
 							</Anchor>
 						</Anchors>
+					</Button>
+					<Button name="$parentCategory2" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory3" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory2" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory4" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory3" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory5" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory4" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory6" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory5" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory7" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory6" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory8" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory7" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory9" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory8" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory10" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory9" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory11" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory10" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory12" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory11" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory13" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory12" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory14" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory13" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory15" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory14" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory16" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory15" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory17" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory16" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentCategory18" inherits="OptionsListButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCategory17" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<ScrollFrame name="$parentScrollFrame" inherits="FauxScrollFrameTemplate">
+						<Size>
+							<AbsDimension x="24" y="0" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="-6" y="-6" />
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-28" y="6" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<Texture name="$parentScrollBarTop" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Size>
+										<AbsDimension x="31" y="256" />
+									</Size>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+											<Offset>
+												<AbsDimension x="-2" y="5" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<TexCoords left="0" right="0.484375" top="0" bottom="1.0" />
+								</Texture>
+								<Texture name="$parentScrollBarBottom" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Size>
+										<AbsDimension x="31" y="106" />
+									</Size>
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+											<Offset>
+												<AbsDimension x="-2" y="-2" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625" />
+								</Texture>
+								<Texture name="$parentScrollBarMiddle" file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parentScrollBarTop" relativePoint="BOTTOMLEFT" />
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parentScrollBarBottom" relativePoint="TOPRIGHT" />
+									</Anchors>
+									<TexCoords left="0" right="0.484375" top="0.5" bottom="1" />
+								</Texture>
+							</Layer>
+						</Layers>
 						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateCheckboxes();
-							</OnClick>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(18, OptionsFrame_UpdateCategories)
+							</OnVerticalScroll>
 						</Scripts>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton2" inherits="OptionsCheckButtonTemplate">
+					</ScrollFrame>
+					<Frame name="$parentHighlight" hidden="true">
 						<Size>
-							<AbsDimension x="26" y="26"/>
+							<AbsDimension x="180" y="18" />
 						</Size>
 						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton11" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="10" y="2"/>
-								</Offset>
-							</Anchor>
+							<Anchor point="TOPLEFT" />
 						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton3" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton2" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton12" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton3" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton8" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton12" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="-10" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<Texture name="$parentTexture" file="Interface\QuestFrame\UI-QuestLogTitleHighlight" setAllPoints="true" alphaMode="ADD" />
+							</Layer>
+						</Layers>
 						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									StaticPopup_Show("DISABLE_OPTION_WARNING")
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateCheckboxes();
-							</OnClick>
+							<OnLoad>
+								_G[this:GetName() .. "Texture"]:SetVertexColor(1.0, 0.8, 0.0)
+							</OnLoad>
 						</Scripts>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton15" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton8" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="10" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton18" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton15" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="-10" y="2"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
+					</Frame>
 				</Frames>
-				<Scripts>
-					<OnLoad>
-						this:SetBackdropBorderColor(0.4, 0.4, 0.4);
-						this:SetBackdropColor(0.15, 0.15, 0.15);
-						getglobal(this:GetName().."Title"):SetText(PIXEL_SHADERS);
-					</OnLoad>
-				</Scripts>
 			</Frame>
-			<Frame name="OptionsFrameMiscellaneous" inherits="OptionFrameBoxTemplate">
-				<Size>
-					<AbsDimension x="212" y="195"/>
-				</Size>
+			<Frame name="$parentContent">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="OptionsFramePixelShaders" relativePoint="TOPRIGHT">
+					<Anchor point="TOPLEFT" relativeTo="$parentCategoryList" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-4" y="-32" />
+						</Offset>
+					</Anchor>
+					<Anchor point="BOTTOMLEFT" relativeTo="$parentCategoryList" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="16" y="-4" />
+						</Offset>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset>
+							<AbsDimension x="-22" y="0" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<CheckButton name="OptionsFrameCheckButton4" inherits="OptionsCheckButtonTemplate">
+					<ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate" setAllPoints="true">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="10" y="-5"/>
+									<AbsDimension x="0" y="28" />
 								</Offset>
 							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton5" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton4" relativePoint="BOTTOM">
+							<Anchor point="BOTTOMRIGHT">
 								<Offset>
-									<AbsDimension x="0" y="4"/>
+									<AbsDimension x="-3" y="30" />
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Frames>
+							<Frame name="$parentChild">
+								<Size>
+									<AbsDimension x="1" y="1" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT" />
+								</Anchors>
+							</Frame>
+						</Frames>
 						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateCheckboxes();
-							</OnClick>
+							<OnLoad>
+								ScrollFrame_OnLoad()
+							</OnLoad>
 						</Scripts>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton13" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton5" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="5" y="4"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton6" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton5" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="-15"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton14" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton6" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="0" y="4"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>
-								if ( this:GetChecked() ) then
-									PlaySound("igMainMenuOptionCheckBoxOn");
-								else
-									PlaySound("igMainMenuOptionCheckBoxOff");
-								end
-								OptionsFrame_UpdateCheckboxes();
-							</OnClick>
-						</Scripts>
-					</CheckButton>
-					<CheckButton name="OptionsFrameCheckButton16" inherits="OptionsCheckButtonTemplate">
-						<Size>
-							<AbsDimension x="26" y="26"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOP" relativeTo="OptionsFrameCheckButton14" relativePoint="BOTTOM">
-								<Offset>
-									<AbsDimension x="10" y="4"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</CheckButton>
+					</ScrollFrame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						this:SetBackdropBorderColor(0.4, 0.4, 0.4);
-						this:SetBackdropColor(0.15, 0.15, 0.15);
-						getglobal(this:GetName().."Title"):SetText(MISCELLANEOUS);
+						_G[this:GetName() .. "ScrollFrame"]:SetScrollChild(_G[this:GetName() .. "ScrollFrameChild"])
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Button name="OptionsFrameCancel" inherits="OptionsButtonTemplate" text="CANCEL">
+			<Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
+				<Size>
+					<AbsDimension x="96" y="22" />
+				</Size>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="-12" y="16"/>
+							<AbsDimension x="-2" y="30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PlaySound("gsTitleOptionExit");
-						HideUIPanel(OptionsFrame);
+						OptionsFrame_RevertOptions()
+
+						PlaySound("gsTitleOptionExit")
+
+						HideUIPanel(OptionsFrame)
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="OptionsFrameOkay" inherits="OptionsButtonTemplate" text="OKAY">
+			<Button name="$parentOkay" inherits="UIPanelButtonTemplate" text="OKAY">
+				<Size>
+					<AbsDimension x="96" y="22" />
+				</Size>
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="OptionsFrameCancel" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentCancel" relativePoint="BOTTOMLEFT" />
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PlaySound("gsTitleOptionOK");
-						OptionsFrame_Save();
-						HideUIPanel(OptionsFrame);
+						HideUIPanel(OptionsFrame)
+
+						PlaySound("gsTitleOptionOK")
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="OptionsFrameDefaults" inherits="OptionsButtonTemplate" text="DEFAULTS">
+			<Button name="$parentDefaults" inherits="UIPanelButtonGrayTemplate" text="DEFAULTS">
+				<Size>
+					<AbsDimension x="96" y="22" />
+				</Size>
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="OptionsFrameOkay" relativePoint="LEFT">
+					<Anchor point="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="-18" y="0"/>
+							<AbsDimension x="14" y="30" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PlaySound("igMainMenuOptionCheckBoxOn");
-						OptionsFrame_SetDefaults();
-						HideUIPanel(OptionsFrame);
+						OptionsFrame_SetDefaults(true)
 					</OnClick>
 				</Scripts>
 			</Button>
+			<EditBox name="$parentSearchBox" autoFocus="false" inherits="SearchBoxTemplate">
+				<Size>
+					<AbsDimension x="424" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentContent" relativePoint="BOTTOMLEFT">
+						<Offset x="8" y="29" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						OptionsFrame_Search()
+					</OnTextChanged>
+					<OnMouseDown>
+						OptionsFrame_Search(true)
+					</OnMouseDown>
+				</Scripts>
+			</EditBox>
+			<Frame name="$parentSearchResults" frameStrata="FULLSCREEN_DIALOG" hidden="true">
+				<Size>
+					<AbsDimension x="434" y="1" />
+				</Size>
+				<Backdrop bgFile="Interface\Buttons\WHITE8X8" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="16" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+					<Color r="0" g="0" b="0" a="0.8" />
+				</Backdrop>
+				<Frames>
+					<Button name="$parentResult1" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent">
+								<Offset x="8" y="-8" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult2" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult1" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult3" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult2" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult4" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult3" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult5" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult4" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult6" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult5" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult7" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult6" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult8" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult7" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult9" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult8" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult10" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult9" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult11" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult10" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult12" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult11" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult13" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult12" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult14" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult13" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult15" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult14" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult16" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult15" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult17" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult16" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult18" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult17" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult19" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult18" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="$parentResult20" inherits="OptionsSearchResultTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentResult19" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-2" />
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						this:EnableMouse(1)
+					</OnLoad>
+				</Scripts>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				OptionsFrame_Init();
+				OptionsFrame_OnLoad()
 			</OnLoad>
 			<OnEvent>
-				OptionsFrame_OnEvent();
+				OptionsFrame_OnEvent()
 			</OnEvent>
 			<OnShow>
-				OptionsFrame_Load();
-				UpdateMicroButtons();
-				Disable_BagButtons();
+				OptionsFrame_OnShow()
 			</OnShow>
 			<OnHide>
-				OptionsFrame_Cancel();
-				UpdateMicroButtons();
-				ShowUIPanel(GameMenuFrame);
+				OptionsFrame_OnHide()
 			</OnHide>
 		</Scripts>
-	</Frame>
+		</Frame>
 </Ui>

@@ -17,10 +17,10 @@
 				ClassTrainerSkillButton_OnClick(arg1);
 			</OnClick>
 			<OnEnter>
-				getglobal(this:GetName().."SubText"):SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+				_G[this:GetName().."SubText"]:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName().."SubText"):SetTextColor(this.r, this.g, this.b);
+				_G[this:GetName().."SubText"]:SetTextColor(this.r, this.g, this.b);
 			</OnLeave>
 		</Scripts>
 		<NormalTexture file="Interface\Buttons\UI-MinusButton-UP">

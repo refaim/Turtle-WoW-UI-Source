@@ -71,11 +71,11 @@
 					</OnClick>
 					<OnEnter>
 						CloseDropDownMenus(this:GetParent():GetParent():GetID() + 1);
-						getglobal(this:GetName().."SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+						_G[this:GetName().."SwatchBg"]:SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 						UIDropDownMenu_StopCounting(this:GetParent():GetParent());
 					</OnEnter>
 					<OnLeave>
-						getglobal(this:GetName().."SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+						_G[this:GetName().."SwatchBg"]:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 						UIDropDownMenu_StartCounting(this:GetParent():GetParent());
 					</OnLeave>
 				</Scripts>
@@ -137,14 +137,14 @@
 				else
 					CloseDropDownMenus(this:GetParent():GetID() + 1);
 				end
-				getglobal(this:GetName().."Highlight"):Show();
+				_G[this:GetName().."Highlight"]:Show();
 				UIDropDownMenu_StopCounting(this:GetParent());
 				if ( this.tooltipTitle ) then
 					GameTooltip_AddNewbieTip(this.tooltipTitle, 1.0, 1.0, 1.0, this.tooltipText, 1);
 				end
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName().."Highlight"):Hide();
+				_G[this:GetName().."Highlight"]:Hide();
 				UIDropDownMenu_StartCounting(this:GetParent());
 				GameTooltip:Hide();
 			</OnLeave>
@@ -245,15 +245,15 @@
 			<OnShow>
 				for i=1, UIDROPDOWNMENU_MAXBUTTONS do
 					if (not this.noResize) then
-						getglobal(this:GetName().."Button"..i):SetWidth(this.maxWidth);
+						_G[this:GetName().."Button"..i]:SetWidth(this.maxWidth);
 					end
 				end
 				if (not this.noResize) then
 					this:SetWidth(this.maxWidth+15);
 				end
-				this.showTime = nil;
+				this.showTimer = nil;
 				if ( this:GetID() > 1 ) then
-					this.parent = getglobal("DropDownList"..(this:GetID() - 1));
+					this.parent = _G["DropDownList"..(this:GetID() - 1)];
 				end
 			</OnShow>
 		</Scripts>

@@ -1,3 +1,10 @@
+ItemRefStaticPopups = {
+	"ADD_FRIEND",
+	"ADD_IGNORE",
+	"ADD_GUILDMEMBER",
+	"ADD_RAIDMEMBER",
+	"ARENA_POPUP_INVITE_PLAYER",
+};
 
 function SetItemRef(link, text, button)
 	if ( strsub(link, 1, 6) == "player" ) then
@@ -6,37 +13,18 @@ function SetItemRef(link, text, button)
 			name = gsub(name, "([^%s]*)%s+([^%s]*)%s+([^%s]*)", "%3");
 			name = gsub(name, "([^%s]*)%s+([^%s]*)", "%2");
 			if ( IsShiftKeyDown() ) then
-				local staticPopup;
-				staticPopup = StaticPopup_Visible("ADD_IGNORE");
-				if ( staticPopup ) then
-					-- If add ignore dialog is up then enter the name into the editbox
-					getglobal(staticPopup.."EditBox"):SetText(name);
-					return;
-				end
-				staticPopup = StaticPopup_Visible("ADD_FRIEND");
-				if ( staticPopup ) then
-					-- If add ignore dialog is up then enter the name into the editbox
-					getglobal(staticPopup.."EditBox"):SetText(name);
-					return;
-				end
-				staticPopup = StaticPopup_Visible("ADD_GUILDMEMBER");
-				if ( staticPopup ) then
-					-- If add ignore dialog is up then enter the name into the editbox
-					getglobal(staticPopup.."EditBox"):SetText(name);
-					return;
-				end
-				staticPopup = StaticPopup_Visible("ADD_RAIDMEMBER");
-				if ( staticPopup ) then
-					-- If add ignore dialog is up then enter the name into the editbox
-					getglobal(staticPopup.."EditBox"):SetText(name);
-					return;
+				for _, value in ipairs(ItemRefStaticPopups) do
+					local staticPopup = StaticPopup_Visible(value);
+					if ( staticPopup ) then
+						_G[staticPopup.."EditBox"]:SetText(name);
+						return;
+					end
 				end
 				if ( ChatFrameEditBox:IsVisible() ) then
 					ChatFrameEditBox:Insert(name);
 				else
 					SendWho("n-"..name);
 				end
-
 			elseif ( button == "RightButton" ) then
 				FriendsFrame_ShowDropdown(name, 1);
 			else

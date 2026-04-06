@@ -1,538 +1,544 @@
-OPTIONS_FARCLIP_MIN = 177;
-OPTIONS_FARCLIP_MAX = 777;
+NUM_CATEGORIES_TO_DISPLAY = 18
+NUM_OPTIONS_TO_DISPLAY = 11
+NUM_SEARCH_RESULTS_TO_DISPLAY = 20
+OPTIONS_OPTION_OFFSET = 34
 
-OptionsFrameCheckButtons = { };
-OptionsFrameCheckButtons["DESKTOP_GAMMA"] = { index = 1, cvar = "desktopGamma", tooltipText = OPTION_TOOLTIP_USE_DESKTOP_GAMMA};
-OptionsFrameCheckButtons["TERRAIN_HIGHLIGHTS"] = { index = 2, cvar = "specular", dependency = "ENABLE_ALL_SHADERS", tooltipText = OPTION_TOOLTIP_TERRAIN_HIGHLIGHTS, tooltipRequirement = OPTION_LOGOUT_REQUIREMENT};
-OptionsFrameCheckButtons["FULL_SCREEN_GLOW"] = { index = 3, cvar = "ffxGlow", dependency = "ENABLE_ALL_SHADERS", tooltipText = OPTION_TOOLTIP_FULL_SCREEN_GLOW};
-OptionsFrameCheckButtons["TRILINEAR_FILTERING"] = { index = 4, cvar = "trilinear", tooltipText = OPTION_TOOLTIP_TRILINEAR, restartClient = 1, tooltipRequirement = OPTION_RESTART_REQUIREMENT};
-OptionsFrameCheckButtons["VERTICAL_SYNC"] = { index = 5, cvar = "gxVSync", tooltipText = OPTION_TOOLTIP_VERTICAL_SYNC, gxRestart = 1};
-OptionsFrameCheckButtons["CINEMATIC_SUBTITLES"] = { index = 6, cvar = "movieSubtitle", tooltipText = OPTION_TOOLTIP_CINEMATIC_SUBTITLES};
-OptionsFrameCheckButtons["WORLD_LOD"] = { index = 7, cvar = "lod", tooltipText = OPTION_TOOLTIP_WORLD_LOD};
-OptionsFrameCheckButtons["VERTEX_ANIMATION_SHADERS"] = { index = 8, cvar = "M2UseShaders", tooltipText = OPTION_TOOLTIP_VERTEX_ANIMATION_SHADERS, tooltipRequirement = OPTION_LOGOUT_REQUIREMENT};
-OptionsFrameCheckButtons["USE_UISCALE"] = { index = 9, cvar = "useUiScale", tooltipText = OPTION_TOOLTIP_USE_UISCALE};
-OptionsFrameCheckButtons["WINDOWED_MODE"] = { index = 10, cvar = "gxWindow", tooltipText = OPTION_TOOLTIP_WINDOWED_MODE, gxRestart = 1};
-OptionsFrameCheckButtons["ENABLE_ALL_SHADERS"] = { index = 11, cvar = "pixelShaders", tooltipText = OPTION_TOOLTIP_ENABLE_ALL_SHADERS};
-OptionsFrameCheckButtons["DEATH_EFFECT"] = { index = 12, cvar = "ffxDeath", dependency = "ENABLE_ALL_SHADERS", tooltipText = OPTION_TOOLTIP_DEATH_EFFECT};
-OptionsFrameCheckButtons["TRIPLE_BUFFER"] = { index = 13, cvar = "gxTripleBuffer", dependency = "VERTICAL_SYNC", tooltipText = OPTION_TOOLTIP_BUFFERING, gxRestart = 1};
-OptionsFrameCheckButtons["HARDWARE_CURSOR"] = { index = 14, cvar = "gxCursor", tooltipText = OPTION_TOOLTIP_HARDWARE_CURSOR, gxRestart = 1};
-OptionsFrameCheckButtons["PHONG_SHADING"] = { index = 15, cvar = "M2UsePixelShaders", dependency = "VERTEX_ANIMATION_SHADERS", tooltipText = OPTION_TOOLTIP_PHONG_SHADING, };
-OptionsFrameCheckButtons["FIX_LAG"] = { index = 16, cvar = "gxFixLag", dependency = "HARDWARE_CURSOR", tooltipText = OPTION_TOOLTIP_FIX_LAG, gxRestart = 1};
-OptionsFrameCheckButtons["WINDOWED_MAXIMIZED"] = { index = 17, cvar = "gxMaximize", dependency = "WINDOWED_MODE", tooltipText = OPTION_TOOLTIP_WINDOWED_MAXIMIZED, gxRestart = 1};
-OptionsFrameCheckButtons["USE_WEATHER_SHADER"] = { index = 18, cvar = "useWeatherShaders", tooltipText = OPTION_TOOLTIP_USE_WEATHER_SHADER};
+local categoryButtons, dependencyMap, resultFrames, searchResults = {}, {}, {}, {}
+local currentCategory
 
-OptionsFrameSliders = {
-	{ text = UI_SCALE, func = "uiscale", minValue = 0.64, maxValue = 1.0, valueStep = 0.01 , tooltipText = OPTION_TOOLTIP_UI_SCALE},
-	{ text = FARCLIP, func = "farclip", minValue = OPTIONS_FARCLIP_MIN, maxValue = OPTIONS_FARCLIP_MAX, valueStep = (OPTIONS_FARCLIP_MAX - OPTIONS_FARCLIP_MIN)/10 , tooltipText = OPTION_TOOLTIP_FARCLIP},
-	{ text = ENVIRONMENT_DETAIL, func = "WorldDetail", minValue = 0, maxValue = 2, valueStep = 1 , tooltipText = OPTION_TOOLTIP_ENVIRONMENT_DETAIL},
-	{ text = TERRAIN_MIP, func = "TerrainMip", minValue = 0, maxValue = 1, valueStep = 1 , tooltipText = OPTION_TOOLTIP_TERRAIN_TEXTURE, restartClient = 1, tooltipRequirement = OPTION_RESTART_REQUIREMENT},
-	{ text = TEXTURE_DETAIL, func = "BaseMip", minValue = 0, maxValue = 1, valueStep = 1 , tooltipText = OPTION_TOOLTIP_TEXTURE_DETAIL},
-	{ text = GAMMA, func = "Gamma", cvar1="gamma", minValue = -0.5, maxValue = 0.5, valueStep = 0.1 , tooltipText = OPTION_TOOLTIP_GAMMA},
-	{ text = ANISOTROPIC, func = "anisotropic", minValue = 1, maxValue = 4, valueStep = 1 , tooltipText = OPTION_TOOLTIP_ANISOTROPIC, restartClient = 1, tooltipRequirement = OPTION_RESTART_REQUIREMENT},
-	{ text = SPELL_DETAIL, func = "spellEffectLevel", minValue = 0, maxValue = 2, valueStep = 1 , tooltipText = OPTION_TOOLTIP_SPELL_DETAIL},
-	{ text = WEATHER_DETAIL, func = "weatherDensity", minValue = 0, maxValue = 3, valueStep = 1 , tooltipText = OPTION_TOOLTIP_WEATHER_DETAIL},
-};
+local function CheckDependency(var, requiredValue)
+	local value = _G[var]
 
-ANISOTROPIC_VALUES = {"1", "2", "4", "8", "16"};
+	if strfind(var, "%(%)") then
+		var = strsub(var, 1, strlen(var) - 2)
 
-OPTIONS_FRAME_WIDTH = 495;
+		value = _G[var]()
+	elseif value == nil then
+		value = GetCVar(var)
+	end
 
-function OptionsFrame_Init()
-	--[[for index, value in OptionsFrameCheckButtons do
-		local string = GetCVar(value.cvar);
-		value.value = string;
-	end]]
-	this:RegisterEvent("CVAR_UPDATE");
+	return value == requiredValue
+end
+
+local function DisableOptionFrame(frame)
+	local type = frame.control and frame.control:GetFrameType() or frame:GetFrameType()
+
+	frame.enabled = false
+
+	if type == "Button" then
+		frame:Disable()
+		return
+	elseif type == "CheckButton" then
+		frame.control:Disable()
+	elseif type == "Frame" then
+		frame.control:EnableMouse(0)
+		frame.button:Disable()
+		frame.text:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+	elseif type == "Slider" then
+		frame.control:EnableMouse(0)
+		frame.minval:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+		frame.maxval:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+		frame.thumb:Hide()
+	end
+
+	frame.label:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+end
+
+local function EnableOptionFrame(frame)
+	local type = frame.control and frame.control:GetFrameType() or frame:GetFrameType()
+
+	frame.enabled = true
+
+	if type == "Button" then
+		frame:Enable()
+		return
+	elseif type == "CheckButton" then
+		frame.control:Enable()
+	elseif type == "Frame" then
+		frame.control:EnableMouse(1)
+		frame.button:Enable()
+		frame.text:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+	elseif type == "Slider" then
+		frame.control:EnableMouse(1)
+		frame.minval:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+		frame.maxval:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+		frame.thumb:Show()
+	end
+
+	frame.label:SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+end
+
+local function UpdateOptionDependency(frame)
+	local dependency = frame.option.dependency
+	if not dependency then
+		EnableOptionFrame(frame)
+		return
+	end
+
+	DisableOptionFrame(frame)
+	for i = 2, getn(dependency) do
+		if CheckDependency(dependency[1], dependency[i]) then
+			EnableOptionFrame(frame)
+			return
+		end
+	end
+end
+
+local function CheckDependentOptions(var)
+	local frames = dependencyMap[var]
+	if not frames then return end
+
+	for _, frame in next, frames do
+		UpdateOptionDependency(frame)
+	end
+end
+
+local function OnControlValueChanged(option, value)
+	local var
+
+	if option.cvar then
+		var = option.cvar
+		SetCVar(var, value, option.name)
+	elseif option.uvar then
+		var = option.uvar
+		_G[var] = value
+	else
+		var = option.getter
+		_G[option.setter](tonumber(value))
+	end
+
+	if option.func then
+		_G[option.func](value)
+	end
+
+	if option.restartGx then
+		RestartGx()
+	end
+
+	option.changedValue = value
+
+	CheckDependentOptions(var)
+end
+
+local function UpdateOptions(category, focusOption)
+	category = GameOptions[category]
+
+	local buttonWidth = 0
+	local indices = { 1, 1, 1 }
+	local initialized = category.initialized
+	local control, offsetX, offsetY, optionDependency, optionFrame, optionName, optionType, value, variable
+
+	wipe(dependencyMap)
+
+	for _, frame in { OptionsFrameContentScrollFrameChild:GetChildren() } do
+		frame:Hide()
+	end
+
+	for index, option in ipairs(category.options) do
+		offsetX = 30
+		offsetY = -14 - ((index - 1) * OPTIONS_OPTION_OFFSET)
+
+		optionDependency = option.dependency
+		optionName = _G[option.name]
+		optionType = option.type
+
+		if option.cvar then
+			value = GetCVar(option.cvar)
+		elseif option.uvar then
+			value = _G[option.uvar]
+		elseif option.getter then
+			value = _G[option.getter]()
+		end
+
+		if optionType == "button" then
+			optionFrame = _G["OptionsFrameButton" .. indices[1]] or CreateFrame("Button", "OptionsFrameButton" .. indices[1], OptionsFrameContentScrollFrameChild, "OptionsButtonTemplateEx")
+			optionFrame:SetText(optionName)
+
+			buttonWidth = max(optionFrame:GetTextWidth(), buttonWidth)
+			optionFrame:SetWidth(buttonWidth + 32)
+			optionFrame:SetScript("OnClick", _G[option.func])
+
+			offsetX = optionDependency and 36 or 28
+			offsetY = -8 - ((index - 1) * OPTIONS_OPTION_OFFSET)
+
+			indices[1] = indices[1] + 1
+		elseif optionType == "checkbutton" then
+			optionFrame = _G["OptionsFrameCheckButton" .. indices[2]] or CreateFrame("Frame", "OptionsFrameCheckButton" .. indices[2], OptionsFrameContentScrollFrameChild, "OptionsCheckButtonTemplateEx")
+
+			control = optionFrame.control
+			control:SetChecked(option.inverted and (1 - tonumber(value)) or tonumber(value))
+
+			indices[2] = indices[2] + 1
+		elseif optionType == "dropdown" then
+			optionFrame = _G["OptionsFrame" .. option.identifier .. "DropDown"] or CreateFrame("Frame", "OptionsFrame" .. option.identifier .. "DropDown", OptionsFrameContentScrollFrameChild, "OptionsDropDownTemplateEx")
+
+			control = optionFrame.control
+			UIDropDownMenu_Initialize(control, _G[option.identifier .. "Dropdown_Init"])
+		elseif optionType == "slider" then
+			optionFrame = _G["OptionsFrameSlider" .. indices[3]] or CreateFrame("Frame", "OptionsFrameSlider" .. indices[3], OptionsFrameContentScrollFrameChild, "OptionsSliderTemplateEx")
+
+			control = optionFrame.control
+			control:SetMinMaxValues(option.minval, option.maxval)
+			control:SetValueStep(option.step)
+			control:SetValue(tonumber(option.inverted and (option.maxval - value + option.minval) or value))
+
+			if option.numberLabels then
+				optionFrame.minval:SetText(option.minval)
+				optionFrame.maxval:SetText(option.maxval)
+			else
+				optionFrame.minval:SetText(LOW)
+				optionFrame.maxval:SetText(HIGH)
+			end
+
+			indices[3] = indices[3] + 1
+		end
+
+		optionFrame:SetPoint("TOPLEFT", OptionsFrameContentScrollFrameChild, offsetX, offsetY)
+		optionFrame:Show()
+		optionFrame.label:SetText(optionName)
+		optionFrame.option = option
+
+		if not initialized then
+			option.initialValue = value
+			option.changedValue = false
+		end
+
+		if optionDependency then
+			variable = optionDependency[1]
+			if strfind(variable, "%(%)") then
+				variable = strsub(variable, 1, strlen(variable) - 2)
+			end
+
+			dependencyMap[variable] = dependencyMap[variable] or {}
+			tinsert(dependencyMap[variable], optionFrame)
+
+			UpdateOptionDependency(optionFrame)
+
+			optionFrame.label:SetPoint("LEFT", optionFrame, option.ignoreOffset and 0 or 10, 0)
+		else
+			EnableOptionFrame(optionFrame)
+
+			optionFrame.label:SetPoint("LEFT", optionFrame)
+		end
+	end
+
+	category.initialized = true
+
+	OptionsFrameContentScrollFrame:UpdateScrollChildRect()
+
+	if focusOption and focusOption > NUM_OPTIONS_TO_DISPLAY then
+		OptionsFrameContentScrollFrame:SetVerticalScroll((focusOption - NUM_OPTIONS_TO_DISPLAY) * OPTIONS_OPTION_OFFSET)
+	end
+end
+
+function OptionsFrame_OnLoad()
+	this:RegisterEvent("VARIABLES_LOADED")
+
+	for i = 1, NUM_CATEGORIES_TO_DISPLAY do
+		tinsert(categoryButtons, _G["OptionsFrameCategoryListCategory" .. i])
+	end
+
+	for i = 1, NUM_SEARCH_RESULTS_TO_DISPLAY do
+		tinsert(resultFrames, _G["OptionsFrameSearchResultsResult" .. i])
+	end
+
+	Options_RegisterUVars()
+
+	OptionsFrame_UpdateCategories()
 end
 
 function OptionsFrame_OnEvent()
-	if ( event == "CVAR_UPDATE" ) then
-		local info = OptionsFrameCheckButtons[arg1];
-		if ( info ) then
-			info.value = arg2;
-		end
+	if ALWAYS_SHOW_MULTIBARS == "1" then
+		MultiActionBar_ShowAllGrids()
 	end
+
+	BuffButtons_UpdatePositions()
+	Options_UpdateCombatText()
 end
 
-function OptionsFrame_Load()
-	LoadAddOn("Blizzard_BattlefieldMinimap")
-	if not BattlefieldMinimapOptions.farclip then
-		BattlefieldMinimapOptions.farclip = OPTIONS_FARCLIP_MAX
+function OptionsFrame_OnShow()
+	if not currentCategory then
+		OptionsFrameCategoryListCategory2:Click()
+	else
+		UpdateOptions(currentCategory)
 	end
-	local shadersEnabled = GetCVar("pixelShaders");
-	local hasAnisotropic, hasPixelShaders, hasVertexShaders, hasTrilinear, hasTripleBuffering, maxAnisotropy, hasHardwareCursor = GetVideoCaps();
-	for index, value in OptionsFrameCheckButtons do
-		local button = getglobal("OptionsFrameCheckButton"..value.index);
-		local string = getglobal("OptionsFrameCheckButton"..value.index.."Text");
-		local checked = GetCVar(value.cvar);
 
-		string:SetText(TEXT(getglobal(index)));
-		button.tooltipText = value.tooltipText;
-		button.tooltipRequirement = value.tooltipRequirement;
-		button.gxRestart = value.gxRestart;
-		button.restartClient = value.restartClient;
+	OptionsFrameSearchBox:ClearFocus()
+	OptionsFrameSearchResults:Hide()
 
-		-- Enable disable checkboxes
-		button.disabled = nil;
-		if ( index == "ENABLE_ALL_SHADERS" ) then
-			if ( not hasPixelShaders ) then
-				button.disabled = 1;
-			end
-		elseif ( index == "VERTEX_ANIMATION_SHADERS" ) then
-			if ( not hasVertexShaders ) then
-				button.disabled = 1;
-			end
-		elseif ( index == "TRILINEAR_FILTERING" ) then
-			if ( not hasTrilinear ) then
-				button.disabled = 1;
-			end
-		elseif ( index == "TRIPLE_BUFFER" ) then
-			if ( not hasTripleBuffering or GetCVar("gxVSync") ~= "1" ) then
-				button.disabled = 1;
-			end
-		elseif ( index == "HARDWARE_CURSOR" ) then
-			if ( not hasHardwareCursor ) then
-				button.disabled = 1;
-			end
-		end
+	Disable_BagButtons()
+	UpdateMicroButtons()
 
-		if ( button.disabled ) then
-			OptionsFrame_DisableCheckBox(button);
-		else
-			OptionsFrame_EnableCheckBox(button, 1, checked);
-		end
+	FauxScrollFrame_Update(OptionsFrameCategoryListScrollFrame, getn(GameOptions), NUM_CATEGORIES_TO_DISPLAY, 18, nil, nil, nil, OptionsFrameCategoryListHighlight, 180, 180)
+end
 
-		if ( index == "ENABLE_ALL_SHADERS" and hasPixelShaders ) then
-			string:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-		end
+function OptionsFrame_OnHide()
+	for _, category in GameOptions do
+		category.initialized = false
 	end
-	for index, value in OptionsFrameSliders do
-		local slider = getglobal("OptionsFrameSlider"..index);
-		local string = getglobal("OptionsFrameSlider"..index.."Text");
-		local thumb = getglobal("OptionsFrameSlider"..index.."Thumb");
-		local getvalue = getglobal("Get"..value.func);
-		slider.disabled = nil;
-		if ( getvalue ) then
-			getvalue = getvalue();
-		elseif ( value.func == "anisotropic" ) then
-			if ( hasAnisotropic ) then
-				-- Map cvar to a slider value from 1 - 4, since sliders can't move up by geometric increments
-				local cvarValue = GetCVar("anisotropic");
-				for i=1, getn(ANISOTROPIC_VALUES) do
-					if ( cvarValue == ANISOTROPIC_VALUES[i] ) then
-						getvalue = i;
+
+	ShowUIPanel(GameMenuFrame)
+
+	UpdateMicroButtons()
+end
+
+function OptionsFrame_RevertOptions()
+	local value
+	for _, category in GameOptions do
+		if category.initialized then
+			for k, option in category.options do
+				if option.changedValue ~= false and option.changedValue ~= option.initialValue then
+					value = option.initialValue
+
+					if option.cvar then
+						SetCVar(option.cvar, value, option.name)
+					elseif option.uvar then
+						_G[option.uvar] = value
+					elseif option.setter then
+						_G[option.setter](value)
 					end
-					if ( maxAnisotropy == tonumber(ANISOTROPIC_VALUES[i]) ) then
-						maxAnisotropy = i;
+
+					if option.func then
+						_G[option.func](value)
 					end
 				end
-				if ( maxAnisotropy ) then
-					value.maxValue = maxAnisotropy;
+			end
+		end
+
+		category.initialized = false
+	end
+end
+
+function OptionsFrame_Search(keepResults)
+	if keepResults and sizeof(searchResults) > 0 then
+		OptionsFrameSearchResults:Show()
+		return
+	end
+
+	OptionsFrameSearchResults:Hide()
+
+	wipe(searchResults)
+
+	local query = strlower(trim(this:GetText()))
+	if query ~= "" and strlen(query) > 2 then
+		for i, category in GameOptions do
+			if category.options then
+				for k = 1, getn(category.options) do
+					local option = category.options[k]
+					if option.type ~= "button" and strfind(strlower(_G[option.name]), query, 1, true) then
+						option.index = k
+						option.category = i
+						tinsert(searchResults, option)
+					end
 				end
+			end
+		end
+
+		local count = getn(searchResults)
+		if count > 0 then
+			for _, frame in { OptionsFrameSearchResults:GetChildren() } do
+				frame:Hide()
+			end
+			local button
+			for i, option in next, searchResults do
+				if i > NUM_SEARCH_RESULTS_TO_DISPLAY then break end
+
+				button = resultFrames[i]
+				button.categoryIndex = option.category
+				button.optionIndex = option.index
+				button.text:SetText("|cffffffff" .. GameOptions[option.category].name .. "|cffcecece > |cffffd100" .. _G[option.name])
+				button:Show()
+			end
+
+			local height = (count < NUM_SEARCH_RESULTS_TO_DISPLAY and count + 1 or NUM_SEARCH_RESULTS_TO_DISPLAY) * 19 -- result frame height + 1 for offset between frames
+			OptionsFrameSearchResults:SetHeight(height)
+			OptionsFrameSearchResults:SetPoint("TOPLEFT", OptionsFrameSearchBox, "TOPLEFT", -10, height)
+			OptionsFrameSearchResults:Show()
+		end
+	end
+end
+
+function OptionsFrame_SetDefaults(popup)
+	if not currentCategory then return end
+
+	if popup then
+		StaticPopup_Show("OPTIONS_CONFIRM_DEFAULTS", GameOptions[currentCategory].name)
+		return
+	end
+
+	local category = GameOptions[currentCategory]
+	local value
+	for _, option in category.options do
+		if option.cvar then
+			value = GetCVarDefault(option.cvar)
+			SetCVar(option.cvar, value, option.name)
+		elseif option.defaultValue then
+			value = option.defaultValue
+			if option.uvar then
+				_G[option.uvar] = value
+			elseif option.setter then
+				_G[option.setter](value)
+			end
+		end
+
+		if option.func then
+			_G[option.func](value)
+		end
+	end
+
+	category.initialized = false
+
+	UpdateOptions(currentCategory)
+	Options_UpdateCombatText()
+end
+
+function OptionsFrame_UpdateCategories()
+	local numCategories = getn(GameOptions)
+	local overflow = numCategories > NUM_CATEGORIES_TO_DISPLAY
+	local scrollOffset = FauxScrollFrame_GetOffset(OptionsFrameCategoryListScrollFrame)
+
+	FauxScrollFrame_Update(OptionsFrameCategoryListScrollFrame, numCategories, NUM_CATEGORIES_TO_DISPLAY, 18, nil, nil, nil, OptionsFrameCategoryListHighlight, 164, 180)
+
+	OptionsFrameCategoryListHighlight:Hide()
+
+	local button, category, offset
+	for i = 1, NUM_CATEGORIES_TO_DISPLAY do
+		offset = i + scrollOffset
+		button = categoryButtons[i]
+
+		if offset > numCategories then
+			button:Hide()
+		else
+			category = GameOptions[offset]
+			if category.options then
+				button:SetTextFontObject(GameFontHighlight)
+				button:EnableMouse(1)
+				button:SetID(offset)
+				button.text:SetPoint("LEFT", button, 24, 0)
+
+				button.bar:Hide()
 			else
-				-- dummy value since slider is disabled
-				getvalue = 1;
-				slider.disabled = 1;
+				button:SetTextFontObject(GameFontNormal)
+				button:EnableMouse(0)
+				button:SetID(0)
+				button.text:SetPoint("LEFT", button, 12, 0)
+
+				button.bar:Show()
 			end
-		else
-			getvalue = GetCVar(value.func);
-		end
 
-		if ( slider.disabled ) then
-			OptionsFrame_DisableSlider(slider);
-		else
-			OptionsFrame_EnableSlider(slider);
-		end
-
-		if ( value.func == "farclip" ) then
-			local cvarFarclip  = tonumber(GetCVar("farclip"))
-			if ( cvarFarclip > OPTIONS_FARCLIP_MAX ) or ( cvarFarclip > BattlefieldMinimapOptions.farclip ) then
-				value.maxValue = cvarFarclip
-				if ( cvarFarclip > BattlefieldMinimapOptions.farclip ) then
-					BattlefieldMinimapOptions.farclip = cvarFarclip
-				end
-			end
-		end
-
-		slider:SetMinMaxValues(value.minValue, value.maxValue);
-		slider:SetValueStep(value.valueStep);
-		slider:SetValue(getvalue);
-		string:SetText(TEXT(value.text));
-		slider.tooltipText = value.tooltipText;
-		slider.tooltipRequirement = value.tooltipRequirement;
-		slider.gxRestart = value.gxRestart;
-		slider.restartClient = value.restartClient;
-	end
-	OptionsFrame.gamma = GetGamma();
-	OptionsFrame.desktopGamma = GetCVar("desktopGamma");
-	OptionsFrame.GXRestart = nil;
-	OptionsFrame.ClientRestart = nil;
-
-	-- Enable or disable buffering dropdown
-	if ( hasTripleBuffering == 1 ) then
-		OptionsFrameCheckButton13:Show();
-		OptionsFrameCheckButton6:SetPoint("TOP", "OptionsFrameCheckButton5", "BOTTOM", 0, -20);
-	else
-		OptionsFrameCheckButton13:Hide();
-		-- Reposition subtitles button
-		OptionsFrameCheckButton6:SetPoint("TOP", "OptionsFrameCheckButton5", "BOTTOM", 0, 2);
-	end
-	-- Update option dependencies
-	OptionsFrame_UpdateCheckboxes();
-	-- Update gamma
-	OptionsFrame_UpdateGammaControls();
-	-- Update ui scale
-	OptionsFrame_UpdateUIScaleControls();
-	-- Update refresh rates dropdown
-	OptionsFrame_UpdateRefreshRatesDropdown();
-
-	-- Resize the options frame
-	OptionsFrame:SetWidth(OPTIONS_FRAME_WIDTH);
-	OptionsFrameDisplay:SetWidth(OPTIONS_FRAME_WIDTH - 25);
-	OptionsFrameWorldAppearance:SetWidth(OPTIONS_FRAME_WIDTH - 25);
-	OptionsFrameBrightness:SetWidth(OPTIONS_FRAME_WIDTH - 25);
-	OptionsFramePixelShaders:SetWidth(OPTIONS_FRAME_WIDTH/2 - 13);
-	OptionsFrameMiscellaneous:SetWidth(OPTIONS_FRAME_WIDTH/2 - 13);
-end
-
-function OptionsFrame_Save()
-	for index, value in OptionsFrameCheckButtons do
-		local button = getglobal("OptionsFrameCheckButton"..value.index);
-		if ( button:GetChecked() ) then
-			value.value = "1";
-		else
-			value.value = "0";
-		end
-
-		SetCVar(value.cvar, value.value, index);
-
-		if ( value.value ~= GetCVar(value.cvar) ) then
-			if ( button.gxRestart ) then
-				OptionsFrame.GXRestart = 1;
-			elseif ( button.restartClient ) then
-				OptionsFrame.ClientRestart = 1;
-			end
-		end
-
-		if ( index == "ENABLE_ALL_SHADERS" ) then
-			SetCVar("ffx", value.value);
-		end
-	end
-	for index, value in OptionsFrameSliders do
-		local slider = getglobal("OptionsFrameSlider"..index);
-		local setvalue = getglobal("Set"..value.func);
-		local getvalue = getglobal("Get"..value.func);
-		if ( value.func == "anisotropic" ) then
-			-- Convert back from slider value to actual anisotropic setting
-			local anisotropicValue = ANISOTROPIC_VALUES[slider:GetValue()];
-			if ( GetCVar("anisotropic") ~= anisotropicValue ) then
-				OptionsFrame.ClientRestart = 1;
-				SetCVar("anisotropic", anisotropicValue);
-			end
-		elseif ( not setvalue ) then
-			if ( slider:GetValue() ~= GetCVar(value.func) ) then
-				if ( slider.gxRestart ) then
-					OptionsFrame.GXRestart = 1;
-				elseif ( slider.restartClient ) then
-					OptionsFrame.ClientRestart = 1;
-				end
-			end
-			SetCVar(value.func, slider:GetValue());
-		else
-			if ( slider:GetValue() ~= getvalue() ) then
-				if ( slider.gxRestart ) then
-					OptionsFrame.GXRestart = 1;
-				elseif ( slider.restartClient ) then
-					OptionsFrame.ClientRestart = 1;
-				end
-			end
-			setvalue(slider:GetValue());
-		end
-	end
-	OptionsFrame.gamma = GetGamma();
-	OptionsFrame.desktopGamma = GetCVar("desktopGamma");
-	SetScreenResolution(UIDropDownMenu_GetSelectedID(OptionsFrameResolutionDropDown));
-	SetMultisampleFormat(UIDropDownMenu_GetSelectedID(OptionsFrameMultiSampleDropDown));
-	-- If this value has changed then do a RestartGx
-	if ( GetCVar("gxRefresh") ~= UIDropDownMenu_GetSelectedValue(OptionsFrameRefreshDropDown) ) then
-		OptionsFrame.GXRestart = 1;
-		SetCVar("gxRefresh", UIDropDownMenu_GetSelectedValue(OptionsFrameRefreshDropDown));
-	end
-	if ( OptionsFrame.GXRestart ) then
-		RestartGx();
-	end
-	if ( OptionsFrame.ClientRestart ) then
-		StaticPopup_Show("CLIENT_RESTART_ALERT");
-	end
-
-	-- Update scrolling combat text if it's loaded
-	if ( CombatText_UpdateDisplayedMessages ) then
-		CombatText_UpdateDisplayedMessages();
-	end
-end
-
-function OptionsFrame_Cancel()
-	SetGamma(OptionsFrame.gamma);
-	SetCVar("desktopGamma", OptionsFrame.desktopGamma);
-end
-
-function OptionsFrameResolutionDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, OptionsFrameResolutionDropDown_Initialize);
-	UIDropDownMenu_SetSelectedID(this, GetCurrentResolution(), 1);
-	UIDropDownMenu_SetWidth(90, OptionsFrameResolutionDropDown);
-end
-
-function OptionsFrameResolutionDropDown_Initialize()
-	OptionsFrameResolutionDropDown_LoadResolutions(GetScreenResolutions());
-end
-
-function OptionsFrameResolutionDropDown_LoadResolutions(...)
-	local info = UIDropDownMenu_CreateInfo();
-	local resolution, xIndex, width, height;
-	for i=1, arg.n, 1 do
-		resolution = arg[i];
-		xIndex = strfind(resolution, "x");
-		width = strsub(resolution, 1, xIndex-1);
-		height = strsub(resolution, xIndex+1, strlen(resolution));
-		if ( width/height > 4/3 ) then
-			resolution = resolution.." "..WIDESCREEN_TAG;
-		end
-		info.text = resolution;
-		info.value = arg[i];
-		info.func = OptionsFrameResolutionButton_OnClick;
-		info.checked = UIDropDownMenu_GetSelectedID(OptionsFrameResolutionDropDown) == i;
-		UIDropDownMenu_AddButton(info);
-	end
-end
-
-function OptionsFrameResolutionButton_OnClick()
-	UIDropDownMenu_SetSelectedID(OptionsFrameResolutionDropDown, this:GetID(), 1);
-end
-
-function OptionsFrameRefreshDropDown_OnLoad()
-	UIDropDownMenu_SetSelectedValue(this, GetCVar("gxRefresh"));
-	UIDropDownMenu_Initialize(this, OptionsFrameRefreshDropDown_Initialize);
-	UIDropDownMenu_SetWidth(90, OptionsFrameRefreshDropDown);
-end
-
-function OptionsFrameRefreshDropDown_Initialize()
-	OptionsFrame_GetRefreshRates(GetRefreshRates());
-end
-
-function OptionsFrame_GetRefreshRates(...)
-	local info = UIDropDownMenu_CreateInfo();
-	local checked;
-	if ( arg.n == 1 and arg[1] == 0 ) then
-		OptionsFrameRefreshDropDownButton:Disable();
-		OptionsFrameRefreshDropDownLabel:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-		OptionsFrameRefreshDropDownText:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-		return;
-	end
-	for i=1, arg.n do
-		info.text = arg[i]..HERTZ;
-		info.func = OptionsFrameRefreshDropDown_OnClick;
-
-		if ( UIDropDownMenu_GetSelectedValue(OptionsFrameRefreshDropDown) and tonumber(UIDropDownMenu_GetSelectedValue(OptionsFrameRefreshDropDown)) == arg[i] ) then
-			checked = 1;
-			UIDropDownMenu_SetText(info.text, OptionsFrameRefreshDropDown);
-		else
-			checked = nil;
-		end
-		info.value = arg[i]
-		info.checked = checked;
-		UIDropDownMenu_AddButton(info);
-	end
-end
-
-function OptionsFrameRefreshDropDown_OnClick()
-	UIDropDownMenu_SetSelectedValue(OptionsFrameRefreshDropDown, this.value);
-end
-
-function OptionsFrameMultiSampleDropDown_OnLoad()
-	UIDropDownMenu_SetSelectedID(this, GetCurrentMultisampleFormat());
-	UIDropDownMenu_Initialize(this, OptionsFrameMultiSampleDropDown_Initialize);
-	UIDropDownMenu_SetWidth(140, OptionsFrameMultiSampleDropDown);
-	UIDropDownMenu_SetAnchor(-5, 23, nil, "TOPRIGHT", "OptionsFrameMultiSampleDropDownRight", "BOTTOMRIGHT");
-end
-
-function OptionsFrameMultiSampleDropDown_Initialize()
-	OptionsFrame_GetMultisampleFormats(GetMultisampleFormats());
-end
-
-function OptionsFrame_GetMultisampleFormats(...)
-	local colorBits, depthBits, multiSample, checked;
-	local info = UIDropDownMenu_CreateInfo();
-	local index = 1;
-	for i=1, arg.n, 3 do
-		colorBits = arg[i];
-		depthBits = arg[i+1];
-		multiSample = arg[i+2];
-		info.text = format(MULTISAMPLING_FORMAT_STRING, colorBits, depthBits, multiSample);
-		info.func = OptionsFrameMultiSampleDropDown_OnClick;
-
-		if ( index == UIDropDownMenu_GetSelectedID(OptionsFrameMultiSampleDropDown) ) then
-			checked = 1;
-			UIDropDownMenu_SetText(info.text, OptionsFrameMultiSampleDropDown);
-		else
-			checked = nil;
-		end
-		info.checked = checked;
-		UIDropDownMenu_AddButton(info);
-		index = index + 1;
-	end
-end
-
-function OptionsFrameMultiSampleDropDown_OnClick()
-	UIDropDownMenu_SetSelectedID(OptionsFrameMultiSampleDropDown, this:GetID());
-end
-
-function OptionsFrame_UpdateCheckboxes()
-	for index, value in OptionsFrameCheckButtons do
-		if ( value.dependency ) then
-			local button = getglobal("OptionsFrameCheckButton"..value.index);
-			local dependency = getglobal("OptionsFrameCheckButton"..OptionsFrameCheckButtons[value.dependency].index);
-			local enable = dependency:GetChecked();
-			if ( enable and index == "TRIPLE_BUFFER" ) then
-				local hasAnisotropic, hasPixelShaders, hasVertexShaders, hasTrilinear, hasTripleBuffering, maxAnisotropy, hasHardwareCursor = GetVideoCaps();
-				if ( not hasTripleBuffering ) then
-					enable = false;
-				end
-			end
-			if ( enable ) then
-				OptionsFrame_EnableCheckBox(button);
+			if overflow then
+				button.text:SetWidth(142)
+				button.bar:SetWidth(278)
 			else
-				OptionsFrame_DisableCheckBox(button);
+				button.text:SetWidth(158)
+				button.bar:SetWidth(314)
 			end
+
+			button.text:SetText(category.name)
+			button:Show()
 		end
 	end
 end
 
-function OptionsFrame_UpdateGammaControls()
-	local value = "0";
-	if ( OptionsFrameCheckButton1:GetChecked() or OptionsFrameCheckButton10:GetChecked() ) then
-		OptionsFrame_DisableSlider(OptionsFrameSlider6);
-		value = "1";
-	else
-		OptionsFrame_EnableSlider(OptionsFrameSlider6);
-	end
-	SetCVar("desktopGamma", value);
+function OptionsFrameCheckButton_OnClick()
+	local option = this:GetParent().option
+	local value = this:GetChecked() and (option.inverted and "0" or "1") or (option.inverted and "1" or "0")
+
+	OnControlValueChanged(option, value)
+
+	PlaySound("igMainMenuOptionCheckBoxOn")
 end
 
-function OptionsFrame_UpdateUIScaleControls()
-	if ( OptionsFrameCheckButton9:GetChecked() ) then
-		OptionsFrame_EnableSlider(OptionsFrameSlider1);
-	else
-		OptionsFrame_DisableSlider(OptionsFrameSlider1);
-	end
+function OptionsFrameDropdown_OnValueChanged()
+	local dropdown = _G[UIDROPDOWNMENU_OPEN_MENU]
+	local option = dropdown:GetParent().option
+	local value
+
+	value = this.value
+	UIDropDownMenu_SetSelectedValue(dropdown, value)
+
+	OnControlValueChanged(option, value)
 end
 
-function OptionsFrame_UpdateRefreshRatesDropdown()
-	if getglobal("OptionsFrameCheckButton"..OptionsFrameCheckButtons["WINDOWED_MODE"].index):GetChecked() then
-		OptionsFrameRefreshDropDownButton:Disable();
-		OptionsFrameRefreshDropDownLabel:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-		OptionsFrameRefreshDropDownText:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	else
-		OptionsFrameRefreshDropDownButton:Enable();
-		OptionsFrameRefreshDropDownLabel:SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
-		OptionsFrameRefreshDropDownText:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	end
+function OptionsFrameSlider_OnValueChanged()
+	local option = this:GetParent().option
+	local value = option.inverted and (option.maxval - this:GetValue() + option.minval) or this:GetValue()
+
+	OnControlValueChanged(option, value)
 end
 
-function OptionsFrame_SetDefaults()
-	local checkButton, slider;
-	for index, value in OptionsFrameCheckButtons do
-		checkButton = getglobal("OptionsFrameCheckButton"..value.index);
-		checkButton:SetChecked(GetCVarDefault(value.cvar));
+function OptionsListButton_OnClick(category, focusOption)
+	local button = this
+
+	if currentCategory and currentCategory ~= category then
+		OptionsFrameContentScrollFrame:SetVerticalScroll(0)
 	end
-	OptionsFrame_UpdateCheckboxes();
-	OptionsFrame_UpdateGammaControls();
-	OptionsFrame_UpdateUIScaleControls();
-	local sliderValue;
-	for index, value in OptionsFrameSliders do
-		slider = getglobal("OptionsFrameSlider"..index);
-		if ( value.func == "WorldDetail" ) then
-			sliderValue = GetCVarDefault("smallCull");
-			sliderValue = sliderValue + 0;
-			if ( sliderValue <= 0.07 ) then
-				sliderValue = 0;
-			elseif ( sliderValue <= 0.04 ) then
-				sliderValue = 1;
-			elseif ( sliderValue <= 0.01 ) then
-				sliderValue = 2;
+
+	local id
+	for _, frame in categoryButtons do
+		id = frame:GetID()
+		if id ~= 0 then
+			frame:EnableMouse(1)
+			if category and id == category then
+				button = frame
 			end
-		elseif ( value.func == "TerrainMip" ) then
-			sliderValue = 1 - GetCVarDefault("shadowLevel");
-		elseif ( value.func == "BaseMip" ) then
-			sliderValue = 1 - GetCVarDefault("baseMip");
-		elseif ( value.func == "Gamma" ) then
-			sliderValue = 1 - GetCVarDefault("gamma");
-		else
-			sliderValue = GetCVarDefault(value.func);
 		end
-		slider:SetValue(sliderValue);
-	end
-	--OptionsFrameRefreshDropDown_Initialize();
-	UIDropDownMenu_Initialize(OptionsFrameRefreshDropDown, OptionsFrameRefreshDropDown_Initialize);
-	UIDropDownMenu_SetSelectedValue(OptionsFrameRefreshDropDown, "60");
-	--OptionsFrameResolutionDropDown_Initialize();
-	UIDropDownMenu_Initialize(OptionsFrameResolutionDropDown, OptionsFrameResolutionDropDown_Initialize);
-	UIDropDownMenu_SetSelectedValue(OptionsFrameResolutionDropDown, "1024x768");
-
-	-- Update video settings
-	RestoreVideoDefaults();
-end
-
-function OptionsFrame_DisableCheckBox(checkBox)
-	--checkBox:SetChecked(0);
-	checkBox:Disable();
-	getglobal(checkBox:GetName().."Text"):SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-end
-
-function OptionsFrame_EnableCheckBox(checkBox, setChecked, checked, isWhite)
-	if ( setChecked ) then
-		checkBox:SetChecked(checked);
-	end
-	checkBox:Enable();
-	if ( isWhite ) then
-		getglobal(checkBox:GetName().."Text"):SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	else
-		getglobal(checkBox:GetName().."Text"):SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 	end
 
+	button:EnableMouse(0)
+
+	category = button:GetID()
+
+	OptionsFrameCategoryListHighlight:ClearAllPoints()
+	OptionsFrameCategoryListHighlight:SetPoint("TOPLEFT", button, -4, 0)
+	OptionsFrameCategoryListHighlight:Show()
+
+	if GameOptions[category].options then
+		UpdateOptions(category, focusOption)
+
+		currentCategory = category
+	end
+
+	OptionsFrameSearchBox:ClearFocus()
+	OptionsFrameSearchResults:Hide()
+
+	PlaySound("igMainMenuOptionCheckBoxOff")
 end
 
-function OptionsFrame_DisableSlider(slider)
-	local name = slider:GetName();
-	getglobal(name.."Thumb"):Hide();
-	getglobal(name.."Text"):SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	getglobal(name.."Low"):SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	getglobal(name.."High"):SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+function OptionsFrameControl_OnEnter(parent)
+	local frame = parent and this:GetParent() or this
+	local tooltip = frame.option.desc
+	local requirement = frame.option.requirement
+	local warning = frame.option.warning
+
+	if tooltip then
+		GameTooltip:SetOwner(parent and this:GetParent() or this, "ANCHOR_RIGHT", 4, 0)
+		GameTooltip:SetText(tooltip, nil, nil, nil, nil, 1)
+
+		if requirement then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(requirement)
+		end
+
+		if warning then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(warning, 1.0, 0, 0, true)
+		end
+
+		GameTooltip:Show()
+	end
+
+	if frame.enabled then
+		frame.label:SetTextColor(1, 1, 1)
+	end
 end
 
-function OptionsFrame_EnableSlider(slider)
-	local name = slider:GetName();
-	getglobal(name.."Thumb"):Show();
-	getglobal(name.."Text"):SetVertexColor(NORMAL_FONT_COLOR.r , NORMAL_FONT_COLOR.g , NORMAL_FONT_COLOR.b);
-	getglobal(name.."Low"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	getglobal(name.."High"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-end
+function OptionsFrameControl_OnLeave(parent)
+	local frame = parent and this:GetParent() or this
 
-function OptionsFrame_DisableDropDown(dropDown)
-	getglobal(dropDown:GetName().."Label"):SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	getglobal(dropDown:GetName().."Text"):SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	getglobal(dropDown:GetName().."Button"):Disable();
-end
+	GameTooltip:Hide()
 
-function OptionsFrame_EnableDropDown(dropDown)
-	getglobal(dropDown:GetName().."Label"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
-	getglobal(dropDown:GetName().."Text"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	getglobal(dropDown:GetName().."Button"):Enable();
-end
-
-function PlayClickSound()
-	if ( this:GetChecked() ) then
-		PlaySound("igMainMenuOptionCheckBoxOn");
-	else
-		PlaySound("igMainMenuOptionCheckBoxOff");
+	if frame.enabled then
+		frame.label:SetTextColor(1, .82, 0)
 	end
 end

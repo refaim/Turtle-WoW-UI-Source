@@ -687,10 +687,10 @@ SlashCmdList["CHATLOG"] = function()
 	local info = ChatTypeInfo["SYSTEM"];
 	if ( LoggingChat() ) then
 		LoggingChat(false);
-		DEFAULT_CHAT_FRAME:AddMessage(TEXT(CHATLOGDISABLED), info.r, info.g, info.b, info.id);
+		DEFAULT_CHAT_FRAME:AddMessage(CHATLOGDISABLED, info.r, info.g, info.b, info.id);
 	else
 		LoggingChat(true);
-		DEFAULT_CHAT_FRAME:AddMessage(TEXT(CHATLOGENABLED), info.r, info.g, info.b, info.id);
+		DEFAULT_CHAT_FRAME:AddMessage(CHATLOGENABLED, info.r, info.g, info.b, info.id);
 	end
 end
 
@@ -698,10 +698,10 @@ SlashCmdList["COMBATLOG"] = function()
 	local info = ChatTypeInfo["SYSTEM"];
 	if ( LoggingCombat() ) then
 		LoggingCombat(false);
-		DEFAULT_CHAT_FRAME:AddMessage(TEXT(COMBATLOGDISABLED), info.r, info.g, info.b, info.id);
+		DEFAULT_CHAT_FRAME:AddMessage(COMBATLOGDISABLED, info.r, info.g, info.b, info.id);
 	else
 		LoggingCombat(true);
-		DEFAULT_CHAT_FRAME:AddMessage(TEXT(COMBATLOGENABLED), info.r, info.g, info.b, info.id);
+		DEFAULT_CHAT_FRAME:AddMessage(COMBATLOGENABLED, info.r, info.g, info.b, info.id);
 	end
 end
 
@@ -790,7 +790,7 @@ SlashCmdList["JOIN"] = 	function(msg)
 	local name = gsub(msg, "%s*([^%s]+).*", "%1");
 	local password = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
 	if(strlen(name) <= 0) then
-		local joinhelp = TEXT(CHAT_JOIN_HELP);
+		local joinhelp = CHAT_JOIN_HELP;
 		local info = ChatTypeInfo["SYSTEM"];
 		DEFAULT_CHAT_FRAME:AddMessage(joinhelp, info.r, info.g, info.b, info.id);
 	else
@@ -825,134 +825,121 @@ SlashCmdList["LIST_CHANNEL"] = function(msg)
 	end
 end
 
-SlashCmdList["CHAT_HELP"] =
-	function(msg)
-		ChatFrame_DisplayChatHelp(DEFAULT_CHAT_FRAME)
-	end
+SlashCmdList["CHAT_HELP"] = function(msg)
+	ChatFrame_DisplayChatHelp(DEFAULT_CHAT_FRAME)
+end
 
-SlashCmdList["CHAT_PASSWORD"] =
-	function(msg)
-		local name = gsub(msg, "%s*([^%s]+).*", "%1");
-		local password = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		SetChannelPassword(name, password);
-	end
+SlashCmdList["CHAT_PASSWORD"] = function(msg)
+	local name = gsub(msg, "%s*([^%s]+).*", "%1");
+	local password = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	SetChannelPassword(name, password);
+end
 
-SlashCmdList["CHAT_OWNER"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local newowner = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(newowner) > 0) then
-				SetChannelOwner(channel, newowner);
-			else
-				DisplayChannelOwner(channel);
-			end
+SlashCmdList["CHAT_OWNER"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local newowner = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(newowner) > 0) then
+			SetChannelOwner(channel, newowner);
+		else
+			DisplayChannelOwner(channel);
 		end
 	end
+end
 
-SlashCmdList["CHAT_MODERATOR"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelModerator(channel, player);
-			end
+SlashCmdList["CHAT_MODERATOR"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelModerator(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_UNMODERATOR"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelUnmoderator(channel, player);
-			end
+SlashCmdList["CHAT_UNMODERATOR"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelUnmoderator(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_MODERATE"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		if(strlen(channel) > 0) then
-			ChannelModerate(channel);
+SlashCmdList["CHAT_MODERATE"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	if(strlen(channel) > 0) then
+		ChannelModerate(channel);
+	end
+end
+
+SlashCmdList["CHAT_MUTE"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelMute(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_MUTE"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelMute(channel, player);
-			end
+SlashCmdList["CHAT_UNMUTE"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelUnmute(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_UNMUTE"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelUnmute(channel, player);
-			end
+SlashCmdList["CHAT_CINVITE"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelInvite(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_CINVITE"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelInvite(channel, player);
-			end
+SlashCmdList["CHAT_KICK"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelKick(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_KICK"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelKick(channel, player);
-			end
+SlashCmdList["CHAT_BAN"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelBan(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_BAN"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelBan(channel, player);
-			end
+SlashCmdList["CHAT_UNBAN"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
+	if(strlen(channel) > 0) then
+		if(strlen(player) > 0) then
+			ChannelUnban(channel, player);
 		end
 	end
+end
 
-SlashCmdList["CHAT_UNBAN"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		local player = gsub(msg, "%s*([^%s]+)%s*(.*)", "%2");
-		if(strlen(channel) > 0) then
-			if(strlen(player) > 0) then
-				ChannelUnban(channel, player);
-			end
-		end
+SlashCmdList["CHAT_ANNOUNCE"] = function(msg)
+	local channel = gsub(msg, "%s*([^%s]+).*", "%1");
+	if(strlen(channel) > 0) then
+		ChannelToggleAnnouncements(channel);
 	end
-
-SlashCmdList["CHAT_ANNOUNCE"] =
-	function(msg)
-		local channel = gsub(msg, "%s*([^%s]+).*", "%1");
-		if(strlen(channel) > 0) then
-			ChannelToggleAnnouncements(channel);
-		end
-	end
+end
 
 SlashCmdList["GUILD_INVITE"] = function(msg)
 	if ( GetSlashCmdTarget(msg) ) then
@@ -1162,12 +1149,16 @@ SlashCmdList["RELOAD"] = function(msg)
 	ReloadUI();
 end
 
+SlashCmdList["PRINT"] = function(msg)
+	RunScript("print("..msg..")");
+end
+
 for i = 1, NUM_CHAT_WINDOWS do
 	if i == 2 then
 		-- disable for combat log by default
-		setglobal("TW_HARDCORE_CHAT"..i, 0)
+		_G["TW_HARDCORE_CHAT"..i] = 0
 	else
-		setglobal("TW_HARDCORE_CHAT"..i, 1)
+		_G["TW_HARDCORE_CHAT"..i] = 1
 	end
 	RegisterForSave("TW_HARDCORE_CHAT"..i)
 end
@@ -1210,7 +1201,7 @@ function ChatFrame_RegisterForMessages(...)
 		end
 	end
 	-- custom chat register
-	if getglobal("TW_HARDCORE_CHAT"..this:GetID()) == 1 then
+	if _G["TW_HARDCORE_CHAT"..this:GetID()] == 1 then
 		this.messageTypeList[index] = "HARDCORE";
 		this:RegisterEvent("CHAT_MSG_HARDCORE");
 	end
@@ -1238,7 +1229,7 @@ function ChatFrame_AddMessageGroup(chatFrame, group)
 		end
 		AddChatWindowMessages(chatFrame:GetID(), group);
 		if group == "HARDCORE" then
-			setglobal("TW_HARDCORE_CHAT"..chatFrame:GetID(), 1)
+			_G["TW_HARDCORE_CHAT"..chatFrame:GetID()] = 1
 		end
 	end
 end
@@ -1256,7 +1247,7 @@ function ChatFrame_RemoveMessageGroup(chatFrame, group)
 		end
 		RemoveChatWindowMessages(chatFrame:GetID(), group);
 		if group == "HARDCORE" then
-			setglobal("TW_HARDCORE_CHAT"..chatFrame:GetID(), 0)
+			_G["TW_HARDCORE_CHAT"..chatFrame:GetID()] = 0
 		end
 	end
 end
@@ -1299,6 +1290,22 @@ function ChatFrame_RemoveAllChannels(chatFrame)
 	chatFrame.zoneChannelList = {};
 end
 
+-- Set up a private editbox to handle macro execution
+do
+	local editbox = CreateFrame("Editbox", "MacroEditBox");
+	editbox:RegisterEvent("EXECUTE_CHAT_LINE");
+	editbox:SetScript("OnEvent", function()
+		local defaulteditbox = DEFAULT_CHAT_FRAME.editBox;
+		this.chatFrame = DEFAULT_CHAT_FRAME;
+		this.chatType = defaulteditbox.chatType;
+		this.tellTarget = defaulteditbox.tellTarget;
+		this.channelTarget = defaulteditbox.channelTarget;
+		this:SetText(arg1);
+		ChatEdit_SendText(this);
+	end);
+	editbox:Hide();
+end
+
 function ChatFrame_OnEvent(event)
 	if ( event == "UPDATE_CHAT_WINDOWS" ) then
 		local name, fontSize, r, g, b, a, shown, locked = GetChatWindowInfo(this:GetID());
@@ -1330,13 +1337,13 @@ function ChatFrame_OnEvent(event)
 		-- Level up
 		local info = ChatTypeInfo["SYSTEM"];
 
-		local string = format(TEXT(LEVEL_UP), arg1);
+		local string = format(LEVEL_UP, arg1);
 		this:AddMessage(string, info.r, info.g, info.b, info.id);
 
 		if ( arg3 > 0 ) then
-			string = format(TEXT(LEVEL_UP_HEALTH_MANA), arg2, arg3);
+			string = format(LEVEL_UP_HEALTH_MANA, arg2, arg3);
 		else
-			string = format(TEXT(LEVEL_UP_HEALTH), arg2);
+			string = format(LEVEL_UP_HEALTH, arg2);
 		end
 		this:AddMessage(string, info.r, info.g, info.b, info.id);
 
@@ -1346,23 +1353,23 @@ function ChatFrame_OnEvent(event)
 		end
 
 		if ( arg5 > 0 ) then
-			string = format(TEXT(LEVEL_UP_STAT), TEXT(SPELL_STAT0_NAME), arg5);
+			string = format(LEVEL_UP_STAT, SPELL_STAT0_NAME, arg5);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
 		if ( arg6 > 0 ) then
-			string = format(TEXT(LEVEL_UP_STAT), TEXT(SPELL_STAT1_NAME), arg6);
+			string = format(LEVEL_UP_STAT, SPELL_STAT1_NAME, arg6);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
 		if ( arg7 > 0 ) then
-			string = format(TEXT(LEVEL_UP_STAT), TEXT(SPELL_STAT2_NAME), arg7);
+			string = format(LEVEL_UP_STAT, SPELL_STAT2_NAME, arg7);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
 		if ( arg8 > 0 ) then
-			string = format(TEXT(LEVEL_UP_STAT), TEXT(SPELL_STAT3_NAME), arg8);
+			string = format(LEVEL_UP_STAT, SPELL_STAT3_NAME, arg8);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
 		if ( arg9 > 0 ) then
-			string = format(TEXT(LEVEL_UP_STAT), TEXT(SPELL_STAT4_NAME), arg9);
+			string = format(LEVEL_UP_STAT, SPELL_STAT4_NAME, arg9);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
 		return;
@@ -1381,15 +1388,9 @@ function ChatFrame_OnEvent(event)
 	if ( event == "GUILD_MOTD" ) then
 		if ( arg1 and (strlen(arg1) > 0) ) then
 			local info = ChatTypeInfo["GUILD"];
-			local string = format(TEXT(GUILD_MOTD_TEMPLATE), arg1);
+			local string = format(GUILD_MOTD_TEMPLATE, arg1);
 			this:AddMessage(string, info.r, info.g, info.b, info.id);
 		end
-		return;
-	end
-	if ( event == "EXECUTE_CHAT_LINE" ) then
-		this.editBox:SetText(arg1);
-		ChatEdit_SendText(this.editBox);
-		ChatEdit_OnEscapePressed(this.editBox);
 		return;
 	end
 	if ( event == "UPDATE_CHAT_COLOR" ) then
@@ -1457,34 +1458,34 @@ function ChatFrame_OnEvent(event)
 		elseif ( strsub(type,1,10) == "BG_SYSTEM_" ) then
 			this:AddMessage(arg1, info.r, info.g, info.b, info.id);
 		elseif ( type == "IGNORED" ) then
-			this:AddMessage(format(TEXT(CHAT_IGNORED), arg2), info.r, info.g, info.b, info.id);
+			this:AddMessage(format(CHAT_IGNORED, arg2), info.r, info.g, info.b, info.id);
 		elseif ( type == "FILTERED" ) then
-			this:AddMessage(format(TEXT(CHAT_FILTERED), arg2), info.r, info.g, info.b, info.id);
+			this:AddMessage(format(CHAT_FILTERED, arg2), info.r, info.g, info.b, info.id);
 		elseif ( type == "CHANNEL_LIST") then
 			if(channelLength > 0) then
-				this:AddMessage(format(TEXT(getglobal("CHAT_"..type.."_GET"))..arg1, arg4), info.r, info.g, info.b, info.id);
+				this:AddMessage(format(_G["CHAT_"..type.."_GET"]..arg1, arg4), info.r, info.g, info.b, info.id);
 			else
 				this:AddMessage(arg1, info.r, info.g, info.b, info.id);
 			end
 		elseif (type == "CHANNEL_NOTICE_USER") then
 			if(strlen(arg5) > 0) then
 				-- TWO users in this notice (E.G. x kicked y)
-				this:AddMessage(format(TEXT(getglobal("CHAT_"..arg1.."_NOTICE")), arg4, arg2, arg5), info.r, info.g, info.b, info.id);
+				this:AddMessage(format(_G["CHAT_"..arg1.."_NOTICE"], arg4, arg2, arg5), info.r, info.g, info.b, info.id);
 			else
-				this:AddMessage(format(TEXT(getglobal("CHAT_"..arg1.."_NOTICE")), arg4, arg2), info.r, info.g, info.b, info.id);
+				this:AddMessage(format(_G["CHAT_"..arg1.."_NOTICE"], arg4, arg2), info.r, info.g, info.b, info.id);
 			end
 		elseif (type == "CHANNEL_NOTICE") then
 			if ( arg10 > 0 ) then
 				arg4 = arg4.." "..arg10;
 			end
-			this:AddMessage(format(TEXT(getglobal("CHAT_"..arg1.."_NOTICE")), arg4), info.r, info.g, info.b, info.id);
+			this:AddMessage(format(_G["CHAT_"..arg1.."_NOTICE"], arg4), info.r, info.g, info.b, info.id);
 		else
 			local body;
 
 			-- Add AFK/DND flags
 			local pflag;
 			if(strlen(arg6) > 0) then
-				pflag = TEXT(getglobal("CHAT_FLAG_"..arg6));
+				pflag = _G["CHAT_FLAG_"..arg6];
 			else
 				pflag = "";
 			end
@@ -1498,15 +1499,15 @@ function ChatFrame_OnEvent(event)
 			if ( (strlen(arg3) > 0) and (arg3 ~= "Universal") and (arg3 ~= this.defaultLanguage) ) then
 				local languageHeader = "["..arg3.."] ";
 				if ( showLink and (strlen(arg2) > 0) ) then
-					body = format(TEXT(getglobal("CHAT_"..type.."_GET"))..languageHeader..arg1, pflag.."|Hplayer:"..arg2.."|h".."["..arg2.."]".."|h");
+					body = format(_G["CHAT_"..type.."_GET"]..languageHeader..arg1, pflag.."|Hplayer:"..arg2.."|h".."["..arg2.."]".."|h");
 				else
-					body = format(TEXT(getglobal("CHAT_"..type.."_GET"))..languageHeader..arg1, pflag..arg2);
+					body = format(_G["CHAT_"..type.."_GET"]..languageHeader..arg1, pflag..arg2);
 				end
 			else
 				if ( showLink and (strlen(arg2) > 0) and (type ~= "EMOTE") ) then
-					body = format(TEXT(getglobal("CHAT_"..type.."_GET"))..arg1, pflag.."|Hplayer:"..arg2.."|h".."["..arg2.."]".."|h");
+					body = format(_G["CHAT_"..type.."_GET"]..arg1, pflag.."|Hplayer:"..arg2.."|h".."["..arg2.."]".."|h");
 				else
-					body = format(TEXT(getglobal("CHAT_"..type.."_GET"))..arg1, pflag..arg2);
+					body = format(_G["CHAT_"..type.."_GET"]..arg1, pflag..arg2);
 
 					-- Add raid boss emote message
 					if ( type == "RAID_BOSS_EMOTE" ) then
@@ -1534,7 +1535,7 @@ function ChatFrame_OnEvent(event)
 	end
 	if ( event == "ZONE_UNDER_ATTACK" ) then
 		local info = ChatTypeInfo["SYSTEM"];
-		this:AddMessage(format(TEXT(ZONE_UNDER_ATTACK), arg1), info.r, info.g, info.b, info.id);
+		this:AddMessage(format(ZONE_UNDER_ATTACK, arg1), info.r, info.g, info.b, info.id);
 		return;
 	end
 	if ( event == "UPDATE_INSTANCE_INFO" ) then
@@ -1543,7 +1544,7 @@ function ChatFrame_OnEvent(event)
 		end
 		local info = ChatTypeInfo["SYSTEM"];
 		if ( RaidFrame.slashCommand and GetNumSavedInstances() == 0 and this == DEFAULT_CHAT_FRAME) then
-			this:AddMessage(TEXT(NO_RAID_INSTANCES_SAVED), info.r, info.g, info.b, info.id);
+			this:AddMessage(NO_RAID_INSTANCES_SAVED, info.r, info.g, info.b, info.id);
 			RaidFrame.slashCommand = nil;
 		end
 	end
@@ -1554,7 +1555,7 @@ function ChatFrame_OnUpdate(elapsedSec)
 		return;
 	end
 
-	local flash = getglobal(this:GetName().."BottomButtonFlash");
+	local flash = _G[this:GetName().."BottomButtonFlash"];
 
 	if ( not flash ) then
 		return;
@@ -1591,9 +1592,25 @@ end
 
 function ChatFrame_OnMouseWheel(value)
 	if ( value > 0 ) then
-		SELECTED_DOCK_FRAME:ScrollUp();
+		if IsShiftKeyDown() then
+			this:ScrollToTop()
+		elseif IsAltKeyDown() then
+			for i = 1, 4 do
+				this:ScrollUp()
+			end
+		else
+			this:ScrollUp()
+		end
 	elseif ( value < 0 ) then
-		SELECTED_DOCK_FRAME:ScrollDown();
+		if IsShiftKeyDown() then
+			this:ScrollToBottom()
+		elseif IsAltKeyDown() then
+			for i = 1, 4 do
+				this:ScrollDown()
+			end
+		else
+			this:ScrollDown()
+		end
 	end
 end
 
@@ -1722,11 +1739,11 @@ function ChatFrame_DisplayStartupText(frame)
 
 	local info = ChatTypeInfo["SYSTEM"];
 	local i = 1;
-	local text = TEXT(getglobal("STARTUP_TEXT_LINE"..i));
+	local text = _G["STARTUP_TEXT_LINE"..i];
 	while text do
 		frame:AddMessage(text, info.r, info.g, info.b, info.id);
 		i = i + 1;
-		text = TEXT(getglobal("STARTUP_TEXT_LINE"..i));
+		text = _G["STARTUP_TEXT_LINE"..i];
 	end
 
 end
@@ -1738,11 +1755,11 @@ function ChatFrame_DisplayHelpText(frame)
 
 	local info = ChatTypeInfo["SYSTEM"];
 	local i = 1;
-	local text = TEXT(getglobal("HELP_TEXT_LINE"..i));
+	local text = _G["HELP_TEXT_LINE"..i];
 	while text do
 		frame:AddMessage(text, info.r, info.g, info.b, info.id);
 		i = i + 1;
-		text = TEXT(getglobal("HELP_TEXT_LINE"..i));
+		text = _G["HELP_TEXT_LINE"..i];
 	end
 
 end
@@ -1754,11 +1771,11 @@ function ChatFrame_DisplayMacroHelpText(frame)
 
 	local info = ChatTypeInfo["SYSTEM"];
 	local i = 1;
-	local text = TEXT(getglobal("MACRO_HELP_TEXT_LINE"..i));
+	local text = _G["MACRO_HELP_TEXT_LINE"..i];
 	while text do
 		frame:AddMessage(text, info.r, info.g, info.b, info.id);
 		i = i + 1;
-		text = TEXT(getglobal("MACRO_HELP_TEXT_LINE"..i));
+		text = _G["MACRO_HELP_TEXT_LINE"..i];
 	end
 
 end
@@ -1770,11 +1787,11 @@ function ChatFrame_DisplayChatHelp(frame)
 
 	local info = ChatTypeInfo["SYSTEM"];
 	local i = 1;
-	local text = TEXT(getglobal("CHAT_HELP_TEXT_LINE"..i));
+	local text = _G["CHAT_HELP_TEXT_LINE"..i];
 	while text do
 		frame:AddMessage(text, info.r, info.g, info.b, info.id);
 		i = i + 1;
-		text = TEXT(getglobal("CHAT_HELP_TEXT_LINE"..i));
+		text = _G["CHAT_HELP_TEXT_LINE"..i];
 	end
 end
 
@@ -1785,11 +1802,11 @@ function ChatFrame_DisplayGuildHelp(frame)
 
 	local info = ChatTypeInfo["SYSTEM"];
 	local i = 1;
-	local text = TEXT(getglobal("GUILD_HELP_TEXT_LINE"..i));
+	local text = _G["GUILD_HELP_TEXT_LINE"..i];
 	while text do
 		frame:AddMessage(text, info.r, info.g, info.b, info.id);
 		i = i + 1;
-		text = TEXT(getglobal("GUILD_HELP_TEXT_LINE"..i));
+		text = _G["GUILD_HELP_TEXT_LINE"..i];
 	end
 end
 
@@ -1817,11 +1834,11 @@ function ChatFrame_DisplayTimePlayed(totalTime, levelTime)
 	local m;
 	local s;
 	d, h, m, s = ChatFrame_TimeBreakDown(totalTime);
-	local string = format(TEXT(TIME_PLAYED_TOTAL), format(TEXT(TIME_DAYHOURMINUTESECOND), d, h, m, s));
+	local string = format(TIME_PLAYED_TOTAL, format(TIME_DAYHOURMINUTESECOND, d, h, m, s));
 	this:AddMessage(string, info.r, info.g, info.b, info.id);
 
 	d, h, m, s = ChatFrame_TimeBreakDown(levelTime);
-	local string = format(TEXT(TIME_PLAYED_LEVEL), format(TEXT(TIME_DAYHOURMINUTESECOND), d, h, m, s));
+	local string = format(TIME_PLAYED_LEVEL, format(TIME_DAYHOURMINUTESECOND, d, h, m, s));
 	this:AddMessage(string, info.r, info.g, info.b, info.id);
 end
 
@@ -1939,15 +1956,15 @@ function ChatEdit_UpdateHeader(editBox)
 	end
 
 	local info = ChatTypeInfo[type];
-	local header = getglobal(editBox:GetName().."Header");
+	local header = _G[editBox:GetName().."Header"];
 	if ( not header ) then
 		return;
 	end
 
 	if ( type == "WHISPER" ) then
-		header:SetText(format(TEXT(getglobal("CHAT_WHISPER_SEND")), editBox.tellTarget));
+		header:SetText(format(CHAT_WHISPER_SEND, editBox.tellTarget));
 	elseif ( type == "EMOTE" ) then
-		header:SetText(format(TEXT(getglobal("CHAT_EMOTE_SEND")), UnitName("player")));
+		header:SetText(format(CHAT_EMOTE_SEND, UnitName("player")));
 	elseif ( type == "CHANNEL" ) then
 		local channel, channelName, instanceID = GetChannelName(editBox.channelTarget);
 		if ( channelName ) then
@@ -1956,10 +1973,10 @@ function ChatEdit_UpdateHeader(editBox)
 			end
 			info = ChatTypeInfo["CHANNEL"..channel];
 			editBox.channelTarget = channel;
-			header:SetText(format(TEXT(getglobal("CHAT_CHANNEL_SEND")), channel, channelName));
+			header:SetText(format(CHAT_CHANNEL_SEND, channel, channelName));
 		end
 	else
-		header:SetText(TEXT(getglobal("CHAT_"..type.."_SEND")));
+		header:SetText(_G["CHAT_"..type.."_SEND"]);
 	end
 
 	header:SetTextColor(info.r, info.g, info.b);
@@ -1970,7 +1987,7 @@ end
 function ChatEdit_AddHistory(editBox)
 	local text = "";
 	local type = editBox.chatType;
-	local header = getglobal("SLASH_"..type.."1");
+	local header = _G["SLASH_"..type.."1"];
 	if ( header ) then
 		text = header;
 	end
@@ -2063,7 +2080,7 @@ function ChatEdit_OnTabPressed()
 
 	for index, value in ChatTypeInfo do
 		local i = 1;
-		local cmdString = TEXT(getglobal("SLASH_"..index..i));
+		local cmdString = _G["SLASH_"..index..i];
 		while ( cmdString ) do
 			if ( strfind(cmdString, command, 1, 1) ) then
 				tabCompleteIndex = tabCompleteIndex - 1;
@@ -2074,13 +2091,13 @@ function ChatEdit_OnTabPressed()
 				end
 			end
 			i = i + 1;
-			cmdString = TEXT(getglobal("SLASH_"..index..i));
+			cmdString = _G["SLASH_"..index..i];
 		end
 	end
 
 	for index, value in SlashCmdList do
 		local i = 1;
-		local cmdString = TEXT(getglobal("SLASH_"..index..i));
+		local cmdString = _G["SLASH_"..index..i];
 		while ( cmdString ) do
 			if ( strfind(cmdString, command, 1, 1) ) then
 				tabCompleteIndex = tabCompleteIndex - 1;
@@ -2091,13 +2108,13 @@ function ChatEdit_OnTabPressed()
 				end
 			end
 			i = i + 1;
-			cmdString = TEXT(getglobal("SLASH_"..index..i));
+			cmdString = _G["SLASH_"..index..i];
 		end
 	end
 
 	local i = 1;
 	local j = 1;
-	local cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+	local cmdString = _G["EMOTE"..i.."_CMD"..j];
 	while ( cmdString ) do
 		if ( strfind(cmdString, command, 1, 1) ) then
 			tabCompleteIndex = tabCompleteIndex - 1;
@@ -2108,11 +2125,11 @@ function ChatEdit_OnTabPressed()
 			end
 		end
 		j = j + 1;
-		cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+		cmdString = _G["EMOTE"..i.."_CMD"..j];
 		if ( not cmdString ) then
 			i = i + 1;
 			j = 1;
-			cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+			cmdString = _G["EMOTE"..i.."_CMD"..j];
 		end
 	end
 
@@ -2133,9 +2150,9 @@ function ChatEdit_OnTextSet()
 end
 
 function ChatEdit_OnInputLanguageChanged()
-	local button = getglobal(this:GetName().."Language");
-	local variable = getglobal("INPUT_"..this:GetInputLanguage());
-	button:SetText(TEXT(variable));
+	local button = _G[this:GetName().."Language"];
+	local variable = _G["INPUT_"..this:GetInputLanguage()];
+	button:SetText(variable);
 end
 
 function ChatEdit_ParseText(editBox, send)
@@ -2176,7 +2193,7 @@ function ChatEdit_ParseText(editBox, send)
 	else
 		for index, value in ChatTypeInfo do
 			local i = 1;
-			local cmdString = TEXT(getglobal("SLASH_"..index..i));
+			local cmdString = _G["SLASH_"..index..i];
 			while ( cmdString ) do
 				cmdString = strupper(cmdString);
 				if ( cmdString == command ) then
@@ -2205,7 +2222,7 @@ function ChatEdit_ParseText(editBox, send)
 					return;
 				end
 				i = i + 1;
-				cmdString = TEXT(getglobal("SLASH_"..index..i));
+				cmdString = _G["SLASH_"..index..i];
 			end
 		end
 	end
@@ -2217,7 +2234,7 @@ function ChatEdit_ParseText(editBox, send)
 
 	for index, value in SlashCmdList do
 		local i = 1;
-		local cmdString = TEXT(getglobal("SLASH_"..index..i));
+		local cmdString = _G["SLASH_"..index..i];
 		while ( cmdString ) do
 			cmdString = strupper(cmdString);
 			if ( cmdString == command ) then
@@ -2227,16 +2244,16 @@ function ChatEdit_ParseText(editBox, send)
 				return;
 			end
 			i = i + 1;
-			cmdString = TEXT(getglobal("SLASH_"..index..i));
+			cmdString = _G["SLASH_"..index..i];
 		end
 	end
 
 	local i = 1;
 	local j = 1;
-	local cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+	local cmdString = _G["EMOTE"..i.."_CMD"..j];
 	while ( cmdString ) do
 		if ( strupper(cmdString) == command ) then
-			local token = getglobal("EMOTE"..i.."_TOKEN");
+			local token = _G["EMOTE"..i.."_TOKEN"];
 			if ( token ) then
 				DoEmote(token, msg);
 			end
@@ -2245,18 +2262,18 @@ function ChatEdit_ParseText(editBox, send)
 			return;
 		end
 		j = j + 1;
-		cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+		cmdString = _G["EMOTE"..i.."_CMD"..j];
 		if ( not cmdString ) then
 			i = i + 1;
 			j = 1;
-			cmdString = TEXT(getglobal("EMOTE"..i.."_CMD"..j));
+			cmdString = _G["EMOTE"..i.."_CMD"..j];
 		end
 	end
 
 
 	-- Unrecognized chat command, show simple help text
 	local info = ChatTypeInfo["SYSTEM"];
-	editBox.chatFrame:AddMessage(TEXT(HELP_TEXT_SIMPLE), info.r, info.g, info.b, info.id);
+	editBox.chatFrame:AddMessage(HELP_TEXT_SIMPLE, info.r, info.g, info.b, info.id);
 	ChatEdit_OnEscapePressed(editBox);
 	return;
 end
@@ -2347,17 +2364,17 @@ end
 
 function ChatMenu_OnLoad()
 	UIMenu_Initialize();
-	UIMenu_AddButton(TEXT(SAY_MESSAGE), TEXT(SLASH_SAY1), ChatMenu_Say);
-	UIMenu_AddButton(TEXT(PARTY_MESSAGE), TEXT(SLASH_PARTY1), ChatMenu_Party);
-	UIMenu_AddButton(TEXT(GUILD_MESSAGE), TEXT(SLASH_GUILD1), ChatMenu_Guild);
-	UIMenu_AddButton(TEXT(HARDCORE_MESSAGE), TEXT(SLASH_HARDCORE1), ChatMenu_Hardcore);
-	UIMenu_AddButton(TEXT(YELL_MESSAGE), TEXT(SLASH_YELL1), ChatMenu_Yell);
-	UIMenu_AddButton(TEXT(WHISPER_MESSAGE), TEXT(SLASH_WHISPER1), ChatMenu_Whisper);
-	UIMenu_AddButton(TEXT(EMOTE_MESSAGE), TEXT(SLASH_EMOTE1), ChatMenu_Emote, "EmoteMenu");
-	UIMenu_AddButton(TEXT(REPLY_MESSAGE), TEXT(SLASH_REPLY1), ChatMenu_Reply);
-	UIMenu_AddButton(TEXT(LANGUAGE), nil, nil, "LanguageMenu");
-	UIMenu_AddButton(TEXT(VOICEMACRO_LABEL), nil, nil, "VoiceMacroMenu");
-	UIMenu_AddButton(TEXT(MACRO), TEXT(SLASH_MACRO1), ShowMacroFrame);
+	UIMenu_AddButton(SAY_MESSAGE, SLASH_SAY1, ChatMenu_Say);
+	UIMenu_AddButton(PARTY_MESSAGE, SLASH_PARTY1, ChatMenu_Party);
+	UIMenu_AddButton(GUILD_MESSAGE, SLASH_GUILD1, ChatMenu_Guild);
+	UIMenu_AddButton(HARDCORE_MESSAGE, SLASH_HARDCORE1, ChatMenu_Hardcore);
+	UIMenu_AddButton(YELL_MESSAGE, SLASH_YELL1, ChatMenu_Yell);
+	UIMenu_AddButton(WHISPER_MESSAGE, SLASH_WHISPER1, ChatMenu_Whisper);
+	UIMenu_AddButton(EMOTE_MESSAGE, SLASH_EMOTE1, ChatMenu_Emote, "EmoteMenu");
+	UIMenu_AddButton(REPLY_MESSAGE, SLASH_REPLY1, ChatMenu_Reply);
+	UIMenu_AddButton(LANGUAGE, nil, nil, "LanguageMenu");
+	UIMenu_AddButton(VOICEMACRO_LABEL, nil, nil, "VoiceMacroMenu");
+	UIMenu_AddButton(MACRO, SLASH_MACRO1, ShowMacroFrame);
 end
 
 function ChatMenu_OnShow()
@@ -2373,22 +2390,22 @@ end
 function TextEmoteSort(token1, token2)
 	local i = 1;
 	local string1, string2;
-	local token = getglobal("EMOTE"..i.."_TOKEN");
+	local token = _G["EMOTE"..i.."_TOKEN"];
 	while ( token ) do
 		if ( token == token1 ) then
-			string1 = TEXT(getglobal("EMOTE"..i.."_CMD1"));
+			string1 = _G["EMOTE"..i.."_CMD1"];
 			if ( string2 ) then
 				break;
 			end
 		end
 		if ( token == token2 ) then
-			string2 = TEXT(getglobal("EMOTE"..i.."_CMD1"));
+			string2 = _G["EMOTE"..i.."_CMD1"];
 			if ( string1 ) then
 				break;
 			end
 		end
 		i = i + 1;
-		token = getglobal("EMOTE"..i.."_TOKEN");
+		token = _G["EMOTE"..i.."_TOKEN"];
 	end
 	return string1 < string2;
 end
@@ -2399,15 +2416,15 @@ function OnMenuLoad(list,func)
 	this.parentMenu = "ChatMenu";
 	for index, value in list do
 		local i = 1;
-		local token = getglobal("EMOTE"..i.."_TOKEN");
+		local token = _G["EMOTE"..i.."_TOKEN"];
 		while ( token ) do
 			if ( token == value ) then
 				break;
 			end
 			i = i + 1;
-			token = getglobal("EMOTE"..i.."_TOKEN");
+			token = _G["EMOTE"..i.."_TOKEN"];
 		end
-		local label = TEXT(getglobal("EMOTE"..i.."_CMD1"));
+		local label = _G["EMOTE"..i.."_CMD1"];
 		if ( not label ) then
 			label = value;
 		end
@@ -2452,7 +2469,6 @@ end
 
 function LanguageMenu_LoadLanguages()
 	local numLanguages = GetNumLaguages();
-	local i;
 	for i = 1, numLanguages, 1 do
 		local language = GetLanguageByIndex(i);
 		UIMenu_AddButton(language, nil, LanguageMenu_Click);
@@ -2522,28 +2538,4 @@ function ChatFrame_ActivateCombatMessages(chatFrame)
 	ChatFrame_AddMessageGroup(chatFrame, "SPELL_PERIODIC_CREATURE_BUFFS");
 	ChatFrame_AddMessageGroup(chatFrame, "SPELL_FAILED_LOCALPLAYER");
 	ChatFrame_AddMessageGroup(chatFrame, "COMBAT_FACTION_CHANGE");
-end
-
-function ChatFrame_OnMouseWheel(dir)
-	if dir > 0 then
-		if IsShiftKeyDown() then
-			this:ScrollToTop()
-		elseif IsAltKeyDown() then
-			for i = 1, 4 do
-				this:ScrollUp()
-			end
-		else
-			this:ScrollUp()
-		end
-	elseif dir < 0 then
-		if IsShiftKeyDown() then
-			this:ScrollToBottom()
-		elseif IsAltKeyDown() then
-			for i = 1, 4 do
-				this:ScrollDown()
-			end
-		else
-			this:ScrollDown()
-		end
-	end
 end

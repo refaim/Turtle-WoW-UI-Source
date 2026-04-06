@@ -25,9 +25,9 @@ FRIENDSFRAME_SUBFRAMES = { "FriendsListFrame", "IgnoreListFrame", "WhoFrame", "G
 function FriendsFrame_ShowSubFrame(frameName)
 	for index, value in FRIENDSFRAME_SUBFRAMES do
 		if ( value == frameName ) then
-			getglobal(value):Show()
+			_G[value]:Show()
 		else
-			getglobal(value):Hide();
+			_G[value]:Hide();
 		end
 	end
 end
@@ -43,7 +43,7 @@ function FriendsFrame_ShowDropdown(name, connected)
 end
 
 function FriendsFrameDropDown_Initialize()
-	UnitPopup_ShowMenu(getglobal(UIDROPDOWNMENU_OPEN_MENU), "FRIEND", nil, FriendsDropDown.name);
+	UnitPopup_ShowMenu(_G[UIDROPDOWNMENU_OPEN_MENU], "FRIEND", nil, FriendsDropDown.name);
 end
 
 function FriendsFrame_OnLoad()
@@ -135,7 +135,7 @@ function FriendsFrame_OnHide()
 	GuildInfoFrame:Hide();
 	RaidInfoFrame:Hide();
 	for index, value in FRIENDSFRAME_SUBFRAMES do
-		getglobal(value):Hide();
+		_G[value]:Hide();
 	end
 end
 
@@ -177,28 +177,29 @@ function FriendsList_Update()
 	for i=1, FRIENDS_TO_DISPLAY, 1 do
 		friendIndex = friendOffset + i;
 		name, level, class, area, connected, status = GetFriendInfo(friendIndex);
-		nameLocationText = getglobal("FriendsFrameFriendButton"..i.."ButtonTextNameLocation");
-		infoText = getglobal("FriendsFrameFriendButton"..i.."ButtonTextInfo");
+		nameLocationText = _G["FriendsFrameFriendButton"..i.."ButtonTextNameLocation"];
+		infoText = _G["FriendsFrameFriendButton"..i.."ButtonTextInfo"];
 		if ( not name ) then
 			name = UNKNOWN
 		end
 		if ( connected ) then
-			local lvlColor = GetDifficultyColor(level or 1)
-			level = format("|cff%02x%02x%02x", lvlColor.r*255, lvlColor.g*255, lvlColor.b*255)..level.."|r"
-			local classToken = TW_CLASS_TOKEN[GetLocale()][class]
-			if classToken then
-				local classColor = RAID_CLASS_COLORS[classToken] and RAID_CLASS_COLORS[classToken].hex or ""
+			local lvlColor = GetDifficultyColor(level or 1).hex
+			local classToken = TW_CLASS_TOKEN and TW_CLASS_TOKEN[class]
+			if classToken and RAID_CLASS_COLORS[classToken] and RAID_CLASS_COLORS[classToken].hex then
+				local classColor = RAID_CLASS_COLORS[classToken].hex
 				class = classColor..class.."|r"
 				name = classColor..name.."|r"
 			end
-			nameLocationText:SetText(format(TEXT(FRIENDS_LIST_TEMPLATE), name, area, status));
-			infoText:SetText(format(gsub(FRIENDS_LEVEL_TEMPLATE, "%%(%d*$?)d", "%%%1s"), level, class));
-			-- infoText:SetText(format(FRIENDS_LEVEL_TEMPLATE, level, class));
+			nameLocationText:SetText(format(FRIENDS_LIST_TEMPLATE, name, area, status));
+			infoText:SetText(format(FRIENDS_LEVEL_TEMPLATE, level, class));
+			if lvlColor then
+				infoText:SetText((gsub(infoText:GetText(), level, lvlColor..level.."|r", 1)))
+			end
 		else
-			nameLocationText:SetText(format(TEXT(FRIENDS_LIST_OFFLINE_TEMPLATE), name));
-			infoText:SetText(TEXT(UNKNOWN));
+			nameLocationText:SetText(format(FRIENDS_LIST_OFFLINE_TEMPLATE, name));
+			infoText:SetText(UNKNOWN);
 		end
-		friendButton = getglobal("FriendsFrameFriendButton"..i);
+		friendButton = _G["FriendsFrameFriendButton"..i];
 		friendButton:SetID(friendIndex);
 
 		-- Update the highlight
@@ -238,9 +239,9 @@ function IgnoreList_Update()
 	local ignoreIndex;
 	for i=1, IGNORES_TO_DISPLAY, 1 do
 		ignoreIndex = i + ignoreOffset;
-		nameText = getglobal("FriendsFrameIgnoreButton"..i.."ButtonTextName");
+		nameText = _G["FriendsFrameIgnoreButton"..i.."ButtonTextName"];
 		nameText:SetText(GetIgnoreName(ignoreIndex));
-		ignoreButton = getglobal("FriendsFrameIgnoreButton"..i);
+		ignoreButton = _G["FriendsFrameIgnoreButton"..i];
 		ignoreButton:SetID(ignoreIndex);
 		-- Update the highlight
 		if ( ignoreIndex == FriendsFrame.selectedIgnore ) then
@@ -278,16 +279,16 @@ function WhoList_Update()
 	WhoFrameTotals:SetText(format(GetText("WHO_FRAME_TOTAL_TEMPLATE", nil, totalCount), totalCount).."  "..displayedText);
 	for i=1, WHOS_TO_DISPLAY, 1 do
 		whoIndex = whoOffset + i;
-		button = getglobal("WhoFrameButton"..i);
-		nameText = getglobal("WhoFrameButton"..i.."Name")
-		levelText = getglobal("WhoFrameButton"..i.."Level")
-		classText = getglobal("WhoFrameButton"..i.."Class")
-		variableText = getglobal("WhoFrameButton"..i.."Variable");
+		button = _G["WhoFrameButton"..i];
+		nameText = _G["WhoFrameButton"..i.."Name"]
+		levelText = _G["WhoFrameButton"..i.."Level"]
+		classText = _G["WhoFrameButton"..i.."Class"]
+		variableText = _G["WhoFrameButton"..i.."Variable"];
 		button.whoIndex = whoIndex;
 		name, guild, level, race, class, zone = GetWhoInfo(whoIndex);
 		columnTable = { zone, guild, race };
 		lvlColor = GetDifficultyColor(level or 1)
-		classToken = TW_CLASS_TOKEN[GetLocale()][class]
+		classToken = TW_CLASS_TOKEN and TW_CLASS_TOKEN[class]
 		r, g, b = 1, 1, 1
 		if classToken and RAID_CLASS_COLORS[classToken] then
 			r, g, b = RAID_CLASS_COLORS[classToken].r, RAID_CLASS_COLORS[classToken].g, RAID_CLASS_COLORS[classToken].b
@@ -346,6 +347,8 @@ function WhoList_Update()
 	ShowUIPanel(FriendsFrame);
 end
 
+local SearchResult = {}
+
 function GuildStatus_Update()
 	-- Set the tab
 	PanelTemplates_SetTab(FriendsFrame, 3);
@@ -358,24 +361,25 @@ function GuildStatus_Update()
 	local name, rank, rankIndex, level, class, zone, note, officernote, online, status;
 	local guildName, guildRankName, guildRankIndex = GetGuildInfo("player");
 	local maxRankIndex = GuildControlGetNumRanks() - 1;
-	local button;
+	local button, buttonText;
 	local onlinecount = 0;
 	local guildIndex;
+	local selectedIndex = GetGuildRosterSelection();
 
 	-- Get selected guild member info
-	name, rank, rankIndex, level, class, zone, note, officernote, online = GetGuildRosterInfo(GetGuildRosterSelection());
+	name, rank, rankIndex, level, class, zone, note, officernote, online = GetGuildRosterInfo(selectedIndex);
 	GuildFrame.selectedName = name;
 	-- If there's a selected guildmember
-	if ( GetGuildRosterSelection() > 0 ) then
+	if ( selectedIndex > 0 ) then
 		-- Update the guild member details frame
 		GuildMemberDetailName:SetText(GuildFrame.selectedName);
-		GuildMemberDetailLevel:SetText(format(TEXT(FRIENDS_LEVEL_TEMPLATE), level, class));
+		GuildMemberDetailLevel:SetText(format(FRIENDS_LEVEL_TEMPLATE, level, class));
 		GuildMemberDetailZoneText:SetText(zone);
 		GuildMemberDetailRankText:SetText(rank);
 		if ( online ) then
 			GuildMemberDetailOnlineText:SetText(GUILD_ONLINE_LABEL);
 		else
-			GuildMemberDetailOnlineText:SetText(GuildFrame_GetLastOnline(GetGuildRosterSelection()));
+			GuildMemberDetailOnlineText:SetText(GuildFrame_GetLastOnline(selectedIndex));
 		end
 		-- Update public note
 		if ( CanEditPublicNote() ) then
@@ -440,8 +444,8 @@ function GuildStatus_Update()
 		else
 			GuildMemberGroupInviteButton:Enable();
 		end
-
-		GuildFrame.selectedName = GetGuildRosterInfo(GetGuildRosterSelection());
+	else
+		GuildMemberDetailFrame:Hide();
 	end
 
 	-- Message of the day stuff
@@ -457,12 +461,6 @@ function GuildStatus_Update()
 		GuildMOTDEditButton:Disable();
 	end
 	GuildFrameNotesText:SetText(CURRENT_GUILD_MOTD);
-
-	-- Scrollbar stuff
-	local showScrollBar = nil;
-	if ( numGuildMembers > GUILDMEMBERS_TO_DISPLAY ) then
-		showScrollBar = 1;
-	end
 
 	-- Get number of online members
 	for i=1, numGuildMembers, 1 do
@@ -489,58 +487,80 @@ function GuildStatus_Update()
 		GuildFrameAddMemberButton:Disable();
 	end
 
+	local searchText = trim(strlower(GuildFrameSearchBox:GetText()))
+	local isSearching = searchText ~= ""
+	wipe(SearchResult)
+	if isSearching then
+		for i = 1, numGuildMembers do
+			if strfind(strlower(GetGuildRosterInfo(i)), searchText) then
+				tinsert(SearchResult, i)
+			end
+		end
+	end
+	local numResults = getn(SearchResult)
+	local numToUpdate = isSearching and numResults or numGuildMembers
+
+	-- Scrollbar stuff
+	local showScrollBar = nil;
+	if ( numToUpdate > GUILDMEMBERS_TO_DISPLAY ) then
+		showScrollBar = 1;
+	end
 
 	if ( FriendsFrame.playerStatusFrame ) then
 		-- Player specific info
 		local guildOffset = FauxScrollFrame_GetOffset(GuildListScrollFrame);
 
 		for i=1, GUILDMEMBERS_TO_DISPLAY, 1 do
-			guildIndex = guildOffset + i;
-			button = getglobal("GuildFrameButton"..i);
+			if isSearching then
+				guildIndex = SearchResult[guildOffset + i] or 0
+			else
+				guildIndex = guildOffset + i;
+			end
+			button = _G["GuildFrameButton"..i];
 			button.guildIndex = guildIndex;
-			name, rank, rankIndex, level, class, zone, note, officernote, online = GetGuildRosterInfo(guildIndex);
-			local lvlColor = GetDifficultyColor(level or 1)
-			level = format("|cff%02x%02x%02x", lvlColor.r*255, lvlColor.g*255, lvlColor.b*255)..level.."|r"
-			local classToken = TW_CLASS_TOKEN[GetLocale()][class]
-			if classToken then
-				local classColor = RAID_CLASS_COLORS[classToken] and RAID_CLASS_COLORS[classToken].hex or ""
-				class = classColor..class.."|r"
-				name = classColor..name.."|r"
-			end
-			getglobal("GuildFrameButton"..i.."Name"):SetText(name);
-			getglobal("GuildFrameButton"..i.."Zone"):SetText(zone);
-			getglobal("GuildFrameButton"..i.."Level"):SetText(level);
-			getglobal("GuildFrameButton"..i.."Class"):SetText(class);
-			if ( not online ) then
-				getglobal("GuildFrameButton"..i.."Name"):SetAlpha(0.5);
-				getglobal("GuildFrameButton"..i.."Zone"):SetAlpha(0.5);
-				getglobal("GuildFrameButton"..i.."Level"):SetAlpha(0.5);
-				getglobal("GuildFrameButton"..i.."Class"):SetAlpha(0.5);
-			else
-				getglobal("GuildFrameButton"..i.."Name"):SetAlpha(1);
-				getglobal("GuildFrameButton"..i.."Zone"):SetAlpha(1);
-				getglobal("GuildFrameButton"..i.."Level"):SetAlpha(1);
-				getglobal("GuildFrameButton"..i.."Class"):SetAlpha(1);
-			end
+			if guildIndex > 0 and i <= numToUpdate then
+				name, rank, rankIndex, level, class, zone, note, officernote, online = GetGuildRosterInfo(guildIndex);
+				local levelColor = GetDifficultyColor(level or 1)
+				local classToken = TW_CLASS_TOKEN and TW_CLASS_TOKEN[class]
+				local classColor = NORMAL_FONT_COLOR
+				local alpha = online and 1 or 0.55
+				if classToken and RAID_CLASS_COLORS[classToken] then
+					classColor = RAID_CLASS_COLORS[classToken]
+				end
+				buttonText = _G["GuildFrameButton"..i.."Name"]
+				buttonText:SetText(name)
+				buttonText:SetTextColor(classColor.r, classColor.g, classColor.b)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameButton"..i.."Zone"]
+				buttonText:SetText(zone)
+				buttonText:SetTextColor(1, 1, 1)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameButton"..i.."Level"]
+				buttonText:SetText(level)
+				buttonText:SetTextColor(levelColor.r, levelColor.g, levelColor.b)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameButton"..i.."Class"]
+				buttonText:SetText(class)
+				buttonText:SetTextColor(classColor.r, classColor.g, classColor.b)
+				buttonText:SetAlpha(alpha)
 
-			-- If need scrollbar resize columns
-			if ( showScrollBar ) then
-				getglobal("GuildFrameButton"..i.."Zone"):SetWidth(95);
-			else
-				getglobal("GuildFrameButton"..i.."Zone"):SetWidth(110);
-			end
+				-- If need scrollbar resize columns
+				if ( showScrollBar ) then
+					_G["GuildFrameButton"..i.."Zone"]:SetWidth(95);
+				else
+					_G["GuildFrameButton"..i.."Zone"]:SetWidth(110);
+				end
 
-			-- Highlight the correct who
-			if ( GetGuildRosterSelection() == guildIndex ) then
-				button:LockHighlight();
-			else
-				button:UnlockHighlight();
-			end
+				-- Highlight the correct who
+				if ( selectedIndex == guildIndex ) then
+					button:LockHighlight();
+				else
+					button:UnlockHighlight();
+				end
 
-			if ( guildIndex > numGuildMembers ) then
-				button:Hide();
-			else
 				button:Show();
+			else
+				button:Hide();
 			end
 		end
 
@@ -554,67 +574,72 @@ function GuildStatus_Update()
 			GuildFrameGuildListToggleButton:SetPoint("LEFT", "GuildFrame", "LEFT", 307, -67);
 		end
 		-- ScrollFrame update
-		FauxScrollFrame_Update(GuildListScrollFrame, numGuildMembers, GUILDMEMBERS_TO_DISPLAY, FRIENDS_FRAME_GUILD_HEIGHT );
+		FauxScrollFrame_Update(GuildListScrollFrame, numToUpdate, GUILDMEMBERS_TO_DISPLAY, FRIENDS_FRAME_GUILD_HEIGHT );
 
 		GuildPlayerStatusFrame:Show();
 		GuildStatusFrame:Hide();
 	else
 		-- Guild specific info
-		local year, month, day, hour;
-		local yearlabel, monthlabel, daylabel, hourlabel;
 		local guildOffset = FauxScrollFrame_GetOffset(GuildListScrollFrame);
 
 		for i=1, GUILDMEMBERS_TO_DISPLAY, 1 do
-			guildIndex = guildOffset + i;
-			button = getglobal("GuildFrameGuildStatusButton"..i);
-			button.guildIndex = guildIndex;
-			name, rank, rankIndex, level, class, zone, note, officernote, online, status = GetGuildRosterInfo(guildIndex);
-			local classToken = TW_CLASS_TOKEN[GetLocale()][class]
-			if classToken then
-				local classColor = RAID_CLASS_COLORS[classToken] and RAID_CLASS_COLORS[classToken].hex or ""
-				name = classColor..name.."|r"
+			if isSearching then
+				guildIndex = SearchResult[guildOffset + i] or 0
+			else
+				guildIndex = guildOffset + i;
 			end
-			getglobal("GuildFrameGuildStatusButton"..i.."Name"):SetText(name);
-			getglobal("GuildFrameGuildStatusButton"..i.."Rank"):SetText(rank);
-			getglobal("GuildFrameGuildStatusButton"..i.."Note"):SetText(note);
-
-			if ( online ) then
-				if ( status == "" ) then
-					getglobal("GuildFrameGuildStatusButton"..i.."Online"):SetText(GUILD_ONLINE_LABEL);
+			button = _G["GuildFrameGuildStatusButton"..i];
+			button.guildIndex = guildIndex;
+			if guildIndex > 0 and i <= numToUpdate then
+				name, rank, rankIndex, level, class, zone, note, officernote, online, status = GetGuildRosterInfo(guildIndex);
+				local classToken = TW_CLASS_TOKEN and TW_CLASS_TOKEN[class]
+				local classColor = NORMAL_FONT_COLOR
+				local alpha = online and 1 or 0.55
+				if classToken and RAID_CLASS_COLORS[classToken] then
+					classColor = RAID_CLASS_COLORS[classToken]
+				end
+				buttonText = _G["GuildFrameGuildStatusButton"..i.."Name"]
+				buttonText:SetText(name)
+				buttonText:SetTextColor(classColor.r, classColor.g, classColor.b)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameGuildStatusButton"..i.."Rank"]
+				buttonText:SetText(rank)
+				buttonText:SetTextColor(1, 1, 1)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameGuildStatusButton"..i.."Note"]
+				buttonText:SetText(note)
+				buttonText:SetTextColor(1, 1, 1)
+				buttonText:SetAlpha(alpha)
+				buttonText = _G["GuildFrameGuildStatusButton"..i.."Online"]
+				if ( online ) then
+					if ( status == "" ) then
+						buttonText:SetText(GUILD_ONLINE_LABEL);
+					else
+						buttonText:SetText(status);
+					end
 				else
-					getglobal("GuildFrameGuildStatusButton"..i.."Online"):SetText(status);
+					buttonText:SetText(GuildFrame_GetLastOnline(guildIndex));
+				end
+				buttonText:SetTextColor(1, 1, 1)
+				buttonText:SetAlpha(alpha)
+
+				-- If need scrollbar resize columns
+				if ( showScrollBar ) then
+					_G["GuildFrameGuildStatusButton"..i.."Note"]:SetWidth(70);
+				else
+					_G["GuildFrameGuildStatusButton"..i.."Note"]:SetWidth(85);
 				end
 
-				getglobal("GuildFrameGuildStatusButton"..i.."Name"):SetAlpha(1);
-				getglobal("GuildFrameGuildStatusButton"..i.."Rank"):SetAlpha(1);
-				getglobal("GuildFrameGuildStatusButton"..i.."Note"):SetAlpha(1);
-				getglobal("GuildFrameGuildStatusButton"..i.."Online"):SetAlpha(1);
-			else
-				getglobal("GuildFrameGuildStatusButton"..i.."Online"):SetText(GuildFrame_GetLastOnline(guildIndex));
-				getglobal("GuildFrameGuildStatusButton"..i.."Name"):SetAlpha(0.5);
-				getglobal("GuildFrameGuildStatusButton"..i.."Rank"):SetAlpha(0.5);
-				getglobal("GuildFrameGuildStatusButton"..i.."Note"):SetAlpha(0.5);
-				getglobal("GuildFrameGuildStatusButton"..i.."Online"):SetAlpha(0.5);
-			end
+				-- Highlight the correct who
+				if ( selectedIndex == guildIndex ) then
+					button:LockHighlight();
+				else
+					button:UnlockHighlight();
+				end
 
-			-- If need scrollbar resize columns
-			if ( showScrollBar ) then
-				getglobal("GuildFrameGuildStatusButton"..i.."Note"):SetWidth(70);
-			else
-				getglobal("GuildFrameGuildStatusButton"..i.."Note"):SetWidth(85);
-			end
-
-			-- Highlight the correct who
-			if ( GetGuildRosterSelection() == guildIndex ) then
-				button:LockHighlight();
-			else
-				button:UnlockHighlight();
-			end
-
-			if ( guildIndex > numGuildMembers ) then
-				button:Hide();
-			else
 				button:Show();
+			else
+				button:Hide();
 			end
 		end
 
@@ -629,7 +654,7 @@ function GuildStatus_Update()
 		end
 
 		-- ScrollFrame update
-		FauxScrollFrame_Update(GuildListScrollFrame, numGuildMembers, GUILDMEMBERS_TO_DISPLAY, FRIENDS_FRAME_GUILD_HEIGHT );
+		FauxScrollFrame_Update(GuildListScrollFrame, numToUpdate, GUILDMEMBERS_TO_DISPLAY, FRIENDS_FRAME_GUILD_HEIGHT );
 
 		GuildPlayerStatusFrame:Hide();
 		GuildStatusFrame:Show();
@@ -641,7 +666,7 @@ function WhoFrameColumn_SetWidth(width, frame)
 		frame = this;
 	end
 	frame:SetWidth(width);
-	getglobal(frame:GetName().."Middle"):SetWidth(width - 9);
+	_G[frame:GetName().."Middle"]:SetWidth(width - 9);
 end
 
 function WhoFrameDropDown_Initialize()
@@ -712,11 +737,11 @@ end
 
 function FriendsFrameWhoButton_OnClick(button)
 	if ( button == "LeftButton" ) then
-		WhoFrame.selectedWho = getglobal("WhoFrameButton"..this:GetID()).whoIndex;
-		WhoFrame.selectedName = getglobal("WhoFrameButton"..this:GetID().."Name"):GetText();
+		WhoFrame.selectedWho = _G["WhoFrameButton"..this:GetID()].whoIndex;
+		WhoFrame.selectedName = _G["WhoFrameButton"..this:GetID().."Name"]:GetText();
 		WhoList_Update();
 	else
-		local name = getglobal("WhoFrameButton"..this:GetID().."Name"):GetText();
+		local name = _G["WhoFrameButton"..this:GetID().."Name"]:GetText();
 		FriendsFrame_ShowDropdown(name, 1);
 	end
 end
@@ -725,7 +750,7 @@ function FriendsFrameGuildStatusButton_OnClick(button)
 	if ( button == "LeftButton" ) then
 		GuildFrame.previousSelectedGuildMember = GuildFrame.selectedGuildMember;
 		GuildFrame.selectedGuildMember = this.guildIndex;
-		GuildFrame.selectedName = getglobal(this:GetName().."Name"):GetText();
+		GuildFrame.selectedName = _G[this:GetName().."Name"]:GetText();
 		SetGuildRosterSelection(GuildFrame.selectedGuildMember);
 		-- Toggle guild details frame
 		if ( GuildMemberDetailFrame:IsVisible() and (GuildFrame.previousSelectedGuildMember and (GuildFrame.previousSelectedGuildMember == GuildFrame.selectedGuildMember)) ) then
@@ -856,16 +881,17 @@ function GuildControlPopupFrame_OnShow()
 	UIDropDownMenu_SetText(GuildControlGetRankName(1), GuildControlPopupFrameDropDown);
 	GuildControlCheckboxUpdate(GuildControlGetRankFlags());
 	GuildControlPopupAcceptButton:Disable();
-	-- Hide center frame if there is one
-	if ( GetCenterFrame() ) then
-		HideUIPanel(GetCenterFrame());
-	end
+	UIPanelWindows["FriendsFrame"].width = FriendsFrame:GetWidth() + GuildControlPopupFrame:GetWidth() -32;
+	UpdateUIPanelPositions(FriendsFrame);
+
 	-- Hide guild member detail frame if its open
 	GuildMemberDetailFrame:Hide();
 	GuildInfoFrame:Hide();
 end
 
 function GuildControlPopupFrame_OnHide()
+	UIPanelWindows["FriendsFrame"].width = FriendsFrame:GetWidth();
+	UpdateUIPanelPositions();
 	FriendsFrame.guildControlShow = 0;
 end
 
@@ -907,7 +933,7 @@ end
 function GuildControlCheckboxUpdate(...)
 	local checkbox;
 	for i=1, arg.n, 1 do
-		checkbox = getglobal("GuildControlPopupFrameCheckbox"..i)
+		checkbox = _G["GuildControlPopupFrameCheckbox"..i]
 		if ( checkbox ) then
 			checkbox:SetChecked(arg[i]);
 		else

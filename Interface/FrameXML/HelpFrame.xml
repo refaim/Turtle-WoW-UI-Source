@@ -288,7 +288,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:SetWidth(getglobal(this:GetName().."Text"):GetWidth()+40);
+								this:SetWidth(_G[this:GetName().."Text"]:GetWidth()+40);
 							</OnLoad>
 							<OnClick>
 								HelpFrame_ShowFrame("OpenTicket");
@@ -305,7 +305,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:SetWidth(getglobal(this:GetName().."Text"):GetWidth()+40);
+								this:SetWidth(_G[this:GetName().."Text"]:GetWidth()+40);
 							</OnLoad>
 							<OnClick>
 								Stuck();
@@ -991,7 +991,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(VERBAL_HARASSMENT_TEXT2);
+										_G[this:GetName().."Text"]:SetText(VERBAL_HARASSMENT_TEXT2);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1005,7 +1005,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(VERBAL_HARASSMENT_TEXT3);
+										_G[this:GetName().."Text"]:SetText(VERBAL_HARASSMENT_TEXT3);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1019,7 +1019,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(VERBAL_HARASSMENT_TEXT4);
+										_G[this:GetName().."Text"]:SetText(VERBAL_HARASSMENT_TEXT4);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1113,7 +1113,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(PHYSICAL_HARASSMENT_TEXT2);
+										_G[this:GetName().."Text"]:SetText(PHYSICAL_HARASSMENT_TEXT2);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1127,7 +1127,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(PHYSICAL_HARASSMENT_TEXT3);
+										_G[this:GetName().."Text"]:SetText(PHYSICAL_HARASSMENT_TEXT3);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1141,7 +1141,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(PHYSICAL_HARASSMENT_TEXT4);
+										_G[this:GetName().."Text"]:SetText(PHYSICAL_HARASSMENT_TEXT4);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1155,7 +1155,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(PHYSICAL_HARASSMENT_TEXT5);
+										_G[this:GetName().."Text"]:SetText(PHYSICAL_HARASSMENT_TEXT5);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1169,7 +1169,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(PHYSICAL_HARASSMENT_TEXT6);
+										_G[this:GetName().."Text"]:SetText(PHYSICAL_HARASSMENT_TEXT6);
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -1272,7 +1272,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:SetWidth(getglobal(this:GetName().."Text"):GetWidth()+40);
+								this:SetWidth(_G[this:GetName().."Text"]:GetWidth()+40);
 							</OnLoad>
 							<OnClick>
 								Stuck();

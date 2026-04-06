@@ -25,7 +25,7 @@ function DurabilityFrame_SetAlerts()
 	local numAlerts = 0;
 	local texture, color, showDurability;
 	for index, value in INVENTORY_ALERT_STATUS_SLOTS do
-		texture = getglobal("Durability"..value.slot);
+		texture = _G["Durability"..value.slot];
 		if ( value.slot == "Shield" ) then
 			if ( OffhandHasWeapon() ) then
 				DurabilityShield:Hide();
@@ -59,9 +59,9 @@ function DurabilityFrame_SetAlerts()
 	for index, value in INVENTORY_ALERT_STATUS_SLOTS do
 		if ( not value.showSeparate ) then
 			if ( showDurability ) then
-				getglobal("Durability"..value.slot):Show();
+				_G["Durability"..value.slot]:Show();
 			else
-				getglobal("Durability"..value.slot):Hide();
+				_G["Durability"..value.slot]:Hide();
 			end
 		end
 	end

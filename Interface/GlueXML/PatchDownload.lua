@@ -50,7 +50,7 @@ end
 
 function PatchDownload_UpdateProgress()
 	local amtComplete = PatchDownloadProgress();
-	PatchProgressText:SetText(format(TEXT("%3.0f%%"), amtComplete*100));
+	PatchProgressText:SetText(format("%3.0f%%", amtComplete * 100));
 end
 
 function PatchDownload_PatchDownloaded()

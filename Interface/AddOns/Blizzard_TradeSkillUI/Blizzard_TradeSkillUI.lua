@@ -10,25 +10,26 @@ TradeSkillTypeColor["easy"]		= { r = 0.25, g = 0.75, b = 0.25 };
 TradeSkillTypeColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
 TradeSkillTypeColor["header"]	= { r = 1.00, g = 0.82, b = 0 };
 
-UIPanelWindows["TradeSkillFrame"] =	{ area = "left", pushable = 10 };
+UIPanelWindows["TradeSkillFrame"] =	{ area = "doublewide", pushable = 0, width = 690 };
 
-TradeSkillIcons =
-{
-	["Alchemy"] = "Trade_Alchemy",
-	["Blacksmithing"] = "Trade_Blacksmithing",
-	["Cooking"] = "inv_misc_food_15",
-	["Engineering"] = "Trade_Engineering",
-	["First Aid"] = "spell_holy_sealofsacrifice",
-	["Jewelcrafting"] = "inv_helmet_44",
-	["Leatherworking"] = "inv_misc_armorkit_17",
-	["Mining"] = "spell_fire_flameblades",
-	["Tailoring"] = "Trade_Tailoring",
+TradeSkillIcons = {
+	"interface\\icons\\trade_alchemy",              -- Alchemy
+	"interface\\icons\\trade_blacksmithing",        -- Blacksmithing
+	"interface\\icons\\inv_misc_food_15",           -- Cooking
+	"interface\\icons\\trade_engineering",          -- Engineering
+	"interface\\icons\\trade_tailoring",            -- Tailoring
+	"interface\\icons\\trade_survival",             -- Survival
+	"interface\\icons\\trade_brewpoison",           -- Poisons
+	"interface\\icons\\spell_holy_sealofsacrifice", -- First Aid
+	"interface\\icons\\inv_jewelry_necklace_11",    -- Jewelcrafting
+	"interface\\icons\\inv_misc_armorkit_17",       -- Leatherworking
+	"interface\\icons\\spell_fire_flameblades",     -- Mining
 }
 
 local searchResults = {}
 
-function TradeSkillFrame_Search()
-	searchResults = {}
+function TradeSkillFrame_Search(noScroll)
+	wipe(searchResults)
 
 	local query = strlower(TradeSkillSearchBox:GetText())
 	local isMatsChecked = TradeSkillMatsCheckButton:GetChecked()
@@ -75,14 +76,16 @@ function TradeSkillFrame_Search()
 			table.remove(searchResults, lastHeaderPos)
 		end
 
-		TradeSkillListScrollFrame:SetVerticalScroll(1)
+		if ( not noScroll ) then
+			TradeSkillListScrollFrame:SetVerticalScroll(1);
+		end
 	end
 
 	TradeSkillFrame_Update()
 end
 
 function TradeSkillFrame_Show()
-	searchResults = {}
+	wipe(searchResults)
 
 	TradeSkillMatsCheckButton:SetChecked(0)
 	TradeSkillSkillCheckButton:SetChecked(0)
@@ -103,9 +106,17 @@ function TradeSkillFrame_Show()
 	FauxScrollFrame_SetOffset(TradeSkillListScrollFrame, 0);
 	TradeSkillListScrollFrameScrollBar:SetMinMaxValues(0, 0);
 	TradeSkillListScrollFrameScrollBar:SetValue(0);
-	local icon = TradeSkillIcons[format(TEXT(TRADE_SKILL_TITLE), GetTradeSkillLine())]
+	local _, _, _, numSpells = GetSpellTabInfo(1)
+	local icon
+	for spell = 1, numSpells do
+		local texture = GetSpellTexture(spell, BOOKTYPE_SPELL)
+		if IsCurrentCast(spell, BOOKTYPE_SPELL) and texture and tContains(TradeSkillIcons, strlower(texture)) then
+			icon = texture
+			break
+		end
+	end
 	if icon then
-		SetPortraitToTexture(TradeSkillFramePortrait, "Interface\\Icons\\" .. icon)
+		SetPortraitToTexture(TradeSkillFramePortrait, icon)
 	else
 		SetPortraitTexture(TradeSkillFramePortrait, "player");
 	end
@@ -121,6 +132,7 @@ function TradeSkillFrame_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("TRADE_SKILL_UPDATE");
 	this:RegisterEvent("UPDATE_TRADESKILL_RECAST");
+	FauxScrollFrame_SetOffset(TradeSkillListScrollFrame, 0);
 end
 
 function TradeSkillFrame_OnEvent()
@@ -145,7 +157,7 @@ function TradeSkillFrame_OnEvent()
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
 		TradeSkillFrame_Hide();
 	elseif ( event == "BAG_UPDATE" ) then
-		TradeSkillFrame_Search();
+		TradeSkillFrame_Search(true);
 	end
 end
 
@@ -154,7 +166,7 @@ function TradeSkillFrame_Update()
 	local skillOffset = FauxScrollFrame_GetOffset(TradeSkillListScrollFrame) or 0;
 	-- If no tradeskills
 	if ( numTradeSkills == 0 ) then
-		TradeSkillFrameTitleText:SetText(format(TEXT(TRADE_SKILL_TITLE), GetTradeSkillLine()));
+		TradeSkillFrameTitleText:SetText(format(TRADE_SKILL_TITLE, GetTradeSkillLine()));
 		TradeSkillSkillName:Hide();
 --		TradeSkillSkillLineName:Hide();
 		TradeSkillSkillIcon:Hide();
@@ -162,7 +174,7 @@ function TradeSkillFrame_Update()
 		TradeSkillRequirementText:SetText("");
 		TradeSkillCollapseAllButton:Disable();
 		for i=1, MAX_TRADE_SKILL_REAGENTS, 1 do
-			getglobal("TradeSkillReagent"..i):Hide();
+			_G["TradeSkillReagent"..i]:Hide();
 		end
 	else
 		TradeSkillSkillName:Show();
@@ -173,9 +185,9 @@ function TradeSkillFrame_Update()
 
 	-- ScrollFrame update
 	local results = table.getn(searchResults)
-	local recipepsToUpdate = results == 0 and numTradeSkills or results
+	local recipesToUpdate = results == 0 and numTradeSkills or results
 
-	FauxScrollFrame_Update(TradeSkillListScrollFrame, recipepsToUpdate, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 290, 292 );
+	FauxScrollFrame_Update(TradeSkillListScrollFrame, recipesToUpdate, TRADE_SKILLS_DISPLAYED, TRADE_SKILL_HEIGHT, nil, nil, nil, TradeSkillHighlightFrame, 309, 309 );
 
 	TradeSkillHighlightFrame:Hide()
 	TradeSkillFrameNoResultsText:Hide()
@@ -197,9 +209,9 @@ function TradeSkillFrame_Update()
 			skillIndex = i + skillOffset;
 		end
 		local skillName, skillType, numAvailable, isExpanded = GetTradeSkillInfo(skillIndex);
-		local skillButton = getglobal("TradeSkillSkill"..i);
+		local skillButton = _G["TradeSkillSkill"..i];
 		if ( skillIndex > 0 and skillIndex <= numTradeSkills ) then
-			skillButton:SetWidth(293);
+			skillButton:SetWidth(310);
 			local color = TradeSkillTypeColor[skillType];
 			if ( color ) then
 				skillButton:SetTextColor(color.r, color.g, color.b);
@@ -215,14 +227,14 @@ function TradeSkillFrame_Update()
 				else
 					skillButton:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-Up");
 				end
-				getglobal("TradeSkillSkill"..i.."Highlight"):SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
-				getglobal("TradeSkillSkill"..i):UnlockHighlight();
+				_G["TradeSkillSkill"..i.."Highlight"]:SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
+				_G["TradeSkillSkill"..i]:UnlockHighlight();
 			else
 				if ( not skillName ) then
 					return;
 				end
 				skillButton:SetNormalTexture("");
-				getglobal("TradeSkillSkill"..i.."Highlight"):SetTexture("");
+				_G["TradeSkillSkill"..i.."Highlight"]:SetTexture("");
 				if ( numAvailable == 0 ) then
 					skillButton:SetText(" "..skillName);
 				else
@@ -233,9 +245,9 @@ function TradeSkillFrame_Update()
 				if ( GetTradeSkillSelectionIndex() == skillIndex ) then
 					TradeSkillHighlightFrame:SetPoint("TOPLEFT", "TradeSkillSkill"..i, "TOPLEFT", 0, 0);
 					TradeSkillHighlightFrame:Show();
-					getglobal("TradeSkillSkill"..i):LockHighlight();
+					_G["TradeSkillSkill"..i]:LockHighlight();
 				else
-					getglobal("TradeSkillSkill"..i):UnlockHighlight();
+					_G["TradeSkillSkill"..i]:UnlockHighlight();
 				end
 			end
 
@@ -296,7 +308,7 @@ function TradeSkillFrame_SetSelection(id)
 
 	-- General Info
 	local skillLineName, skillLineRank, skillLineMaxRank = GetTradeSkillLine();
-	TradeSkillFrameTitleText:SetText(format(TEXT(TRADE_SKILL_TITLE), skillLineName));
+	TradeSkillFrameTitleText:SetText(format(TRADE_SKILL_TITLE, skillLineName));
 	-- Set statusbar info
 	TradeSkillRankFrameSkillName:SetText(skillLineName);
 	TradeSkillRankFrame:SetStatusBarColor(0.0, 0.0, 1.0, 0.5);
@@ -331,9 +343,9 @@ function TradeSkillFrame_SetSelection(id)
 	local numReagents = GetTradeSkillNumReagents(id);
 	for i=1, numReagents, 1 do
 		local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(id, i);
-		local reagent = getglobal("TradeSkillReagent"..i)
-		local name = getglobal("TradeSkillReagent"..i.."Name");
-		local count = getglobal("TradeSkillReagent"..i.."Count");
+		local reagent = _G["TradeSkillReagent"..i]
+		local name = _G["TradeSkillReagent"..i.."Name"];
+		local count = _G["TradeSkillReagent"..i.."Count"];
 		if ( not reagentName or not reagentTexture ) then
 			reagent:Hide();
 		else
@@ -362,7 +374,7 @@ function TradeSkillFrame_SetSelection(id)
 	end
 
 	for i=numReagents + 1, MAX_TRADE_SKILL_REAGENTS, 1 do
-		getglobal("TradeSkillReagent"..i):Hide();
+		_G["TradeSkillReagent"..i]:Hide();
 	end
 
 	local spellFocus = BuildColoredListString(GetTradeSkillTools(id));
@@ -382,9 +394,6 @@ function TradeSkillFrame_SetSelection(id)
 		TradeSkillCreateAllButton:Disable();
 	end
 	TradeSkillDetailScrollFrame:UpdateScrollChildRect();
-
-	-- Reset the number of items to be created
-	TradeSkillInputBox:SetNumber(GetTradeskillRepeatCount());
 end
 
 function TradeSkillSkillButton_OnClick(button)
@@ -424,9 +433,9 @@ end
 
 function TradeSkillFilterFrame_LoadSubClasses(...)
 	local allChecked = GetTradeSkillSubClassFilter(0);
-	local info = {};
+	local info = UIDropDownMenu_CreateInfo();
 	if ( arg.n > 1 ) then
-		info.text = TEXT(ALL_SUBCLASSES);
+		info.text = ALL_SUBCLASSES;
 		info.func = TradeSkillSubClassDropDownButton_OnClick;
 		info.checked = allChecked;
 		UIDropDownMenu_AddButton(info);
@@ -436,14 +445,14 @@ function TradeSkillFilterFrame_LoadSubClasses(...)
 	for i=1, arg.n, 1 do
 		if ( allChecked and arg.n > 1 ) then
 			checked = nil;
-			UIDropDownMenu_SetText(TEXT(ALL_SUBCLASSES), TradeSkillSubClassDropDown);
+			UIDropDownMenu_SetText(ALL_SUBCLASSES, TradeSkillSubClassDropDown);
 		else
 			checked = GetTradeSkillSubClassFilter(i);
 			if ( checked ) then
 				UIDropDownMenu_SetText(arg[i], TradeSkillSubClassDropDown);
 			end
 		end
-		info = {};
+		info = UIDropDownMenu_CreateInfo();
 		info.text = arg[i];
 		info.func = TradeSkillSubClassDropDownButton_OnClick;
 		info.checked = checked;
@@ -470,9 +479,9 @@ end
 
 function TradeSkillFilterFrame_LoadInvSlots(...)
 	local allChecked = GetTradeSkillInvSlotFilter(0);
-	local info = {}
+	local info = UIDropDownMenu_CreateInfo();
 	if ( arg.n > 1 ) then
-		info.text = TEXT(ALL_INVENTORY_SLOTS);
+		info.text = ALL_INVENTORY_SLOTS;
 		info.func = TradeSkillInvSlotDropDownButton_OnClick;
 		info.checked = allChecked;
 		UIDropDownMenu_AddButton(info);
@@ -482,14 +491,14 @@ function TradeSkillFilterFrame_LoadInvSlots(...)
 	for i=1, arg.n, 1 do
 		if ( allChecked and arg.n > 1 ) then
 			checked = nil;
-			UIDropDownMenu_SetText(TEXT(ALL_INVENTORY_SLOTS), TradeSkillInvSlotDropDown);
+			UIDropDownMenu_SetText(ALL_INVENTORY_SLOTS, TradeSkillInvSlotDropDown);
 		else
 			checked = GetTradeSkillInvSlotFilter(i);
 			if ( checked ) then
 				UIDropDownMenu_SetText(arg[i], TradeSkillInvSlotDropDown);
 			end
 		end
-		info = {};
+		info = UIDropDownMenu_CreateInfo();
 		info.text = arg[i];
 		info.func = TradeSkillInvSlotDropDownButton_OnClick;
 		info.checked = checked;

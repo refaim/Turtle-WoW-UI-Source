@@ -2,7 +2,10 @@
 ## Title: Blizzard Inspect UI
 ## Secure: 1
 ## LoadOnDemand: 1
+Blizzard_InspectUITemplates.xml
 Blizzard_InspectUI.xml
 InspectPaperDollFrame.xml
 InspectHonorFrame.xml
+InspectArenaFrame.xml
+InspectTalentsFrame.xml
 Localization.lua

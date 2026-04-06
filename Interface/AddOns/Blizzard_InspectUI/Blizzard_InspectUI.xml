@@ -118,6 +118,48 @@
 					</OnLeave>
 				</Scripts>
 			</Button>
+			<Button name="InspectFrameTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="ARENA">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="InspectFrameTab2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-16" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						InspectFrameTab_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ARENA, 1.0,1.0,1.0 );
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Button>
+			<Button name="InspectFrameTab4" inherits="CharacterFrameTabButtonTemplate" id="4" text="TALENTS">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="InspectFrameTab3" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-16" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						InspectFrameTab_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(TALENTS, 1.0,1.0,1.0 );
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>

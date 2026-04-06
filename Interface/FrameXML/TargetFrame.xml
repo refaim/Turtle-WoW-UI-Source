@@ -7,8 +7,8 @@
 		</Size>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."Border"):SetWidth(13);
-				getglobal(this:GetName().."Border"):SetHeight(13);
+				_G[this:GetName().."Border"]:SetWidth(13);
+				_G[this:GetName().."Border"]:SetHeight(13);
 			</OnLoad>
 			<OnEnter>
 				if ( this:GetCenter() > GetScreenWidth()/2 ) then
@@ -97,7 +97,7 @@
 			</Anchor>
 		</Anchors>
 		<HitRectInsets>
-			<AbsInset left="96" right="6" top="4" bottom="9"/>
+			<AbsInset left="0" right="6" top="4" bottom="9"/>
 		</HitRectInsets>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -294,6 +294,7 @@
 						TargetHPText:Show()
 						TargetHPPercText:Show()
 						TargetHealthCheck()
+						TargetFrame:GetScript("OnEnter")()
 					</OnEnter>
 					<OnLeave>
 						if GetCVar("statusBarText") ~= "1" then
@@ -301,6 +302,9 @@
 							TargetHPPercText:Hide()
 						end
 					</OnLeave>
+					<OnMouseUp>
+						TargetFrame_OnClick(arg1);
+					</OnMouseUp>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 			</StatusBar>
@@ -338,6 +342,9 @@
 
 						TargetFrame_CheckChallenges("target")
 					</OnEnter>
+					<OnMouseUp>
+						TargetFrame_OnClick(arg1);
+					</OnMouseUp>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0" g="0" b="1.0"/>
@@ -629,13 +636,11 @@
 			</OnLoad>
 			<OnDragStart>
 				if this.movable then
-				this:StartMoving();
-				this.isMoving = true;
+					StartSnapMoveFrame(this)
 				end
 			</OnDragStart>
 			<OnDragStop>
-				this:StopMovingOrSizing();
-				this.isMoving = false;
+				StopSnapMoveFrame(this)
 			</OnDragStop>
 			<OnEvent>
 				TargetFrame_OnEvent(event);
@@ -653,7 +658,6 @@
 			</OnHide>
 			<OnEnter>
 				UnitFrame_OnEnter();
-
 				if SHOW_NEWBIE_TIPS == "0" then
 					TargetFrame_CheckChallenges("target")
 				end
@@ -817,7 +821,7 @@
 		<Scripts>
 			<OnLoad>
 				UnitFrame_Initialize("targettarget", TargetofTargetName, TargetofTargetPortrait, TargetofTargetHealthBar, TargetofTargetHealthBarText, TargetofTargetManaBar, TargetofTargetFrameManaBarText);
-				SetTextStatusBarTextZeroText(TargetofTargetHealthBar, TEXT(DEAD));
+				SetTextStatusBarTextZeroText(TargetofTargetHealthBar, DEAD);
 				TargetofTargetFrame.timeleft = 0;
 				this:RegisterEvent("UNIT_AURA");
 			</OnLoad>

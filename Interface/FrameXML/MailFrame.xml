@@ -913,7 +913,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(SEND_MONEY);
+										_G[this:GetName().."Text"]:SetText(SEND_MONEY);
 									</OnLoad>
 								</Scripts>
 							</CheckButton>
@@ -927,7 +927,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(COD);
+										_G[this:GetName().."Text"]:SetText(COD);
 									</OnLoad>
 								</Scripts>
 							</CheckButton>
@@ -1902,9 +1902,7 @@
 		</Frames>
 		<Scripts>
 			<OnShow>
-				if ( GetCenterFrame() ) then
-					HideUIPanel(GetCenterFrame());
-				end
+				OpenMailFrame_OnShow();
 			</OnShow>
 			<OnHide>
 				OpenMailFrame_OnHide();

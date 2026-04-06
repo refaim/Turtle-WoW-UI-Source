@@ -50,7 +50,7 @@
 				QuestLogTitleButton_OnLoad();
 			</OnLoad>
 			<OnEvent>
-				QuestLogTitleButton_OnEvent(event);
+				QuestLogTitleButton_OnEvent();
 			</OnEvent>
 			<OnClick>
 				QuestLogTitleButton_OnClick(arg1);
@@ -60,7 +60,7 @@
 			</OnEnter>
 			<OnLeave>
 				if (this:GetID() ~= (QuestLogFrame.selectedButtonID - FauxScrollFrame_GetOffset(QuestLogListScrollFrame))) then
-					getglobal(this:GetName().."Tag"):SetTextColor(this.r, this.g, this.b);
+					_G[this:GetName().."Tag"]:SetTextColor(this.r, this.g, this.b);
 				end
 				GameTooltip:Hide();
 			</OnLeave>

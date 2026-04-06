@@ -633,7 +633,7 @@
 							<OnLoad>
 								PanelTemplates_SelectTab(this);
 								PanelTemplates_TabResize(0);
-								getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
+								_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 31);
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -922,7 +922,7 @@
 							<OnLoad>
 								PanelTemplates_SelectTab(this);
 								PanelTemplates_TabResize(0);
-								getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
+								_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 31);
 							</OnLoad>
 						</Scripts>
 					</Button>
@@ -1809,7 +1809,7 @@
 								</Texture>
 								<Texture name="GuildFrameLFGFrameMiddle" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
 									<Size>
-										<AbsDimension x="186" y="28"/>
+										<AbsDimension x="150" y="28"/>
 									</Size>
 									<Anchors>
 										<Anchor point="RIGHT" relativeTo="GuildFrameLFGFrameRight" relativePoint="LEFT"/>
@@ -1845,7 +1845,7 @@
 											<Anchors>
 												<Anchor point="RIGHT" relativePoint="LEFT">
 													<Offset>
-														<AbsDimension x="-10" y="1"/>
+														<AbsDimension x="-5" y="1"/>
 													</Offset>
 												</Anchor>
 											</Anchors>
@@ -1882,6 +1882,23 @@
 								<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
 								<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
 							</CheckButton>
+							<EditBox name="GuildFrameSearchBox" inherits="SearchBoxTemplate">
+								<Size x="90" y="20"/>
+								<Anchors>
+									<Anchor point="LEFT">
+										<Offset x="-53" y="1"/>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnTextChanged>
+										GuildStatus_Update()
+									</OnTextChanged>
+									<OnEnterPressed>
+										this:ClearFocus()
+										GuildStatus_Update()
+									</OnEnterPressed>
+								</Scripts>
+							</EditBox>
 						</Frames>
 					</Frame>
 					<Frame name="GuildPlayerStatusFrame" hidden="true">
@@ -2975,7 +2992,7 @@
 												this:ClearFocus();
 											</OnEscapePressed>
 											<OnTextChanged>
-												local scrollBar = getglobal(this:GetParent():GetName().."ScrollBar")
+												local scrollBar = _G[this:GetParent():GetName().."ScrollBar"];
 												this:GetParent():UpdateScrollChildRect();
 												local min;
 												local max;
@@ -3464,7 +3481,7 @@
 						this:SetFrameLevel(2);
 					</OnLoad>
 					<OnEnter>
-						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(FRIENDS), "TOGGLEFRIENDSTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_FRIENDSTAB, 1);
+						GameTooltip_AddNewbieTip(MicroButtonTooltipText(FRIENDS, "TOGGLEFRIENDSTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_FRIENDSTAB, 1);
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -3503,7 +3520,7 @@
 						this:SetFrameLevel(2);
 					</OnLoad>
 					<OnEnter>
-						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(WHO), "TOGGLEWHOTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_WHOTAB, 1);
+						GameTooltip_AddNewbieTip(MicroButtonTooltipText(WHO, "TOGGLEWHOTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_WHOTAB, 1);
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -3528,7 +3545,7 @@
 						FriendsFrame_OnShow();
 					</OnClick>
 					<OnEnter>
-						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(GUILD), "TOGGLEGUILDTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_GUILDTAB, 1);
+						GameTooltip_AddNewbieTip(MicroButtonTooltipText(GUILD, "TOGGLEGUILDTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_GUILDTAB, 1);
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -3551,7 +3568,7 @@
 						FriendsFrame_Update();
 					</OnEvent>
 					<OnEnter>
-						GameTooltip_AddNewbieTip(MicroButtonTooltipText(TEXT(RAID), "TOGGLERAIDTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_RAIDTAB, 1);
+						GameTooltip_AddNewbieTip(MicroButtonTooltipText(RAID, "TOGGLERAIDTAB"), 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_RAIDTAB, 1);
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();

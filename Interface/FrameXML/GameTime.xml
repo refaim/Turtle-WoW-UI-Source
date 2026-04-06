@@ -25,7 +25,12 @@
 				this.timeOfDay = 0;
 				this:SetFrameLevel(this:GetFrameLevel() + 2);
 				GameTimeFrame_Update();
+				this:RegisterEvent("PLAYER_LOGIN");
+				this:RegisterEvent("CHAT_MSG_ADDON");
 			</OnLoad>
+			<OnEvent>
+				GameTimeFrame_OnEvent();
+			</OnEvent>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT");
 				GameTimeFrame_UpdateTooltip(GetGameTime());

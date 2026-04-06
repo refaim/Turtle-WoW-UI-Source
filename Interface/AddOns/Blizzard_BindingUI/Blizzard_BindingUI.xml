@@ -6,6 +6,24 @@
 			<OnClick>
 				KeyBindingButton_OnClick(arg1);
 			</OnClick>
+			<OnMouseWheel>
+				if ( KeyBindingFrame.selected ) then
+					if ( arg1 > 0 ) then
+						KeyBindingFrame_OnKeyDown("MOUSEWHEELUP");
+					else
+						KeyBindingFrame_OnKeyDown("MOUSEWHEELDOWN");
+					end
+				else
+					local scrollBar = KeyBindingFrameScrollFrameScrollBar;
+					if not scrollBar:IsVisible() then return end
+
+					if ( arg1 > 0 ) then
+						scrollBar:SetValue(scrollBar:GetValue() - (scrollBar:GetHeight() / 2));
+					else
+						scrollBar:SetValue(scrollBar:GetValue() + (scrollBar:GetHeight() / 2));
+					end
+				end
+			</OnMouseWheel>
 			<OnLoad>
 				this:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up");
 			</OnLoad>
@@ -168,11 +186,11 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="KeyBindingFrameOutputText" inherits="GameFontNormal">
+				<FontString name="KeyBindingFrameOutputText" inherits="GameFontNormal" text="BINDING_PLACEHOLDER_TEXT">
 					<Anchors>
 						<Anchor point="BOTTOM">
 							<Offset>
-								<AbsDimension x="0" y="52"/>
+								<AbsDimension x="0" y="74"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -350,15 +368,6 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="KeyBindingFrameBinding17" inherits="KeyBindingFrameBindingTemplate" id="17">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="KeyBindingFrameBinding16" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="2"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Frame>
 			<ScrollFrame name="KeyBindingFrameScrollFrame" inherits="FauxScrollFrameTemplate">
 				<Size>
 					<AbsDimension x="560" y="390"/>
@@ -435,7 +444,7 @@
 				<Scripts>
 					<OnClick>
 						LoadBindings(DEFAULT_BINDINGS);
-						KeyBindingFrameOutputText:SetText("");
+						KeyBindingFrameOutputText:SetText(BINDINGS_RESET_TEXT);
 						KeyBindingFrame.selected = nil;
 						KeyBindingFrame_Update();
 					</OnClick>
@@ -455,7 +464,7 @@
 				<Scripts>
 					<OnClick>
 						LoadBindings(GetCurrentBindingSet());
-						KeyBindingFrameOutputText:SetText("");
+						KeyBindingFrameOutputText:SetText(BINDING_PLACEHOLDER_TEXT);
 						KeyBindingFrame.selected = nil;
 						HideUIPanel(KeyBindingFrame);
 					</OnClick>
@@ -486,7 +495,7 @@
 							end
 						end
 						SaveBindings(KeyBindingFrame.which);
-						KeyBindingFrameOutputText:SetText("");
+						KeyBindingFrameOutputText:SetText(BINDING_PLACEHOLDER_TEXT);
 						KeyBindingFrame.selected = nil;
 						HideUIPanel(KeyBindingFrame);
 					</OnClick>
@@ -530,9 +539,25 @@
 						KeyBindingFrame.selected = nil;
 						KeyBindingFrame.buttonPressed:UnlockHighlight();
 						KeyBindingFrame_UpdateUnbindKey();
+						KeyBindingFrameOutputText:SetText(KEY_UNBOUND);
 					</OnClick>
 				</Scripts>
 			</Button>
+			<EditBox name="$parentSearchBox" autoFocus="false" inherits="SearchBoxTemplate">
+				<Size>
+					<AbsDimension x="562" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" >
+						<Offset x="24" y="44" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						KeyBindingFrame_Search()
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
 		</Frames>
 		<Scripts>
 			<OnClick>
@@ -550,10 +575,17 @@
 				UpdateMicroButtons();
 			</OnShow>
 			<OnHide>
-				KeyBindingFrameOutputText:SetText("");
+				KeyBindingFrameOutputText:SetText(BINDING_PLACEHOLDER_TEXT);
 				ShowUIPanel(GameMenuFrame);
 				UpdateMicroButtons();
 			</OnHide>
+			<OnDragStart>
+				this:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				this:StopMovingOrSizing()
+				this:SetUserPlaced(false)
+			</OnDragStop>
 			<OnMouseWheel>
 				return;
 			</OnMouseWheel>

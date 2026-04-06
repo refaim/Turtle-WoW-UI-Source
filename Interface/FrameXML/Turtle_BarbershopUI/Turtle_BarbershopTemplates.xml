@@ -1,0 +1,52 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Frame name="BarbershopSelectorTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="175" y="32" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentCategory" inherits="GameFontHighlightSmall">
+					<Size>
+						<AbsDimension x="100" y="14" />
+					</Size>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentPrev">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentCategory" relativePoint="LEFT"/>
+				</Anchors>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<Scripts>
+					<OnClick>
+						BarbershopSelector_OnClick(-1)
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentNext">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentCategory" relativePoint="RIGHT"/>
+				</Anchors>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<Scripts>
+					<OnClick>
+						BarbershopSelector_OnClick(1)
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+</Ui>

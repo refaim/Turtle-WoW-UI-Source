@@ -19,8 +19,6 @@ UIPanelTemplates.lua
 UIPanelTemplates.xml
 GameMenuFrame.xml
 OptionsFrame.xml
-SoundOptionsFrame.xml
-UIOptionsFrame.xml
 UIErrorsFrame.xml
 StaticPopup.xml
 MirrorTimer.xml
@@ -94,6 +92,10 @@ DressUpFrame.xml
 RaidWarning.xml
 ClassTrainerFrameTemplates.xml
 
+Hooks.lua
+ChronoboonTimers.lua
+SpellChatLinks.lua
+
 # Arena
 Turtle_ArenaUI\Turtle_ArenaUI.lua
 Turtle_ArenaUI\Turtle_ArenaUITemplates.xml
@@ -102,40 +104,27 @@ Turtle_ArenaUI\Turtle_ArenaQueueFrame.xml
 Turtle_ArenaUI\Turtle_ArenaRegistrarFrame.xml
 
 # Barbershop
-Turtle_Barbershop\Turtle_BarbershopTemplates.xml
-Turtle_Barbershop\Turtle_Barbershop.xml
+Turtle_BarbershopUI\Turtle_Barbershop.xml
 
 # Transmog
 Turtle_TransmogUI\Turtle_TransmogUITemplates.xml
 Turtle_TransmogUI\Turtle_TransmogUI.xml
-
-# Inspect Talents and spell/talent chat links
-Turtle_InspectTalentsUI\InspectTalentsFrame.xml
 
 # Shop
 Turtle_ShopUI\Turtle_ShopUITemplates.xml
 Turtle_ShopUI\Turtle_ShopUI.xml
 
 # Guild Bank
-StaticPopup2\StaticPopup2.xml
 Turtle_GuildBankUI\Turtle_GuildBankUITemplates.xml
 Turtle_GuildBankUI\Turtle_GuildBankUI.xml
 
 # EverlookBroadcastingCo
-# Author: Lexie
 EverlookBroadcastingCo\EverlookBroadcastingCo.xml
 
-# Hooks
-# Author: Lexie
-Hooks.lua
+Custom_Merchant\CustomMerchantFrame.xml
 
 # LFT
-# Author: Xerron/Er, modified by Lexie, Luke
 LFT\LFT_Data.lua
 LFT\LFT.lua
 LFT\LFTTemplates.xml
 LFT\LFT.xml
-
-# Chronoboon Timers
-# Author: Xerron/Er, Edit by Zaas
-ChronoboonTimers.lua

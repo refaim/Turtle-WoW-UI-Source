@@ -62,7 +62,7 @@ function WorldMapFrame_Update()
 		mapFileName = "World";
 	end
 	for i = 1, NUM_WORLDMAP_DETAIL_TILES, 1 do
-		getglobal("WorldMapDetailTile" .. i):SetTexture("Interface\\WorldMap\\" .. mapFileName .. "\\" .. mapFileName .. i);
+		_G["WorldMapDetailTile" .. i]:SetTexture("Interface\\WorldMap\\" .. mapFileName .. "\\" .. mapFileName .. i);
 	end
 	-- WorldMapHighlight:Hide();
 
@@ -86,11 +86,11 @@ function WorldMapFrame_Update()
 		NUM_WORLDMAP_POIS = numPOIs;
 	end
 	for i = 1, NUM_WORLDMAP_POIS do
-		worldMapPOI = getglobal("WorldMapFramePOI" .. i);
+		worldMapPOI = _G["WorldMapFramePOI" .. i];
 		if ( i <= numPOIs ) then
 			name, description, textureIndex, x, y = GetMapLandmarkInfo(i);
 			x1, x2, y1, y2 = WorldMap_GetPOITextureCoords(textureIndex);
-			getglobal(worldMapPOI:GetName() .. "Texture"):SetTexCoord(x1, x2, y1, y2);
+			_G[worldMapPOI:GetName() .. "Texture"]:SetTexCoord(x1, x2, y1, y2);
 			x = x * WorldMapButton:GetWidth();
 			y = -y * WorldMapButton:GetHeight();
 			worldMapPOI:SetPoint("CENTER", "WorldMapButton", "TOPLEFT", x, y);
@@ -136,7 +136,7 @@ function WorldMapFrame_Update()
 			end
 			for k = 1, numTexturesWide do
 				textureCount = textureCount + 1;
-				texture = getglobal("WorldMapOverlay" .. textureCount);
+				texture = _G["WorldMapOverlay" .. textureCount];
 				if ( k < numTexturesWide ) then
 					texturePixelWidth = 256;
 					textureFileWidth = 256;
@@ -160,7 +160,7 @@ function WorldMapFrame_Update()
 		end
 	end
 	for i = textureCount + 1, NUM_WORLDMAP_OVERLAYS do
-		getglobal("WorldMapOverlay" .. i):Hide();
+		_G["WorldMapOverlay" .. i]:Hide();
 	end
 
 	WorldMapFrame_SetMapName();
@@ -175,7 +175,9 @@ function WorldMapFrame_Minimize()
 	-- update frame attributes
 	UIPanelWindows["WorldMapFrame"].area = "center";
 
-	table.insert(UISpecialFrames, "WorldMapFrame");
+	if not tContains(UISpecialFrames, "WorldMapFrame") then
+		tinsert(UISpecialFrames, "WorldMapFrame");
+	end
 
 	-- adjust main frame
 	WorldMapFrame:SetParent(UIParent);
@@ -214,7 +216,7 @@ function WorldMapFrame_Minimize()
 	BlackoutWorld:Hide();
 
 	for i = 1, 12 do
-		local texture = getglobal('WorldMapFrameTexture' .. i);
+		local texture = _G['WorldMapFrameTexture' .. i];
 		if texture then
 			texture:Hide();
 		end
@@ -230,7 +232,7 @@ function WorldMapFrame_Minimize()
 
 	-- show textures and frames
 	for i = 1, 8 do
-		local texture = getglobal('WorldMapFrameMinimizedTexture' .. i);
+		local texture = _G['WorldMapFrameMinimizedTexture' .. i];
 		if texture then
 			texture:Show();
 		end
@@ -288,7 +290,7 @@ function WorldMapFrame_Maximize()
 	BlackoutWorld:Show();
 
 	for i = 1, 12 do
-		local texture = getglobal('WorldMapFrameTexture' .. i);
+		local texture = _G['WorldMapFrameTexture' .. i];
 		if texture then
 			texture:Show();
 		end
@@ -304,7 +306,7 @@ function WorldMapFrame_Maximize()
 
 	-- hide textures and frames
 	for i = 1, 8 do
-		local texture = getglobal('WorldMapFrameMinimizedTexture' .. i);
+		local texture = _G['WorldMapFrameMinimizedTexture' .. i];
 		if texture then
 			texture:Hide();
 		end
@@ -490,8 +492,7 @@ function WorldMapButton_OnUpdate(elapsed)
 	local height = this:GetHeight();
 	local adjustedY = (centerY + (height / 2) - y) / height;
 	local adjustedX = (x - (centerX - (width / 2))) / width;
-	local name, fileName, texPercentageX, texPercentageY, textureX, textureY,
-	scrollChildX, scrollChildY = UpdateMapHighlight(adjustedX, adjustedY);
+	local name, fileName, texPercentageX, texPercentageY, textureX, textureY, scrollChildX, scrollChildY = UpdateMapHighlight(adjustedX, adjustedY);
 
 	WorldMapFrame.areaName = name;
 	if ( not WorldMapFrame.poiHighlight ) then
@@ -523,9 +524,8 @@ function WorldMapButton_OnUpdate(elapsed)
 	else
 		playerX = playerX * WorldMapDetailFrame:GetWidth();
 		playerY = -playerY * WorldMapDetailFrame:GetHeight();
-		PositionWorldMapArrowFrame("CENTER", "WorldMapDetailFrame", "TOPLEFT",
-			playerX * WorldMapDetailFrame:GetScale(),
-			playerY * WorldMapDetailFrame:GetScale());
+		local scale = WorldMapDetailFrame:GetScale();
+		PositionWorldMapArrowFrame("CENTER", "WorldMapDetailFrame", "TOPLEFT", playerX * scale, playerY * scale);
 		ShowWorldMapArrowFrame(1);
 
 		-- Position clear button to detect mouseovers
@@ -544,7 +544,7 @@ function WorldMapButton_OnUpdate(elapsed)
 			elseif ( WorldMapPing.fadeOut ) then
 				WorldMapPing.fadeOutTimer = WorldMapPing.fadeOutTimer - elapsed;
 				if ( WorldMapPing.fadeOutTimer > 0 ) then
-					WorldMapPing:SetAlpha(255 * (WorldMapPing.fadeOutTimer / MINIMAPPING_FADE_TIMER))
+					WorldMapPing:SetAlpha(WorldMapPing.fadeOutTimer / MINIMAPPING_FADE_TIMER);
 				else
 					WorldMapPing.fadeOut = nil;
 					WorldMapPing:Hide();
@@ -558,13 +558,13 @@ function WorldMapButton_OnUpdate(elapsed)
 	local playerCount = 0;
 	if ( GetNumRaidMembers() > 0 ) then
 		for i = 1, MAX_PARTY_MEMBERS do
-			partyMemberFrame = getglobal("WorldMapParty" .. i);
+			partyMemberFrame = _G["WorldMapParty" .. i];
 			partyMemberFrame:Hide();
 		end
 		for i = 1, MAX_RAID_MEMBERS do
 			local unit = "raid" .. i;
 			partyX, partyY = GetPlayerMapPosition(unit);
-			partyMemberFrame = getglobal("WorldMapRaid" .. playerCount + 1);
+			partyMemberFrame = _G["WorldMapRaid" .. playerCount + 1];
 			if ( (partyX ~= 0 or partyY ~= 0) and not UnitIsUnit(unit, "player") ) then
 				partyX = partyX * WorldMapDetailFrame:GetWidth();
 				partyY = -partyY * WorldMapDetailFrame:GetHeight();
@@ -578,7 +578,7 @@ function WorldMapButton_OnUpdate(elapsed)
 	else
 		for i = 1, MAX_PARTY_MEMBERS do
 			partyX, partyY = GetPlayerMapPosition("party" .. i);
-			partyMemberFrame = getglobal("WorldMapParty" .. i);
+			partyMemberFrame = _G["WorldMapParty" .. i];
 			if ( partyX == 0 and partyY == 0 ) then
 				partyMemberFrame:Hide();
 			else
@@ -593,7 +593,7 @@ function WorldMapButton_OnUpdate(elapsed)
 	local numTeamMembers = GetNumBattlefieldPositions();
 	for i = playerCount + 1, MAX_RAID_MEMBERS do
 		partyX, partyY, name = GetBattlefieldPosition(i - playerCount);
-		partyMemberFrame = getglobal("WorldMapRaid" .. i);
+		partyMemberFrame = _G["WorldMapRaid" .. i];
 		if ( partyX == 0 and partyY == 0 ) then
 			partyMemberFrame:Hide();
 		else
@@ -610,8 +610,8 @@ function WorldMapButton_OnUpdate(elapsed)
 	local numFlags = GetNumBattlefieldFlagPositions();
 	for i = 1, numFlags do
 		flagX, flagY, flagToken = GetBattlefieldFlagPosition(i);
-		flagFrame = getglobal("WorldMapFlag" .. i);
-		flagTexture = getglobal("WorldMapFlag" .. i .. "Texture");
+		flagFrame = _G["WorldMapFlag" .. i];
+		flagTexture = _G["WorldMapFlag" .. i .. "Texture"];
 		if ( flagX == 0 and flagY == 0 ) then
 			flagFrame:Hide();
 		else
@@ -623,7 +623,7 @@ function WorldMapButton_OnUpdate(elapsed)
 		end
 	end
 	for i = numFlags + 1, NUM_WORLDMAP_FLAGS do
-		flagFrame = getglobal("WorldMapFlag" .. i);
+		flagFrame = _G["WorldMapFlag" .. i];
 		flagFrame:Hide();
 	end
 
@@ -662,7 +662,7 @@ function WorldMapUnit_OnEnter()
 	end
 	-- Check party
 	for i = 1, MAX_PARTY_MEMBERS do
-		unitButton = getglobal("WorldMapParty" .. i);
+		unitButton = _G["WorldMapParty" .. i];
 		if ( unitButton:IsVisible() and MouseIsOver(unitButton) ) then
 			tooltipText = tooltipText .. newLineString .. UnitName(unitButton.unit);
 			newLineString = "\n";
@@ -670,7 +670,7 @@ function WorldMapUnit_OnEnter()
 	end
 	-- Check Raid
 	for i = 1, MAX_RAID_MEMBERS do
-		unitButton = getglobal("WorldMapRaid" .. i);
+		unitButton = _G["WorldMapRaid" .. i];
 		if ( unitButton:IsVisible() and MouseIsOver(unitButton) ) then
 			-- Handle players not in your raid or party, but on your team
 			if ( unitButton.name ) then
@@ -686,7 +686,7 @@ function WorldMapUnit_OnEnter()
 end
 
 function WorldMapFrame_PingPlayerPosition()
-	WorldMapPing:SetAlpha(255);
+	WorldMapPing:SetAlpha(1);
 	WorldMapPing:Show();
 	-- PlaySound("MapPing");
 	WorldMapPing.timer = 1;
@@ -699,4 +699,3 @@ function ToggleWorldMap()
 		ShowUIPanel(WorldMapFrame);
 	end
 end
-

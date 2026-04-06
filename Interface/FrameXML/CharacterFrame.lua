@@ -5,7 +5,7 @@ function ToggleCharacter(tab)
 		return;
 	end
 
-	local subFrame = getglobal(tab);
+	local subFrame = _G[tab];
 	if ( subFrame ) then
 		PanelTemplates_SetTab(CharacterFrame, subFrame:GetID());
 		if ( CharacterFrame:IsVisible() ) then
@@ -25,9 +25,9 @@ end
 function CharacterFrame_ShowSubFrame(frameName)
 	for index, value in CHARACTERFRAME_SUBFRAMES do
 		if ( value == frameName ) then
-			getglobal(value):Show()
+			_G[value]:Show()
 		else
-			getglobal(value):Hide();
+			_G[value]:Hide();
 		end
 	end
 end
@@ -52,9 +52,9 @@ function CharacterFrame_OnLoad()
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("PLAYER_PVP_RANK_CHANGED");
 
-	SetTextStatusBarTextPrefix(PlayerFrameHealthBar, TEXT(HEALTH));
-	SetTextStatusBarTextPrefix(PlayerFrameManaBar, TEXT(MANA));
-	SetTextStatusBarTextPrefix(MainMenuExpBar, TEXT(XP));
+	SetTextStatusBarTextPrefix(PlayerFrameHealthBar, HEALTH);
+	SetTextStatusBarTextPrefix(PlayerFrameManaBar, MANA);
+	SetTextStatusBarTextPrefix(MainMenuExpBar, XP);
 	-- Tab Handling code
 	PanelTemplates_SetNumTabs(this, 5);
 	PanelTemplates_SetTab(this, 1);

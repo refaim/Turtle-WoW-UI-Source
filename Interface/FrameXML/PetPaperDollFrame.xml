@@ -242,9 +242,9 @@
 					</Button>
 				</Frames>
 			</PlayerModel>
-			<Frame name="PetPaperDollPetInfo" enableMouse="true" hidden="false">
+			<Frame name="PetPaperDollPetInfo" enableMouse="true" hidden="true" frameLevel="5">
 				<Size>
-					<AbsDimension x="24" y="23"/>
+					<AbsDimension x="32" y="32"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="PetModelFrameRotateLeftButton">
@@ -255,11 +255,10 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture file="Interface\PetPaperDollFrame\UI-PetHappiness" setAllPoints="true">
+						<Texture file="Interface\PetPaperDollFrame\PetStable-DietIcon" setAllPoints="true">
 							<Size>
-								<AbsDimension x="24" y="23"/>
+								<AbsDimension x="32" y="32"/>
 							</Size>
-							<TexCoords left="0" right="0.1875" top="0" bottom="0.359375"/>
 						</Texture>
 					</Layer>
 				</Layers>

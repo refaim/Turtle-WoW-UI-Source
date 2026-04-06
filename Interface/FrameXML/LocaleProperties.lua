@@ -35,18 +35,18 @@ function GetText(token, gender, ordinal)
 		variable = variable..genderTag;
 	end
 
-	local string = getglobal(variable);
+	local string = _G[variable];
 	if ( not string ) then
 		if ( pluralTag and genderTag ) then
-			string = getglobal(token..pluralTag);
+			string = _G[token..pluralTag];
 			if ( not string ) then
-				string = getglobal(token..genderTag);
+				string = _G[token..genderTag];
 				if ( not string ) then
-					string = getglobal(token);
+					string = _G[token];
 				end
 			end
 		else
-			string = getglobal(token);
+			string = _G[token];
 		end
 	end
 

@@ -1,0 +1,258 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Button name="GroupMemberFrameAuraButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="14" y="14" />
+		</Size>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentTexture" setAllPoints="true" />
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				GroupMemberFrameAuraButton_OnLoad()
+			</OnLoad>
+			<OnClick>
+				GroupMemberFrameAuraButton_OnClick()
+			</OnClick>
+			<OnEnter>
+				GroupMemberFrameAuraButton_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="GroupMemberFrameTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="64" y="42" />
+		</Size>
+		<Frames>
+			<StatusBar name="$parentHealthBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="6" />
+					</Anchor>
+				</Anchors>
+				<BarTexture file="Interface/GroupFrame/UI-Group-Fill" />
+				<BarColor r="0.0" g="1.0" b="0.0" />
+				<Backdrop bgFile="Interface/Tooltips/UI-Tooltip-Background">
+					<Color r="0.2" g="0.2" b="0.2" a="0.8" />
+					<BackgroundInsets left="-1" right="-1" top="-1" bottom="-1" />
+				</Backdrop>
+			</StatusBar>
+			<StatusBar name="$parentPowerBar">
+				<BarTexture file="Interface/GroupFrame/UI-Group-Fill" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentHealthBar" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-1" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" />
+				</Anchors>
+				<Backdrop bgFile="Interface/Tooltips/UI-Tooltip-Background">
+					<Color r="0.2" g="0.2" b="0.2" a="0.8" />
+					<BackgroundInsets left="-1" right="-1" top="-1" bottom="-1" />
+				</Backdrop>
+			</StatusBar>
+			<Button name="$parentAuraButton1" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="$parentHealthBar">
+						<Offset x="1" y="0" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton2" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton1" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton3" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton2" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton4" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton3" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton5" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton4" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton6" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton5" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton7" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton6" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentAuraButton8" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAuraButton7" relativePoint="RIGHT" />
+				</Anchors>
+			</Button>
+			<Button name="$parentDebuffIndicator" inherits="GroupMemberFrameAuraButtonTemplate">
+				<Size>
+					<AbsDimension x="16" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent">
+						<Offset x="-1" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="$parentTexture" setAllPoints="true" />
+					</Layer>
+				</Layers>
+			</Button>
+			<Frame setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentName" font="Fonts\FRIZQT__.TTF" justifyH="LEFT">
+							<Size x="38" y="10" />
+							<FontHeight val="10" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent">
+									<Offset x="3" y="-3" />
+								</Anchor>
+							</Anchors>
+							<Shadow>
+								<Color a="1" r="0" g="0" b="0" />
+								<Offset x="1" y="-1" />
+							</Shadow>
+						</FontString>
+						<FontString name="$parentStatus" font="Fonts\FRIZQT__.TTF">
+							<Size x="60" y="10" />
+							<FontHeight val="10" />
+							<Anchors>
+								<Anchor point="CENTER" relativeTo="$parent" />
+							</Anchors>
+							<Color r="0.7" g="0.7" b="0.7" />
+							<Shadow>
+								<Color a="1" r="0" g="0" b="0" />
+								<Offset x="1" y="-1" />
+							</Shadow>
+						</FontString>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="$parentDebuffHighlight" file="Interface/GroupFrame/UI-Group-Highlight" setAllPoints="true" hidden="true" />
+						<Texture name="$parentHighlight" file="Interface/GroupFrame/UI-Group-Highlight" setAllPoints="true" hidden="true" />
+						<Texture name="$parentRaidIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="18" y="18" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="-2" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentReadyCheckStatus" file="Interface\FrameXML\LFT\images\readycheck-waiting" hidden="true">
+							<Size>
+								<AbsDimension x="18" y="18" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="-2" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				GroupMemberFrame_OnLoad()
+			</OnLoad>
+			<OnEvent>
+				GroupMemberFrame_OnEvent()
+			</OnEvent>
+			<OnClick>
+				GroupMemberFrame_OnClick()
+			</OnClick>
+			<OnEnter>
+				GroupMemberFrame_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="GroupClusterFrameTemplate" movable="true" clampedToScreen="true" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentHeader" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="10" y="12" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentMemberFrame1" inherits="GroupMemberFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent">
+						<Offset x="5" y="-5" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentMemberFrame2" inherits="GroupMemberFrameTemplate" />
+			<Button name="$parentMemberFrame3" inherits="GroupMemberFrameTemplate" />
+			<Button name="$parentMemberFrame4" inherits="GroupMemberFrameTemplate" />
+			<Button name="$parentMemberFrame5" inherits="GroupMemberFrameTemplate" />
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				this.header = _G[this:GetName() .. "Header"]
+				this:RegisterForDrag("LeftButton")
+				this:RegisterForClicks("RightButtonUp")
+			</OnLoad>
+			<OnClick>
+				ToggleDropDownMenu(1, nil, GroupClusterDropDown, "cursor", 2, -2)
+			</OnClick>
+			<OnEnter>
+				this.header:SetVertexColor(1, 1, 1)
+				this.header:Show()
+				if GroupFrame:IsMouseEnabled() then
+					this.r, this.g, this.b, this.a = this:GetBackdropColor()
+					this:SetBackdropColor(1, 1, 1, 0.5)
+				end
+			</OnEnter>
+			<OnLeave>
+				this.header:SetVertexColor(1, .82, 0)
+				if GROUP_HEADERS == "0" then
+					this.header:Hide()
+				end
+				if GroupFrame:IsMouseEnabled() then
+					this:SetBackdropColor(this.r, this.g, this.b, this.a)
+				end
+			</OnLeave>
+			<OnDragStart>
+				if not this.isMoving then
+					this:SetFrameStrata("HIGH")
+					StartSnapMoveFrame(this)
+				end
+			</OnDragStart>
+			<OnDragStop>
+				if this.isMoving then
+					this:SetFrameStrata("MEDIUM")
+					StopSnapMoveFrame(this)
+				end
+			</OnDragStop>
+		</Scripts>
+	</Button>
+</Ui>

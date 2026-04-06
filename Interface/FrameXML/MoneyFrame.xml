@@ -294,4 +294,92 @@
 			</OnHide>
 		</Scripts>
 	</Frame>
+	<Button name="SmallDenominationTemplate" virtual="true">
+		<Size x="32" y="13"/>
+		<ButtonText name="$parentText">
+			<Anchors>
+				<Anchor point="LEFT"/>
+			</Anchors>
+		</ButtonText>
+		<NormalTexture name="$parentTexture">
+			<Size x="3" y="3"/>
+			<Anchors>
+				<Anchor point="LEFT"/>
+			</Anchors>
+			<TexCoords left="0.078125" right="0.90625" top="0.078125" bottom="0.90625"/>
+		</NormalTexture>
+		<NormalFont inherits="NumberFontNormal" justifyH="RIGHT"/>
+		<PushedTextOffset x="0" y="0"/>
+		<Scripts>
+			<OnEnter>
+				if this.link then
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					GameTooltip:SetHyperlink(this.link)
+					GameTooltip:Show()
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+				ResetCursor();
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Frame name="SmallAlterateCurrencyFrameTemplate" virtual="true">
+		<Size x="128" y="13"/>
+		<Frames>
+			<Button name="$parentHonor" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset x="13" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(HONOR);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+						ResetCursor();
+					</OnLeave>
+				</Scripts>
+			</Button>
+			<Button name="$parentArena" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset x="13" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ARENA_CONQUEST_POINTS);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+						ResetCursor();
+					</OnLeave>
+				</Scripts>
+			</Button>
+			<Button name="$parentItem1" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentArena" relativePoint="RIGHT"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentItem2" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentItem1" relativePoint="RIGHT">
+						<Offset x="4" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentItem3" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentItem2" relativePoint="RIGHT">
+						<Offset x="4" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
 </Ui>

@@ -32,7 +32,7 @@ RACE_SELECT_INFO_FADE_OUT = .5;
 function SetGlueScreen(name)
 	local newFrame;
 	for index, value in GlueScreenInfo do
-		local frame = getglobal(value);
+		local frame = _G[value];
 		if ( frame ) then
 			frame:Hide();
 			if ( index == name ) then
@@ -307,18 +307,18 @@ function GetText(token, gender, ordinal)
 		variable = variable..genderTag;
 	end
 
-	local string = getglobal(variable);
+	local string = _G[variable];
 	if ( not string ) then
 		if ( pluralTag and genderTag ) then
-			string = getglobal(token..pluralTag);
+			string = _G[token..pluralTag];
 			if ( not string ) then
-				string = getglobal(token..genderTag);
+				string = _G[token..genderTag];
 				if ( not string ) then
-					string = getglobal(token);
+					string = _G[token];
 				end
 			end
 		else
-			string = getglobal(token);
+			string = _G[token];
 		end
 	end
 
@@ -352,7 +352,7 @@ function TriStateCheckbox_SetState(checked, checkButton)
 	if ( not checkButton ) then
 		checkButton = this;
 	end
-	local checkedTexture = getglobal(checkButton:GetName().."CheckedTexture");
+	local checkedTexture = _G[checkButton:GetName().."CheckedTexture"];
 	if ( not checkedTexture ) then
 		message("Can't find checked texture");
 	end

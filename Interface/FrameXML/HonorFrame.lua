@@ -1,16 +1,65 @@
+local ADDON_PREFIX = "TW_HONOR"
+local ADDON_CHANNEL = "GUILD"
+
 function HonorFrame_OnLoad()
 	this:RegisterEvent("PLAYER_PVP_KILLS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_PVP_RANK_CHANGED");
+	this:RegisterEvent("CHAT_MSG_ADDON");
 end
+
+local function FormatCurrencySpaces(value)
+	local s = tostring(value)
+	local formatted
+
+	repeat
+		s, formatted = string.gsub(s, "^(-?%d+)(%d%d%d)", "%1 %2")
+	until formatted == 0
+
+	return s
+end
+
+local function UpdateHonorPoints(points)
+	HonorFrameCurrentHonor:SetText(FormatCurrencySpaces(points));
+	local factionGroup = UnitFactionGroup("player");
+	local honorTexture = "Interface\\TargetingFrame\\UI-PVP-Horde";
+	if ( factionGroup ) then
+		honorTexture = "Interface\\TargetingFrame\\UI-PVP-"..factionGroup;
+	end
+
+
+	HonorFrameHonorIcon:SetTexture(honorTexture);
+end
+
 
 function HonorFrame_OnEvent()
 	if ( event == "PLAYER_PVP_KILLS_CHANGED" or event == "PLAYER_PVP_RANK_CHANGED") then
 		HonorFrame_Update();
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
 		HonorFrame_Update(1);
+
+	elseif event == "CHAT_MSG_ADDON" then
+		if arg1 ~= ADDON_PREFIX then
+			return
+		end
+
+		local args = explode(arg2, ADDON_MSG_FIELD_DELIMITER);
+
+		if args[1] == "S2C_HONOR_RESPONSE" then
+			UpdateHonorPoints(args[2]);
+		end
 	end
 end
+
+local function Send(message)
+	SendAddonMessage(ADDON_PREFIX, message, ADDON_CHANNEL)
+end
+
+function HonorFrame_OnShow()
+	Send("C2S_HONOR_REQUEST");
+end
+
+
 
 function HonorFrame_Update(updateAll)
 	local hk, dk, contribution, rank, highestRank, rankName, rankNumber;

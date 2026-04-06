@@ -10,7 +10,7 @@ function AccountLogin_OnLoad()
 	this:RegisterEvent("SHOW_SURVEY_NOTIFICATION");
 
 	local versionType, buildType, version, internalVersion, date = GetBuildInfo();
-	AccountLoginVersion:SetText(format(TEXT(VERSION_TEMPLATE), versionType, version, internalVersion, buildType, date));
+	AccountLoginVersion:SetText(format(VERSION_TEMPLATE, versionType, version, internalVersion, buildType, date));
 
 	-- Color edit box backdrops
 	local backdropColor = DEFAULT_TOOLTIP_COLOR;
@@ -177,7 +177,7 @@ local buttonText = {}
 function VirtualKeypadFrame_OnEvent(event)
 	if ( event == "PLAYER_ENTER_PIN" ) then
 		for i=1, 10 do
-			buttonText[i] = getglobal("arg"..i)
+			buttonText[i] = _G["arg"..i]
 		end
 	end
 	-- Randomize location to prevent hacking (yeah right)
@@ -202,7 +202,7 @@ function VirtualKeypadButton_OnClick()
 end
 
 function VirtualKeypadOkayButton_OnClick()
-	local PIN = VirtualKeypadText:GetNumber();
+	local PIN = VirtualKeypadText:GetText();
 	local numNumbers = strlen(PIN);
 	if numNumbers < 6 then return end
 	local pinNumber = {};
@@ -218,7 +218,7 @@ function VirtualKeypadOkayButton_OnClick()
 			pinNumber[i] = nil;
 		end
 	end
-	PINEntered(pinNumber[1] , pinNumber[2], pinNumber[3], pinNumber[4], pinNumber[5], pinNumber[6], pinNumber[7], pinNumber[8], pinNumber[9], pinNumber[10]);
+	PINEntered(pinNumber[1], pinNumber[2], pinNumber[3], pinNumber[4], pinNumber[5], pinNumber[6], pinNumber[7], pinNumber[8], pinNumber[9], pinNumber[10]);
 	VirtualKeypadFrame:Hide();
 end
 

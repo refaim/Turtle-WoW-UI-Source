@@ -38,7 +38,7 @@ function AddonList_Update()
 
 	for i=1, MAX_ADDONS_DISPLAYED do
 		addonIndex = AddonList.offset + i;
-		entry = getglobal("AddonListEntry"..i);
+		entry = _G["AddonListEntry"..i];
 		if ( addonIndex > numEntrys ) then
 			entry:Hide();
 		else
@@ -47,7 +47,7 @@ function AddonList_Update()
 			checkboxState = GetAddOnEnableState(character, addonIndex);
 			enabled = (checkboxState > 0);
 
-			checkbox = getglobal("AddonListEntry"..i.."Enabled");
+			checkbox = _G["AddonListEntry"..i.."Enabled"];
 			-- If some are enabled then set the checkbox to be gray
 			TriStateCheckbox_SetState(checkboxState, checkbox);
 			if ( checkboxState == 1 ) then
@@ -56,7 +56,7 @@ function AddonList_Update()
 				checkbox.tooltip = nil;
 			end
 
-			string = getglobal("AddonListEntry"..i.."Title");
+			string = _G["AddonListEntry"..i.."Title"];
 			if ( loadable ) then
 				string:SetTextColor(1.0, 0.78, 0.0);
 			elseif ( enabled and reason ~= "DEP_DISABLED" ) then
@@ -69,8 +69,8 @@ function AddonList_Update()
 			else
 				string:SetText(name);
 			end
-			urlButton = getglobal("AddonListEntry"..i.."URL");
-			versionButton = getglobal("AddonListEntry"..i.."Update");
+			urlButton = _G["AddonListEntry"..i.."URL"];
+			versionButton = _G["AddonListEntry"..i.."Update"];
 			if ( url ) then
 				if ( newVersion ) then
 					versionButton.tooltip = ADDON_UPDATE_AVAILABLE..CLICK_TO_LAUNCH_ADDON_URL..url;
@@ -88,7 +88,7 @@ function AddonList_Update()
 				versionButton:Hide();
 				urlButton:Hide();
 			end
-			securityIcon = getglobal("AddonListEntry"..i.."SecurityIcon");
+			securityIcon = _G["AddonListEntry"..i.."SecurityIcon"];
 			if ( security == "SECURE" ) then
 				AddonList_SetSecurityIcon(securityIcon, 1);
 			elseif ( security == "INSECURE" ) then
@@ -96,10 +96,10 @@ function AddonList_Update()
 			elseif ( security == "BANNED" ) then
 				AddonList_SetSecurityIcon(securityIcon, 3);
 			end
-			getglobal("AddonListEntry"..i.."Security").tooltip = getglobal("ADDON_"..security);
-			string = getglobal("AddonListEntry"..i.."Status");
+			_G["AddonListEntry"..i.."Security"].tooltip = _G["ADDON_"..security];
+			string = _G["AddonListEntry"..i.."Status"];
 			if ( reason ) then
-				string:SetText(TEXT(getglobal("ADDON_"..reason)));
+				string:SetText(_G["ADDON_"..reason]);
 			else
 				string:SetText("");
 			end
@@ -117,7 +117,7 @@ function AddonTooltip_BuildDeps(...)
 	local deps = "";
 	for i=1, arg.n do
 		if ( i == 1 ) then
-			deps = TEXT(ADDON_DEPENDENCIES)..arg[i];
+			deps = ADDON_DEPENDENCIES..arg[i];
 		else
 			deps = deps..", "..arg[i];
 		end
@@ -179,7 +179,7 @@ function AddonList_OnCancel()
 end
 
 function AddonListScrollFrame_OnVerticalScroll()
-	local scrollbar = getglobal(this:GetName().."ScrollBar");
+	local scrollbar = _G[this:GetName().."ScrollBar"];
 	scrollbar:SetValue(arg1);
 	AddonList.offset = floor((arg1 / ADDON_BUTTON_HEIGHT) + 0.5);
 	AddonList_Update();
@@ -240,9 +240,9 @@ end
 AddonDialogTypes = { };
 
 AddonDialogTypes["ADDONS_OUT_OF_DATE"] = {
-	text = TEXT(ADDONS_OUT_OF_DATE),
-	button1 = TEXT(DISABLE_ADDONS),
-	button2 = TEXT(LOAD_ADDONS),
+	text = ADDONS_OUT_OF_DATE,
+	button1 = DISABLE_ADDONS,
+	button2 = LOAD_ADDONS,
 	OnAccept = function()
 		AddonDialog_Show("CONFIRM_DISABLE_ADDONS");
 	end,
@@ -252,9 +252,9 @@ AddonDialogTypes["ADDONS_OUT_OF_DATE"] = {
 }
 
 AddonDialogTypes["CONFIRM_LOAD_ADDONS"] = {
-	text = TEXT(CONFIRM_LOAD_ADDONS),
-	button1 = TEXT(OKAY),
-	button2 = TEXT(CANCEL),
+	text = CONFIRM_LOAD_ADDONS,
+	button1 = OKAY,
+	button2 = CANCEL,
 	OnAccept = function()
 		SetAddonVersionCheck(0);
 	end,
@@ -264,9 +264,9 @@ AddonDialogTypes["CONFIRM_LOAD_ADDONS"] = {
 }
 
 AddonDialogTypes["CONFIRM_DISABLE_ADDONS"] = {
-	text = TEXT(CONFIRM_DISABLE_ADDONS),
-	button1 = TEXT(OKAY),
-	button2 = TEXT(CANCEL),
+	text = CONFIRM_DISABLE_ADDONS,
+	button1 = OKAY,
+	button2 = CANCEL,
 	OnAccept = function()
 		AddonList_DisableOutOfDate();
 	end,
@@ -276,9 +276,9 @@ AddonDialogTypes["CONFIRM_DISABLE_ADDONS"] = {
 }
 
 AddonDialogTypes["CONFIRM_LAUNCH_ADDON_URL"] = {
-	text = TEXT(CONFIRM_LAUNCH_ADDON_URL),
-	button1 = TEXT(OKAY),
-	button2 = TEXT(CANCEL),
+	text = CONFIRM_LAUNCH_ADDON_URL,
+	button1 = OKAY,
+	button2 = CANCEL,
 	OnAccept = function()
 		LaunchAddOnURL(AddonList.selectedID);
 	end

@@ -11,7 +11,7 @@
 			</OnLoad>
 			<OnEvent>
 				if ( event == "UPDATE_MOUSEOVER_UNIT" ) then
-					getglobal(this:GetName().."TextLeft1"):SetTextColor(GameTooltip_UnitColor("mouseover"));
+					_G[this:GetName().."TextLeft1"]:SetTextColor(GameTooltip_UnitColor("mouseover"));
 
 					if UnitIsPlayer("mouseover") then
 						TargetFrame_CheckChallenges("mouseover")

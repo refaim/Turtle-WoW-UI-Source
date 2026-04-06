@@ -1,5 +1,328 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Include file="CharacterFrameTemplates.xml"/>
+	<Button name="OptionsListButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="172" y="18"/>
+		</Size>
+		<Scripts>
+			<OnClick>
+				PlaySound("igMainMenuOptionCheckBoxOn")
+			</OnClick>
+		</Scripts>
+		<ButtonText name="$parentText"/>
+		<NormalFont inherits="GameFontNormal"/>
+		<HighlightFont inherits="GameFontHighlight"/>
+		<DisabledFont inherits="GameFontDisable"/>
+		<HighlightTexture file="Interface\QuestFrame\UI-QuestLogTitleHighlight" alphaMode="ADD">
+			<Size>
+				<AbsDimension x="180" y="18" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="-4" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBar" file="Interface\BattlefieldFrame\UI-Battlefield-Bar" hidden="true">
+					<Size>
+						<AbsDimension x="314" y="52" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-10" y="4" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this.bar = _G[this:GetName() .. "Bar"]
+				this.text = _G[this:GetName() .. "Text"]
+				this.text:SetWidth(158)
+				this.text:SetHeight(18)
+				this.text:SetJustifyH("LEFT")
+
+				this:GetHighlightTexture():SetVertexColor(1.0, 0.8, 0.0)
+			</OnLoad>
+			<OnClick>
+				OptionsListButton_OnClick()
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Button name="OptionsButtonTemplateEx" virtual="true" inherits="UIPanelButtonTemplate2">
+		<Size>
+			<AbsDimension x="0" y="32"/>
+		</Size>
+		<Scripts>
+			<OnLoad>
+				this.label = OptionsFramePlaceholder
+			</OnLoad>
+			<OnMouseDown>
+				PlaySound("gsTitleOptionOK")
+			</OnMouseDown>
+		</Scripts>
+	</Button>
+	<Frame name="OptionsCheckButtonTemplateEx" virtual="true">
+		<Size>
+			<AbsDimension x="346" y="18"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="210" y="12"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton name="$parentControl">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset>
+							<AbsDimension x="6" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						OptionsFrameCheckButton_OnClick()
+					</OnClick>
+					<OnEnter>
+						OptionsFrameControl_OnEnter(true)
+					</OnEnter>
+					<OnLeave>
+						OptionsFrameControl_OnLeave(true)
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+				<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+				<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+			</CheckButton>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				this.control = _G[this:GetName() .. "Control"]
+				this.label = _G[this:GetName() .. "Label"]
+			</OnLoad>
+			<OnEnter>
+				OptionsFrameControl_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				OptionsFrameControl_OnLeave()
+			</OnLeave>
+		</Scripts>
+	</Frame>
+	<Frame name="OptionsDropDownTemplateEx" virtual="true">
+		<Size>
+			<AbsDimension x="346" y="18"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="210" y="12"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentControl" inherits="UIDropDownMenuTemplate">
+				<Size>
+					<AbsDimension x="1" y="1"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset>
+							<AbsDimension x="18" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_SetWidth(110, this)
+					</OnLoad>
+					<OnEnter>
+						OptionsFrameControl_OnEnter(true)
+					</OnEnter>
+					<OnLeave>
+						OptionsFrameControl_OnLeave(true)
+					</OnLeave>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				local name = this:GetName()
+
+				this.control = _G[name .. "Control"]
+				this.button = _G[name .. "ControlButton"]
+				this.text = _G[name .. "ControlText"]
+				this.label = _G[name .. "Label"]
+			</OnLoad>
+			<OnEnter>
+				OptionsFrameControl_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				OptionsFrameControl_OnLeave()
+			</OnLeave>
+		</Scripts>
+	</Frame>
+	<Frame name="OptionsSliderTemplateEx" virtual="true">
+		<Size>
+			<AbsDimension x="346" y="18"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="210" y="12"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Slider name="$parentControl" orientation="HORIZONTAL" enableMouse="true">
+				<Size>
+					<AbsDimension x="128" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset>
+							<AbsDimension x="0" y="5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Horizontal">
+					<Size>
+						<AbsDimension x="32" y="32"/>
+					</Size>
+				</ThumbTexture>
+				<HitRectInsets>
+					<AbsInset left="0" right="0" top="-10" bottom="-10"/>
+				</HitRectInsets>
+				<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="8"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="6" bottom="6"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentMinValue" inherits="GameFontHighlightSmall" text="LOW">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+									<Offset>
+										<AbsDimension x="2" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parentMaxValue" inherits="GameFontHighlightSmall" text="HIGH">
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT">
+									<Offset>
+										<AbsDimension x="-2" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						OptionsFrameControl_OnEnter(true)
+					</OnEnter>
+					<OnLeave>
+						OptionsFrameControl_OnLeave(true)
+					</OnLeave>
+					<OnMouseUp>
+						OptionsFrameSlider_OnValueChanged()
+					</OnMouseUp>
+				</Scripts>
+			</Slider>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				local name = this:GetName()
+
+				this.control = _G[name .. "Control"]
+				this.thumb = _G[name .. "ControlThumb"]
+				this.minval = _G[name .. "ControlMinValue"]
+				this.maxval = _G[name .. "ControlMaxValue"]
+				this.label = _G[name .. "Label"]
+			</OnLoad>
+			<OnEnter>
+				OptionsFrameControl_OnEnter()
+			</OnEnter>
+			<OnLeave>
+				OptionsFrameControl_OnLeave()
+			</OnLeave>
+		</Scripts>
+	</Frame>
+		<Button name="OptionsSearchResultTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="424" y="16"/>
+		</Size>
+		<ButtonText name="$parentText"/>
+		<NormalFont inherits="GameFontNormal"/>
+		<HighlightFont inherits="GameFontHighlight"/>
+		<DisabledFont inherits="GameFontDisable"/>
+		<HighlightTexture file="Interface\QuestFrame\UI-QuestLogTitleHighlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="0" y="1"/>
+					</Offset>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset>
+						<AbsDimension x="0" y="1"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+		<Scripts>
+			<OnLoad>
+				this.text = _G[this:GetName() .. "Text"]
+				this.text:SetPoint("LEFT", this, 4, 0)
+				this:GetHighlightTexture():SetVertexColor(1.0, 0.8, 0.0)
+			</OnLoad>
+			<OnShow>
+				this:UnlockHighlight()
+			</OnShow>
+			<OnClick>
+				OptionsListButton_OnClick(this.categoryIndex, this.optionIndex)
+			</OnClick>
+		</Scripts>
+	</Button>
+	<!-- Legacy templates used by the default option frames. Left here for backwards compatibility with add-ons which might use them. -->
 	<Frame name="OptionFrameBoxTemplate" virtual="true">
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -44,25 +367,30 @@
 		<Scripts>
 			<OnClick>
 				if ( this:GetChecked() ) then
-					PlaySound("igMainMenuOptionCheckBoxOn");
+				PlaySound("igMainMenuOptionCheckBoxOn");
 				else
-					PlaySound("igMainMenuOptionCheckBoxOff");
+				PlaySound("igMainMenuOptionCheckBoxOff");
 				end
 			</OnClick>
 			<OnEnter>
 				if ( this.tooltipText ) then
-					GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-					GameTooltip:SetText(this.tooltipText, nil, nil, nil, nil, 1);
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+				GameTooltip:SetText(this.tooltipText, nil, nil, nil, nil, 1);
 				end
 				if ( this.tooltipRequirement ) then
-					GameTooltip:AddLine(this.tooltipRequirement, "", 1.0, 1.0, 1.0);
-					GameTooltip:Show();
+				GameTooltip:AddLine(this.tooltipRequirement);
+				GameTooltip:Show();
 				end
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
+	</CheckButton>
+		<CheckButton name="UIOptionsCheckButtonTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
 	</CheckButton>
 	<Slider name="OptionsSliderTemplate" orientation="HORIZONTAL" virtual="true" enableMouse="true">
 		<Size>
@@ -112,12 +440,12 @@
 		<Scripts>
 			<OnEnter>
 				if ( this.tooltipText ) then
-					GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-					GameTooltip:SetText(this.tooltipText, nil, nil, nil, nil, 1);
+				GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+				GameTooltip:SetText(this.tooltipText, nil, nil, nil, nil, 1);
 				end
 				if ( this.tooltipRequirement ) then
-					GameTooltip:AddLine(this.tooltipRequirement, "", 1.0, 1.0, 1.0);
-					GameTooltip:Show();
+				GameTooltip:AddLine(this.tooltipRequirement);
+				GameTooltip:Show();
 				end
 			</OnEnter>
 			<OnLeave>
@@ -129,5 +457,12 @@
 				<AbsDimension x="32" y="32"/>
 			</Size>
 		</ThumbTexture>
+	</Slider>
+	<Slider name="SoundOptionsSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+		<Scripts>
+			<OnValueChanged>
+				SoundOptionsSlider_OnValueChanged();
+			</OnValueChanged>
+		</Scripts>
 	</Slider>
 </Ui>

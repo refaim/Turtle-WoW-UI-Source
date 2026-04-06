@@ -1,6 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
 	<Script file="InspectPaperDollFrame.lua"/>
+	<Frame name="InspectTransmogTooltip" parent="GameTooltip">
+		<Scripts>
+			<OnShow>
+				InspectTransmogTooltip_OnShow()
+			</OnShow>
+			<OnHide>
+				GameTooltip.itemLink = nil
+			</OnHide>
+		</Scripts>
+	</Frame>
 	<Button name="InspectPaperDollItemSlotButtonTemplate" inherits="ItemButtonTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
@@ -18,9 +28,9 @@
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
 				if ( not GameTooltip:SetInventoryItem(InspectFrame.unit, this:GetID()) ) then
-					local text = TEXT(getglobal(strupper(strsub(this:GetName(), 8))));
+					local text = _G[strupper(strsub(this:GetName(), 8))];
 					if ( this.checkRelic and UnitHasRelicSlot(InspectFrame.unit) ) then
-						text = TEXT(getglobal("RELICSLOT"));
+						text = RELICSLOT;
 					end
 					GameTooltip:SetText(text);
 				end
@@ -134,18 +144,18 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						InspectModelFrame_OnLoad();
+						Model_OnLoad();
 						this:RegisterEvent("DISPLAY_SIZE_CHANGED");
 					</OnLoad>
 					<OnEvent>
 						this:RefreshUnit();
 					</OnEvent>
 					<OnUpdate>
-						InspectModelFrame_OnUpdate(arg1);
+						Model_OnUpdate(arg1, this);
 					</OnUpdate>
 				</Scripts>
 				<Frames>
-					<Button name="InspectModelRotateLeftButton">
+					<Button name="InspectModelFrameRotateLeftButton">
 						<Size>
 							<AbsDimension x="35" y="35"/>
 						</Size>
@@ -157,26 +167,26 @@
 								this:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
 							</OnLoad>
 							<OnClick>
-								InspectModelRotateLeftButton_OnClick();
+								Model_RotateLeft(InspectModelFrame);
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-RotationLeft-Button-Up"/>
 						<PushedTexture file="Interface\Buttons\UI-RotationLeft-Button-Down"/>
 						<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
 					</Button>
-					<Button name="InspectModelRotateRightButton">
+					<Button name="InspectModelFrameRotateRightButton">
 						<Size>
 							<AbsDimension x="35" y="35"/>
 						</Size>
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="InspectModelRotateLeftButton" relativePoint="TOPRIGHT"/>
+							<Anchor point="TOPLEFT" relativeTo="InspectModelFrameRotateLeftButton" relativePoint="TOPRIGHT"/>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
 							</OnLoad>
 							<OnClick>
-								InspectModelRotateRightButton_OnClick();
+								Model_RotateRight(InspectModelFrame);
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-RotationRight-Button-Up"/>

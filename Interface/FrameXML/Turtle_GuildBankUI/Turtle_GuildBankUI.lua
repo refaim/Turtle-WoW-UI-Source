@@ -13,24 +13,13 @@ local MAX_TABS = 5
 local MAX_SLOTS = 98
 local MAX_WITHDRAWALS = 5
 
-local TEXT_WITHDREW = "|cffff0000" .. GUILD_BANK_WITHDREW .. " "
-local TEXT_DEPOSITT = "|cffffffff" .. GUILD_BANK_DEPOSITED .. " "
-local TEXT_DESTROY = "|cffff8888" .. GUILD_BANK_DESTROYED .. " "
-local COLOR_PLAYER = "|cffffd200"
 local COLOR_GOLD = "|cffd7b845"
 local COLOR_SILVER = "|cff979697"
 local COLOR_COPPER = "|cffa05a39"
 local STAMP_FORMAT = "%A %d %b %Y %H:%M"
-local GAME_YELLOW = "|cffffff00"
 local TRIGGER = "GUILD_BANK_TRIGGER"
 
-local GuildBank = CreateFrame("Frame")
-
-GuildBank:RegisterEvent("CHAT_MSG_ADDON")
-GuildBank:RegisterEvent("GOSSIP_SHOW")
-GuildBank:RegisterEvent("GOSSIP_CLOSED")
-GuildBank:RegisterEvent("PLAYER_GUILD_UPDATE")
-GuildBank:RegisterEvent("GUILD_ROSTER_UPDATE")
+GuildBank = {}
 
 GuildBank.tabIcons = {
 	"Ability_Creature_Cursed_01",
@@ -166,6 +155,7 @@ GuildBank.prefix = "TW_GUILDBANK"
 
 GuildBank.money = 0
 GuildBank.currentTab = 1
+GuildBank.BottomTab = 1
 
 GuildBank.itemFrames = {}
 GuildBank.guildInfo = {}
@@ -183,11 +173,8 @@ for i = 1, MAX_TABS do
 	GuildBank.withdrawalsLeft[i] = ""
 end
 
-GuildBank.newTabSettings = {
-	tab = nil,
-	info = nil,
-	ghettoTrigger = 0
-}
+GuildBank.oldTabSettings = {}
+GuildBank.newTabSettings = {}
 
 GuildBank.cost = {
 	feature = 0,
@@ -199,32 +186,18 @@ GuildBank.cost = {
 ------------------------------------------- Utils
 ------------------------------------------------------------
 
-local function gprint(str)
-	DEFAULT_CHAT_FRAME:AddMessage(GAME_YELLOW .. str)
-end
-
 local function gdebug(str)
-	if GuildBank.debug then
-		gprint("[g] " .. tostring(str))
-	end
+	if not GuildBank.debug then return end
+	DEFAULT_CHAT_FRAME:AddMessage("["..format("%.3f", GetTime()).."] " .. tostring(str))
 end
 
 function GuildBank:Send(data)
-	if self.debug then
-		gdebug("|cff11ff00->" .. data)
-	end
+	if self.debug then gdebug("|cff11ff00->" .. data) end
 	SendAddonMessage(self.prefix, data, "GUILD")
 end
 
 function GuildBank:CacheItem(linkOrID)
-
-	if not linkOrID then
-		gdebug("cache item call with null " .. type(linkOrID))
-	end
-
-	if not linkOrID or linkOrID == 0 then
-		return
-	end
+	if not linkOrID or linkOrID == 0 then return end
 
 	if tonumber(linkOrID) then
 		if GetItemInfo(linkOrID) then
@@ -232,12 +205,12 @@ function GuildBank:CacheItem(linkOrID)
 			return true
 		else
 			local item = "item:" .. linkOrID .. ":0:0:0"
-			local _, _, itemLink = strfind(item, "(item:%d+:%d+:%d+:%d+)");
+			local _, _, itemLink = strfind(item, "(item:%d+:%d+:%d+:%d+)")
 			linkOrID = itemLink
 		end
 	else
 		if strfind(linkOrID, "|", 1, true) then
-			local _, _, itemLink = strfind(linkOrID, "(item:%d+:%d+:%d+:%d+)");
+			local _, _, itemLink = strfind(linkOrID, "(item:%d+:%d+:%d+:%d+)")
 			linkOrID = itemLink
 			if GetItemInfo(self:IDFromLink(linkOrID)) then
 				-- item ok, break
@@ -254,36 +227,51 @@ function GuildBank:IDFromLink(link)
 	return tonumber(itemID)
 end
 
+function GuildBank:GetFreeSlot()
+	-- if not GuildBankFrame:IsShown() then return 0 end
+	-- local index = 1
+	-- local col = 1
+	-- local row = 1
+	-- while col < 15 do
+	-- 	if not self.itemFrames[index].occupied then return index end
+	-- 	index = index + 14
+	-- 	row = row + 1
+	-- 	if row > 7 then
+	-- 		row = 1
+	-- 		col = col + 1
+	-- 		index = col
+	-- 	end
+	-- end
+	return 0
+end
+
 ------------------------------------------------------------
 ------------------------------------------- OnLoad
 ------------------------------------------------------------
 
 function GuildBankFrame_OnLoad()
+	GuildBankFrame:SetUserPlaced(true)
+	GuildBankFrame:RegisterEvent("CHAT_MSG_ADDON")
+	GuildBankFrame:RegisterEvent("GOSSIP_SHOW")
+	GuildBankFrame:RegisterEvent("GOSSIP_CLOSED")
+	GuildBankFrame:RegisterEvent("PLAYER_GUILD_UPDATE")
+	GuildBankFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
+	GuildBankFrame:RegisterEvent("PLAYER_LOGIN")
 	GuildBank:HookFunctions()
 	GuildBank:CreateFrames()
-	GuildBank.startDelay:Show()
+	PanelTemplates_SetNumTabs(GuildBankFrame, 3)
+	PanelTemplates_SetTab(GuildBankFrame, 1)
 end
 
 ------------------------------------------------------------
 ------------------------------------------- Cursor
 ------------------------------------------------------------
 
-function GuildBankFrame_CursorItem_OnClick()
-end
-
-function GuildBankFrame_CursorItem_OnKeyDown()
-	if arg1 == "ESCAPE" then
-		GuildBank:ResetAction()
-	end
-end
-
 function GuildBank:ResetCursorItem()
-	self.cursorItem = {
-		tab = nil,
-		slot = nil,
-		from = nil,
-		count = 0
-	}
+	self.cursorItem.tab = nil
+	self.cursorItem.slot = nil
+	self.cursorItem.from = nil
+	self.cursorItem.count = 0
 end
 
 function GuildBank:CursorHasItem()
@@ -320,19 +308,15 @@ GuildBank.cursorFrame:SetScript("OnHide", function()
 	if GuildBank.cursorItem.slot and GuildBank.cursorItem.slot ~= 0 then
 		SetDesaturation(_G["GuildBankFrameItem" .. GuildBank.cursorItem.slot .. "IconTexture"], 0)
 	end
-	GuildBank:ResetAction()
+	GuildBank:ResetCursorItem()
 end)
 
 GuildBank.cursorFrame:SetScript("OnUpdate", function()
-
-	local cursorX, cursorY = GetCursorPosition();
-
+	local cursorX, cursorY = GetCursorPosition()
 	cursorX = cursorX / UIParent:GetScale()
 	cursorY = cursorY / UIParent:GetScale()
-
-	GuildBankFrameCursorItemFrameTexture:ClearAllPoints();
-	GuildBankFrameCursorItemFrameTexture:SetPoint("BOTTOMLEFT", nil, "BOTTOMLEFT", cursorX - 5, cursorY - 32);
-
+	GuildBankFrameCursorItemFrameTexture:ClearAllPoints()
+	GuildBankFrameCursorItemFrameTexture:SetPoint("BOTTOMLEFT", nil, "BOTTOMLEFT", cursorX - 5, cursorY - 32)
 end)
 
 
@@ -340,67 +324,32 @@ end)
 ------------------------------------------- Tooltip
 ------------------------------------------------------------
 
-function GuildBank:AddButtonOnEnterTooltip(frame, itemLink)
-	frame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4) + 10, -(this:GetHeight() / 4))
-		GameTooltip:SetHyperlink(itemLink)
-		local count = 0
-		for i = 1, MAX_TABS do
-			for _, item in GuildBank.items[i] do
-				if frame.itemID == item.itemID then
-					if frame.name == item.nameIfSuffix then
-						count = count + item.count
-					end
-					if item.nameIfSuffix ~= "0" and frame.guid == item.guid then
-						if strfind(item.nameIfSuffix, GameTooltipTextLeft1:GetText(), 1, true) then
-							GameTooltipTextLeft1:SetText(item.nameIfSuffix)
-						end
-					end
-				end
-			end
-		end
-		if count > 1 then
-			GameTooltip:AddLine(count .. " " .. GUILD_BANK_QUANTITY, 1, 1, 1, 1)
-		end
-		GameTooltip:Show()
-	end)
-	frame:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-	end)
-end
-
-function GuildBank:RemoveButtonOnEnterTooltip(frame)
-	frame:SetScript("OnEnter", nil)
-end
-
 GuildBank.TooltipFrame = CreateFrame("Frame", "GuildBankTooltipFrame", GameTooltip)
 
-local TWGBHookSetBagItem = GameTooltip.SetBagItem
+local original_SetBagItem = GameTooltip.SetBagItem
+
 function GameTooltip.SetBagItem(self, container, slot)
-	GameTooltip.itemLink = GetContainerItemLink(container, slot)
 	local _, count = GetContainerItemInfo(container, slot)
-	if count and count < 0 then
-		count = 1
-	end
+	if count and count < 0 then count = 1 end
 	GameTooltip.itemCount = count
-	return TWGBHookSetBagItem(self, container, slot)
+	GameTooltip.itemLink = GetContainerItemLink(container, slot)
+	return original_SetBagItem(self, container, slot)
 end
+
 GuildBank.TooltipFrame:SetScript("OnShow", function()
-	if GameTooltip.itemLink then
-		local count = 0
-		for i = 1, MAX_TABS do
-			for _, item in GuildBank.items[i] do
-				local _, _, id = strfind(GameTooltip.itemLink, "item:(%d+)")
-				id = tonumber(id)
-				if id and id == item.itemID then
-					count = count + item.count
-				end
+	if not GameTooltip.itemLink then return end
+	local count = 0
+	for i = 1, MAX_TABS do
+		for _, item in pairs(GuildBank.items[i]) do
+			local id = GuildBank:IDFromLink(GameTooltip.itemLink)
+			if id and id == item.itemID then
+				count = count + item.count
 			end
 		end
-		if count > 0 then
-			GameTooltip:AddLine(count .. " " .. TEXT(GUILD_BANK_QUANTITY), 1, 1, 1, 1)
-			GameTooltip:Show()
-		end
+	end
+	if count > 0 then
+		GameTooltip:AddLine(count .. " " .. GUILD_BANK_QUANTITY, 1, 1, 1, 1)
+		GameTooltip:Show()
 	end
 end)
 
@@ -412,18 +361,23 @@ end)
 ------------------------------------------- Events
 ------------------------------------------------------------
 
-GuildBank:SetScript("OnEvent", function()
+function GuildBankFrame_OnEvent()
+	if event == "PLAYER_LOGIN" then
+		if IsInGuild() then
+			GuildRoster()
+		end
+		return
+	end
+
 	if (event == "PLAYER_GUILD_UPDATE" and arg1 == "player") or (event == "GUILD_ROSTER_UPDATE" and GuildBankFrame:IsShown()) then
 		GuildBank.playerGuildUpdateTimer:Show()
 		return
 	end
 
 	if event == "GOSSIP_SHOW" then
-		if GetGossipText() == TRIGGER then
+		if GetGossipText() == TRIGGER and UnitExists("npc") then
 			UIPanelWindows.GossipFrame.pushable = 99
-			local centerFrame = (GetCenterFrame())
-			HideUIPanel(centerFrame)
-			ShowUIPanel(centerFrame)
+			CloseWindows(nil, GossipFrame)
 			GuildBank.gossipOpen = true
 			GossipFrame:SetAlpha(0)
 			GossipFrame:EnableMouse(nil)
@@ -446,11 +400,10 @@ GuildBank:SetScript("OnEvent", function()
 			GossipFrame:EnableMouse(1)
 			UIPanelWindows.GossipFrame.pushable = 0
 			GuildBankFrameCloseButton_OnClick()
-			StaticPopup_Hide("RENAME_TAB_BAD")
-			StaticPopup_Hide("UNLOCK_GUILD_BANK")
-			StaticPopup2_Hide("UNLOCK_GUILD_BANK_TAB")
-			StaticPopup2_Hide("GUILDBANK_WITHDRAW_MONEY")
-			StaticPopup2_Hide("GUILDBANK_DEPOSIT_MONEY")
+			StaticPopup_Hide("GUILDBANK_UNLOCK")
+			StaticPopup_Hide("GUILDBANK_UNLOCK_TAB")
+			StaticPopup_Hide("GUILDBANK_WITHDRAW_MONEY")
+			StaticPopup_Hide("GUILDBANK_DEPOSIT_MONEY")
 		end
 		return
 	end
@@ -459,23 +412,19 @@ GuildBank:SetScript("OnEvent", function()
 		local message = arg2
 
 		if strfind(message, "^Access:Error:HC") then
-			-- UIErrorsFrame:AddMessage(GUILD_BANK_ERR_HARDCORE, 1, 0.1, 0.1, 1)
-			-- CloseGossip()
 			return
 		end
 
 		-- bank management messages
 		if strfind(message, "^Player:Unguilded") then
 			GuildBank:Reset()
-			-- UIErrorsFrame:AddMessage(ERR_GUILD_PLAYER_NOT_IN_GUILD, 1, 0.1, 0.1, 1)
-			-- CloseGossip()
 			return
 		end
 
 		if strfind(message, "^UnlockGuildBank:Cost:") then
 			if GuildBank.gossipOpen then
 				local _, _, cost = strfind(message, "UnlockGuildBank:Cost:(%d+)")
-				StaticPopup_Show("UNLOCK_GUILD_BANK", cost)
+				StaticPopup_Show("GUILDBANK_UNLOCK", cost)
 			end
 			return
 		end
@@ -485,7 +434,7 @@ GuildBank:SetScript("OnEvent", function()
 			if tab and cost then
 				GuildBank.cost.tab = tab
 				GuildBank.cost.tabCost = cost
-				StaticPopup2_Show("UNLOCK_GUILD_BANK_TAB", GuildBank.cost.tab, GuildBank.cost.tabCost)
+				StaticPopup_Show("GUILDBANK_UNLOCK_TAB", GuildBank.cost.tab, GuildBank.cost.tabCost)
 				return
 			end
 			return
@@ -686,18 +635,20 @@ GuildBank:SetScript("OnEvent", function()
 		end
 
 		if strfind(message, "^GTabLog:") then
-			local tabEx = explode(message, ":")
-			local tab = tonumber(tabEx[2])
+			local _, _, tab = strfind(message, "GTabLog:(%d):")
+			tab = tonumber(tab)
+			local logLine = gsub(message, "GTabLog:%d:", "")
 
-			local logLine = explode(message, "GTabLog:" .. tab .. ":")
-			if logLine[2] then
-
-				GuildBank:AppendLog(tab, logLine[2])
-
-				if GuildBank.BottomTab == 2 then
-					GuildBank:ShowLog(tab)
-				end
+			if not logLine then
+				return
 			end
+
+			GuildBank:AppendLog(tab, logLine)
+
+			if GuildBank.BottomTab == 2 then
+				GuildBank:ShowLog(tab)
+			end
+
 			return
 		end
 
@@ -889,27 +840,22 @@ GuildBank:SetScript("OnEvent", function()
 			return
 		end
 	end
-end)
+end
 
 function GuildBankFrame_OnShow()
-	PlaySoundFile("Interface\\GuildBankFrame\\GuildBankOpen.wav", "Dialog");
+	PlaySoundFile("Interface\\GuildBankFrame\\GuildBankOpen.wav")
 end
 
 function GuildBankFrame_OnHide()
-
-	GuildBank.gossipOpen = false
-
-	StaticPopup_Hide("RENAME_TAB_BAD")
-	StaticPopup_Hide("UNLOCK_GUILD_BANK")
-	StaticPopup2_Hide("UNLOCK_GUILD_BANK_TAB")
-	StaticPopup2_Hide("GUILDBANK_WITHDRAW_MONEY")
-	StaticPopup2_Hide("GUILDBANK_DEPOSIT_MONEY")
-	StaticPopup2_Hide("DELETE_GOOD_ITEM")
-	StaticPopup2_Hide("DELETE_ITEM")
-
+	StaticPopup_Hide("GUILDBANK_UNLOCK")
+	StaticPopup_Hide("GUILDBANK_UNLOCK_TAB")
+	StaticPopup_Hide("GUILDBANK_WITHDRAW_MONEY")
+	StaticPopup_Hide("GUILDBANK_DEPOSIT_MONEY")
+	StaticPopup_Hide("GUILDBANK_DELETE_GOOD_ITEM")
+	StaticPopup_Hide("GUILDBANK_DELETE_ITEM")
 	GuildBank:ResetAction()
-
-	PlaySoundFile("Interface\\GuildBankFrame\\GuildBankClose.wav", "Dialog");
+	GuildBank.gossipOpen = false
+	PlaySoundFile("Interface\\GuildBankFrame\\GuildBankClose.wav")
 end
 
 function GuildBankFrameCloseButton_OnClick()
@@ -920,30 +866,26 @@ end
 
 function GuildBank:PlayerGuildUpdate()
 	self.playerGuildUpdateTimer:Hide()
-	if IsInGuild() then
 
-		local guildName = GetGuildInfo("player");
-		if not guildName then
-			return
-		end
-
-		if self.guildInfo.name then
-
-			if self.guildInfo.name == guildName then
-				self:Update("PlayerGuildUpdate")
-			else
-				self:Reset()
-				self.startDelay:Show()
-			end
-			return
-		else
-			self:UpdateGuildInfo()
-			self.playerGuildUpdateTimer:Show()
-		end
-
-	else
+	if not IsInGuild() then
 		self:Reset()
 		GuildBankFrame:Hide()
+		return
+	end
+
+	local guildName = GetGuildInfo("player")
+	if not guildName then return end
+
+	if self.guildInfo.name then
+		if self.guildInfo.name == guildName then
+			self:Update("PlayerGuildUpdate")
+		else
+			self:Reset()
+			self.startDelay:Show()
+		end
+	else
+		self:UpdateGuildInfo()
+		self.playerGuildUpdateTimer:Show()
 	end
 end
 
@@ -999,8 +941,10 @@ GuildBank.startDelay:SetScript("OnUpdate", function()
 				gdebug("got guild name = " .. GuildBank.guildInfo.name .. ", can init")
 				gdebug("got guildRankIndex = " .. GuildBank.guildInfo.rankIndex .. ", can init")
 				GuildBank.startDelay:Hide()
-
-				GuildBank:Init()
+				GuildBank.currentTab = 1
+				GuildBank.BottomTab = 1
+				GuildBank:ResetCursorItem()
+				GuildRoster()
 			else
 				this.startTime = GetTime()
 			end
@@ -1014,28 +958,18 @@ GuildBank.startDelay:SetScript("OnUpdate", function()
 	end
 end)
 
-GuildBank.initDelay = CreateFrame("Frame")
-GuildBank.initDelay:Hide()
-
-GuildBank.initDelay:SetScript("OnShow", function()
-	this.startTime = GetTime()
-end)
-GuildBank.initDelay:SetScript("OnHide", function()
-end)
-
-GuildBank.initDelay:SetScript("OnUpdate", function()
-	local plus = 0.5
-	local gt = GetTime() * 1000
-	local st = (this.startTime + plus) * 1000
-	if gt >= st then
-
-		GuildBank:Init()
-		GuildBank.initDelay:Hide()
-	end
-end)
-
 function GuildBank_UnlockGuildBank_Accept()
 	GuildBank:Send("UnlockGuildBank:Ok")
+end
+
+local function SplitStack(button, split)
+	GuildBank.cursorItem.tab = button.tab
+	GuildBank.cursorItem.slot = button:GetID()
+	GuildBank.cursorItem.from = "split"
+	GuildBank.cursorItem.count = split
+	local texture = _G["GuildBankFrameItem" .. GuildBank.cursorItem.slot .. "IconTexture"]:GetTexture()
+	GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
+	GuildBank.cursorFrame:Show()
 end
 
 function GuildBank:CreateFrames()
@@ -1045,7 +979,6 @@ function GuildBank:CreateFrames()
 	local separators = 0
 
 	for i = 1, MAX_SLOTS do
-
 		if not self.itemFrames[i] then
 			self.itemFrames[i] = CreateFrame("Button", "GuildBankFrameItem" .. i, GuildBankFrameSlots, "GuildBankFrameItemButtonTemplate")
 		end
@@ -1058,8 +991,6 @@ function GuildBank:CreateFrames()
 			separators = separators + separator
 		end
 
-		_G["GuildBankFrameItem" .. i .. "Slot"]:SetText(i);
-
 		self.itemFrames[i]:SetPoint("TOPLEFT", GuildBankFrameSlots, "TOPLEFT", col * 40 + separator + separators - 24, -10 - row * 44)
 		self.itemFrames[i]:SetID(i)
 		self.itemFrames[i].tab = 1
@@ -1068,7 +999,7 @@ function GuildBank:CreateFrames()
 		self.itemFrames[i].maxStack = 0
 		self.itemFrames[i].guid = 0
 		self.itemFrames[i].itemID = 0
-
+		self.itemFrames[i].SplitStack = SplitStack
 		self.itemFrames[i]:Show()
 
 		col = col + 1
@@ -1079,43 +1010,13 @@ function GuildBank:CreateFrames()
 			separators = 0
 			separator = 0
 		end
-
 	end
-end
-
-function GuildBank:Init()
-
-	gdebug("|cFF33FF00 GuildBank Init !")
-
-	if not self.guildInfo.name then
-		gdebug("init not guildinfo name")
-		return
-	end
-
-	self.currentTab = 1
-	self.BottomTab = 1
-
-	GuildBankFrameBottomTab_Enable(GuildBankFrameBottomTab1)
-	GuildBankFrameBottomTab_Disable(GuildBankFrameBottomTab2)
-	GuildBankFrameBottomTab_Disable(GuildBankFrameBottomTab3)
-
-	GuildBankFrameTab1:SetChecked(true)
-
-	GuildRoster() --Requests updated guild roster information from the server
-
-	self:GetBankInfo()
-
-	self:ResetCursorItem()
-
-	GuildBankFrameDestroyItemCatcherFrame:SetScript("OnMouseUp", function()
-		GuildBank:ShowDeleteDialog()
-	end)
 end
 
 function GuildBank:Reset()
 	self:ResetAction()
-	self.ready = false;
-	self.money = 0;
+	self.ready = false
+	self.money = 0
 	self.itemFrames = {}
 	self.currentTab = 1
 	self.guildInfo = {}
@@ -1135,11 +1036,6 @@ function GuildBank:Reset()
 		feature = 0,
 		tab = 0,
 		tabCost = 0,
-	}
-	self.newTabSettings = {
-		tab = nil,
-		info = nil,
-		ghettoTrigger = 0
 	}
 end
 
@@ -1161,7 +1057,6 @@ function GuildBank:ShowDeleteDialog(skipButtonCheck)
 		end
 
 		if name and quality then
-
 			GuildBankFrameCursorItemFrame:Hide()
 			GuildBankFrameDestroyItemCatcherFrame:Hide()
 
@@ -1173,9 +1068,9 @@ function GuildBank:ShowDeleteDialog(skipButtonCheck)
 			end
 
 			if quality >= 3 then
-				StaticPopup2_Show("DELETE_GOOD_ITEM", name .. count);
+				StaticPopup_Show("GUILDBANK_DELETE_GOOD_ITEM", name .. count)
 			else
-				StaticPopup2_Show("DELETE_ITEM", name .. count);
+				StaticPopup_Show("GUILDBANK_DELETE_ITEM", name .. count)
 			end
 			return
 		end
@@ -1185,9 +1080,7 @@ end
 
 function GuildBank:Update(w)
 	gdebug(" ------------------------------ |cff88ff88 GUILDBANK Update()")
-	if w then
-		gdebug(w)
-	end
+	if w then gdebug(w) end
 	self:UpdateTabs()
 	self:UpdateTabTitle()
 	self:UpdateMoney()
@@ -1197,33 +1090,23 @@ function GuildBank:Update(w)
 end
 
 function GuildBank:UpdateGuildInfo()
-
 	gdebug("UpdateGuildInfo trigger")
 
-	if IsInGuild() then
+	if not IsInGuild() then
+		self.guildInfo = { name = nil, rankName = nil, rankIndex = nil }
+		return
+	end
 
-		gdebug("UpdateGuildInfo in guild")
-
-		local guildName, guildRankName, guildRankIndex = GetGuildInfo("player")
-
-		if guildName then
-
-			self.guildInfo.name = guildName;
-			self.guildInfo.rankName = guildRankName;
-			self.guildInfo.rankIndex = guildRankIndex;
-
-			GuildBankFrameHeader:SetText(self.guildInfo.name .. " " .. GUILD_BANK_TITLE)
-
-			gdebug("UpdateGuildInfo got guildName = [" .. self.guildInfo.name .. "]")
-		else
-			gdebug("UpdateGuildInfo player guilded, couldnt get info")
-		end
+	gdebug("UpdateGuildInfo in guild")
+	local guildName, guildRankName, guildRankIndex = GetGuildInfo("player")
+	if guildName then
+		self.guildInfo.name = guildName
+		self.guildInfo.rankName = guildRankName
+		self.guildInfo.rankIndex = guildRankIndex
+		GuildBankFrameHeader:SetText(self.guildInfo.name .. " " .. GUILD_BANK_TITLE)
+		gdebug("UpdateGuildInfo got guildName = [" .. self.guildInfo.name .. "]")
 	else
-		self.guildInfo = {
-			name = nil,
-			rankName = nil,
-			rankIndex = nil
-		}
+		gdebug("UpdateGuildInfo player guilded, couldnt get info")
 	end
 end
 
@@ -1243,166 +1126,133 @@ end
 ------------------------------------------------------------
 
 function GuildBank:HookFunctions()
-
-	local GuildBank_BagSlot_OnClick = ContainerFrameItemButton_OnClick
-	if GuildBank_BagSlot_OnClick then
-		ContainerFrameItemButton_OnClick = function(button, ignoreModifiers)
-
-			if GuildBank.BottomTab == 1 and GuildBankFrame:IsVisible() then
-				-- bank
-
-				if button == "LeftButton" then
-
-					-- withdraw to specific bag slot
-					if GuildBank:CursorHasBankItem() then
-
-						local bag = this:GetParent():GetID()
-						local slot = this:GetID()
-
-						GuildBank:Send("WithdrawItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot ..
-						":" .. bag .. ":" .. slot .. ":" .. GuildBank.cursorItem.count)
-
-						GuildBank:ResetAction()
-						return
-					end
-
-					-- withdraw partial from split from bank
-					if GuildBank:CursorHasSplitItem() then
-						local bag = this:GetParent():GetID()
-						local slot = this:GetID()
-
-						GuildBank:Send("WithdrawItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot ..
-						":" .. bag .. ":" .. slot .. ":" .. GuildBank.cursorItem.count)
-
-						GuildBank:ResetAction()
-						return
-					end
-				end
-
-				if button == "RightButton" and GuildBankFrame:IsVisible() then
+	local original_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick
+	ContainerFrameItemButton_OnClick = function(button, ignoreModifiers)
+		if GuildBank.BottomTab == 1 and GuildBankFrame:IsVisible() then
+			-- bank
+			if button == "LeftButton" then
+				-- withdraw to specific bag slot
+				if GuildBank:CursorHasBankItem() then
 					local bag = this:GetParent():GetID()
 					local slot = this:GetID()
 
-					if GetContainerItemInfo(bag, slot) then
-						local texture, count, locked, quality, readable, lootable, itemLink = GetContainerItemInfo(bag, slot);
-						if count < 0 then
-							count = 1
-						end
-						GuildBank:Send("DepositItem:" .. bag .. ":" .. slot .. ":" .. GuildBank.currentTab .. ":0:" .. count)
-					end
+					GuildBank:Send("WithdrawItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot ..
+					":" .. bag .. ":" .. slot .. ":" .. GuildBank.cursorItem.count)
 
 					GuildBank:ResetAction()
 					return
 				end
 
+				-- withdraw partial from split from bank
+				if GuildBank:CursorHasSplitItem() then
+					local bag = this:GetParent():GetID()
+					local slot = this:GetID()
+
+					GuildBank:Send("WithdrawItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot ..
+					":" .. bag .. ":" .. slot .. ":" .. GuildBank.cursorItem.count)
+
+					GuildBank:ResetAction()
+					return
+				end
 			end
 
-			-- execute original onclick
-			GuildBank_BagSlot_OnClick(button, ignoreModifiers)
+			-- deposit into free guild bank slot
+			if button == "RightButton" then
+				local bag = this:GetParent():GetID()
+				local slot = this:GetID()
 
-			-- original executed
-			if button == "LeftButton" then
-
-				-- item picked up ?
-				if CursorHasItem() then
-
-					-- todo
-					--local texture, itemCount, locked = GetContainerItemInfo(BANK_CONTAINER, this:GetID());
-					--if ( not locked ) then
-					--
-					--end
-
-					local texture, count, locked, quality, readable, lootable, itemLink = GetContainerItemInfo(this:GetParent():GetID(), this:GetID());
-					if count < 0 then
-						count = 1
-					end
-					GuildBank.cursorItem = {
-						tab = this:GetParent():GetID(), --bag
-						slot = this:GetID(),
-						from = "bag",
-						count = count
-					}
-
-					return
-				else
-					GuildBank:ResetAction()
+				local texture, count, locked, quality, readable = GetContainerItemInfo(bag, slot)
+				if count then
+					if count < 0 then count = 1 end
+					GuildBank:Send("DepositItem:" .. bag .. ":" .. slot .. ":" .. GuildBank.currentTab .. ":"..GuildBank:GetFreeSlot()..":" .. count)
 				end
 
+				GuildBank:ResetAction()
+				return
 			end
+		end
 
+		-- execute original onclick
+		original_ContainerFrameItemButton_OnClick(button, ignoreModifiers)
+
+		-- original executed
+		if button == "LeftButton" then
+			-- item picked up ?
+			if CursorHasItem() then
+				local texture, count, locked, quality, readable = GetContainerItemInfo(this:GetParent():GetID(), this:GetID())
+				if count and count < 0 then count = 1 end
+				GuildBank.cursorItem.tab = this:GetParent():GetID()
+				GuildBank.cursorItem.slot = this:GetID()
+				GuildBank.cursorItem.from = "bag"
+				GuildBank.cursorItem.count = count
+				return
+			elseif not this.hasStackSplit == 1 then
+				GuildBank:ResetAction()
+			end
 		end
 	end
 
-	local GuildBank_StackSplitFrameOkay_Click = StackSplitFrameOkay_Click
-	if GuildBank_StackSplitFrameOkay_Click then
-		StackSplitFrameOkay_Click = function()
-			GuildBank_StackSplitFrameOkay_Click()
-			if StackSplitFrame.owner then
-				GuildBank.cursorItem.tab = StackSplitFrame.owner:GetParent():GetID()
-				GuildBank.cursorItem.slot = StackSplitFrame.owner:GetID()
-				GuildBank.cursorItem.count = StackSplitFrame.split
-			else
-				gdebug("|cffff0000 StackSplitFrame doesnt have owner")
-			end
+	local original_OpenStackSplitFrame = OpenStackSplitFrame
+	OpenStackSplitFrame = function(maxStack, parent, anchor, anchorTo, minSplit)
+		original_OpenStackSplitFrame(maxStack, parent, anchor, anchorTo, minSplit)
+		if parent:GetParent() ~= GuildBankFrameSlots then
+			-- we started splitting item in our bags
+			GuildBank.cursorItem.tab = parent:GetParent():GetID()
+			GuildBank.cursorItem.slot = parent:GetID()
+			GuildBank.cursorItem.from = "bag"
+			GuildBank.cursorItem.count = 0
 		end
 	end
 
+	local original_StackSplitFrameOkay_Click = StackSplitFrameOkay_Click
+	StackSplitFrameOkay_Click = function()
+		if GuildBank.cursorItem.from == "bag" then
+			-- splitting item in our bag is finished
+			-- set how many to be deposited into guild bank
+			GuildBank.cursorItem.count = StackSplitFrame.split
+		end
+		original_StackSplitFrameOkay_Click()
+	end
 end
 
 ------------------------------------------------------------
 ------------------------------------------- Slots
 ------------------------------------------------------------
 
-function BankSlot_OnClick(button)
-
-	if GuildBank:TabIsLocked(GuildBank.currentTab) then
-		return
-	end
+function GuildBankSlot_OnClick(button)
+	if GuildBank:TabIsLocked(GuildBank.currentTab) then return end
 
 	local frame = _G["GuildBankFrameItem" .. this:GetID()]
-
-	if not button then
-		return false
-	end
+	if not frame then return end
 
 	if button == "LeftButton" then
-
 		if IsShiftKeyDown() then
-
 			if frame.occupied then
-
 				if ChatFrameEditBox:IsVisible() then
-					local name, linkString, quality = GetItemInfo(frame.itemID)
-					local itemLink = ITEM_QUALITY_COLORS[quality].hex .. "\124H" .. linkString .. "\124h[" .. name .. "]\124h\124r"
+					local name, linkString, quality = GetItemInfo(frame.linkString)
+					local itemLink = ITEM_QUALITY_COLORS[quality].hex .. "|H" .. linkString .. "|h[" .. name .. "]|h|r"
 					ChatFrameEditBox:Insert(itemLink)
 				else
-					GuildBankFrame_OpenStackSplitFrame(frame.maxStack, frame, "BOTTOMRIGHT", "TOPRIGHT")
+					OpenStackSplitFrame(frame.count, frame, "BOTTOMRIGHT", "TOPRIGHT")
 				end
-
 			end
-
 			return
 		end
 
 		if CursorHasItem() then
 			if GuildBank:CursorHasBagItem() then
-				-- from player bag
-				-- todo fix pickup from keyring, click on bank, cursor ddoesnt have item here!
-
+				-- deposit to specific slot from player bag
+				-- TODO: fix pickup from keyring, click on bank, cursor ddoesnt have item here!
 				GuildBank:Send("DepositItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot
 				.. ":" .. GuildBank.currentTab .. ":" .. this:GetID() .. ":" .. GuildBank.cursorItem.count)
 				ClearCursor()
 				GuildBank:ResetAction()
-				return
 			else
 				-- cursor has invalid item, from keyring for example
 				ClearCursor()
-				return
 			end
-		end
 
-		if GuildBank:CursorHasBankItem() then
-
+		elseif GuildBank:CursorHasBankItem() then
 			-- move item
 			if GuildBank.cursorItem.slot == frame.slot then
 				-- same source dest
@@ -1411,106 +1261,72 @@ function BankSlot_OnClick(button)
 			end
 			GuildBank:Send("MoveItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.slot)
 			GuildBank:ResetAction()
-			return
 
 		elseif GuildBank:CursorHasSplitItem() then
-
 			-- split item
 			if GuildBank.cursorItem.slot == frame.slot then
 				-- same source dest
 				GuildBank:ResetAction()
 				return
 			end
-			GuildBank:Send("SplitItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.slot .. ":" .. GuildBank.cursorItem.count)
-			GuildBank:ResetAction()
-			return
-
-		else
-			if frame.occupied then
-				-- pick up bank item
-				local texture = _G[frame:GetName() .. "IconTexture"]:GetTexture()
-				GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
-
-				GuildBank.cursorItem = {
-					tab = frame.tab,
-					slot = frame.slot,
-					from = "bank",
-					count = frame.count
-				}
-				-- show frame
-				GuildBank.cursorFrame:Show()
-				return
+			if _G["GuildBankFrameItem"..GuildBank.cursorItem.slot].count == GuildBank.cursorItem.count then
+				GuildBank:Send("MoveItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.slot)
 			else
-				-- click on empty spot without cursoritem, do nothing
-			end
-		end
-
-	end
-	if button == "RightButton" then
-
-		if GuildBank:CursorHasItem() then
-
-			if GuildBank:CursorHasBagItem() then
-				gdebug("has bag item")
-			end
-			if GuildBank:CursorHasBankItem() then
-				gdebug("has bank item")
-			end
-			if GuildBank:CursorHasSplitItem() then
-				gdebug("has split item")
+				GuildBank:Send("SplitItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.slot .. ":" .. GuildBank.cursorItem.count)
 			end
 			GuildBank:ResetAction()
-			return
-		end
 
-		-- auto withdraw from bank
-		if frame.occupied then
+		elseif frame.occupied then
+			-- pick up bank item
+			local texture = _G[frame:GetName() .. "IconTexture"]:GetTexture()
+			GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
+
+			GuildBank.cursorItem.tab = frame.tab
+			GuildBank.cursorItem.slot = frame.slot
+			GuildBank.cursorItem.from = "bank"
+			GuildBank.cursorItem.count = frame.count
+
+			-- show frame
+			GuildBank.cursorFrame:Show()
+		end
+	elseif button == "RightButton" then
+		if GuildBank:CursorHasItem() then
+			GuildBank:ResetAction()
+		elseif frame.occupied then
+			-- auto withdraw from bank
 			GuildBank:Send("WithdrawItem:" .. frame.tab .. ":" .. frame.slot .. ":0:0:" .. frame.count)
 		end
-
 	end
 end
 
-function BankSlot_OnDragStart()
-
-	if GuildBank:TabIsLocked(GuildBank.currentTab) then
-		return
-	end
+function GuildBankSlot_OnDragStart()
+	if GuildBank:TabIsLocked(GuildBank.currentTab) then return end
 
 	local frame = _G["GuildBankFrameItem" .. this:GetID()]
+	if not frame then return end
 
-	if frame.occupied then
-		-- pick up bank item
-		local texture = _G[frame:GetName() .. "IconTexture"]:GetTexture()
-		GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
+	if not frame.occupied then return end
 
-		GuildBank.cursorItem = {
-			tab = frame.tab,
-			slot = frame.slot,
-			from = "bank",
-			count = frame.count
-		}
+	-- pick up bank item
+	local texture = _G[frame:GetName() .. "IconTexture"]:GetTexture()
+	GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
 
-		-- show frame
-		GuildBank.cursorFrame:Show()
-		return
-	else
-		-- start drag from empty slot
-	end
+	GuildBank.cursorItem.tab = frame.tab
+	GuildBank.cursorItem.slot = frame.slot
+	GuildBank.cursorItem.from = "bank"
+	GuildBank.cursorItem.count = frame.count
 
-
+	-- show frame
+	GuildBank.cursorFrame:Show()
 end
 
-function BankSlot_OnReceiveDrag()
-
-	if GuildBank:TabIsLocked(GuildBank.currentTab) then
-		return
-	end
+function GuildBankSlot_OnReceiveDrag()
+	if GuildBank:TabIsLocked(GuildBank.currentTab) then	return end
 
 	local frame = _G["GuildBankFrameItem" .. this:GetID()]
+	if not frame then return end
 
 	if GuildBank:CursorHasBankItem() then
-
 		if GuildBank.cursorItem.slot == frame.slot then
 			-- same source dest
 			GuildBank:ResetAction()
@@ -1520,174 +1336,47 @@ function BankSlot_OnReceiveDrag()
 		GuildBank:Send("MoveItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.slot)
 		GuildBank:ResetAction()
 		return
-
 	end
 
 	if GuildBank:CursorHasBagItem() then
-
-		local texture, count, locked, quality, readable, lootable, itemLink = GetContainerItemInfo(GuildBank.cursorItem.tab, GuildBank.cursorItem.slot);
-		if count < 0 then
-			count = 1
-		end
+		local texture, count, locked, quality, readable = GetContainerItemInfo(GuildBank.cursorItem.tab, GuildBank.cursorItem.slot)
+		if count and count < 0 then count = 1 end
 		GuildBank:Send("DepositItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":" .. frame.tab .. ":" .. frame.slot .. ":" .. count)
-		ClearCursor();
+		ClearCursor()
 		GuildBank:ResetAction()
 		return
-
 	end
-
 end
 
-function GuildBankFrame_StackSplitFrameRight_Click()
-	if GuildBankFrameStackSplitFrame.split == GuildBankFrameStackSplitFrame.maxStack then
-		return
-	end
+function GuildBankSlot_OnEnter()
+	if not this.linkString then return end
 
-	GuildBankFrameStackSplitFrame.split = GuildBankFrameStackSplitFrame.split + 1
-	GuildBankFrameStackSplitFrameSplitText:SetText(GuildBankFrameStackSplitFrame.split)
+	GameTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4) + 10, -(this:GetHeight() / 4))
+	GameTooltip:SetHyperlink(this.linkString)
 
-	if GuildBankFrameStackSplitFrame.split == GuildBankFrameStackSplitFrame.maxStack then
-		GuildBankFrameStackSplitFrameRightButton:Disable()
-	end
-	GuildBankFrameStackSplitFrameLeftButton:Enable()
-end
+	local count = 0
 
-function GuildBankFrame_StackSplitFrameLeft_Click()
-	if GuildBankFrameStackSplitFrame.split == 1 then
-		return
-	end
-
-	GuildBankFrameStackSplitFrame.split = GuildBankFrameStackSplitFrame.split - 1;
-	GuildBankFrameStackSplitFrameSplitText:SetText(GuildBankFrameStackSplitFrame.split);
-
-	if GuildBankFrameStackSplitFrame.split == 1 then
-		GuildBankFrameStackSplitFrameLeftButton:Disable()
-	end
-	GuildBankFrameStackSplitFrameRightButton:Enable()
-end
-
-function GuildBankFrame_StackSplitFrameOkay_Click()
-	if GuildBankFrameStackSplitFrame.owner then
-
-		local texture = _G["GuildBankFrameItem" .. GuildBank.cursorItem.slot .. "IconTexture"]:GetTexture()
-		GuildBankFrameCursorItemFrameTexture:SetTexture(texture)
-
-		GuildBank.cursorItem.count = GuildBankFrameStackSplitFrame.split
-
-		GuildBank.cursorFrame:Show()
-
-	end
-	GuildBankFrameStackSplitFrame:Hide();
-end
-
-function GuildBankFrame_StackSplitFrameCancel_Click()
-	GuildBankFrameStackSplitFrame:Hide();
-end
-
-function GuildBankFrame_OpenStackSplitFrame(maxStack, parent, anchor, anchorTo)
-	if GuildBankFrameStackSplitFrame.owner then
-		GuildBankFrameStackSplitFrame.owner.hasStackSplit = 0
-	end
-
-	GuildBankFrameStackSplitFrame.maxStack = maxStack
-	if GuildBankFrameStackSplitFrame.maxStack < 2 then
-		GuildBankFrameStackSplitFrame:Hide()
-		return
-	end
-
-	GuildBankFrameStackSplitFrame.owner = parent
-	parent.hasStackSplit = 1
-	GuildBankFrameStackSplitFrame.split = 1
-	GuildBankFrameStackSplitFrame.typing = 0
-	GuildBankFrameStackSplitFrameSplitText:SetText(GuildBankFrameStackSplitFrame.split)
-	GuildBankFrameStackSplitFrameLeftButton:Disable()
-	GuildBankFrameStackSplitFrameRightButton:Enable()
-
-	GuildBank.cursorItem.tab = GuildBank.currentTab
-	GuildBank.cursorItem.slot = parent:GetID()
-	GuildBank.cursorItem.from = "split"
-	GuildBank.cursorItem.count = 0
-
-	GuildBankFrameStackSplitFrame:ClearAllPoints()
-	GuildBankFrameStackSplitFrame:SetPoint(anchor, parent, anchorTo, 0, 0)
-	GuildBankFrameStackSplitFrame:Show()
-end
-
-function GuildBankFrame_StackSplitFrame_OnKeyDown()
-	if arg1 == "BACKSPACE" or arg1 == "DELETE" then
-		if this.typing == 0 or this.split == 1 then
-			return
+	for i = 1, MAX_TABS do
+		for _, item in pairs(GuildBank.items[i]) do
+			if this.itemID == item.itemID then
+				if this.name == item.nameIfSuffix then
+					count = count + item.count
+				end
+			end
 		end
-
-		this.split = floor(this.split / 10)
-		if this.split <= 1 then
-			this.split = 1
-			this.typing = 0
-			GuildBankFrameStackSplitFrameLeftButton:Disable()
-		else
-			GuildBankFrameStackSplitFrameLeftButton:Enable()
-		end
-		GuildBankFrameStackSplitFrameSplitText:SetText(this.split)
-		if (this.money == this.maxStack) then
-			GuildBankFrameStackSplitFrameRightButton:Disable()
-		else
-			GuildBankFrameStackSplitFrameRightButton:Enable()
-		end
-	elseif arg1 == "ENTER" then
-		GuildBankFrame_StackSplitFrameOkay_Click()
-	elseif arg1 == "ESCAPE" then
-		GuildBankFrame_StackSplitFrameCancel_Click()
-	elseif arg1 == "LEFT" or arg1 == "DOWN" then
-		GuildBankFrame_StackSplitFrameLeft_Click()
-	elseif arg1 == "RIGHT" or arg1 == "UP" then
-		GuildBankFrame_StackSplitFrameRight_Click()
-	end
-end
-
-function GuildBankFrame_StackSplitFrame_OnChar()
-	if arg1 < "0" or arg1 > "9" then
-		return
 	end
 
-	if this.typing == 0 then
-		this.typing = 1
-		this.split = 0
+	if count > 1 then
+		GameTooltip:AddLine(count .. " " .. GUILD_BANK_QUANTITY, 1, 1, 1, 1)
 	end
 
-	local split = (this.split * 10) + arg1
-	if split == this.split then
-		if this.split == 0 then
-			this.split = 1
-		end
-		return
-	end
-
-	if split <= this.maxStack then
-		this.split = split
-		GuildBankFrameStackSplitFrameSplitText:SetText(split)
-		if split == this.maxStack then
-			GuildBankFrameStackSplitFrameRightButton:Disable()
-		else
-			GuildBankFrameStackSplitFrameRightButton:Enable()
-		end
-		if split == 1 then
-			GuildBankFrameStackSplitFrameLeftButton:Disable()
-		else
-			GuildBankFrameStackSplitFrameLeftButton:Enable()
-		end
-	elseif split == 0 then
-		this.split = 1
-	end
+	GameTooltip:Show()
 end
 
 function GuildBank:UpdateSlot(tab, slot, item, noAnimation)
-
 	local frame = _G["GuildBankFrameItem" .. slot]
 
-	if not frame then
-		gdebug("update slot error, no frame")
-		return
-	end
+	if not frame then return end
 
 	if self:CursorHasItem() and self.currentTab == tab then
 		if self.cursorItem.tab == tab and self.cursorItem.slot == slot then
@@ -1695,9 +1384,7 @@ function GuildBank:UpdateSlot(tab, slot, item, noAnimation)
 		end
 	end
 
-	if tab ~= self.currentTab then
-		return
-	end
+	if tab ~= self.currentTab then return end
 
 	if not item or item.guid == 0 then
 		frame.occupied = false
@@ -1705,47 +1392,44 @@ function GuildBank:UpdateSlot(tab, slot, item, noAnimation)
 		frame.itemID = 0
 		frame.guid = 0
 		frame.name = "0"
-		SetItemButtonTexture(frame, nil);
+		SetItemButtonTexture(frame, nil)
 		_G[frame:GetName() .. "Count"]:Hide()
-		self:RemoveButtonOnEnterTooltip(frame)
+		frame.linkString = nil
 		return
 	end
 
-	if item.guid ~= 0 then
+	if item.guid == 0 then return end
 
-		frame.occupied = true
-		frame.tab = item.tab
-		frame.itemID = item.itemID
-		frame.count = item.count
-		frame.guid = item.guid
-		frame.name = item.nameIfSuffix
+	frame.occupied = true
+	frame.tab = item.tab
+	frame.itemID = item.itemID
+	frame.count = item.count
+	frame.guid = item.guid
+	frame.name = item.nameIfSuffix
 
-		local name, linkString, _, _, _, _, maxStack, _, texture = GetItemInfo(item.itemID)
+	local name, linkString, _, _, _, _, maxStack, _, texture = GetItemInfo(item.itemID)
 
-		if not name then
-			-- cache
-			self:CacheItem(item.itemID)
-			return
-		end
+	if not name then
+		self:CacheItem(item.itemID)
+		return
+	end
 
-		linkString = gsub(linkString, ":0:0:0", ":" .. item.enchant .. ":" .. item.randomProperty .. ":0")
+	linkString = gsub(linkString, ":0:0:0", ":" .. item.enchant .. ":" .. item.randomProperty .. ":0")
+	frame.linkString = linkString
+	frame.maxStack = maxStack
 
-		frame.maxStack = maxStack
+	SetItemButtonTexture(frame, texture)
+	SetDesaturation(_G["GuildBankFrameItem" .. slot .. "IconTexture"], self:TabIsLocked(tab) and 1 or 0)
 
-		SetItemButtonTexture(frame, texture);
+	_G["GuildBankFrameItem" .. item.slot .. "Count"]:Hide()
 
-		_G["GuildBankFrameItem" .. item.slot .. "Count"]:Hide()
+	if item.count > 1 then
+		_G["GuildBankFrameItem" .. item.slot .. "Count"]:SetText(item.count)
+		_G["GuildBankFrameItem" .. item.slot .. "Count"]:Show()
+	end
 
-		if item.count > 1 then
-			_G["GuildBankFrameItem" .. item.slot .. "Count"]:SetText(item.count)
-			_G["GuildBankFrameItem" .. item.slot .. "Count"]:Show()
-		end
-
-		if self.currentTab == frame.tab and not noAnimation then
-			ComboPointShineFadeIn(_G["GuildBankFrameItem" .. frame.slot .. "Shine"])
-		end
-
-		self:AddButtonOnEnterTooltip(frame, linkString)
+	if self.currentTab == frame.tab and not noAnimation then
+		ComboPointShineFadeIn(_G["GuildBankFrameItem" .. frame.slot .. "Shine"])
 	end
 end
 
@@ -1753,10 +1437,10 @@ function GuildBank:UpdateTabTitle()
 
 	if not self.tabs.info then return end
 
-	local accessText = ITEM_QUALITY_COLORS[2].hex .. "(" .. GUILD_BANK_FULL_ACCESS .. ")"
+	local accessText = GREEN_FONT_COLOR_CODE .. "(" .. GUILD_BANK_FULL_ACCESS .. ")|r"
 
 	if self:TabIsLocked(self.currentTab) then
-		accessText = "|cffff1111(" .. GUILD_BANK_LOCKED .. ")"
+		accessText = RED_FONT_COLOR_CODE .. "(" .. GUILD_BANK_LOCKED .. ")|r"
 	end
 
 	GuildBankFrameWithdrawalsTitle:Hide()
@@ -1795,49 +1479,19 @@ function GuildBank_UnlockTab_Accept(moneySource)
 	GuildBank:Send("UnlockTab:" .. GuildBank.cost.tab .. ":" .. moneySource)
 end
 
-function GuildBankFrameBottomTab_Disable(tab)
-	local name = tab:GetName();
-	_G[name .. "Left"]:Show()
-	_G[name .. "Middle"]:Show()
-	_G[name .. "Right"]:Show()
-	tab:Enable();
-	_G[name .. "LeftDisabled"]:Hide()
-	_G[name .. "MiddleDisabled"]:Hide()
-	_G[name .. "RightDisabled"]:Hide()
-end
-
-function GuildBankFrameBottomTab_Enable(tab)
-	local name = tab:GetName();
-	_G[name .. "Left"]:Hide()
-	_G[name .. "Middle"]:Hide()
-	_G[name .. "Right"]:Hide()
-	tab:Disable();
-	_G[name .. "LeftDisabled"]:Show()
-	_G[name .. "MiddleDisabled"]:Show()
-	_G[name .. "RightDisabled"]:Show()
-end
-
 function GuildBankFrameBottomTab_OnClick(id)
-
-	PlaySound("igCharacterInfoTab");
+	PlaySound("igCharacterInfoTab")
 
 	GuildBank.BottomTab = id
 	GuildBank:ResetAction()
-
-	GuildBankFrameBottomTab_Disable(GuildBankFrameBottomTab1)
-	GuildBankFrameBottomTab_Disable(GuildBankFrameBottomTab2)
-	GuildBankFrameBottomTab_Disable(GuildBankFrameBottomTab3)
-
-	GuildBankFrameBottomTab_Enable(_G["GuildBankFrameBottomTab" .. id])
-
 	GuildBankFrameSlots:Hide()
 	GuildBankFrameLog:Hide()
 	GuildBankFrameMoneyLog:Hide()
 
 	-- enable tab buttons
 	for i = 1, GuildBank.tabs.numTabs do
-		_G["GuildBankFrameTab" .. i]:Enable()
-		SetDesaturation(_G["GuildBankFrameTab" .. i]:GetNormalTexture(), 0)
+		_G["GuildBankFrameGuildTab" .. i]:Enable()
+		SetDesaturation(_G["GuildBankFrameGuildTab" .. i]:GetNormalTexture(), 0)
 	end
 
 	if GuildBank.BottomTab == 1 then
@@ -1848,8 +1502,8 @@ function GuildBankFrameBottomTab_OnClick(id)
 	elseif GuildBank.BottomTab == 3 then
 		-- disable tab buttons
 		for i = 1, GuildBank.tabs.numTabs do
-			_G["GuildBankFrameTab" .. i]:Disable()
-			SetDesaturation(_G["GuildBankFrameTab" .. i]:GetNormalTexture(), 1)
+			_G["GuildBankFrameGuildTab" .. i]:Disable()
+			SetDesaturation(_G["GuildBankFrameGuildTab" .. i]:GetNormalTexture(), 1)
 		end
 		GuildBank:ShowMoneyLog()
 	end
@@ -1858,6 +1512,9 @@ function GuildBankFrameBottomTab_OnClick(id)
 end
 
 function GuildBankFrameTab_OnClick(id, initial)
+	for i = 1, MAX_TABS do
+		_G["GuildBankFrameGuildTab"..i]:SetChecked(GuildBank.currentTab == i)
+	end
 
 	if arg1 == "RightButton" then
 		if GuildBank:IsGm() and id <= GuildBank.tabs.numTabs then
@@ -1868,92 +1525,42 @@ function GuildBankFrameTab_OnClick(id, initial)
 
 	GuildBank:ResetAction()
 
-	if GuildBank.currentTab == id and not initial then
-		_G["GuildBankFrameTab" .. id]:SetChecked(true)
-		return
-	end
-
-	if _G["GuildBankFrameTab" .. id].unlocked then
-
+	if _G["GuildBankFrameGuildTab" .. id].unlocked then
 		GuildBank.currentTab = id
-
-		for i = 1, MAX_TABS do
-			_G["GuildBankFrameTab"..i]:SetChecked(false)
-		end
-
-		_G["GuildBankFrameTab" .. id]:SetChecked(true)
-
 		-- reset all slots
 		for i = 1, MAX_SLOTS do
 			GuildBank:UpdateSlot(GuildBank.currentTab, i, nil, true)
 		end
-
 		-- fill
 		for _, item in GuildBank.items[GuildBank.currentTab] do
 			GuildBank:UpdateSlot(item.tab, item.slot, item, true)
 		end
-
 		if not initial then
-			PlaySoundFile("Interface\\GuildBankFrame\\GuildBankOpenTab" .. math.random(1, 4) .. ".wav", "Dialog");
+			PlaySoundFile("Interface\\GuildBankFrame\\GuildBankOpenTab" .. math.random(1, 4) .. ".wav")
 		end
-
 		GuildBank:Update()
-
 		-- log
 		if GuildBank.BottomTab == 2 then
 			GuildBank:ShowLog(id)
 		end
-
 	else
-		_G["GuildBankFrameTab" .. id]:SetChecked(false)
+		_G["GuildBankFrameGuildTab" .. id]:SetChecked(false)
 		GuildBank.cost.tab = id
 		GuildBank:Send("UnlockTabCost:" .. id)
 	end
-
 end
 
 function GuildBankFrameSaveTabSettings()
-	if GuildBank.newTabSettings.info.name == "" then
-		StaticPopup_Show("RENAME_TAB_BAD")
+	if GuildBankFrameTabSettingsSaveButton:IsEnabled() == 0 then
 		return
 	end
-
-	local start, finish = 1, 1
-	for i = 1, string.len(GuildBank.newTabSettings.info.name) do
-		if string.sub(GuildBank.newTabSettings.info.name, i, i) ~= " " then
-			start = i
-			break
-		end
-	end
-	for i = string.len(GuildBank.newTabSettings.info.name), 1, -1 do
-		if string.sub(GuildBank.newTabSettings.info.name, i, i) ~= " " then
-			finish = i
-			break
-		end
-	end
-
-	if start == finish or string.len(string.sub(GuildBank.newTabSettings.info.name, start, finish)) < 2 then
-		StaticPopup_Show("RENAME_TAB_BAD")
-		return
-	end
-
-	GuildBank.newTabSettings.info.name = string.sub(GuildBank.newTabSettings.info.name, start, finish)
 
 	GuildBank:Send("UpdateTab:" .. GuildBank.newTabSettings.tab .. ":" ..
-	GuildBank.newTabSettings.info.name .. ":" ..
-	GuildBank.newTabSettings.info.icon .. ":" ..
-	GuildBank.newTabSettings.info.withdrawals .. ":" ..
-	GuildBank.newTabSettings.info.minrank)
+	GuildBank.newTabSettings.name .. ":" ..
+	GuildBank.newTabSettings.icon .. ":" ..
+	GuildBank.newTabSettings.withdrawals .. ":" ..
+	GuildBank.newTabSettings.minrank)
 
-	GuildBankFrameCloseTabSettings()
-end
-
-function GuildBankFrameCloseTabSettings()
-	GuildBank.newTabSettings = {
-		tab = nil,
-		info = nil,
-		ghettoTrigger = 0
-	}
 	GuildBankFrameTabSettings:Hide()
 end
 
@@ -1964,7 +1571,7 @@ function GuildBankFrameWithdrawalsDropDown_Initialize()
 		info.value = i
 		info.arg1 = i
 		info.func = GuildBankFrameWithdrawalsDropDown_Set
-		info.checked = i == GuildBank.newTabSettings.info.withdrawals
+		info.checked = i == GuildBank.newTabSettings.withdrawals
 		UIDropDownMenu_AddButton(info)
 	end
 end
@@ -1976,8 +1583,8 @@ function GuildBankFrameAccessDropdown_Initialize()
 		info.value = i - 1
 		info.arg1 = i - 1
 		info.func = GuildBankFrameMinRankDropDown_Set
-		info.checked = i - 1 == GuildBank.newTabSettings.info.minrank
-		UIDropDownMenu_AddButton(info);
+		info.checked = i - 1 == GuildBank.newTabSettings.minrank
+		UIDropDownMenu_AddButton(info)
 	end
 end
 
@@ -1987,150 +1594,164 @@ function GuildBankFrameWithdrawalsDropDown_Set(value)
 	else
 		UIDropDownMenu_SetText(value, GuildBankFrameTabSettingsWithdrawalsDropdown)
 	end
-	GuildBank.newTabSettings.info.withdrawals = value
-	GuildBankFrameTabSettings_Changed(true)
+	GuildBank.newTabSettings.withdrawals = value
+	GuildBankFrameTabSettings_Changed()
 end
 
 function GuildBankFrameMinRankDropDown_Set(value)
 	UIDropDownMenu_SetText(GuildBank.guildRanks[value], GuildBankFrameTabSettingsAccessDropdown)
-	GuildBank.newTabSettings.info.minrank = value
-	GuildBankFrameTabSettings_Changed(true)
+	GuildBank.newTabSettings.minrank = value
+	GuildBankFrameTabSettings_Changed()
 end
 
 function GuildBankFrameWithdrawalsIcon_OnClick()
-	for i in GuildBank.tabIcons do
-		_G["GuildBankFrameIcon" .. i .. "Selected"]:Hide()
+	local id = this:GetID()
+	for i = 1, getn(GuildBank.iconFrames) do
+		GuildBank.iconFrames[i]:SetChecked(false)
 	end
-
-	_G["GuildBankFrameIcon" .. this:GetID() .. "Selected"]:Show()
-
-	GuildBank.newTabSettings.info.icon = GuildBank.tabIcons[this:GetID()]
-
-	GuildBankFrameTabSettings_Changed(true)
+	this:SetChecked(true)
+	GuildBank.newTabSettings.icon = GuildBank.tabIcons[id]
+	GuildBankFrameTabSettings_Changed()
 end
 
-function GuildBankFrameTabSettings_Changed(force)
-	if GuildBank.newTabSettings.ghettoTrigger == 0 and not force then
-		GuildBank.newTabSettings.ghettoTrigger = GuildBank.newTabSettings.ghettoTrigger + 1
+function GuildBankFrameTabSettings_Changed()
+	local name = trim(GuildBankFrameTabSettingsTabNameEditBox:GetText())
+
+	if strlen(name) < 2 or strfind(name, ":", 1, true) then
+		GuildBankFrameTabSettingsSaveButton:Disable()
 		return
 	end
-	GuildBank.newTabSettings.info.name = GuildBankFrameTabSettingsTabNameEditBox:GetText()
-	if string.len(GuildBank.newTabSettings.info.name) < 2 or GuildBank.newTabSettings.info.name == "" then
-		GuildBankFrameTabSettingsSaveButton:Disable()
-	else
+
+	GuildBank.newTabSettings.name = name
+
+	local enableSave
+	for k in pairs(GuildBank.newTabSettings) do
+		if GuildBank.newTabSettings[k] ~= GuildBank.oldTabSettings[k] then
+			enableSave = true
+			break
+		end
+	end
+
+	if enableSave then
 		GuildBankFrameTabSettingsSaveButton:Enable()
+	else
+		GuildBankFrameTabSettingsSaveButton:Disable()
 	end
 end
 
 function GuildBank:UpdateTabs()
-	if not self.gossipOpen then
-		return
-	end
+	if not self.gossipOpen then return end
 
-	if not self.tabs.numTabs then
-		return
-	end
+	if not self.tabs.numTabs then return end
 
 	for i = 1, MAX_TABS do
-		_G["GuildBankFrameTab" .. i]:Hide()
+		_G["GuildBankFrameGuildTab" .. i]:Hide()
 	end
 
 	for i = 1, self.tabs.numTabs do
-		_G["GuildBankFrameTab" .. i]:SetNormalTexture("Interface\\Icons\\" .. self.tabs.info[i].icon)
-		_G["GuildBankFrameTab" .. i]:SetPushedTexture("Interface\\Icons\\" .. self.tabs.info[i].icon)
-		_G["GuildBankFrameTab" .. i].tooltip = self.tabs.info[i].name
-		_G["GuildBankFrameTab" .. i].tooltip2 = self:IsGm() and GUILD_BANK_MANAGE or nil
-		_G["GuildBankFrameTab" .. i].unlocked = true
-		_G["GuildBankFrameTab" .. i]:Show()
+		_G["GuildBankFrameGuildTab" .. i]:SetNormalTexture("Interface\\Icons\\" .. self.tabs.info[i].icon)
+		_G["GuildBankFrameGuildTab" .. i]:SetPushedTexture("Interface\\Icons\\" .. self.tabs.info[i].icon)
+		_G["GuildBankFrameGuildTab" .. i].tooltip = self.tabs.info[i].name
+		_G["GuildBankFrameGuildTab" .. i].tooltip2 = self:IsGm() and GUILD_BANK_MANAGE or nil
+		_G["GuildBankFrameGuildTab" .. i].unlocked = true
+		_G["GuildBankFrameGuildTab" .. i]:Show()
 	end
 
 	-- guild master
 	if self.tabs.numTabs < MAX_TABS and self:IsGm() then
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1]:Show()
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1].tooltip = GUILD_BANK_BUY_TAB .. " " .. self.tabs.numTabs + 1
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1].unlocked = false
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1].tooltip2 = nil
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1]:SetNormalTexture("Interface\\GuildBankFrame\\UI-GuildBankFrame-NewTab")
-		_G["GuildBankFrameTab" .. self.tabs.numTabs + 1]:SetPushedTexture("Interface\\GuildBankFrame\\UI-GuildBankFrame-NewTab")
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1]:Show()
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1].tooltip = GUILD_BANK_BUY_TAB .. " " .. self.tabs.numTabs + 1
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1].unlocked = false
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1].tooltip2 = nil
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1]:SetNormalTexture("Interface\\GuildBankFrame\\UI-GuildBankFrame-NewTab")
+		_G["GuildBankFrameGuildTab" .. self.tabs.numTabs + 1]:SetPushedTexture("Interface\\GuildBankFrame\\UI-GuildBankFrame-NewTab")
 	end
 
 	for i = 1, MAX_TABS do
-		_G["GuildBankFrameTab" .. i]:SetChecked(false)
+		_G["GuildBankFrameGuildTab" .. i]:SetChecked(i == self.currentTab)
 	end
-	_G["GuildBankFrameTab" .. self.currentTab]:SetChecked(true)
-
 end
 
 function GuildBank:OpenTabSettings(tab)
+	self.oldTabSettings.tab = tab
+	self.oldTabSettings.name = self.tabs.info[tab].name
+	self.oldTabSettings.icon = self.tabs.info[tab].icon
+	self.oldTabSettings.minrank = self.tabs.info[tab].minrank
+	self.oldTabSettings.withdrawals = self.tabs.info[tab].withdrawals
 
-	self.newTabSettings = {
-		tab = tab,
-		info = self.tabs.info[tab],
-		ghettoTrigger = 0 -- yeah...
-	}
+	self.newTabSettings.tab = tab
+	self.newTabSettings.name = self.oldTabSettings.name
+	self.newTabSettings.icon = self.oldTabSettings.icon
+	self.newTabSettings.minrank = self.oldTabSettings.minrank
+	self.newTabSettings.withdrawals = self.oldTabSettings.withdrawals
 
 	-- ranks
 	self.guildRanks = {}
 	for i = 1, GuildControlGetNumRanks() do
-		self.guildRanks[i - 1] = GuildControlGetRankName(i);
+		self.guildRanks[i - 1] = GuildControlGetRankName(i)
 	end
 
 	-- name
-	GuildBankFrameTabSettingsTabNameEditBox:SetText(self.tabs.info[tab].name)
+	GuildBankFrameTabSettingsTabNameEditBox:SetText(self.oldTabSettings.name)
 
 	-- withdrawals
-	local withdrawalsText = self.tabs.info[tab].withdrawals
+	local withdrawalsText = self.oldTabSettings.withdrawals
 	if withdrawalsText == 0 then
 		withdrawalsText = GUILD_BANK_WITHDRAWAL_UNLIMITED
 	end
 
-	UIDropDownMenu_Initialize(GuildBankFrameTabSettingsWithdrawalsDropdown, GuildBankFrameWithdrawalsDropDown_Initialize);
-	UIDropDownMenu_SetWidth(80, GuildBankFrameTabSettingsWithdrawalsDropdown);
+	UIDropDownMenu_Initialize(GuildBankFrameTabSettingsWithdrawalsDropdown, GuildBankFrameWithdrawalsDropDown_Initialize)
+	UIDropDownMenu_SetWidth(80, GuildBankFrameTabSettingsWithdrawalsDropdown)
 	UIDropDownMenu_SetText(withdrawalsText, GuildBankFrameTabSettingsWithdrawalsDropdown)
 
 	-- access
-	UIDropDownMenu_Initialize(GuildBankFrameTabSettingsAccessDropdown, GuildBankFrameAccessDropdown_Initialize);
-	UIDropDownMenu_SetWidth(80, GuildBankFrameTabSettingsAccessDropdown);
-	UIDropDownMenu_SetText(self.guildRanks[self.tabs.info[tab].minrank], GuildBankFrameTabSettingsAccessDropdown)
+	UIDropDownMenu_Initialize(GuildBankFrameTabSettingsAccessDropdown, GuildBankFrameAccessDropdown_Initialize)
+	UIDropDownMenu_SetWidth(80, GuildBankFrameTabSettingsAccessDropdown)
+	UIDropDownMenu_SetText(self.guildRanks[self.oldTabSettings.minrank], GuildBankFrameTabSettingsAccessDropdown)
 
 	-- icons
-	self.iconFrames = {}
+	self.iconFrames = self.iconFrames or {}
 
-	local col = 0
-	local row = 0
-
-	for i, icon in self.tabIcons do
-
-		if not self.iconFrames[i] then
-			self.iconFrames[i] = CreateFrame("Button", "GuildBankFrameIcon" .. i, GuildBankFrameTabSettingsScrollFrameChildren, "GuildBankFrameTabIconButtonTemplate")
+	local maxCol = 5
+	local maxRow = 6
+	local index = 1
+	if not self.iconFrames[1] then
+		for row = 1, maxRow do
+			for col = 1, maxCol do
+				local frame = CreateFrame("CheckButton", "GuildBankFrameIcon" .. index, GuildBankFrameTabSettings, "GuildBankFrameTabIconButtonTemplate")
+				frame:SetPoint("TOPLEFT", GuildBankFrameTabSettings, "TOPLEFT", (col - 1) * 36 + 8, -(row - 1) * 36 - 111)
+				frame:Show()
+				self.iconFrames[index] = frame
+				index = index + 1
+			end
 		end
-
-		SetItemButtonTexture(_G["GuildBankFrameIcon" .. i], "Interface\\Icons\\" .. icon);
-
-		self.iconFrames[i]:SetPoint("TOPLEFT", GuildBankFrameTabSettingsScrollFrameChildren, "TOPLEFT", col * 36 + 3, -row * 36)
-		self.iconFrames[i]:Show()
-		self.iconFrames[i]:SetID(i)
-
-		_G["GuildBankFrameIcon" .. i .. "Selected"]:Hide()
-		if icon == self.tabs.info[tab].icon then
-			_G["GuildBankFrameIcon" .. i .. "Selected"]:Show()
-		end
-
-		col = col + 1
-
-		if col == 5 then
-			col = 0
-			row = row + 1
-		end
-
 	end
 
 	GuildBankFrameTabSettingsSaveButton:Disable()
-
 	GuildBankFrameTabSettingsWithdrawalsDropdown:Enable()
 	GuildBankFrameTabSettingsWithdrawalsDropdownButton:Enable()
-
 	GuildBankFrameTabSettings:Show()
+	GuildBankFrameTabSettingsScrollFrame_Update()
+end
+
+function GuildBankFrameTabSettingsScrollFrame_Update()
+	local offset = FauxScrollFrame_GetOffset(GuildBankFrameTabSettingsScrollFrame) or 0
+	for i = 1, 30 do
+		local frame = GuildBank.iconFrames[i]
+		if frame then
+			local iconIndex = i + (offset * 5)
+			local texture = GuildBank.tabIcons[iconIndex]
+			if texture then
+				SetItemButtonTexture(frame, "Interface\\Icons\\" .. texture)
+				frame:SetID(iconIndex)
+				frame:SetChecked(strlower(texture) == strlower(GuildBank.newTabSettings.icon))
+				frame:Show()
+			else
+				frame:Hide()
+			end
+		end
+	end
+	FauxScrollFrame_Update(GuildBankFrameTabSettingsScrollFrame, ceil(getn(GuildBank.tabIcons) / 5), 6, 36)
 end
 
 function GuildBank:GetTabWithdrawalsLeft()
@@ -2138,37 +1759,16 @@ function GuildBank:GetTabWithdrawalsLeft()
 end
 
 function GuildBank:TabIsLocked(tab)
-	if not self.guildInfo or not self.guildInfo.rankIndex then
-		return true
-	end
-	if not self.tabs or
-		not self.tabs.info or
-		not self.tabs.info[tab] then
-		return true
-	end
+	if not self.guildInfo or not self.guildInfo.rankIndex then return true end
 
-	if self:IsGm() then
-		return false
-	end
+	if not self.tabs or not self.tabs.info or not self.tabs.info[tab] then return true end
 
-	if self.guildInfo.rankIndex > self.tabs.info[tab].minrank then
-		return true
-	end
+	if self:IsGm() then return false end
+
+	if self.guildInfo.rankIndex > self.tabs.info[tab].minrank then return true end
 
 	if self.tabs.info[tab].withdrawals > 0 then
-
-		if tonumber(self.withdrawalsLeft[tab]) == 0 then
-			return true
-		end
-
-		--if self.withdrawalsLeft[tab] == "Unlimited" then
-		--	 return false
-		--else
-		--	 if tonumber(self.withdrawalsLeft[tab]) == 0 then
-		--		  return true
-		--	 end
-		--end
-
+		if tonumber(self.withdrawalsLeft[tab]) == 0 then return true end
 	end
 
 	return false
@@ -2204,9 +1804,9 @@ end
 ------------------------------------------------------------
 
 function GuildBankFrameMoneyFrame_OnLoad()
-	GuildBankFrameMoneyFrameGoldButton:EnableMouse(false);
-	GuildBankFrameMoneyFrameSilverButton:EnableMouse(false);
-	GuildBankFrameMoneyFrameCopperButton:EnableMouse(false);
+	GuildBankFrameMoneyFrameGoldButton:EnableMouse(false)
+	GuildBankFrameMoneyFrameSilverButton:EnableMouse(false)
+	GuildBankFrameMoneyFrameCopperButton:EnableMouse(false)
 end
 
 function GuildBank:UpdateMoney()
@@ -2217,15 +1817,15 @@ function GuildBank:UpdateMoney()
 	local silverButton = GuildBankFrameMoneyFrameSilverButton
 	local copperButton = GuildBankFrameMoneyFrameCopperButton
 
-	goldButton:SetText(gold);
-	goldButton:SetWidth(goldButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL);
-	goldButton:Show();
-	silverButton:SetText(silver);
-	silverButton:SetWidth(silverButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL);
-	silverButton:Show();
-	copperButton:SetText(copper);
-	copperButton:SetWidth(copperButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL);
-	copperButton:Show();
+	goldButton:SetText(gold)
+	goldButton:SetWidth(goldButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL)
+	goldButton:Show()
+	silverButton:SetText(silver)
+	silverButton:SetWidth(silverButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL)
+	silverButton:Show()
+	copperButton:SetText(copper)
+	copperButton:SetWidth(copperButton:GetTextWidth() + MONEY_ICON_WIDTH_SMALL)
+	copperButton:Show()
 	GuildBankFrameMoneyFrameAvailableMoneyText:ClearAllPoints()
 	GuildBankFrameMoneyFrameAvailableMoneyText:SetPoint("RIGHT", GuildBankFrameMoneyFrameGoldButtonText, "LEFT", -4, 0)
 end
@@ -2245,23 +1845,6 @@ end
 ------------------------------------------------------------
 ------------------------------------------- Log
 ------------------------------------------------------------
-
-function TWGuildLogHyperlinkClick()
-	ChatFrame_OnHyperlinkShow(arg1, arg2, arg3)
-end
-
-function TWGuildLog_OnScroll()
-	if arg1 > 0 then
-		this:ScrollUp()
-	else
-		if IsShiftKeyDown() then
-			this:ScrollToBottom();
-		else
-			this:ScrollDown()
-		end
-	end
-end
-
 function GuildBank:GetTabLog(tab)
 	self:Send("GetTabLog:" .. tab)
 end
@@ -2271,70 +1854,69 @@ function GuildBank:GetMoneyLog()
 end
 
 function GuildBank:ShowLog(tab)
-
 	GuildBankFrameLog:Show()
 	GuildBankFrameLog:Clear()
+
 	if sizeof(self.log[tab]) == 0 then
 		GuildBankFrameLog:AddMessage(GUILD_BANK_NO_LOG)
+		return
 	end
 
-	for _, line in self.log[tab] do
+	for _, line in ipairs(self.log[tab]) do
 		if line.item then
 			local name, _, quality = GetItemInfo(line.item)
 			line.name = name or UNKNOWN
 			line.quality = quality or 1
 			local count = ""
-			local actionText = ""
-			local playerName = COLOR_PLAYER .. line.player .. " "
+			local fmt = ""
+			local playerName = line.player
 			local itemLink = ""
 
 			if line.count > 1 then
-				count = " x " .. line.count
+				count = " x" .. line.count
 			end
 
 			itemLink = "|Hitem:" .. line.item .. ":" .. line.enchant .. ":" .. line.randomProperty .. ":0:0:0:0:0:0|h" .. ITEM_QUALITY_COLORS[line.quality].hex .. "[" .. line.name .. "]|h|r" .. count
 
 			if line.action == ACTION_WITHDRAW then
-				actionText = TEXT_WITHDREW
+				fmt = GUILD_BANK_WITHDREW
 			elseif line.action == ACTION_DEPOSIT then
-				actionText = TEXT_DEPOSITT
+				fmt = GUILD_BANK_DEPOSITED
 			elseif line.action == ACTION_DESTROY then
-				actionText = TEXT_DESTROY
+				fmt = GUILD_BANK_DESTROYED
 			end
 
 			local stamp = date(STAMP_FORMAT, line.stamp)
-			stamp = " |cffafafaf(" .. stamp .. ")"
 
-			GuildBankFrameLog:AddMessage(playerName .. actionText .. itemLink .. stamp);
+			GuildBankFrameLog:AddMessage(format(fmt, stamp, playerName, itemLink))
 		end
 	end
-
 end
 
 function GuildBank:ShowMoneyLog()
-
 	GuildBankFrameMoneyLog:Show()
 	GuildBankFrameMoneyLog:Clear()
+
 	if sizeof(self.moneyLog) == 0 then
-		GuildBankFrameLog:AddMessage(GUILD_BANK_NO_LOG)
+		GuildBankFrameMoneyLog:AddMessage(GUILD_BANK_NO_LOG)
+		return
 	end
 
-	for _, line in self.moneyLog do
-
-		local playerName = COLOR_PLAYER .. line.player .. " "
-		local actionText = ""
+	for _, line in ipairs(self.moneyLog) do
+		local playerName = line.player
+		local fmt = ""
 		local money = ""
 
 		if line.action == ACTION_UNLOCK_GUILD_BANK then
-			actionText = "|cff0abb34" .. GUILD_BANK_LOG_UNLOCK_BANK .. " "
+			fmt = GUILD_BANK_LOG_UNLOCK_BANK
 		elseif line.action == ACTION_UNLOCK_GUILD_TAB_GUILD_MONEY then
-			actionText = "|cff0abb34" .. GUILD_BANK_LOG_UNLOCK_TAB1 .. " "
+			fmt = GUILD_BANK_LOG_UNLOCK_TAB1
 		elseif line.action == ACTION_UNLOCK_GUILD_TAB_PERSONAL_MONEY then
-			actionText = "|cff0abb34" .. GUILD_BANK_LOG_UNLOCK_TAB2 .. " "
+			fmt = GUILD_BANK_LOG_UNLOCK_TAB2
 		elseif line.action == ACTION_WITHDRAW_MONEY then
-			actionText = TEXT_WITHDREW
+			fmt = GUILD_BANK_WITHDREW
 		elseif line.action == ACTION_DEPOSIT_MONEY then
-			actionText = TEXT_DEPOSITT
+			fmt = GUILD_BANK_DEPOSITED
 		else
 			return
 		end
@@ -2344,22 +1926,19 @@ function GuildBank:ShowMoneyLog()
 		local copper = mod(line.money, COPPER_PER_SILVER)
 
 		if gold > 0 then
-			money = "|r" .. gold .. COLOR_GOLD .. "g"
+			money = gold..COLOR_GOLD.." "..strlower(GOLD).."|r"
 		end
 		if silver > 0 then
-			money = money .. "|r" .. silver .. COLOR_SILVER .. "s"
+			money = money.." "..silver..COLOR_SILVER.." "..strlower(SILVER).."|r"
 		end
 		if copper > 0 then
-			money = money .. "|r" .. copper .. COLOR_COPPER .. "c"
+			money = money.." "..copper..COLOR_COPPER.." "..strlower(COPPER).."|r"
 		end
 
 		local stamp = date(STAMP_FORMAT, line.stamp)
-		stamp = " |cffafafaf(" .. stamp .. ")"
 
-		GuildBankFrameMoneyLog:AddMessage(playerName .. actionText .. money .. stamp);
-
+		GuildBankFrameMoneyLog:AddMessage(format(fmt, stamp, playerName, money))
 	end
-
 end
 
 function GuildBank:AppendLog(tab, line)
@@ -2378,9 +1957,7 @@ function GuildBank:AppendLog(tab, line)
 	local randomProperty = tonumber(log[8])
 	local enchant = tonumber(log[9])
 
-	if not self.log[tab] then
-		self.log[tab] = {}
-	end
+	if not self.log[tab] then self.log[tab] = {} end
 
 	tinsert(self.log[tab], {
 		stamp = stamp,
@@ -2418,26 +1995,24 @@ end
 ------------------------------------------- Popups
 ------------------------------------------------------------
 
-StaticPopupDialogs["UNLOCK_GUILD_BANK"] = {
-	text = TEXT(GUILD_BANK_POPUP_UNLOCK),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
+StaticPopupDialogs["GUILDBANK_UNLOCK"] = {
+	text = GUILD_BANK_POPUP_UNLOCK,
+	button1 = YES,
+	button2 = NO,
 	OnAccept = function()
 		GuildBank_UnlockGuildBank_Accept()
 	end,
 	OnCancel = function()
 		CloseGossip()
 	end,
-	timeout = 0,
-	whileDead = 0,
 	hideOnEscape = 1,
-};
+}
 
-StaticPopup2Dialogs["UNLOCK_GUILD_BANK_TAB"] = {
-	text = TEXT(GUILD_BANK_POPUP_UNLOCK_TAB),
-	button1 = TEXT(GUILD_BANK_POPUP_UNLOCK_TAB_BUTTON1),
-	button3 = TEXT(GUILD_BANK_POPUP_UNLOCK_TAB_BUTTON2),
-	button2 = TEXT(CANCEL),
+StaticPopupDialogs["GUILDBANK_UNLOCK_TAB"] = {
+	text = GUILD_BANK_POPUP_UNLOCK_TAB,
+	button1 = GUILD_BANK_POPUP_UNLOCK_TAB_BUTTON1,
+	button3 = GUILD_BANK_POPUP_UNLOCK_TAB_BUTTON2,
+	button2 = CANCEL,
 	OnAccept = function()
 		GuildBank_UnlockTab_Accept(0) -- bank gold
 	end,
@@ -2458,63 +2033,51 @@ StaticPopup2Dialogs["UNLOCK_GUILD_BANK_TAB"] = {
 			tabCost = 0,
 		}
 	end,
-	timeout = 0,
 	hideOnEscape = 1
-};
+}
 
-StaticPopupDialogs["RENAME_TAB_BAD"] = {
-	text = TEXT(GUILD_BANK_POPUP_INVALID_NAME),
-	button1 = TEXT(OKAY),
-	timeout = 0,
-	exclusive = 1,
-	whileDead = 1,
-	hideOnEscape = 1
-};
-
-StaticPopup2Dialogs["GUILDBANK_WITHDRAW_MONEY"] = {
-	text = TEXT(GUILD_BANK_POPUP_WITHDRAW),
-	button1 = TEXT(ACCEPT),
-	button2 = TEXT(CANCEL),
+StaticPopupDialogs["GUILDBANK_WITHDRAW_MONEY"] = {
+	text = GUILD_BANK_POPUP_WITHDRAW,
+	button1 = ACCEPT,
+	button2 = CANCEL,
 	OnAccept = function()
 		local moneyInputFrame = _G[this:GetParent():GetName() .. "MoneyInputFrame"]
-		GuildBankFrameMoneyFrameWithdrawMoney(MoneyInputFrame_GetCopper(moneyInputFrame));
+		GuildBankFrameMoneyFrameWithdrawMoney(MoneyInputFrame_GetCopper(moneyInputFrame))
 	end,
 	OnHide = function()
 		MoneyInputFrame_ResetMoney(_G[this:GetName() .. "MoneyInputFrame"])
 	end,
 	EditBoxOnEnterPressed = function()
-		GuildBankFrameMoneyFrameWithdrawMoney(MoneyInputFrame_GetCopper(this:GetParent()));
-		this:GetParent():GetParent():Hide();
+		GuildBankFrameMoneyFrameWithdrawMoney(MoneyInputFrame_GetCopper(this:GetParent()))
+		this:GetParent():GetParent():Hide()
 	end,
 	hasMoneyInputFrame = 1,
-	timeout = 0,
 	hideOnEscape = 1
-};
+}
 
-StaticPopup2Dialogs["GUILDBANK_DEPOSIT_MONEY"] = {
-	text = TEXT(GUILD_BANK_POPUP_DEPOSIT),
-	button1 = TEXT(ACCEPT),
-	button2 = TEXT(CANCEL),
+StaticPopupDialogs["GUILDBANK_DEPOSIT_MONEY"] = {
+	text = GUILD_BANK_POPUP_DEPOSIT,
+	button1 = ACCEPT,
+	button2 = CANCEL,
 	OnAccept = function()
 		local moneyInputFrame = _G[this:GetParent():GetName() .. "MoneyInputFrame"]
-		GuildBankFrameMoneyFrameDepositMoney(MoneyInputFrame_GetCopper(moneyInputFrame));
+		GuildBankFrameMoneyFrameDepositMoney(MoneyInputFrame_GetCopper(moneyInputFrame))
 	end,
 	OnHide = function()
 		MoneyInputFrame_ResetMoney(_G[this:GetName() .. "MoneyInputFrame"])
 	end,
 	EditBoxOnEnterPressed = function()
-		GuildBankFrameMoneyFrameDepositMoney(MoneyInputFrame_GetCopper(this:GetParent()));
-		this:GetParent():GetParent():Hide();
+		GuildBankFrameMoneyFrameDepositMoney(MoneyInputFrame_GetCopper(this:GetParent()))
+		this:GetParent():GetParent():Hide()
 	end,
 	hasMoneyInputFrame = 1,
-	timeout = 0,
 	hideOnEscape = 1
-};
+}
 
-StaticPopup2Dialogs["DELETE_ITEM"] = {
-	text = TEXT(DELETE_ITEM),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
+StaticPopupDialogs["GUILDBANK_DELETE_ITEM"] = {
+	text = DELETE_ITEM,
+	button1 = YES,
+	button2 = NO,
 	OnAccept = function()
 		local count = 0
 		if GuildBank:CursorHasSplitItem() then
@@ -2531,17 +2094,16 @@ StaticPopup2Dialogs["DELETE_ITEM"] = {
 			GuildBank:ResetAction()
 		end
 	end,
-	timeout = 0,
 	whileDead = 1,
 	exclusive = 1,
 	showAlert = 1,
 	hideOnEscape = 1
-};
+}
 
-StaticPopup2Dialogs["DELETE_GOOD_ITEM"] = {
-	text = TEXT(DELETE_GOOD_ITEM),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
+StaticPopupDialogs["GUILDBANK_DELETE_GOOD_ITEM"] = {
+	text = DELETE_GOOD_ITEM,
+	button1 = YES,
+	button2 = NO,
 	OnAccept = function()
 		local count = 0
 		if GuildBank:CursorHasSplitItem() then
@@ -2558,7 +2120,6 @@ StaticPopup2Dialogs["DELETE_GOOD_ITEM"] = {
 			GuildBank:ResetAction()
 		end
 	end,
-	timeout = 0,
 	whileDead = 1,
 	exclusive = 1,
 	showAlert = 1,
@@ -2571,7 +2132,7 @@ StaticPopup2Dialogs["DELETE_GOOD_ITEM"] = {
 	end,
 	OnHide = function()
 		if (ChatFrameEditBox:IsShown()) then
-			ChatFrameEditBox:SetFocus();
+			ChatFrameEditBox:SetFocus()
 		end
 		_G[this:GetName() .. "EditBox"]:SetText("")
 	end,
@@ -2579,7 +2140,7 @@ StaticPopup2Dialogs["DELETE_GOOD_ITEM"] = {
 		if (_G[this:GetParent():GetName() .. "Button1"]:IsEnabled() == 1) then
 			GuildBank:Send("DestroyItem:" .. GuildBank.cursorItem.tab .. ":" .. GuildBank.cursorItem.slot .. ":0")
 			GuildBank:ResetAction()
-			this:GetParent():Hide();
+			this:GetParent():Hide()
 		end
 	end,
 	EditBoxOnTextChanged = function()
@@ -2591,7 +2152,7 @@ StaticPopup2Dialogs["DELETE_GOOD_ITEM"] = {
 		end
 	end,
 	EditBoxOnEscapePressed = function()
-		this:GetParent():Hide();
+		this:GetParent():Hide()
 		GuildBank:ResetAction()
 	end
-};
+}

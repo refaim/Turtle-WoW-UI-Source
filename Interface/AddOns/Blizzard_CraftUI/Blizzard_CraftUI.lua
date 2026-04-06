@@ -1,27 +1,87 @@
-
-CRAFTS_DISPLAYED = 8;
+CRAFTS_DISPLAYED = 19;
 MAX_CRAFT_REAGENTS = 8;
 CRAFT_SKILL_HEIGHT = 16;
 
-CraftTypeColor = { };
-CraftTypeColor["optimal"]	= { r = 1.00, g = 0.50, b = 0.25 };
-CraftTypeColor["medium"]	= { r = 1.00, g = 1.00, b = 0.00 };
-CraftTypeColor["easy"]		= { r = 0.25, g = 0.75, b = 0.25 };
-CraftTypeColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
-CraftTypeColor["used"]	= { r = 0.50, g = 0.50, b = 0.50 };
-CraftTypeColor["header"]	= { r = 1.00, g = 0.82, b = 0 };
-CraftTypeColor["none"]		= { r = 0.25, g = 0.75, b = 0.25 };
+CraftTypeColor = {};
+CraftTypeColor["optimal"] = { r = 1.00, g = 0.50, b = 0.25 };
+CraftTypeColor["medium"]  = { r = 1.00, g = 1.00, b = 0.00 };
+CraftTypeColor["easy"]    = { r = 0.25, g = 0.75, b = 0.25 };
+CraftTypeColor["trivial"] = { r = 0.50, g = 0.50, b = 0.50 };
+CraftTypeColor["used"]    = { r = 0.50, g = 0.50, b = 0.50 };
+CraftTypeColor["header"]  = { r = 1.00, g = 0.82, b = 0 };
+CraftTypeColor["none"]    = { r = 0.25, g = 0.75, b = 0.25 };
 
-CraftSubTypeColor = { };
-CraftSubTypeColor["optimal"]	= { r = 1.00, g = 0.50, b = 0.25 };
-CraftSubTypeColor["medium"]	= { r = 1.00, g = 1.00, b = 0.00 };
-CraftSubTypeColor["easy"]		= { r = 0.25, g = 0.75, b = 0.25 };
-CraftSubTypeColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
-CraftSubTypeColor["used"]	= { r = 0.50, g = 0.50, b = 0.50 };
-CraftSubTypeColor["header"]	= { r = 1.00, g = 0.82, b = 0 };
-CraftSubTypeColor["none"]		= { r = 0, g = 0.45, b = 0 };
+CraftSubTypeColor = {};
+CraftSubTypeColor["optimal"] = { r = 1.00, g = 0.50, b = 0.25 };
+CraftSubTypeColor["medium"]  = { r = 1.00, g = 1.00, b = 0.00 };
+CraftSubTypeColor["easy"]    = { r = 0.25, g = 0.75, b = 0.25 };
+CraftSubTypeColor["trivial"] = { r = 0.50, g = 0.50, b = 0.50 };
+CraftSubTypeColor["used"]    = { r = 0.50, g = 0.50, b = 0.50 };
+CraftSubTypeColor["header"]  = { r = 1.00, g = 0.82, b = 0 };
+CraftSubTypeColor["none"]    = { r = 0, g = 0.45, b = 0 };
 
-UIPanelWindows["CraftFrame"] = { area = "left", pushable = 4 };
+UIPanelWindows["CraftFrame"] = { area = "doublewide", pushable = 0, width = 690 };
+
+CraftIcons = {
+	"interface\\icons\\trade_engraving",             -- Enchanting
+	"interface\\icons\\ability_rogue_disguise",      -- Disguise
+	"interface\\icons\\ability_hunter_beastcall02",  -- Beast Training
+}
+
+local SearchResults = {}
+
+function CraftFrame_Search(noScroll)
+	wipe(SearchResults)
+
+	local query = strlower(CraftFrameSearchBox:GetText())
+	local isMatsChecked = CraftFrameMatsCheckButton:GetChecked()
+	local isSkillChecked = CraftFrameSkillCheckButton:GetChecked()
+
+	if query ~= "" or isMatsChecked or isSkillChecked then
+		local lastHeaderPos = -1
+
+		for i = 1, GetNumCrafts() do
+			local craftName, craftSubSpellName, craftType, numAvailable = GetCraftInfo(i)
+			if craftType == "header" then
+				ExpandCraftSkillLine(i)
+				tinsert(SearchResults, i)
+				-- if difference between this header and last header position
+				-- is 1, it means they this header is followed by the previous
+				-- and it has no matching results and can be removed from the list
+				if getn(SearchResults) - lastHeaderPos == 1 then
+					tremove(SearchResults, lastHeaderPos)
+				end
+				lastHeaderPos = getn(SearchResults)
+			else
+				if query ~= "" then
+					if strfind(strlower(craftName), query) then
+						tinsert(SearchResults, i)
+						if (isMatsChecked and numAvailable == 0) or (isSkillChecked and craftType == "trivial") then
+							tremove(SearchResults, getn(SearchResults))
+						end
+					end
+				else
+					if isMatsChecked and numAvailable > 0 or not isMatsChecked then
+						if isSkillChecked and craftType ~= "trivial" or not isSkillChecked then
+							tinsert(SearchResults, i)
+						end
+					end
+				end
+			end
+		end
+
+		-- if the last result is a header with no children results, remove it
+		if lastHeaderPos == getn(SearchResults) then
+			tremove(SearchResults, lastHeaderPos)
+		end
+
+		if ( not noScroll ) then
+			CraftListScrollFrame:SetVerticalScroll(1);
+		end
+	end
+
+	CraftFrame_Update()
+end
 
 function CraftFrame_Show()
 	ShowUIPanel(CraftFrame);
@@ -45,6 +105,22 @@ function CraftFrame_Show()
 	FauxScrollFrame_SetOffset(CraftListScrollFrame, 0);
 	CraftListScrollFrameScrollBar:SetMinMaxValues(0, 0);
 	CraftListScrollFrameScrollBar:SetValue(0);
+	local _, _, _, numSpells = GetSpellTabInfo(1)
+	local icon
+	for spell = 1, numSpells do
+		local texture = GetSpellTexture(spell, BOOKTYPE_SPELL)
+		local i = tContains(CraftIcons, strlower(texture))
+		if IsCurrentCast(spell, BOOKTYPE_SPELL) and texture and i then
+			icon = texture
+			CraftFrame.iconIndex = i
+			break
+		end
+	end
+	if icon then
+		SetPortraitToTexture(CraftFramePortrait, icon)
+	else
+		SetPortraitTexture(CraftFramePortrait, "player");
+	end
 	CraftFrame_Update();
 end
 
@@ -54,9 +130,9 @@ end
 
 function CraftFrame_OnLoad()
 	this:RegisterEvent("CRAFT_UPDATE");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("SPELLS_CHANGED");
 	this:RegisterEvent("UNIT_PET_TRAINING_POINTS");
+	this:RegisterEvent("BAG_UPDATE");
 	FauxScrollFrame_SetOffset(CraftListScrollFrame, 0);
 end
 
@@ -67,7 +143,7 @@ function CraftFrame_OnEvent()
 
 	if ( event == "CRAFT_UPDATE" ) then
 		CraftCreateButton:Disable();
-		if ( GetCraftSelectionIndex() > 1 ) then
+		if ( GetCraftSelectionIndex() > 0 ) then
 			CraftFrame_SetSelection(GetCraftSelectionIndex());
 		else
 			if ( GetNumCrafts() > 0 ) then
@@ -85,25 +161,22 @@ function CraftFrame_OnEvent()
 			CraftListScrollFrameScrollBar:SetValue(0);
 		end
 		CraftFrame_Update();
-	elseif ( event == "UNIT_PORTRAIT_UPDATE" ) then
-		if ( arg1 == "player" ) then
-			SetPortraitTexture(CraftFramePortrait, "player");
-		end
 	elseif ( event == "SPELLS_CHANGED" ) then
 		CraftFrame_Update();
 	elseif ( event == "UNIT_PET_TRAINING_POINTS" ) then
 		Craft_UpdateTrainingPoints();
+	elseif ( event == "BAG_UPDATE" ) then
+		CraftFrame_Search(true);
 	end
 end
 
 function CraftFrame_Update()
-	SetPortraitTexture(CraftFramePortrait, "player");
 	CraftFrameTitleText:SetText(GetCraftName());
 
 	local numCrafts = GetNumCrafts();
-	local craftOffset = FauxScrollFrame_GetOffset(CraftListScrollFrame);
+	local craftOffset = FauxScrollFrame_GetOffset(CraftListScrollFrame) or 0;
 	-- Set the action button text
-	CraftCreateButton:SetText(getglobal(GetCraftButtonToken()));
+	CraftCreateButton:SetText(_G[GetCraftButtonToken()]);
 	-- Set the craft skill line status bar info
 	local name, rank, maxRank = GetCraftDisplaySkillLine();
 	if ( name ) then
@@ -114,12 +187,18 @@ function CraftFrame_Update()
 		CraftRankFrame:SetValue(rank);
 		CraftRankFrameSkillRank:SetText(rank.."/"..maxRank);
 		CraftRankFrame:Show();
-		CraftSkillBorderLeft:Show();
-		CraftSkillBorderRight:Show();
 	else
 		CraftRankFrame:Hide();
-		CraftSkillBorderLeft:Hide();
-		CraftSkillBorderRight:Hide();
+	end
+
+	if ( CraftFrame.iconIndex == 1 ) then
+		CraftFrameMatsCheckButton:Show();
+		CraftFrameSkillCheckButton:Show();
+	else
+		CraftFrameMatsCheckButton:SetChecked(false);
+		CraftFrameSkillCheckButton:SetChecked(false);
+		CraftFrameMatsCheckButton:Hide();
+		CraftFrameSkillCheckButton:Hide();
 	end
 
 	-- Hide the expand all button if less than 2 crafts learned
@@ -136,14 +215,14 @@ function CraftFrame_Update()
 		CraftReagentLabel:Hide();
 		CraftDescription:Hide();
 		for i=1, MAX_CRAFT_REAGENTS, 1 do
-			getglobal("CraftReagent"..i):Hide();
+			_G["CraftReagent"..i]:Hide();
 		end
 		CraftDetailScrollFrameScrollBar:Hide();
 		CraftDetailScrollFrameTop:Hide();
 		CraftDetailScrollFrameBottom:Hide();
 		CraftListScrollFrame:Hide();
 		for i=1, CRAFTS_DISPLAYED, 1 do
-			getglobal("Craft"..i):Hide();
+			_G["Craft"..i]:Hide();
 		end
 		CraftHighlightFrame:Hide();
 		CraftRequirements:Hide();
@@ -157,36 +236,42 @@ function CraftFrame_Update()
 	CraftDescription:Show();
 	CraftCollapseAllButton:Enable();
 
+	local results = getn(SearchResults);
+	local craftsToUpdate = results == 0 and numCrafts or results;
 	-- ScrollFrame update
-	FauxScrollFrame_Update(CraftListScrollFrame, numCrafts, CRAFTS_DISPLAYED, CRAFT_SKILL_HEIGHT, nil, nil, nil, CraftHighlightFrame, 293, 316 );
+	FauxScrollFrame_Update(CraftListScrollFrame, craftsToUpdate, CRAFTS_DISPLAYED, CRAFT_SKILL_HEIGHT, nil, nil, nil, CraftHighlightFrame, 309, 309 );
 
 	CraftHighlightFrame:Hide();
+	CraftFrameNoResultsText:Hide();
 
-	local craftIndex, craftName, craftButton, craftButtonSubText, craftButtonCost, craftButtonText;
+	local craftIndex, craftButton, craftButtonSubText, craftButtonCost, craftButtonText;
 	for i=1, CRAFTS_DISPLAYED, 1 do
-		craftIndex = i + craftOffset;
-		craftName, craftSubSpellName, craftType, numAvailable, isExpanded, trainingPointCost, requiredLevel = GetCraftInfo(craftIndex);
-		craftButton = getglobal("Craft"..i);
-		craftButtonSubText = getglobal("Craft"..i.."SubText");
-		craftButtonCost = getglobal("Craft"..i.."Cost");
-		craftButtonText = getglobal("Craft"..i.."Text");
-		if ( craftIndex <= numCrafts ) then
-			-- Set button widths if scrollbar is shown or hidden
-			if ( CraftListScrollFrame:IsVisible() ) then
-				craftButton:SetWidth(293);
-				-- HACK to fix a bug with (Rank) rendering in Beast Training --
-				if ( not trainingPointCost ) then
-					craftButtonText:SetWidth(290);
+		craftIndex = 0;
+		if ( CraftFrameSearchBox:GetText() ~= "" or CraftFrameMatsCheckButton:GetChecked() or CraftFrameSkillCheckButton:GetChecked() ) then
+			if ( results > 0 ) then
+				if ( SearchResults[i + craftOffset] ) then
+					craftIndex = SearchResults[i + craftOffset];
 				end
 			else
-				craftButton:SetWidth(323);
-				-- HACK to fix a bug with (Rank) rendering in Beast Training --
-				if ( not trainingPointCost ) then
-					craftButtonText:SetWidth(320);
-				end
+				CraftFrameNoResultsText:Show();
+				craftIndex = -1;
+			end
+		else
+			craftIndex = i + craftOffset;
+		end
+		local craftName, craftSubSpellName, craftType, numAvailable, isExpanded, trainingPointCost, requiredLevel = GetCraftInfo(craftIndex);
+		craftButton = _G["Craft"..i];
+		craftButtonSubText = _G["Craft"..i.."SubText"];
+		craftButtonCost = _G["Craft"..i.."Cost"];
+		craftButtonText = _G["Craft"..i.."Text"];
+		if ( craftIndex > 0 and craftIndex <= numCrafts ) then
+			-- Set button widths if scrollbar is shown or hidden
+			craftButton:SetWidth(310);
+			-- HACK to fix a bug with (Rank) rendering in Beast Training --
+			if ( not trainingPointCost ) then
+				craftButtonText:SetWidth(290);
 			end
 			local color = CraftTypeColor[craftType];
-			local subColor = CraftSubTypeColor[craftType];
 			craftButton:SetTextColor(color.r, color.g, color.b);
 			craftButton.r = color.r;
 			craftButton.g = color.g;
@@ -204,18 +289,18 @@ function CraftFrame_Update()
 				else
 					craftButton:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-Up");
 				end
-				getglobal("Craft"..i.."Highlight"):SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
-				getglobal("Craft"..i):UnlockHighlight();
+				_G["Craft"..i.."Highlight"]:SetTexture("Interface\\Buttons\\UI-PlusButton-Hilight");
+				_G["Craft"..i]:UnlockHighlight();
 			else
 				craftButton:SetNormalTexture("");
-				getglobal("Craft"..i.."Highlight"):SetTexture("");
+				_G["Craft"..i.."Highlight"]:SetTexture("");
 				if ( numAvailable == 0 ) then
 					craftButton:SetText(" "..craftName);
 				else
 					craftButton:SetText(" "..craftName.." ["..numAvailable.."]");
 				end
 				if ( craftSubSpellName ~= "" ) then
-					craftButtonSubText:SetText(format(TEXT(PARENS_TEMPLATE), craftSubSpellName));
+					craftButtonSubText:SetText(format(PARENS_TEMPLATE, craftSubSpellName));
 				else
 					craftButtonSubText:SetText("");
 				end
@@ -231,9 +316,9 @@ function CraftFrame_Update()
 					CraftHighlightFrame:Show();
 					craftButtonSubText:SetTextColor(1.0, 1.0, 1.0);
 					craftButtonCost:SetTextColor(1.0, 1.0, 1.0);
-					getglobal("Craft"..i):LockHighlight();
+					_G["Craft"..i]:LockHighlight();
 				else
-					getglobal("Craft"..i):UnlockHighlight();
+					_G["Craft"..i]:UnlockHighlight();
 				end
 			end
 
@@ -270,13 +355,13 @@ function CraftFrame_Update()
 	if ( numHeaders > 0 ) then
 		-- If has headers then move all the names to the right
 		for i=1, CRAFTS_DISPLAYED, 1 do
-			getglobal("Craft"..i.."Text"):SetPoint("TOPLEFT", "Craft"..i, "TOPLEFT", 21, 0);
+			_G["Craft"..i.."Text"]:SetPoint("TOPLEFT", "Craft"..i, "TOPLEFT", 21, 0);
 		end
 		CraftExpandButtonFrame:Show();
 	else
 		-- If no headers then move all the names to the left
 		for i=1, CRAFTS_DISPLAYED, 1 do
-			getglobal("Craft"..i.."Text"):SetPoint("TOPLEFT", "Craft"..i, "TOPLEFT", 3, 0);
+			_G["Craft"..i.."Text"]:SetPoint("TOPLEFT", "Craft"..i, "TOPLEFT", 3, 0);
 		end
 		CraftExpandButtonFrame:Hide();
 	end
@@ -324,9 +409,9 @@ function CraftFrame_SetSelection(id)
 
 	for i=1, numReagents, 1 do
 		local reagentName, reagentTexture, reagentCount, playerReagentCount = GetCraftReagentInfo(id, i);
-		local reagent = getglobal("CraftReagent"..i)
-		local name = getglobal("CraftReagent"..i.."Name");
-		local count = getglobal("CraftReagent"..i.."Count");
+		local reagent = _G["CraftReagent"..i]
+		local name = _G["CraftReagent"..i.."Name"];
+		local count = _G["CraftReagent"..i.."Count"];
 		if ( not reagentName or not reagentTexture ) then
 			reagent:Hide();
 		else
@@ -355,7 +440,7 @@ function CraftFrame_SetSelection(id)
 		CraftReagentLabel:Hide();
 	end
 	for i=numReagents + 1, MAX_CRAFT_REAGENTS, 1 do
-		getglobal("CraftReagent"..i):Hide();
+		_G["CraftReagent"..i]:Hide();
 	end
 
 	local requiredTotems = BuildColoredListString(GetCraftSpellFocus(id));
@@ -427,7 +512,7 @@ end
 
 function Craft_UpdateTrainingPoints()
 	local totalPoints, spent = GetPetTrainingPoints();
-	if ( totalPoints > 0 ) then
+	if ( totalPoints > 0 and CraftFrame.iconIndex == 3 ) then
 		CraftFramePointsLabel:Show();
 		CraftFramePointsText:Show();
 		CraftFramePointsText:SetText(totalPoints - spent);

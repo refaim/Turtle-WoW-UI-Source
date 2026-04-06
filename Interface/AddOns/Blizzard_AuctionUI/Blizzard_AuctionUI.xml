@@ -433,7 +433,7 @@
 					</ScrollFrame>
 					<ScrollFrame name="BrowseScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="465" y="306" />
+							<AbsDimension x="605" y="306" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
@@ -1101,7 +1101,7 @@
 					</Button>
 					<ScrollFrame name="BidScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="625" y="335" />
+							<AbsDimension x="775" y="335" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
@@ -1534,7 +1534,7 @@
 					</Button>
 					<ScrollFrame name="AuctionsScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="435" y="339" />
+							<AbsDimension x="580" y="339" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">

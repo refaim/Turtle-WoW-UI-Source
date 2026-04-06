@@ -4,15 +4,16 @@ NUM_SHOPPING_TOOLTIPS = 2;
 ATTACK_POWER_MAGIC_NUMBER = 14;
 
 local availableTitles = nil
+local numTitles = 0
 
 function PaperDollFrame_OnLoad()
-	CharacterAttackFrameLabel:SetText(TEXT(MELEE_ATTACK));
-	CharacterDamageFrameLabel:SetText(TEXT(DAMAGE_COLON));
-	CharacterAttackPowerFrameLabel:SetText(TEXT(ATTACK_POWER_COLON));
-	CharacterRangedAttackFrameLabel:SetText(TEXT(RANGED_ATTACK));
-	CharacterRangedDamageFrameLabel:SetText(TEXT(DAMAGE_COLON));
-	CharacterRangedAttackPowerFrameLabel:SetText(TEXT(ATTACK_POWER_COLON));
-	CharacterArmorFrameLabel:SetText(TEXT(ARMOR_COLON));
+	CharacterAttackFrameLabel:SetText(MELEE_ATTACK);
+	CharacterDamageFrameLabel:SetText(DAMAGE_COLON);
+	CharacterAttackPowerFrameLabel:SetText(ATTACK_POWER_COLON);
+	CharacterRangedAttackFrameLabel:SetText(RANGED_ATTACK);
+	CharacterRangedDamageFrameLabel:SetText(DAMAGE_COLON);
+	CharacterRangedAttackPowerFrameLabel:SetText(ATTACK_POWER_COLON);
+	CharacterArmorFrameLabel:SetText(ARMOR_COLON);
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("CHAT_MSG_ADDON");
 	this:RegisterEvent("CHARACTER_POINTS_CHANGED");
@@ -44,22 +45,22 @@ end
 function PaperDollFrame_OnEvent(event, unit)
 	if ( event == "CHAT_MSG_ADDON" and arg1 == "TWT_TITLES" ) then
 		-- new title message
-		local _, _, titleID = string.find(arg2, "newTitle:(%d+)")
-		if titleID then
-			DEFAULT_CHAT_FRAME:AddMessage("|cff00FF00"..format(TW_TITLES_EARNED, getglobal("PVP_MEDAL" .. titleID)))
-
+		local _, _, titleID = strfind(arg2, "newTitle:(%d+)")
+		if titleID and _G["PVP_MEDAL" .. titleID] then
+			local info = ChatTypeInfo["SYSTEM"]
+			DEFAULT_CHAT_FRAME:AddMessage(format(TW_TITLES_EARNED, _G["PVP_MEDAL" .. titleID]), info.r, info.g, info.b, info.id)
 			SendAddonMessage("TW_TITLES", "Titles:List", "GUILD")
+			return
 		end
-
 		-- available titles
-		if string.find(arg2, "TW_AVAILABLE_TITLES:", 1, true) then
+		if strfind(arg2, "TW_AVAILABLE_TITLES:", 1, true) then
 			availableTitles = arg2
 			UIDropDownMenu_Initialize(PaperDollFrameTitlesDropdown, TitlesDropDown_Initialize)
+			return
 		end
 	end
 	if ( event == "PLAYER_ENTERING_WORLD" ) then
 		CharacterModelFrame:SetUnit("player");
-
 		SendAddonMessage("TW_TITLES", "Titles:List", "GUILD")
 		return;
 	end
@@ -109,12 +110,9 @@ function PaperDollItemSlotButton_OnLoad()
 	this:RegisterForDrag("LeftButton");
 	this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 	local slotName = this:GetName();
-	local id;
-	local textureName;
-	local checkRelic;
-	id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName,10));
+	local id, textureName, checkRelic = GetInventorySlotInfo(strsub(slotName,10));
 	this:SetID(id);
-	local texture = getglobal(slotName.."IconTexture");
+	local texture = _G[slotName.."IconTexture"];
 	texture:SetTexture(textureName);
 	this.backgroundTextureName = textureName;
 	this.checkRelic = checkRelic;
@@ -122,48 +120,43 @@ function PaperDollItemSlotButton_OnLoad()
 end
 
 function PaperDollFrame_SetLevel()
-	CharacterLevelText:SetText(format(TEXT(PLAYER_LEVEL),UnitLevel("player"), UnitRace("player"), UnitClass("player")));
+	CharacterLevelText:SetText(format(PLAYER_LEVEL,UnitLevel("player"), UnitRace("player"), UnitClass("player")));
 	-- Set it for the honor frame while we at it
-	HonorLevelText:SetText(format(TEXT(PLAYER_LEVEL),UnitLevel("player"), UnitRace("player"), UnitClass("player")));
+	-- HonorLevelText:SetText(format(PLAYER_LEVEL,UnitLevel("player"), UnitRace("player"), UnitClass("player")));
+	HonorLevelText:Hide();
 end
-
---[[
-Just in case they change their minds
-function PaperDollFrame_SetCharacterPoints()
-	local cp1 = UnitCharacterPoints("player");
-	CharacterPointsText1:SetText(cp1);
-end
-]]
 
 function PaperDollFrame_SetGuild()
 	local guildName, title, rank = GetGuildInfo("player");
-	if ( guildName ) then
-		-- CharacterGuildText:Show();
-		-- CharacterGuildText:SetText(format(TEXT(GUILD_TITLE_TEMPLATE), title, guildName));
-		-- Set it for the honor frame while we're at it
-		HonorGuildText:Show();
-		HonorGuildText:SetText(format(TEXT(GUILD_TITLE_TEMPLATE), title, guildName));
+	if ( numTitles < 2 ) then
+		CharacterGuildText:Show();
+		PaperDollFrameTitlesDropdown:Hide();
 	else
 		CharacterGuildText:Hide();
-
-		HonorGuildText:Hide();
+		PaperDollFrameTitlesDropdown:Show();
+	end
+	if ( guildName ) then
+		CharacterGuildText:SetText(format(GUILD_TITLE_TEMPLATE, title, guildName));
+		-- Set it for the honor frame while we're at it
+		-- HonorGuildText:Show();
+		-- HonorGuildText:SetText(format(GUILD_TITLE_TEMPLATE, title, guildName));
+	else
+		CharacterGuildText:Hide();
+		-- HonorGuildText:Hide();
 	end
 end
 
 function PaperDollFrame_SetStats()
 	for i=1, NUM_STATS, 1 do
-		local label = getglobal("CharacterStatFrame"..i.."Label");
-		local text = getglobal("CharacterStatFrame"..i.."StatText");
-		local frame = getglobal("CharacterStatFrame"..i);
-		local stat;
-		local effectiveStat;
-		local posBuff;
-		local negBuff;
-		label:SetText(TEXT(getglobal("SPELL_STAT"..(i-1).."_NAME"))..":");
-		stat, effectiveStat, posBuff, negBuff = UnitStat("player", i);
+		local label = _G["CharacterStatFrame"..i.."Label"];
+		local text = _G["CharacterStatFrame"..i.."StatText"];
+		local frame = _G["CharacterStatFrame"..i];
+
+		label:SetText(_G["SPELL_STAT"..(i-1).."_NAME"]..":");
+		local stat, effectiveStat, posBuff, negBuff = UnitStat("player", i);
 
 		-- Set the tooltip text
-		local tooltipText = HIGHLIGHT_FONT_COLOR_CODE..getglobal("SPELL_STAT"..(i-1).."_NAME").." ";
+		local tooltipText = HIGHLIGHT_FONT_COLOR_CODE.._G["SPELL_STAT"..(i-1).."_NAME"].." ";
 
 		if ( ( posBuff == 0 ) and ( negBuff == 0 ) ) then
 			text:SetText(effectiveStat);
@@ -197,22 +190,18 @@ end
 
 function PaperDollFrame_SetResistances()
 	for i=1, NUM_RESISTANCE_TYPES, 1 do
-		local resistance;
-		local positive;
-		local negative;
-		local base;
-		local text = getglobal("MagicResText"..i);
-		local frame = getglobal("MagicResFrame"..i);
+		local text = _G["MagicResText"..i];
+		local frame = _G["MagicResFrame"..i];
 
-		base, resistance, positive, negative = UnitResistance("player", frame:GetID());
+		local base, resistance, positive, negative = UnitResistance("player", frame:GetID());
 
-		local resistanceName = getglobal("RESISTANCE"..(frame:GetID()).."_NAME");
+		local resistanceName = _G["RESISTANCE"..(frame:GetID()).."_NAME"];
 		frame.tooltip = resistanceName.." "..resistance;
 
 		-- resistances can now be negative. Show Red if negative, Green if positive, white otherwise
-		if( abs(negative) > positive ) then
+		if ( abs(negative) > positive ) then
 			text:SetText(RED_FONT_COLOR_CODE..resistance..FONT_COLOR_CODE_CLOSE);
-		elseif( abs(negative) == positive ) then
+		elseif ( abs(negative) == positive ) then
 			text:SetText(resistance);
 		else
 			text:SetText(GREEN_FONT_COLOR_CODE..resistance..FONT_COLOR_CODE_CLOSE);
@@ -221,10 +210,10 @@ function PaperDollFrame_SetResistances()
 		if ( positive ~= 0 or negative ~= 0 ) then
 			-- Otherwise build up the formula
 			frame.tooltip = frame.tooltip.. " ( "..HIGHLIGHT_FONT_COLOR_CODE..base;
-			if( positive > 0 ) then
+			if ( positive > 0 ) then
 				frame.tooltip = frame.tooltip..GREEN_FONT_COLOR_CODE.." +"..positive;
 			end
-			if( negative < 0 ) then
+			if ( negative < 0 ) then
 				frame.tooltip = frame.tooltip.." "..RED_FONT_COLOR_CODE..negative;
 			end
 			frame.tooltip = frame.tooltip..FONT_COLOR_CODE_CLOSE.." )";
@@ -246,7 +235,7 @@ function PaperDollFrame_SetResistances()
 		else
 			resistanceLevel = RESISTANCE_NONE;
 		end
-		frame.tooltipSubtext = format(RESISTANCE_TOOLTIP_SUBTEXT, getglobal("RESISTANCE_TYPE"..frame:GetID()), unitLevel, resistanceLevel);
+		frame.tooltipSubtext = format(RESISTANCE_TOOLTIP_SUBTEXT, _G["RESISTANCE_TYPE"..frame:GetID()], unitLevel, resistanceLevel);
 	end
 end
 
@@ -259,10 +248,9 @@ function PaperDollFrame_SetArmor(unit, prefix)
 	end
 
 	local base, effectiveArmor, armor, posBuff, negBuff = UnitArmor(unit);
-	local totalBufs = posBuff + negBuff;
 
-	local frame = getglobal(prefix.."ArmorFrame");
-	local text = getglobal(prefix.."ArmorFrameStatText");
+	local frame = _G[prefix.."ArmorFrame"];
+	local text = _G[prefix.."ArmorFrameStatText"];
 
 	PaperDollFormatStat(ARMOR, base, posBuff, negBuff, frame, text);
 	local playerLevel = UnitLevel(unit);
@@ -281,8 +269,8 @@ function PaperDollFrame_SetDefense(unit, prefix)
 	end
 	local base, modifier = UnitDefense(unit);
 
-	local frame = getglobal(prefix.."DefenseFrame");
-	local text = getglobal(prefix.."DefenseFrameStatText");
+	local frame = _G[prefix.."DefenseFrame"];
+	local text = _G[prefix.."DefenseFrameStatText"];
 
 	local posBuff = 0;
 	local negBuff = 0;
@@ -302,19 +290,11 @@ function PaperDollFrame_SetDamage(unit, prefix)
 		prefix = "Character";
 	end
 
-	local damageText = getglobal(prefix.."DamageFrameStatText");
-	local damageFrame = getglobal(prefix.."DamageFrame");
+	local damageText = _G[prefix.."DamageFrameStatText"];
+	local damageFrame = _G[prefix.."DamageFrame"];
 
 	local speed, offhandSpeed = UnitAttackSpeed(unit);
-
-	local minDamage;
-	local maxDamage;
-	local minOffHandDamage;
-	local maxOffHandDamage;
-	local physicalBonusPos;
-	local physicalBonusNeg;
-	local percent;
-	minDamage, maxDamage, minOffHandDamage, maxOffHandDamage, physicalBonusPos, physicalBonusNeg, percent = UnitDamage(unit);
+	local minDamage, maxDamage, minOffHandDamage, maxOffHandDamage, physicalBonusPos, physicalBonusNeg, percent = UnitDamage(unit);
 	local displayMin = max(floor(minDamage),1);
 	local displayMax = max(ceil(maxDamage),1);
 
@@ -327,8 +307,12 @@ function PaperDollFrame_SetDamage(unit, prefix)
 	local damagePerSecond = (max(fullDamage,1) / speed);
 	local damageTooltip = max(floor(minDamage),1).." - "..max(ceil(maxDamage),1);
 
-	local colorPos = "|cff20ff20";
-	local colorNeg = "|cffff2020";
+	if ( totalBonus < 0.1 and totalBonus > -0.1 ) then
+		totalBonus = 0;
+	end
+
+	local colorPos = GREEN_FONT_COLOR_CODE;
+	local colorNeg = RED_FONT_COLOR_CODE;
 	if ( totalBonus == 0 ) then
 		if ( ( displayMin < 100 ) and ( displayMax < 100 ) ) then
 			damageText:SetText(displayMin.." - "..displayMax);
@@ -336,7 +320,6 @@ function PaperDollFrame_SetDamage(unit, prefix)
 			damageText:SetText(displayMin.."-"..displayMax);
 		end
 	else
-
 		local color;
 		if ( totalBonus > 0 ) then
 			color = colorPos;
@@ -404,8 +387,8 @@ function PaperDollFrame_SetAttackPower(unit, prefix)
 
 	local base, posBuff, negBuff = UnitAttackPower(unit);
 
-	local frame = getglobal(prefix.."AttackPowerFrame");
-	local text = getglobal(prefix.."AttackPowerFrameStatText");
+	local frame = _G[prefix.."AttackPowerFrame"];
+	local text = _G[prefix.."AttackPowerFrameStatText"];
 
 	PaperDollFormatStat(MELEE_ATTACK_POWER, base, posBuff, negBuff, frame, text);
 	frame.tooltipSubtext = format(MELEE_ATTACK_POWER_TOOLTIP, max((base+posBuff+negBuff), 0)/ATTACK_POWER_MAGIC_NUMBER);
@@ -421,8 +404,8 @@ function PaperDollFrame_SetAttackBothHands(unit, prefix)
 	-- FIXME: The offhand stats aren't displayed yet.
 	local mainHandAttackBase, mainHandAttackMod = UnitAttackBothHands(unit);
 
-	local frame = getglobal(prefix.."AttackFrame");
-	local text = getglobal(prefix.."AttackFrameStatText");
+	local frame = _G[prefix.."AttackFrame"];
+	local text = _G[prefix.."AttackFrameStatText"];
 
 	if( mainHandAttackMod == 0 ) then
 		text:SetText(mainHandAttackBase);
@@ -451,8 +434,8 @@ function PaperDollFrame_SetRangedAttack(unit, prefix)
 
 	local hasRelic = UnitHasRelicSlot(unit);
 	local rangedAttackBase, rangedAttackMod = UnitRangedAttack(unit);
-	local frame = getglobal(prefix.."RangedAttackFrame");
-	local text = getglobal(prefix.."RangedAttackFrameStatText");
+	local frame = _G[prefix.."RangedAttackFrame"];
+	local text = _G[prefix.."RangedAttackFrameStatText"];
 
 	-- If no ranged texture then set stats to n/a
 	local rangedTexture = GetInventoryItemTexture("player", 18);
@@ -473,7 +456,7 @@ function PaperDollFrame_SetRangedAttack(unit, prefix)
 		return;
 	end
 
-	if( rangedAttackMod == 0 ) then
+	if ( rangedAttackMod == 0 ) then
 		text:SetText(rangedAttackBase);
 		frame.tooltip = nil;
 	else
@@ -498,8 +481,8 @@ function PaperDollFrame_SetRangedDamage(unit, prefix)
 		prefix = "Character";
 	end
 
-	local damageText = getglobal(prefix.."RangedDamageFrameStatText");
-	local damageFrame = getglobal(prefix.."RangedDamageFrame");
+	local damageText = _G[prefix.."RangedDamageFrameStatText"];
+	local damageFrame = _G[prefix.."RangedDamageFrame"];
 
 	-- If no ranged attack then set to n/a
 	if ( PaperDollFrame.noRanged ) then
@@ -521,6 +504,10 @@ function PaperDollFrame_SetRangedDamage(unit, prefix)
 	local damagePerSecond = (max(fullDamage,1) / rangedAttackSpeed);
 	local tooltip = max(floor(minDamage),1).." - "..max(ceil(maxDamage),1);
 
+	if ( totalBonus < 0.1 and totalBonus > -0.1 ) then
+		totalBonus = 0;
+	end
+
 	if ( totalBonus == 0 ) then
 		if ( ( displayMin < 100 ) and ( displayMax < 100 ) ) then
 			damageText:SetText(displayMin.." - "..displayMax);
@@ -528,8 +515,8 @@ function PaperDollFrame_SetRangedDamage(unit, prefix)
 			damageText:SetText(displayMin.."-"..displayMax);
 		end
 	else
-		local colorPos = "|cff20ff20";
-		local colorNeg = "|cffff2020";
+		local colorPos = GREEN_FONT_COLOR_CODE;
+		local colorNeg = RED_FONT_COLOR_CODE;
 		local color;
 		if ( totalBonus > 0 ) then
 			color = colorPos;
@@ -552,7 +539,7 @@ function PaperDollFrame_SetRangedDamage(unit, prefix)
 		elseif ( percent < 1 ) then
 			tooltip = tooltip..colorNeg.." x"..floor(percent*100+0.5).."%|r";
 		end
-		damageFrame.tooltip = tooltip.." "..format(TEXT(DPS_TEMPLATE), damagePerSecond);
+		damageFrame.tooltip = tooltip.." "..format(DPS_TEMPLATE, damagePerSecond);
 	end
 	damageFrame.attackSpeed = rangedAttackSpeed;
 	damageFrame.damage = tooltip;
@@ -568,8 +555,8 @@ function PaperDollFrame_SetRangedAttackPower(unit, prefix)
 	if ( not prefix ) then
 		prefix = "Character";
 	end
-	local frame = getglobal(prefix.."RangedAttackPowerFrame");
-	local text = getglobal(prefix.."RangedAttackPowerFrameStatText");
+	local frame = _G[prefix.."RangedAttackPowerFrame"];
+	local text = _G[prefix.."RangedAttackPowerFrameStatText"];
 
 	-- If no ranged attack then set to n/a
 	if ( PaperDollFrame.noRanged ) then
@@ -608,10 +595,7 @@ function PaperDollFrame_OnShow()
 end
 
 function PaperDollFrame_OnHide()
-	--CharacterFrameCharacterTabButton:Enable();
---	for i=1, NUM_SHOPPING_TOOLTIPS, 1 do
---		getglobal("ShoppingTooltip"..i):Hide();
---	end
+
 end
 
 function PaperDollItemSlotButton_OnEvent(event)
@@ -646,7 +630,7 @@ function PaperDollItemSlotButton_OnEvent(event)
 			return;
 		end
 
-		local tooltip = getglobal("ShoppingTooltip"..arg2);
+		local tooltip = _G["ShoppingTooltip"..arg2];
 		local anchor = "ANCHOR_RIGHT";
 		if ( arg2 > 1 ) then
 			anchor = "ANCHOR_BOTTOMRIGHT";
@@ -655,10 +639,6 @@ function PaperDollItemSlotButton_OnEvent(event)
 		local hasItem, hasCooldown = tooltip:SetInventoryItem("player", this:GetID());
 		if ( not hasItem ) then
 			tooltip:Hide();
-		elseif ( hasCooldown ) then
-			--this.updateTooltip = TOOLTIP_UPDATE_TIME;
-		else
-			--this.updateTooltip = nil;
 		end
 		return;
 	end
@@ -681,12 +661,11 @@ function PaperDollItemSlotButton_OnClick(button, ignoreModifiers)
 	elseif ( button == "RightButton" ) then
 		UseInventoryItem(this:GetID());
 	end
-
 end
 
 function PaperDollItemSlotButton_Update(cooldownOnly)
 	local textureName = GetInventoryItemTexture("player", this:GetID());
-	local cooldown = getglobal(this:GetName().."Cooldown");
+	local cooldown = _G[this:GetName().."Cooldown"];
 	if ( textureName ) then
 		SetItemButtonTexture(this, textureName);
 		SetItemButtonCount(this, GetInventoryItemCount("player", this:GetID()));
@@ -714,13 +693,6 @@ function PaperDollItemSlotButton_Update(cooldownOnly)
 	local start, duration, enable = GetInventoryItemCooldown("player", this:GetID());
 	CooldownFrame_SetTimer(cooldown, start, duration, enable);
 
-	--local quality = GetInventoryItemQuality("player", this:GetID());
-	--if ( quality and quality ~= -1 ) then
-	--	local color = getglobal("ITEM_QUALITY".. quality .."_COLOR");
-	--	SetItemButtonNormalTextureVertexColor(this, color.r, color.g, color.b);
-	--else
-	--	SetItemButtonNormalTextureVertexColor(this, 1.0, 1.0, 1.0);
-	--end
 	if ( GameTooltip:IsOwned(this) ) then
 		if ( textureName or cooldownOnly ) then
 			if ( this.isBag ) then
@@ -729,7 +701,6 @@ function PaperDollItemSlotButton_Update(cooldownOnly)
 				PaperDollItemSlotButton_OnEnter();
 			end
 		else
-			--this.updateTooltip = nil;
 			GameTooltip:Hide();
 			ResetCursor();
 		end
@@ -751,10 +722,8 @@ end
 
 function PaperDollItemSlotButton_UpdateLock()
 	if ( IsInventoryItemLocked(this:GetID()) ) then
-		--this:SetNormalTexture("Interface\\Buttons\\UI-Quickslot");
 		SetItemButtonDesaturated(this, 1, 0.5, 0.5, 0.5);
 	else
-		--this:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2");
 		SetItemButtonDesaturated(this, nil);
 	end
 end
@@ -763,22 +732,14 @@ function PaperDollItemSlotButton_OnEnter()
 	GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
 	local hasItem, hasCooldown, repairCost = GameTooltip:SetInventoryItem("player", this:GetID());
 	if ( not hasItem ) then
-		local text = TEXT(getglobal(strupper(strsub(this:GetName(), 10))));
+		local text = _G[strupper(strsub(this:GetName(), 10))];
 		if ( this.checkRelic and UnitHasRelicSlot("player") ) then
-			text = TEXT(getglobal("RELICSLOT"));
+			text = RELICSLOT;
 		end
 		GameTooltip:SetText(text);
 	end
-	if ( hasCooldown ) then
-		--this.updateTooltip = TOOLTIP_UPDATE_TIME;
-	else
-		--this.updateTooltip = nil;
-	end
---	if ( MerchantFrame:IsVisible() ) then
---		ShowInventorySellCursor(this:GetID());
---	end
 	if ( InRepairMode() and repairCost and (repairCost > 0) ) then
-		GameTooltip:AddLine(TEXT(REPAIR_COST), "", 1, 1, 1);
+		GameTooltip:AddLine(REPAIR_COST);
 		SetTooltipMoney(GameTooltip, repairCost);
 		GameTooltip:Show();
 	else
@@ -787,16 +748,6 @@ function PaperDollItemSlotButton_OnEnter()
 end
 
 function PaperDollItemSlotButton_OnUpdate(elapsed)
-	--[[
-	if ( not this.updateTooltip ) then
-		return;
-	end
-
-	this.updateTooltip = this.updateTooltip - elapsed;
-	if ( this.updateTooltip > 0 ) then
-		return;
-	end
-	]]
 	if ( GameTooltip:IsOwned(this) ) then
 		if ( this.isBag ) then
 			BagSlotButton_OnEnter();
@@ -812,10 +763,10 @@ function PaperDollStatTooltip(unit, stat)
 	end
 	-- Get class specific tooltip for that stat
 	local temp, classFileName = UnitClass(unit);
-	local classStatText = getglobal(strupper(classFileName).."_"..stat.."_".."TOOLTIP");
+	local classStatText = _G[strupper(classFileName).."_"..stat.."_".."TOOLTIP"];
 	-- If can't find one use the default
 	if ( not classStatText ) then
-		classStatText = getglobal("DEFAULT".."_"..stat.."_".."TOOLTIP");
+		classStatText = _G["DEFAULT".."_"..stat.."_".."TOOLTIP"];
 	end
 
 	GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
@@ -889,40 +840,25 @@ function TitlesDropDown_Initialize()
 	if not availableTitles then
 		return
 	end
-	-- get titles
-	local fEx = string.gsub(availableTitles, "TW_AVAILABLE_TITLES:", "")
-	if fEx then
-		local aEx = explode(fEx, ";")
-		local info = UIDropDownMenu_CreateInfo()
-		for _, titleData in aEx do
-			local _, _, id, active = string.find(titleData, "(%d+):(%d+)")
-			if id == "0" then
-				info.text = GENERIC_NONE
-				info.value = id
-				info.arg1 = id
-				info.checked = active == "1"
-				info.func = TitlesDropDown_OnValueChanged
-				UIDropDownMenu_AddButton(info)
-				if active == "1" then
-					UIDropDownMenu_SetText(GENERIC_NONE, PaperDollFrameTitlesDropdown)
-				end
-			else
-				if getglobal("PVP_MEDAL" .. id) then
-					info.text = getglobal("PVP_MEDAL" .. id)
-					info.value = id
-					info.arg1 = id
-					info.checked = active == "1"
-					info.func = TitlesDropDown_OnValueChanged
-					UIDropDownMenu_AddButton(info)
-					if active == "1" then
-						UIDropDownMenu_SetText(getglobal("PVP_MEDAL" .. id), PaperDollFrameTitlesDropdown)
-					end
-				end
-			end
+	numTitles = 0
+	local info = UIDropDownMenu_CreateInfo()
+	for id, status in string.gfind(availableTitles, "(%d+):(%d+)") do
+		local checked = status == "1"
+		local title = id == "0" and GENERIC_NONE or _G["PVP_MEDAL" .. id]
+		info.text = title
+		info.value = id
+		info.checked = checked
+		info.func = TitlesDropDown_ChangeTitle
+		info.arg1 = id
+		UIDropDownMenu_AddButton(info)
+		if checked then
+			UIDropDownMenu_SetText(title, PaperDollFrameTitlesDropdown)
 		end
+		numTitles = numTitles + 1
 	end
+	PaperDollFrame_SetGuild()
 end
 
-function TitlesDropDown_OnValueChanged(a)
-	SendAddonMessage("TW_TITLES", "ChangeTitle:" .. a, "GUILD")
+function TitlesDropDown_ChangeTitle(id)
+	SendAddonMessage("TW_TITLES", "ChangeTitle:" .. id, "GUILD")
 end

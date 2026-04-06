@@ -55,7 +55,7 @@ function BuffButton_Update()
 	local buffIndex, untilCancelled = GetPlayerBuff(this:GetID(), this.buffFilter);
 	this.buffIndex = buffIndex;
 	this.untilCancelled = untilCancelled;
-	local buffDuration = getglobal(this:GetName().."Duration");
+	local buffDuration = _G[this:GetName().."Duration"];
 
 	if ( buffIndex < 0 ) then
 		this:Hide();
@@ -71,13 +71,13 @@ function BuffButton_Update()
 		end
 	end
 
-	local icon = getglobal(this:GetName().."Icon");
+	local icon = _G[this:GetName().."Icon"];
 	icon:SetTexture(GetPlayerBuffTexture(buffIndex));
 
 	-- Set color of debuff border based on dispel class.
 	local color;
 	local debuffType = GetPlayerBuffDispelType(GetPlayerBuff(this:GetID(), "HARMFUL"));
-	local debuffSlot = getglobal(this:GetName().."Border");
+	local debuffSlot = _G[this:GetName().."Border"];
 	if ( debuffType ) then
 		color = DebuffTypeColor[debuffType];
 	else
@@ -88,7 +88,7 @@ function BuffButton_Update()
 	end
 
 	-- Set the number of applications of an aura if its a debuff
-	local buffCount = getglobal(this:GetName().."Count");
+	local buffCount = _G[this:GetName().."Count"];
 	local count = GetPlayerBuffApplications(buffIndex);
 	if ( count > 1 ) then
 		buffCount:SetText(count);
@@ -116,7 +116,7 @@ function BuffButton_OnEvent(event)
 end
 
 function BuffButton_OnUpdate()
-	local buffDuration = getglobal(this:GetName().."Duration");
+	local buffDuration = _G[this:GetName().."Duration"];
 	if ( this.untilCancelled == 1 ) then
 		buffDuration:Hide();
 		return;
@@ -203,10 +203,10 @@ function BuffFrame_Enchant_OnUpdate(elapsed)
 	end
 	if ( hasMainHandEnchant ) then
 		enchantIndex = enchantIndex + 1;
-		enchantButton = getglobal("TempEnchant"..enchantIndex);
+		enchantButton = _G["TempEnchant"..enchantIndex];
 		textureName = GetInventoryItemTexture("player", 16);
 		enchantButton:SetID(16);
-		getglobal(enchantButton:GetName().."Icon"):SetTexture(textureName);
+		_G[enchantButton:GetName().."Icon"]:SetTexture(textureName);
 		enchantButton:Show();
 
 		-- Show buff durations if necessary
@@ -225,8 +225,8 @@ function BuffFrame_Enchant_OnUpdate(elapsed)
 	end
 	--Hide unused enchants
 	for i=enchantIndex+1, 2 do
-		getglobal("TempEnchant"..i):Hide();
-		getglobal("TempEnchant"..i.."Duration"):Hide();
+		_G["TempEnchant"..i]:Hide();
+		_G["TempEnchant"..i.."Duration"]:Hide();
 	end
 
 	-- Position buff frame
@@ -247,7 +247,7 @@ function BuffFrame_EnchantButton_OnEnter()
 end
 
 function BuffFrame_UpdateDuration(buffButton, timeLeft)
-	local duration = getglobal(buffButton:GetName().."Duration");
+	local duration = _G[buffButton:GetName().."Duration"];
 	if ( SHOW_BUFF_DURATIONS == "1" and timeLeft ) then
 		duration:SetText(SecondsToTimeAbbrev(timeLeft));
 		if ( timeLeft < BUFF_DURATION_WARNING_TIME ) then
@@ -269,11 +269,11 @@ function RefreshBuffs(button, showBuffs, unit)
 
 	for i=1, MAX_PARTY_DEBUFFS do
 
-		local debuffBorder = getglobal(button.."Debuff"..i.."Border");
-		local debuffIcon = getglobal(button.."Debuff"..i.."Icon");
+		local debuffBorder = _G[button.."Debuff"..i.."Border"];
+		local debuffIcon = _G[button.."Debuff"..i.."Icon"];
 
 		if ( unit == "party"..i ) then
-			unitStatus = getglobal(button.."Status");
+			unitStatus = _G[button.."Status"];
 		end
 		if ( showBuffs == 1 ) then
 			debuff = UnitBuff(unit, i, SHOW_CASTABLE_BUFFS);
@@ -297,9 +297,9 @@ function RefreshBuffs(button, showBuffs, unit)
 				debuffColor = DebuffTypeColor["none"];
 			end
 			debuffBorder:SetVertexColor(debuffColor.r, debuffColor.g, debuffColor.b);
-			getglobal(button.."Debuff"..i):Show();
+			_G[button.."Debuff"..i]:Show();
 		else
-			getglobal(button.."Debuff"..i):Hide();
+			_G[button.."Debuff"..i]:Hide();
 		end
 	end
 	-- Reset unitStatus overlay graphic timer

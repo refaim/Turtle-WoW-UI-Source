@@ -11,11 +11,11 @@
 				GlueButtonMaster_OnUpdate(arg1);
 			</OnUpdate>
 			<OnEnter>
-				getglobal(this:GetName().."Rays"):Show();
+				_G[this:GetName().."Rays"]:Show();
 				this.startPulse = 1;
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName().."Rays"):Hide();
+				_G[this:GetName().."Rays"]:Hide();
 				this.startPulse = nil;
 			</OnLeave>
 		</Scripts>

@@ -72,8 +72,8 @@ function PetStable_Update()
 	local button;
 	local icon, name, level, family, loyalty;
 	for i=1, NUM_PET_STABLE_SLOTS do
-		button = getglobal("PetStableStabledPet"..i);
-		background = getglobal("PetStableStabledPet"..i.."Background");
+		button = _G["PetStableStabledPet"..i];
+		local background = _G["PetStableStabledPet"..i.."Background"];
 		icon, name, level, family, loyalty = GetStablePetInfo(i);
 		SetItemButtonTexture(button, icon);
 		if ( i <= GetNumStableSlots() ) then
@@ -81,7 +81,7 @@ function PetStable_Update()
 			button:Enable();
 			if ( icon ) then
 				button.tooltip = name;
-				button.tooltipSubtext = format(TEXT(UNIT_LEVEL_TEMPLATE),level).." "..family;
+				button.tooltipSubtext = format(UNIT_LEVEL_TEMPLATE,level).." "..family;
 			else
 				button.tooltip = EMPTY_STABLE_SLOT;
 				button.tooltipSubtext = "";
@@ -89,7 +89,7 @@ function PetStable_Update()
 			if ( i == selectedPet ) then
 				if ( icon ) then
 					button:SetChecked(1);
-					PetStableLevelText:SetText(name.." "..format(TEXT(UNIT_LEVEL_TEMPLATE),level).." "..family);
+					PetStableLevelText:SetText(name.." "..format(UNIT_LEVEL_TEMPLATE,level).." "..family);
 					PetStableLoyaltyText:SetText(loyalty);
 					SetPetStablePaperdoll(PetStableModel);
 					PetStablePetInfo.tooltip = format(PET_DIET_TEMPLATE, BuildListString(GetStablePetFoodTypes(i)));
@@ -109,7 +109,7 @@ function PetStable_Update()
 			if ( GameTooltip:IsOwned(button) ) then
 				GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
 				GameTooltip:SetText(button.tooltip);
-				GameTooltip:AddLine(button.tooltipSubtext, "", 1.0, 1.0, 1.0);
+				GameTooltip:AddLine(button.tooltipSubtext);
 				GameTooltip:Show();
 			end
 		else
@@ -126,7 +126,7 @@ function PetStable_Update()
 			if ( not family ) then
 				family = "";
 			end
-			PetStableLevelText:SetText(UnitName("pet").." "..format(TEXT(UNIT_LEVEL_TEMPLATE),UnitLevel("pet")).." "..family);
+			PetStableLevelText:SetText(UnitName("pet").." "..format(UNIT_LEVEL_TEMPLATE,UnitLevel("pet")).." "..family);
 			PetStableLoyaltyText:SetText(GetPetLoyalty());
 			SetPetStablePaperdoll(PetStableModel);
 			if ( not PetStableModel:IsShown() ) then
@@ -139,7 +139,7 @@ function PetStable_Update()
 			-- If pet doesn't exist it might be dismissed, so check stable slot 0 for current pet info
 			PetStableCurrentPet:SetChecked(1);
 			icon, name, level, family, loyalty = GetStablePetInfo(0);
-			PetStableLevelText:SetText(name.." "..format(TEXT(UNIT_LEVEL_TEMPLATE),level).." "..family);
+			PetStableLevelText:SetText(name.." "..format(UNIT_LEVEL_TEMPLATE,level).." "..family);
 			PetStableLoyaltyText:SetText(loyalty);
 			SetPetStablePaperdoll(PetStableModel);
 			if ( not PetStableModel:IsShown() ) then
@@ -161,12 +161,12 @@ function PetStable_Update()
 	if ( GetPetIcon() ) then
 		SetItemButtonTexture(PetStableCurrentPet, GetPetIcon());
 		PetStableCurrentPet.tooltip = UnitName("pet");
-		PetStableCurrentPet.tooltipSubtext = format(TEXT(UNIT_LEVEL_TEMPLATE),UnitLevel("pet")).." "..UnitCreatureFamily("pet");
+		PetStableCurrentPet.tooltipSubtext = format(UNIT_LEVEL_TEMPLATE,UnitLevel("pet")).." "..UnitCreatureFamily("pet");
 	elseif ( GetStablePetInfo(0) ) then
 		icon, name, level, family, loyalty = GetStablePetInfo(0);
 		SetItemButtonTexture(PetStableCurrentPet, icon);
 		PetStableCurrentPet.tooltip = name;
-		PetStableCurrentPet.tooltipSubtext = format(TEXT(UNIT_LEVEL_TEMPLATE),level).." "..family;
+		PetStableCurrentPet.tooltipSubtext = format(UNIT_LEVEL_TEMPLATE,level).." "..family;
 	else
 		SetItemButtonTexture(PetStableCurrentPet, "");
 		PetStableCurrentPet.tooltip = EMPTY_STABLE_SLOT;
@@ -176,7 +176,7 @@ function PetStable_Update()
 	if ( GameTooltip:IsOwned(PetStableCurrentPet) ) then
 		GameTooltip:SetOwner(PetStableCurrentPet, "ANCHOR_RIGHT");
 		GameTooltip:SetText(PetStableCurrentPet.tooltip);
-		GameTooltip:AddLine(PetStableCurrentPet.tooltipSubtext, "", 1.0, 1.0, 1.0);
+		GameTooltip:AddLine(PetStableCurrentPet.tooltipSubtext);
 		GameTooltip:Show();
 	end
 
@@ -210,7 +210,7 @@ end
 
 function PetStable_NoPetsAllowed()
 	for i=1, NUM_PET_STABLE_SLOTS do
-		button = getglobal("PetStableStabledPet"..i);
+		local button = _G["PetStableStabledPet"..i];
 		button.tooltip = EMPTY_STABLE_SLOT;
 		button:SetChecked(nil);
 	end

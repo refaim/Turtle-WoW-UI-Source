@@ -2,16 +2,27 @@ LOOTFRAME_NUMBUTTONS = 4;
 NUM_GROUP_LOOT_FRAMES = 4;
 MASTER_LOOT_THREHOLD = 4;
 
+GROUP_LOOT_BACKDROP_GOLD = {
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background",
+	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+	tile = true,
+	tileSize = 32,
+	edgeSize = 32,
+	insets = { left = 11, right = 12, top = 12, bottom = 11 }
+}
+
+GROUP_LOOT_BACKDROP = {
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	tile = true,
+	tileSize = 32,
+	edgeSize = 32,
+	insets = { left = 11, right = 12, top = 12, bottom = 11 }
+}
+
 local GroupRoster = {}
 for k in pairs(RAID_CLASS_COLORS) do
 	GroupRoster[k] = {}
-	if TW_CLASS_TOKEN and TW_CLASS_TOKEN[GetLocale()] then
-		for k2, v2 in pairs(TW_CLASS_TOKEN[GetLocale()]) do
-			if v2 == k then
-				GroupRoster[k].class = k2
-			end
-		end
-	end
 end
 
 local lastSelectedButton = nil
@@ -61,7 +72,7 @@ function LootFrame_OnEvent(event)
 		end
 		local slot = arg1 - ((this.page - 1) * numLootToShow);
 		if ( (slot > 0) and (slot < (numLootToShow + 1)) ) then
-			local button = getglobal("LootButton"..slot);
+			local button = _G["LootButton"..slot];
 			if ( button ) then
 				button:Hide();
 			end
@@ -71,7 +82,7 @@ function LootFrame_OnEvent(event)
 		local allButtonsHidden = 1;
 
 		for index = 1, LOOTFRAME_NUMBUTTONS do
-			button = getglobal("LootButton"..index);
+			button = _G["LootButton"..index];
 			if ( button:IsVisible() ) then
 				allButtonsHidden = nil;
 			end
@@ -112,24 +123,27 @@ function LootFrame_UpdateRoster()
 			tremove(GroupRoster[class], i)
 		end
 	end
-	local class, name
-	if UnitInRaid("player") then
+	local class, name, classLocalized
+	if GetNumRaidMembers() > 0 then
 		for i = 1, GetNumRaidMembers() do
 			if GetRaidRosterInfo(i) then
-				_, class = UnitClass("raid" .. i)
+				classLocalized, class = UnitClass("raid" .. i)
 				name = GetRaidRosterInfo(i)
 				tinsert(GroupRoster[class], name)
+				GroupRoster[class].class = classLocalized
 			end
 		end
-	elseif UnitInParty("player") then
-		_, class = UnitClass("player")
+	elseif GetNumPartyMembers() > 0 then
+		classLocalized, class = UnitClass("player")
 		name = UnitName("player")
 		tinsert(GroupRoster[class], name)
+		GroupRoster[class].class = classLocalized
 		for i = 1, GetNumPartyMembers() do
 			if UnitName("party" .. i) then
-				_, class = UnitClass("party" .. i)
+				classLocalized, class = UnitClass("party" .. i)
 				name = UnitName("party" .. i)
 				tinsert(GroupRoster[class], name)
+				GroupRoster[class].class = classLocalized
 			end
 		end
 	end
@@ -148,17 +162,17 @@ function LootFrame_Update()
 	local texture, item, quantity, quality;
 	local button, countString, color;
 	for index = 1, LOOTFRAME_NUMBUTTONS do
-		button = getglobal("LootButton"..index);
+		button = _G["LootButton"..index];
 		local slot = (numLootToShow * (LootFrame.page - 1)) + index;
 		if ( slot <= numLootItems ) then
 			if ( (LootSlotIsItem(slot) or LootSlotIsCoin(slot)) and index <= numLootToShow ) then
 				texture, item, quantity, quality = GetLootSlotInfo(slot);
 				color = ITEM_QUALITY_COLORS[quality];
-				getglobal("LootButton"..index.."IconTexture"):SetTexture(texture);
-				getglobal("LootButton"..index.."Text"):SetText(item);
-				getglobal("LootButton"..index.."Text"):SetVertexColor(color.r, color.g, color.b);
+				_G["LootButton"..index.."IconTexture"]:SetTexture(texture);
+				_G["LootButton"..index.."Text"]:SetText(item);
+				_G["LootButton"..index.."Text"]:SetVertexColor(color.r, color.g, color.b);
 
-				countString = getglobal("LootButton"..index.."Count");
+				countString = _G["LootButton"..index.."Count"];
 				if ( quantity > 1 ) then
 					countString:SetText(quantity);
 					countString:Show();
@@ -232,7 +246,7 @@ function LootFrameItem_OnClick(button)
 	LootFrame.selectedLootButton = this:GetName();
 	LootFrame.selectedSlot = this.slot;
 	LootFrame.selectedQuality = this.quality;
-	LootFrame.selectedItemName = getglobal(this:GetName().."Text"):GetText();
+	LootFrame.selectedItemName = _G[this:GetName().."Text"]:GetText();
 end
 
 function GroupLootDropDown_OnLoad()
@@ -241,11 +255,9 @@ end
 
 local function IsRaidMemberOffline(member)
 	for i = 1, MAX_RAID_MEMBERS do
-		if GetRaidRosterInfo(i) then
-			local name, rank, subgroup, level, class, classToken, zone, online, isDead = GetRaidRosterInfo(i)
-			if name == member and not online then
-				return 1
-			end
+		local name, rank, subgroup, level, class, classToken, zone, online, isDead = GetRaidRosterInfo(i)
+		if name and name == member then
+			return not online
 		end
 	end
 	return nil
@@ -353,11 +365,11 @@ end
 function GroupLootFrame_OpenNewFrame(id, rollTime)
 	local frame;
 	for i=1, NUM_GROUP_LOOT_FRAMES do
-		frame = getglobal("GroupLootFrame"..i);
+		frame = _G["GroupLootFrame"..i];
 		if ( not frame:IsVisible() ) then
 			frame.rollID = id;
 			frame.rollTime = rollTime;
-			getglobal("GroupLootFrame"..i.."Timer"):SetMinMaxValues(0, rollTime);
+			_G["GroupLootFrame"..i.."Timer"]:SetMinMaxValues(0, rollTime);
 			frame:Show();
 			return;
 		end
@@ -366,21 +378,24 @@ end
 
 function GroupLootFrame_OnShow()
 	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo(this.rollID);
-
+	if ( not name ) then
+		this:Hide();
+		return;
+	end
 	if ( bindOnPickUp ) then
-		this:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
-		getglobal(this:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Gold-Corner");
-		getglobal(this:GetName().."Decoration"):Show();
+		this:SetBackdrop(GROUP_LOOT_BACKDROP_GOLD);
+		_G[this:GetName().."Corner"]:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Gold-Corner");
+		_G[this:GetName().."Decoration"]:Show();
 	else
-		this:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32, insets = { left = 11, right = 12, top = 12, bottom = 11 } } );
-		getglobal(this:GetName().."Corner"):SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner");
-		getglobal(this:GetName().."Decoration"):Hide();
+		this:SetBackdrop(GROUP_LOOT_BACKDROP);
+		_G[this:GetName().."Corner"]:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner");
+		_G[this:GetName().."Decoration"]:Hide();
 	end
 
-	getglobal("GroupLootFrame"..this:GetID().."IconFrameIcon"):SetTexture(texture);
-	getglobal("GroupLootFrame"..this:GetID().."Name"):SetText(name);
+	_G["GroupLootFrame"..this:GetID().."IconFrameIcon"]:SetTexture(texture);
+	_G["GroupLootFrame"..this:GetID().."Name"]:SetText(name);
 	local color = ITEM_QUALITY_COLORS[quality];
-	getglobal("GroupLootFrame"..this:GetID().."Name"):SetVertexColor(color.r, color.g, color.b);
+	_G["GroupLootFrame"..this:GetID().."Name"]:SetVertexColor(color.r, color.g, color.b);
 end
 
 function GroupLootFrame_OnEvent()
@@ -392,12 +407,10 @@ function GroupLootFrame_OnEvent()
 end
 
 function GroupLootFrame_OnUpdate()
-	if ( this:IsVisible() ) then
-		local left = GetLootRollTimeLeft(this:GetParent().rollID);
-		local min, max = this:GetMinMaxValues();
-		if ( (left < min) or (left > max) ) then
-			left = min;
-		end
-		this:SetValue(left);
+	local left = GetLootRollTimeLeft(this:GetParent().rollID);
+	local min, max = this:GetMinMaxValues();
+	if ( (left < min) or (left > max) ) then
+		left = min;
 	end
+	this:SetValue(left);
 end

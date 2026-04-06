@@ -464,7 +464,7 @@
 			</OnLoad>
 			<OnShow>
 				PanelTemplates_TabResize(0);
-				getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 30);
+				_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 30);
 			</OnShow>
 			<OnClick>
 				WorldStateScoreFrameTab_OnClick();
@@ -1303,7 +1303,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="WorldStateScoreFrameLeaveButton" inherits="UIPanelButtonTemplate" text="RETURN_TO_WORLD">
+			<Button name="WorldStateScoreFrameLeaveButton" inherits="UIPanelButtonTemplate2" text="RETURN_TO_WORLD">
 				<Size>
 					<AbsDimension x="153" y="21"/>
 				</Size>
@@ -1390,36 +1390,10 @@
 				WorldStateScoreFrame_OnLoad();
 			</OnLoad>
 			<OnEvent>
-				if	( event == "UPDATE_BATTLEFIELD_SCORE" or event == "UPDATE_WORLD_STATES") then
-					local _, instanceType = IsInInstance()
-					if ( event == "UPDATE_WORLD_STATES" ) then
-						if instanceType == "none" then
-							this.arenaData = nil
-						end
-					else
-						if instanceType == "pvp" and not this.arenaData then
-							RequestArenaScoreInfo()
-						end
-					end
-
-					if ( WorldStateScoreFrame:IsVisible() or GetBattlefieldWinner() ) then
-						WorldStateScoreFrame_Resize();
-						WorldStateScoreFrame_Update();
-					end
-				end
-				if ( event == "PLAYER_ENTERING_WORLD" ) then
-					HideUIPanel(WorldStateScoreFrame);
-					BATTLEFIELD_SHUTDOWN_TIMER = 0;
-				end
+				WorldStateScoreFrame_OnEvent();
 			</OnEvent>
 			<OnShow>
-				if this.arenaData then
-					RequestArenaScoreInfo()
-				end
-
-				WorldStateScoreFrame_Resize();
-				WorldStateScoreFrame_Update();
-				WorldStateScoreFrameTab_OnClick(WorldStateScoreFrameTab1);
+				WorldStateScoreFrame_OnShow();
 			</OnShow>
 			<OnUpdate>
 				RequestBattlefieldScoreData();

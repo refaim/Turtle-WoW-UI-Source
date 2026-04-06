@@ -5,16 +5,18 @@ MAX_PARTY_TOOLTIP_DEBUFFS = 16;
 
 function HidePartyFrame()
 	for i=1, MAX_PARTY_MEMBERS, 1 do
-		getglobal("PartyMemberFrame"..i):Hide();
+		_G["PartyMemberFrame"..i]:Hide();
 	end
+	UpdatePartyMemberBackground();
 end
 
 function ShowPartyFrame()
 	for i=1, MAX_PARTY_MEMBERS, 1 do
 		if ( GetPartyMember(i) ) then
-			getglobal("PartyMemberFrame"..i):Show();
+			_G["PartyMemberFrame"..i]:Show();
 		end
 	end
+	UpdatePartyMemberBackground();
 end
 
 function PartyMemberFrame_OnLoad()
@@ -35,7 +37,7 @@ function PartyMemberFrame_OnLoad()
 end
 
 function PartyMemberFrame_UpdateMember()
-	if ( HIDE_PARTY_INTERFACE == "1" and GetNumRaidMembers() > 0 ) then
+	if ( (HIDE_PARTY_INTERFACE == "1" and GetNumRaidMembers() > 0) or (GROUP_ENABLED and GROUP_ENABLED == "1" and GROUP_REPLACE_PARTY == "1")) then
 		return;
 	end
 	local id = this:GetID();
@@ -44,7 +46,7 @@ function PartyMemberFrame_UpdateMember()
 		UnitFrame_Update();
 		this:Show();
 
-		local masterIcon = getglobal(this:GetName().."MasterIcon");
+		local masterIcon = _G[this:GetName().."MasterIcon"];
 		local lootMethod;
 		local lootMaster;
 		lootMethod, lootMaster = GetLootMethod();
@@ -68,7 +70,7 @@ function PartyMemberFrame_UpdatePet(id)
 	end
 
 	local frameName = "PartyMemberFrame"..id;
-	local petFrame = getglobal("PartyMemberFrame"..id.."PetFrame");
+	local petFrame = _G["PartyMemberFrame"..id.."PetFrame"];
 
 	if ( UnitIsConnected("party"..id) and UnitExists("partypet"..id) and SHOW_PARTY_PETS == "1" ) then
 		petFrame:Show();
@@ -99,13 +101,13 @@ function PartyMemberFrame_UpdateMemberHealth(elapsed)
 		else
 			alpha = (255 - (counter * 256)) / 255;
 		end
-		getglobal(this:GetName().."Portrait"):SetAlpha(alpha);
+		_G[this:GetName().."Portrait"]:SetAlpha(alpha);
 	end
 end
 
 function PartyMemberFrame_UpdateLeader()
 	local id = this:GetID();
-	local icon = getglobal("PartyMemberFrame"..id.."LeaderIcon");
+	local icon = _G["PartyMemberFrame"..id.."LeaderIcon"];
 	if( GetPartyLeaderIndex() == id ) then
 		icon:Show();
 	else
@@ -116,7 +118,7 @@ end
 function PartyMemberFrame_UpdatePvPStatus()
 	local id = this:GetID();
 	local unit = "party"..id;
-	local icon = getglobal("PartyMemberFrame"..id.."PVPIcon");
+	local icon = _G["PartyMemberFrame"..id.."PVPIcon"];
 	local factionGroup = UnitFactionGroup(unit);
 	if ( UnitIsPVPFreeForAll(unit) ) then
 		icon:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
@@ -155,9 +157,9 @@ function PartyMemberFrame_OnEvent(event)
 		local lootMaster;
 		lootMethod, lootMaster = GetLootMethod();
 		if ( this:GetID() == lootMaster ) then
-			getglobal(this:GetName().."MasterIcon"):Show();
+			_G[this:GetName().."MasterIcon"]:Show();
 		else
-			getglobal(this:GetName().."MasterIcon"):Hide();
+			_G[this:GetName().."MasterIcon"]:Hide();
 		end
 		return;
 	end
@@ -201,7 +203,7 @@ end
 
 function PartyMemberFrame_OnUpdate(elapsed)
 	PartyMemberFrame_UpdateMemberHealth(arg1);
-	local partyStatus = getglobal(this:GetName().."Status");
+	local partyStatus = _G[this:GetName().."Status"];
 	if ( this.hasDispellable ) then
 		partyStatus:Show();
 		partyStatus:SetAlpha(BUFF_ALPHA_VALUE);
@@ -233,7 +235,7 @@ function PartyMemberFrame_OnClick(partyFrame)
 			TargetUnit(unit);
 		end
 	else
-		ToggleDropDownMenu(1, nil, getglobal("PartyMemberFrame"..partyFrame:GetID().."DropDown"), partyFrame:GetName(), 47, 15);
+		ToggleDropDownMenu(1, nil, _G["PartyMemberFrame"..partyFrame:GetID().."DropDown"], partyFrame:GetName(), 47, 15);
 	end
 end
 
@@ -256,7 +258,7 @@ function PartyMemberFrame_RefreshPetBuffs(id)
 	if ( not id ) then
 		id = this:GetID();
 	end
-	RefreshBuffs(getglobal("PartyMemberFrame"..id.."PetFrame"), 0, "partypet"..id)
+	RefreshBuffs(_G["PartyMemberFrame"..id.."PetFrame"], 0, "partypet"..id)
 end
 
 function PartyMemberBuffTooltip_Update(isPet)
@@ -271,7 +273,7 @@ function PartyMemberBuffTooltip_Update(isPet)
 			texture = UnitBuff("party"..this:GetID(), i);
 		end
 		if ( texture ) then
-			buffButton = getglobal("PartyMemberBuffTooltipBuff"..index)
+			buffButton = _G["PartyMemberBuffTooltipBuff"..index]
 			if ( not buffButton ) then
 				buffButton = CreateFrame("Button", "PartyMemberBuffTooltipBuff"..index, PartyMemberBuffTooltip, "PartyBuffButtonTemplate")
 				local point, relativeTo, relativePoint, x, y = "LEFT", "PartyMemberBuffTooltipBuff"..(index - 1), "RIGHT", 2, 0
@@ -280,17 +282,17 @@ function PartyMemberBuffTooltip_Update(isPet)
 				end
 				buffButton:SetPoint(point, relativeTo, relativePoint, x, y)
 			end
-			getglobal("PartyMemberBuffTooltipBuff"..index.."Icon"):SetTexture(texture);
-			getglobal("PartyMemberBuffTooltipBuff"..index.."Icon"):SetTexCoord(0.078125, 0.90625, 0.078125, 0.90625)
-			getglobal("PartyMemberBuffTooltipBuff"..index.."Border"):Hide();
-			getglobal("PartyMemberBuffTooltipBuff"..index):Show();
+			_G["PartyMemberBuffTooltipBuff"..index.."Icon"]:SetTexture(texture);
+			_G["PartyMemberBuffTooltipBuff"..index.."Icon"]:SetTexCoord(0.078125, 0.90625, 0.078125, 0.90625)
+			_G["PartyMemberBuffTooltipBuff"..index.."Border"]:Hide();
+			_G["PartyMemberBuffTooltipBuff"..index]:Show();
 			index = index + 1;
 			numBuffs = numBuffs + 1;
 		end
 	end
 	for i=index, MAX_PARTY_TOOLTIP_BUFFS do
-		if ( getglobal("PartyMemberBuffTooltipBuff"..i) ) then
-			getglobal("PartyMemberBuffTooltipBuff"..i):Hide();
+		if ( _G["PartyMemberBuffTooltipBuff"..i] ) then
+			_G["PartyMemberBuffTooltipBuff"..i]:Hide();
 		end
 	end
 
@@ -318,7 +320,7 @@ function PartyMemberBuffTooltip_Update(isPet)
 		end
 
 		if ( texture ) then
-			debuffButton = getglobal("PartyMemberBuffTooltipDebuff"..index)
+			debuffButton = _G["PartyMemberBuffTooltipDebuff"..index]
 			if ( not debuffButton ) then
 				debuffButton = CreateFrame("Button", "PartyMemberBuffTooltipDebuff"..index, PartyMemberBuffTooltip, "PartyBuffButtonTemplate")
 				local point, relativeTo, relativePoint, x, y = "LEFT", "PartyMemberBuffTooltipDebuff"..(index - 1), "RIGHT", 2, 0
@@ -327,8 +329,8 @@ function PartyMemberBuffTooltip_Update(isPet)
 				end
 				debuffButton:SetPoint(point, relativeTo, relativePoint, x, y)
 			end
-			local debuffBorder = getglobal("PartyMemberBuffTooltipDebuff"..index.."Border")
-			local partyDebuff = getglobal("PartyMemberBuffTooltipDebuff"..index.."Icon");
+			local debuffBorder = _G["PartyMemberBuffTooltipDebuff"..index.."Border"]
+			local partyDebuff = _G["PartyMemberBuffTooltipDebuff"..index.."Icon"];
 			partyDebuff:SetTexture(texture);
 			partyDebuff:SetTexCoord(0.078125, 0.90625, 0.078125, 0.90625)
 			if ( debuffType ) then
@@ -343,8 +345,8 @@ function PartyMemberBuffTooltip_Update(isPet)
 		end
 	end
 	for i=index, MAX_PARTY_TOOLTIP_DEBUFFS do
-		if ( getglobal("PartyMemberBuffTooltipDebuff"..i) ) then
-			getglobal("PartyMemberBuffTooltipDebuff"..i):Hide();
+		if ( _G["PartyMemberBuffTooltipDebuff"..i] ) then
+			_G["PartyMemberBuffTooltipDebuff"..i]:Hide();
 		end
 	end
 
@@ -368,13 +370,13 @@ function PartyMemberHealthCheck()
 	if ( not UnitIsConnected("party"..this:GetParent():GetID()) ) then
 		this:SetValue(unitHPMax);
 		this:SetStatusBarColor(0.5, 0.5, 0.5);
-		SetDesaturation(getglobal(this:GetParent():GetName().."Portrait"), 1);
-		getglobal(this:GetParent():GetName().."Disconnect"):Show();
-		getglobal(this:GetParent():GetName().."PetFrame"):Hide();
+		SetDesaturation(_G[this:GetParent():GetName().."Portrait"], 1);
+		_G[this:GetParent():GetName().."Disconnect"]:Show();
+		_G[this:GetParent():GetName().."PetFrame"]:Hide();
 		return;
 	else
-		SetDesaturation(getglobal(this:GetParent():GetName().."Portrait"), nil);
-		getglobal(this:GetParent():GetName().."Disconnect"):Hide();
+		SetDesaturation(_G[this:GetParent():GetName().."Portrait"], nil);
+		_G[this:GetParent():GetName().."Disconnect"]:Hide();
 	end
 
 	unitCurrHP = this:GetValue();
@@ -384,13 +386,13 @@ function PartyMemberHealthCheck()
 		this:GetParent().unitHPPercent = 0;
 	end
 	if ( UnitIsDead("party"..this:GetParent():GetID()) ) then
-		getglobal(prefix.."Portrait"):SetVertexColor(0.35, 0.35, 0.35, 1.0);
+		_G[prefix.."Portrait"]:SetVertexColor(0.35, 0.35, 0.35, 1.0);
 	elseif ( UnitIsGhost("party"..this:GetParent():GetID()) ) then
-		getglobal(prefix.."Portrait"):SetVertexColor(0.2, 0.2, 0.75, 1.0);
+		_G[prefix.."Portrait"]:SetVertexColor(0.2, 0.2, 0.75, 1.0);
 	elseif ( (this:GetParent().unitHPPercent > 0) and (this:GetParent().unitHPPercent <= 0.2) ) then
-		getglobal(prefix.."Portrait"):SetVertexColor(1.0, 0.0, 0.0);
+		_G[prefix.."Portrait"]:SetVertexColor(1.0, 0.0, 0.0);
 	else
-		getglobal(prefix.."Portrait"):SetVertexColor(1.0, 1.0, 1.0, 1.0);
+		_G[prefix.."Portrait"]:SetVertexColor(1.0, 1.0, 1.0, 1.0);
 	end
 end
 
@@ -401,7 +403,7 @@ end
 function PartyFrameDropDown_Initialize()
 	local dropdown;
 	if ( UIDROPDOWNMENU_OPEN_MENU ) then
-		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
+		dropdown = _G[UIDROPDOWNMENU_OPEN_MENU];
 	else
 		dropdown = this;
 	end
@@ -412,8 +414,8 @@ function UpdatePartyMemberBackground()
 	if ( not PartyMemberBackground ) then
 		return;
 	end
-	if ( SHOW_PARTY_BACKGROUND == "1" and GetNumPartyMembers() > 0 and HIDE_PARTY_INTERFACE ~= "1" ) then
-		if ( getglobal("PartyMemberFrame"..GetNumPartyMembers().."PetFrame"):IsShown() ) then
+	if ( SHOW_PARTY_BACKGROUND == "1" and GetNumPartyMembers() > 0 and HIDE_PARTY_INTERFACE ~= "1" and GROUP_REPLACE_PARTY == "0") then
+		if ( _G["PartyMemberFrame"..GetNumPartyMembers().."PetFrame"]:IsShown() ) then
 			PartyMemberBackground:SetPoint("BOTTOMLEFT", "PartyMemberFrame"..GetNumPartyMembers(), "BOTTOMLEFT", -5, -21);
 		else
 			PartyMemberBackground:SetPoint("BOTTOMLEFT", "PartyMemberFrame"..GetNumPartyMembers(), "BOTTOMLEFT", -5, -5);

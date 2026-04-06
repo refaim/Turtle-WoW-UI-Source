@@ -49,7 +49,7 @@ function CharacterSelect_OnShow()
 	local serverType = "";
 	if ( serverName ) then
 		if( not connected ) then
-			serverName = serverName.."\n("..TEXT(SERVER_DOWN)..")";
+			serverName = serverName.."\n("..SERVER_DOWN..")";
 		end
 		if ( isPVP ) then
 			if ( isRP ) then
@@ -81,7 +81,7 @@ function CharacterSelect_OnShow()
 		else
 			local billingTimeLeft = GetBillingTimeRemaining();
 			-- Set default text for the payment plan
-			local billingText = getglobal("BILLING_TEXT"..paymentPlan);
+			local billingText = _G["BILLING_TEXT"..paymentPlan];
 			if ( paymentPlan == 1 ) then
 				-- Recurring account
 				billingTimeLeft = ceil(billingTimeLeft/(60 * 24));
@@ -200,7 +200,9 @@ function CharacterSelect_OnEvent()
 		GlueDialog_Show("SUGGEST_REALM");
 	elseif ( event == "FORCE_RENAME_CHARACTER" ) then
 		CharacterRenameDialog:Show();
-		CharacterRenameText1:SetText(getglobal(arg1));
+		CharacterRenameBackground:SetHeight(16 + CharacterRenameText1:GetHeight() + CharacterRenameText2:GetHeight() + 23 + CharacterRenameEditBox:GetHeight() + 8 + CharacterRenameButton1:GetHeight() + 16);
+
+		CharacterRenameText1:SetText(_G[arg1]);
 	end
 end
 
@@ -211,12 +213,12 @@ end
 
 function UpdateCharacterSelection()
 	for i=1, MAX_CHARACTERS_DISPLAYED, 1 do
-		getglobal("CharSelectCharacterButton"..i):UnlockHighlight();
+		_G["CharSelectCharacterButton"..i]:UnlockHighlight();
 	end
 
 	local index = this.selectedIndex;
 	if ( (index > 0) and (index <= MAX_CHARACTERS_DISPLAYED) )then
-		getglobal("CharSelectCharacterButton"..index):LockHighlight();
+		_G["CharSelectCharacterButton"..index]:LockHighlight();
 	end
 end
 
@@ -227,7 +229,7 @@ function UpdateCharacterList()
 	for i=1, numChars, 1 do
 		local name, race, class, level, zone, fileString, gender, ghost = GetCharacterInfo(i);
 
-		local button = getglobal("CharSelectCharacterButton"..index);
+		local button = _G["CharSelectCharacterButton"..index];
 		if ( not name ) then
 			button:SetText("ERROR - Tell Jeremy");
 		else
@@ -235,18 +237,19 @@ function UpdateCharacterList()
 				zone = "";
 			end
 
-			local classColor = "|cffFFFFFF"
-			local classToken = TW_CLASS_TOKEN[GetLocale()] and TW_CLASS_TOKEN[GetLocale()][class]
-			if classToken then
-				classColor = CLASS_COLORS[classToken] or classColor
+			local classColor
+			local classToken = TW_CLASS_TOKEN and TW_CLASS_TOKEN[class]
+			if classToken and CLASS_COLORS[classToken] then
+				classColor = CLASS_COLORS[classToken]
+				class = classColor .. class .. "|r"
 			end
-			getglobal("CharSelectCharacterButton"..index.."ButtonTextName"):SetText(name);
+			_G["CharSelectCharacterButton"..index.."ButtonTextName"]:SetText(name);
 			if ( ghost ) then
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO_GHOST), level, classColor .. class .. "|r"));
+				_G["CharSelectCharacterButton"..index.."ButtonTextInfo"]:SetText(format(CHARACTER_SELECT_INFO_GHOST, level, class));
 			else
-				getglobal("CharSelectCharacterButton"..index.."ButtonTextInfo"):SetText(format(TEXT(CHARACTER_SELECT_INFO), level, classColor .. class .. "|r"));
+				_G["CharSelectCharacterButton"..index.."ButtonTextInfo"]:SetText(format(CHARACTER_SELECT_INFO, level, class));
 			end
-			getglobal("CharSelectCharacterButton"..index.."ButtonTextLocation"):SetText(zone);
+			_G["CharSelectCharacterButton"..index.."ButtonTextLocation"]:SetText(zone);
 		end
 		button:Show();
 
@@ -269,7 +272,7 @@ function UpdateCharacterList()
 
 	local connected = IsConnectedToServer();
 	for i=index, MAX_CHARACTERS_DISPLAYED, 1 do
-		local button = getglobal("CharSelectCharacterButton"..index);
+		local button = _G["CharSelectCharacterButton"..index];
 		if ( (CharacterSelect.createIndex == 0) and (numChars < MAX_CHARACTERS_PER_REALM) ) then
 			CharacterSelect.createIndex = index;
 			if ( connected ) then
@@ -319,10 +322,10 @@ function CharacterSelectButton_OnDoubleClick()
 end
 
 function CharacterSelect_TabResize()
-	local buttonMiddle = getglobal(this:GetName().."Middle");
-	local buttonMiddleDisabled = getglobal(this:GetName().."MiddleDisabled");
+	local buttonMiddle = _G[this:GetName().."Middle"];
+	local buttonMiddleDisabled = _G[this:GetName().."MiddleDisabled"];
 	local width = this:GetTextWidth() - 8;
-	local leftWidth = getglobal(this:GetName().."Left"):GetWidth();
+	local leftWidth = _G[this:GetName().."Left"]:GetWidth();
 	buttonMiddle:SetWidth(width);
 	buttonMiddleDisabled:SetWidth(width);
 	this:SetWidth(width + (2 * leftWidth));
@@ -349,7 +352,7 @@ end
 
 function CharacterDeleteDialog_OnShow()
 	local name, race, class, level = GetCharacterInfo(CharacterSelect.selectedIndex);
-	CharacterDeleteText1:SetText(format(TEXT(CONFIRM_CHAR_DELETE), name, level, class));
+	CharacterDeleteText1:SetText(format(CONFIRM_CHAR_DELETE, name, level, class));
 	CharacterDeleteBackground:SetHeight(16 + CharacterDeleteText1:GetHeight() + CharacterDeleteText2:GetHeight() + 23 + CharacterDeleteEditBox:GetHeight() + 8 + CharacterDeleteButton1:GetHeight() + 16);
 	CharacterDeleteButton1:Disable();
 end
@@ -371,7 +374,7 @@ end
 
 function CharacterSelect_TechSupport()
 	PlaySound("gsCharacterSelectionAcctOptions");
-	LaunchURL(TEXT(TECH_SUPPORT_URL));
+	LaunchURL(TECH_SUPPORT_URL);
 end
 
 function CharacterSelect_Delete()
@@ -422,5 +425,5 @@ end
 
 function CharacterSelect_ManageAccount()
 	PlaySound("gsCharacterSelectionAcctOptions");
-	LaunchURL(TEXT(AUTH_NO_TIME_URL));
+	LaunchURL(AUTH_NO_TIME_URL);
 end

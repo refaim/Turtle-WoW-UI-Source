@@ -84,7 +84,7 @@ end
 function SetTooltipMoney(frame, money)
 	frame:AddLine(" ", 1.0, 1.0, 1.0);
 	local numLines = frame:NumLines();
-	local moneyFrame = getglobal(frame:GetName().."MoneyFrame");
+	local moneyFrame = _G[frame:GetName().."MoneyFrame"];
 	moneyFrame:SetPoint("LEFT", frame:GetName().."TextLeft"..numLines, "LEFT", 4, 0);
 	moneyFrame:Show();
 	MoneyFrame_Update(moneyFrame:GetName(), money);
@@ -92,7 +92,7 @@ function SetTooltipMoney(frame, money)
 end
 
 function GameTooltip_ClearMoney()
-	local moneyFrame = getglobal(this:GetName().."MoneyFrame");
+	local moneyFrame = _G[this:GetName().."MoneyFrame"];
 	if(moneyFrame) then
 		moneyFrame:Hide();
 	end

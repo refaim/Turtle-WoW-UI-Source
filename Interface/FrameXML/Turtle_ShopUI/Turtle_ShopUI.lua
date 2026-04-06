@@ -24,15 +24,15 @@ RegisterForSave("TWS_HIDE_MINIMAP_BUTTON")
 RegisterForSave("TWS_AUTODRESS")
 
 -- Player model positions for previews in fashion category
--- [subcategoryID] = {
+-- [inventorySlotID] = {
 --	 [race] = {
---		 [male] =   { z, x, y, facingNormal, facingSpecial },
---		 [female] = { z, x, y, facingNormal, facingSpecial },
+--		 [1] = { z, x, y, facingNormal, facingSpecial }, -- male
+--		 [2] = { z, x, y, facingNormal, facingSpecial }, -- female
 --	 },
 -- },
 local Positions = {}
 -- Head
-Positions[18] = {
+Positions[1] = {
 	human =     { { 2.1,   0,    -0.8,  0.5 }, { 1.85,  0,    -0.73, 0.5 } },
 	dwarf =     { { 1.6,   0,    -0.34, 0.5 }, { 1.5,   0,    -0.43, 0.5 } },
 	gnome =     { { 0.8,   0,    -0.3,  0.5 }, { 0.8,   0,    -0.2,  0.5 } },
@@ -45,7 +45,7 @@ Positions[18] = {
 	goblin =    { { 1.2,  -0.02, -0.33, 0.5 }, { 1.5,   0.04, -0.28, 0.5 } },
 }
 -- Shoulders
-Positions[19] = {
+Positions[3] = {
 	human =     { { 1.7,  0.04, -0.6,  0.73 }, { 1.8,  0.04, -0.54, 0.73 } },
 	dwarf =     { { 1.2,  0.06, -0.21, 0.73 }, { 1.3,  0.01, -0.27, 0.73 } },
 	gnome =     { { 0.8,  0.07, -0.05, 0.73 }, { 0.8,  0.06, -0.11, 0.73 } },
@@ -58,7 +58,7 @@ Positions[19] = {
 	goblin =    { { 1.2,  0.06, -0.2,  0.73 }, { 1.5,  0.03, -0.15, 0.73 } },
 }
 -- Back
-Positions[20] = {
+Positions[15] = {
 	human =     { { 1,    0,    0,    3 }, { 0.9, 0,    0,    3 } },
 	dwarf =     { { 0.8,  0,    0.2,  3 }, { 0.8, 0,    0.15, 3 } },
 	gnome =     { { 0.7,  0,    0.17, 3 }, { 0.7, 0,    0.17, 3 } },
@@ -71,7 +71,7 @@ Positions[20] = {
 	goblin =    { { 0.8,  0.01, 0.17, 3 }, { 1,   0.01, 0.26, 3 } },
 }
 -- Chest
-Positions[21] = {
+Positions[5] = {
 	human =     { { 1.6,  0.02, -0.39, 0.3 }, { 1.2,  0.02, -0.33, 0.3 } },
 	dwarf =     { { 1.2,  0.02, -0.08, 0.3 }, { 1.2,  0,    -0.14, 0.3 } },
 	gnome =     { { 0.8,  0,     0,    0.3 }, { 0.8,  0,     0,    0.3 } },
@@ -84,11 +84,11 @@ Positions[21] = {
 	goblin =    { { 1.2,  0,    -0.09, 0.3 }, { 1.2,  0,     0,    0.3 } },
 }
 -- Tabard
-Positions[22] = Positions[21]
+Positions[19] = Positions[5]
 -- Shirt
-Positions[23] = Positions[21]
+Positions[4] = Positions[5]
 -- Wrist
-Positions[24] = {
+Positions[9] = {
 	human =     { { 1.6, 0.03, -0.07, 1.5 }, { 1.6,  0.06, -0.08, 1.5 } },
 	dwarf =     { { 1.2, 0.04,  0.23, 1.5 }, { 1.3,  0,     0.15, 1.5 } },
 	gnome =     { { 1.2, 0.08,  0.21, 1.5 }, { 1,    0.11,  0.23, 1.5 } },
@@ -101,9 +101,9 @@ Positions[24] = {
 	goblin =    { { 1,   0.06,  0.21, 1.5 }, { 1.4,  0.11,  0.36, 1.5 } },
 }
 -- Hands
-Positions[25] = Positions[24]
+Positions[10] = Positions[9]
 -- Waist
-Positions[26] = {
+Positions[6] = {
 	human =     { { 2,    0.02, -0.16, 0 }, { 1.6,  0.01, -0.13, 0 } },
 	dwarf =     { { 1.5,  0,     0.18, 0 }, { 1.5,  0,     0.13, 0 } },
 	gnome =     { { 1.2,  0,     0.21, 0 }, { 1.2,  0,     0.22, 0 } },
@@ -116,7 +116,7 @@ Positions[26] = {
 	goblin =    { { 1.2,  0,     0.22, 0 }, { 1.65, 0.01,  0.26, 0 } },
 }
 -- Legs
-Positions[27] = {
+Positions[7] = {
 	human =     { { 1.2,  0.01, 0.25, 0 }, { 0.8, -0.01, 0.19, 0 } },
 	dwarf =     { { 1.2,  0,    0.4,  0 }, { 1.2,  0,    0.35, 0 } },
 	gnome =     { { 1.2,  0.01, 0.29, 0 }, { 1,    0,    0.25, 0 } },
@@ -129,7 +129,7 @@ Positions[27] = {
 	goblin =    { { 1.2,  0,    0.31, 0 }, { 1.6,  0,    0.39, 0 } },
 }
 -- Feet
-Positions[28] = {
+Positions[8] = {
 	human =     { { 1.6,  0.02, 0.43, 0 }, { 1.6, -0.01, 0.53, 0 } },
 	dwarf =     { { 1.2,  0,    0.57, 0 }, { 1.5, -0.03, 0.59, 0 } },
 	gnome =     { { 1.2,  0.01, 0.31, 0 }, { 1.2,  0,    0.38, 0 } },
@@ -142,7 +142,7 @@ Positions[28] = {
 	goblin =    { { 1.1,  0,    0.41, 0 }, { 1.6, -0.01, 0.53, 0 } },
 }
 -- Weapon
-Positions[29] = {
+Positions[16] = {
 	human =     { { 1.2,  0,     0,    1, -0.6  }, { 0.8,  0,     0,    1, -0.9 } },
 	dwarf =     { { 0.4,  0,     0.06, 1, -0.6  }, { 0.4,  0,     0.09, 1, -0.6 } },
 	gnome =     { { 0.4,  0,     0,    1, -0.6  }, { 0.4, -0.04,  0.07, 1, -0.6 } },
@@ -154,35 +154,49 @@ Positions[29] = {
 	scourge =   { { 0.4,  0,     0,    1, -0.6  }, { 0.8,  0,     0,    1, -0.6 } },
 	goblin =    { { 0.4,  0,     0.03, 1, -0.9  }, { 0.7,  0,     0.02, 1, -1.5 } },
 }
+-- Off-hand
+Positions[17] = Positions[16]
+-- Ranged
+Positions[18] = Positions[16]
+
+local InvTypeToSlot = {
+	["INVTYPE_HEAD"] = 1,
+	["INVTYPE_SHOULDER"] = 3,
+	["INVTYPE_CLOAK"] = 15,
+	["INVTYPE_CHEST"] = 5,
+	["INVTYPE_ROBE"] = 5,
+	["INVTYPE_WAIST"] = 6,
+	["INVTYPE_LEGS"] = 7,
+	["INVTYPE_FEET"] = 8,
+	["INVTYPE_WRIST"] = 9,
+	["INVTYPE_HAND"] = 10,
+	["INVTYPE_BODY"] = 4,
+	["INVTYPE_TABARD"] = 19,
+	["INVTYPE_WEAPON"] = 16,
+	["INVTYPE_2HWEAPON"] = 16,
+	["INVTYPE_WEAPONMAINHAND"] = 16,
+	["INVTYPE_SHIELD"] = 17,
+	["INVTYPE_WEAPONOFFHAND"] = 17,
+	["INVTYPE_HOLDABLE"] = 17,
+	["INVTYPE_RANGED"] = 18,
+	["INVTYPE_THROWN"] = 18,
+	["INVTYPE_RANGEDRIGHT"] = 18,
+}
 
 -- utils
-local function print(a)
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffd200" .. tostring(a))
-end
-
 local function IsRed(r, g ,b)
-	if r > 0.9 and g < 0.2 and b < 0.2 then
-		return true
-	end
-	return false
+	return r > 0.9 and g < 0.2 and b < 0.2
 end
 
 local function IsSearching()
-	if ShopFrameSearchBox:GetText() == TEXT(SEARCH) or ShopFrameSearchBox:GetText() == "" then
-		return false
-	end
-	return true
+	return ShopFrameSearchBox:GetText() ~= ""
 end
 
-local function debug(...)
-	if not DebugMode then
-		return
-	end
-	for i = 1, arg.n do
-		arg[i] = tostring(arg[i])
-	end
-	local msg = table.concat(arg, ", ") or "nil"
-	DEFAULT_CHAT_FRAME:AddMessage("["..GRAY_FONT_COLOR_CODE..GetTime().."|r] "..msg)
+local function debugprint(...)
+	if not DebugMode then return end
+	for i = 1, arg.n do arg[i] = tostring(arg[i]) end
+	local msg = table.concat(arg, " ") or ""
+	DEFAULT_CHAT_FRAME:AddMessage("["..format("%.3f",GetTime()).."|r] "..msg)
 end
 
 local function Send(msg)
@@ -252,6 +266,7 @@ function ShopFrame_OnEvent()
 		else
 			ShopFrameAutoDress:SetChecked(1)
 		end
+		return
 	end
 
 	if event == "CHAT_MSG_SYSTEM" then
@@ -295,7 +310,7 @@ function Shop_ProcessBalance(arg)
 	local balance = gsub(arg, "Balance:", "")
 	balance = tonumber(balance) or 0
 	Balance = balance
-	ShopFrameBalance:SetText(TEXT(DONO_SHOP_BALANCE) .. Balance)
+	ShopFrameBalance:SetText(DONO_SHOP_BALANCE .. Balance)
 end
 
 function Shop_RefreshEntries()
@@ -324,48 +339,45 @@ function Shop_ProcessCategories(arg)
 	arg = string.gsub(arg, ":", ":0=0=" .. DONO_SHOP_ABOUT_TITLE .. "=about;")
 
 	local categories = gsub(arg, "Categories:", "")
-	if categories then
-		local cats = explode(categories, ";")
-		for _, cat in next, cats do
-			if cat then
-				local catEx = explode(cat, "=")
-				if catEx[2] then
-					local categoryID = tonumber(catEx[1])
-					local parentID = tonumber(catEx[2])
-					local name = catEx[3]
-					local icon = catEx[4]
+	if not categories then
+		return
+	end
+	local cats = explode(categories, ";")
+	for _, cat in pairs(cats) do
+		local _, _, id, parent, name, icon = strfind(cat, "(%d+)=(%d+)=(.+)=(.+)")
+		if id then
+			local categoryID = tonumber(id)
+			local parentID = tonumber(parent)
 
-					-- fetch category entries
-					Send("Entries:" .. categoryID)
+			-- fetch category entries
+			Send("Entries:" .. categoryID)
 
-					if parentID > 0 then
-						-- category has a parentID which means it's a subcategory
-						local frame = CreateFrame("Button", "ShopFrameSubcategoryFrame" .. parentID .. categoryID,
-							ShopFrameCategoriesScrollFrameChild, "ShopSubcategoryFrameTemplate")
+			if parentID > 0 then
+				-- category has a parentID which means it's a subcategory
+				local frame = CreateFrame("Button", "ShopFrameSubcategoryFrame" .. parentID .. categoryID,
+					ShopFrameCategoriesScrollFrameChild, "ShopSubcategoryFrameTemplate")
 
-						tinsert(CategoryFrames[parentID].subcategories, frame)
+				tinsert(CategoryFrames[parentID].subcategories, frame)
 
-						frame:SetID(parentID)
-						frame.subcategoryID = categoryID
+				frame:SetID(parentID)
+				frame.subcategoryID = categoryID
 
-						_G[frame:GetName() .. "Name"]:SetText(name)
-					else
-						local frame = CreateFrame("Button", "ShopFrameCategoryFrame" .. categoryID,
-							ShopFrameCategoriesScrollFrameChild, "ShopCategoryFrameTemplate")
-						frame:SetID(categoryID)
+				_G[frame:GetName() .. "Name"]:SetText(name)
+			else
+				local frame = CreateFrame("Button", "ShopFrameCategoryFrame" .. categoryID,
+					ShopFrameCategoriesScrollFrameChild, "ShopCategoryFrameTemplate")
+				frame:SetID(categoryID)
 
-						_G[frame:GetName() .. "Name"]:SetText(name)
-						_G[frame:GetName() .. "IconTexture"]:SetTexture("Interface\\ShopFrame\\" .. icon)
+				_G[frame:GetName() .. "Name"]:SetText(name)
+				_G[frame:GetName() .. "IconTexture"]:SetTexture("Interface\\ShopFrame\\" .. icon)
 
-						CategoryFrames[categoryID] = frame
-					end
-				end
+				CategoryFrames[categoryID] = frame
 			end
 		end
-
-		ShopFrameCategoriesScrollFrame:SetVerticalScroll(0)
-		ShopFrameCategoriesScrollFrame:UpdateScrollChildRect()
 	end
+
+	ShopFrameCategoriesScrollFrame:SetVerticalScroll(0)
+	ShopFrameCategoriesScrollFrame:UpdateScrollChildRect()
 end
 
 function ShopFrameCategoryButton_OnClick(category, subcategory)
@@ -459,94 +471,104 @@ end
 
 function Shop_ProcessEntries(arg)
 	ShopEntries = ShopEntries or {}
-	local catEx = gsub(arg, "Entries:", "")
 
-	if not strfind(arg, "=start$") and not strfind(arg, "=end$") then
-		if catEx then
-			local catEx2 = explode(catEx, "=")
-			if catEx2[1] and tonumber(catEx2[1]) then
-				local catId = tonumber(catEx2[1])
-				ShopEntries[catId] = ShopEntries[catId] or {}
+	if strfind(arg, "=start$") or strfind(arg, "=end$") then return end
 
-				local entry = {
-					category = catId,
-					id = tonumber(catEx2[6]),
-					subcategory = tonumber(catEx2[2]),
-					name = catEx2[3],
-					price = tonumber(catEx2[4]),
-					text = catEx2[5],
-					modelid = tonumber(catEx2[7]),
-					itemid = tonumber(catEx2[8]),
-					posx = tonumber(catEx2[9]),
-					posy = tonumber(catEx2[10]),
-					posz = tonumber(catEx2[11]),
-					rotation = tonumber(catEx2[12]),
-					holiday = tonumber(catEx2[13]),
-					colors = catEx2[14] or "",
-					gender = tonumber(catEx2[15]) or 0,
-					restricted = false,
-					hidden = false,
-				}
+	arg = gsub(arg, "Entries:", "")
+	local info = explode(arg, "=")
+	local catId = tonumber(info[1])
+	if not catId then return end
 
-				-- force cache item
-				local itemLink = "item:" .. entry.id .. ":0:0:0"
-				for i = 2, 15 do
-					_G["ShopFrameScanTooltipTextLeft"..i]:SetTextColor(0, 0, 0)
-					_G["ShopFrameScanTooltipTextRight"..i]:SetTextColor(0, 0, 0)
-				end
-				ShopFrameScanTooltip:ClearLines()
-				ShopFrameScanTooltip:SetOwner(WorldFrame, "BOTTOMRIGHT")
-				ShopFrameScanTooltip:SetHyperlink(itemLink)
-				ShopFrameScanTooltip:Show()
-				for i = 2, 15 do
-					local rL, gL, bL = _G["ShopFrameScanTooltipTextLeft"..i]:GetTextColor()
-					local rR, gR, bR = _G["ShopFrameScanTooltipTextRight"..i]:GetTextColor()
-					if IsRed(rL, gL, bL) or IsRed(rR, gR, bR) then
-						entry.restricted = true
-						break
-					end
-				end
-				ShopFrameScanTooltip:Hide()
+	ShopEntries[catId] = ShopEntries[catId] or {}
 
-				if entry.colors ~= "" then
-					local s = loadstring("return {"..entry.colors.."}")
-					if s then
-						entry.shared = s()
-					end
-					if entry.shared then
-						for _, model in pairs(entry.shared) do
-							model = tonumber(model)
-						end
-						if entry.shared[1] ~= entry.modelid then
-							entry.hidden = true
-						end
-					end
-				end
+	local entry = {
+		category = catId,
+		subcategory = tonumber(info[2]),
+		name = info[3],
+		price = tonumber(info[4]),
+		-- text = info[5],
+		id = tonumber(info[6]),
+		modelid = tonumber(info[7]),
+		itemid = tonumber(info[8]),
+		posx = tonumber(info[9]),
+		posy = tonumber(info[10]),
+		posz = tonumber(info[11]),
+		rotation = tonumber(info[12]),
+		holiday = tonumber(info[13]),
+		-- colors = info[14] or "",
+		gender = tonumber(info[15]) or 0,
+		restricted = false,
+		hidden = false,
+	}
 
-				if entry.gender > 0 then
-					if entry.gender ~= Sex then
-						entry.restricted = true
-					end
-				end
-				local contains = false
-				for k, v in pairs(ShopEntries[catId]) do
-					if v.id == entry.id then
-						contains = true
-						break
-					end
-				end
-				if not contains then
-					if not entry.restricted or entry.holiday > 0 then
-						table.insert(ShopEntries[catId], 1, entry)
-					else
-						table.insert(ShopEntries[catId], entry)
-					end
-				end
+	-- force cache item
+	local itemLink = "item:" .. entry.id .. ":0:0:0"
+	for i = 2, 15 do
+		_G["ShopFrameScanTooltipTextLeft"..i]:SetTextColor(0, 0, 0)
+		_G["ShopFrameScanTooltipTextRight"..i]:SetTextColor(0, 0, 0)
+	end
+	ShopFrameScanTooltip:ClearLines()
+	ShopFrameScanTooltip:SetOwner(WorldFrame, "BOTTOMRIGHT")
+	ShopFrameScanTooltip:SetHyperlink(itemLink)
+	ShopFrameScanTooltip:Show()
+	for i = 2, 15 do
+		local rL, gL, bL = _G["ShopFrameScanTooltipTextLeft"..i]:GetTextColor()
+		local rR, gR, bR = _G["ShopFrameScanTooltipTextRight"..i]:GetTextColor()
+		if IsRed(rL, gL, bL) or IsRed(rR, gR, bR) then
+			entry.restricted = true
+			break
+		end
+	end
+	ShopFrameScanTooltip:Hide()
+
+	local recolors = info[14]
+	if recolors and recolors ~= "" then
+		local s = loadstring("return {"..recolors.."}")
+		if s then entry.shared = s() end
+		if entry.shared then
+			for _, model in pairs(entry.shared) do
+				model = tonumber(model)
 			end
+			if entry.shared[1] ~= entry.modelid then
+				entry.hidden = true
+			end
+		end
+	end
+
+	if entry.gender > 0 then
+		if entry.gender ~= Sex then
+			entry.restricted = true
+		end
+	end
+	local contains = false
+	for k, v in pairs(ShopEntries[catId]) do
+		if v.id == entry.id then
+			contains = true
+			break
+		end
+	end
+	if not contains then
+		if not entry.restricted or entry.holiday > 0 then
+			table.insert(ShopEntries[catId], 1, entry)
+		else
+			table.insert(ShopEntries[catId], entry)
 		end
 	end
 end
 
+local function RefreshModelPosition()
+	this.elapsed = this.elapsed + arg1
+	if this.elapsed > 0.03 then
+		local entry = this.entryFrame.data
+		local scale = UIParent:GetScale() or 1.0
+		this:SetScript("OnUpdate", nil)
+		this.elapsed = 0
+		this:SetPosition(entry.posz / scale, entry.posx / scale, entry.posy / scale)
+		this:SetFacing(entry.rotation)
+	end
+end
+
+local copy = {}
 function Shop_ShowEntries(category, subcategory)
 	ShopFrame_HideEntries()
 
@@ -568,13 +590,13 @@ function Shop_ShowEntries(category, subcategory)
 	end
 
 	if subcategory then
-		local t = {}
+		wipe(copy)
 		for _, entry in entries do
 			if entry.subcategory == subcategory then
-				table.insert(t, entry)
+				table.insert(copy, entry)
 			end
 		end
-		entries = t
+		entries = copy
 	end
 
 	local visibleEntries = sizeof(entries)
@@ -605,14 +627,13 @@ function Shop_ShowEntries(category, subcategory)
 	end
 
 	local entryIndex = 0
-	local scale = UIParent:GetScale() or 1.0
 	local normal = "Interface\\ShopFrame\\item_normal"
 	local highlight = "Interface\\ShopFrame\\item_highlight"
 	local pushed = "Interface\\ShopFrame\\item_normal"
 	local lowerLimit = (CurrentPage - 1) * MaxEntries
 	local upperLimit = CurrentPage * MaxEntries
 
-	for index, entry in entries do
+	for index, entry in ipairs(entries) do
 		if not entry.hidden or searching or subcategory then
 			entryIndex = entryIndex + 1
 			if entryIndex > lowerLimit and entryIndex <= upperLimit then
@@ -636,7 +657,6 @@ function Shop_ShowEntries(category, subcategory)
 
 				if entry.restricted then
 					entryFrame:SetHighlightTexture("")
-
 					entryFrame:GetNormalTexture():SetDesaturated(1)
 					entryFrame:GetNormalTexture():SetVertexColor(0, 0, 0)
 					entryFrame:GetPushedTexture():SetDesaturated(1)
@@ -664,7 +684,8 @@ function Shop_ShowEntries(category, subcategory)
 								if data.shared then
 									for k, v in pairs(data.shared) do
 										if v == modelID then
-											data.shared[k] = nil
+											tremove(data.shared, k)
+											break
 										end
 									end
 								end
@@ -693,7 +714,7 @@ function Shop_ShowEntries(category, subcategory)
 				entryFrame.model = nil
 				entryFrame.data = entry
 
-				if entry.category == 2 then
+				if entry.category == 2 then -- skins
 					if entry.gender == 0 then
 						entryFrame:SetNormalTexture("Interface\\ShopFrame\\entries\\" .. entry.id .. "_" .. Sex)
 						entryFrame:SetPushedTexture("Interface\\ShopFrame\\entries\\" .. entry.id .. "_" .. Sex)
@@ -715,43 +736,38 @@ function Shop_ShowEntries(category, subcategory)
 						model:SetPoint("BOTTOMRIGHT", entryFrame, -10, 60)
 						model:SetLight(1, 0, -0.3, -1, -1,   0.55, 1.0, 1.0, 1.0,   0.8, 1.0, 1.0, 1.0)
 						model:SetModelScale(1)
+						model:SetParent(ShopFrame)
+						model:SetFrameLevel(entryFrame:GetFrameLevel() + 1)
+						model.entryFrame = entryFrame
 					end
 					model:SetAlpha(1)
-					model:EnableMouse(1)
+					model:EnableMouse(DebugMode)
 					model:SetID(index)
 					model:SetPosition(0, 0, 0)
 					model:SetFacing(0)
-					if entry.category ~= 7 then
+					if entry.modelid ~= 0 then
+						-- creature model
 						model:SetUnit(entry.modelid)
-						model:SetScript("OnUpdate", function()
-							if (this.elapsed or 0) >= 0.001 then
-								local entry = this:GetParent().data
-								this:SetScript("OnUpdate", nil)
-								this:SetPosition(entry.posz / scale, entry.posx / scale, entry.posy / scale)
-								this:SetFacing(entry.rotation)
-							end
-							this.elapsed = this.elapsed + arg1
-						end)
-						if entry.category ~= 2 then
-							entryFrame.model = entry.modelid
-						end
-					else
+						model.elapsed = 0
+						model:SetScript("OnUpdate", RefreshModelPosition)
+						entryFrame.model = entry.modelid
+					elseif loc and loc ~= "" then
+						-- something that player can equip
 						model:SetUnit("player")
 						model:Undress()
 						entryFrame.dress = entry.itemid
-						if entry.subcategory ~= 0 then
-							local subcat = entry.subcategory
-							local z, x, y = Positions[subcat][Race][Sex][1], Positions[subcat][Race][Sex][2], Positions[subcat][Race][Sex][3]
-							local fNormal, fSpecial = Positions[subcat][Race][Sex][4], Positions[subcat][Race][Sex][5]
+						local slot = InvTypeToSlot[loc]
+						if slot then
+							local z, x, y = Positions[slot][Race][Sex][1], Positions[slot][Race][Sex][2], Positions[slot][Race][Sex][3]
+							local fNormal, fSpecial = Positions[slot][Race][Sex][4], Positions[slot][Race][Sex][5]
 							model:SetPosition(z, x, y)
-							model:SetFacing(fNormal)
-							if subcat == 29 then
-								if loc == "INVTYPE_RANGED" or loc == "INVTYPE_WEAPONOFFHAND" or loc == "INVTYPE_HOLDABLE" or loc == "INVTYPE_SHIELD" then
-									model:SetFacing(fSpecial)
-								end
+							if loc == "INVTYPE_RANGED" or loc == "INVTYPE_WEAPONOFFHAND" or loc == "INVTYPE_HOLDABLE" or loc == "INVTYPE_SHIELD" then
+								model:SetFacing(fSpecial)
+							else
+								model:SetFacing(fNormal)
 							end
+							model:TryOn(entry.itemid)
 						end
-						model:TryOn(entry.itemid)
 					end
 				else
 					local itemBorder = _G[entryFrame:GetName() .. "ItemBorder"]
@@ -768,7 +784,7 @@ function Shop_ShowEntries(category, subcategory)
 					end
 				end
 
-				ShopFrame_AddButtonOnEnterTooltipShopFrame(entryFrame, itemLink)
+				entryFrame.itemLink = itemLink
 
 				if entry.id == ClaimID and not entry.restricted then
 					entryFrame:LockHighlight()
@@ -781,22 +797,17 @@ end
 
 function Shop_ProcessBuyResult(arg)
 	local result = gsub(arg, "BuyResult:", "")
-	if result then
-		if result == "itemnotinshop" then
-			print(DONO_SHOP_MSG_UNKNOWN_ITEM)
-		end
-		if result == "bagsfulloralreadyhaveitem" then
-			print(DONO_SHOP_MSG_FULL_BAGS)
-		end
-		if result == "unknowndberror" then
-			print(DONO_SHOP_MSG_UNKNOWN_ERR)
-		end
-		if result == "dberrorcantprocess" then
-			print(DONO_SHOP_MSG_CANT_PROCESS)
-		end
-		if result == "notenoughtokens" then
-			print(DONO_SHOP_MSG_INSUFFICIENT_TOKENS)
-		end
+
+	if result == "itemnotinshop" then
+		UIErrorsFrame:AddMessage(DONO_SHOP_MSG_UNKNOWN_ITEM, 1, 0.1, 0.1)
+	elseif result == "bagsfulloralreadyhaveitem" then
+		UIErrorsFrame:AddMessage(DONO_SHOP_MSG_FULL_BAGS, 1, 0.1, 0.1)
+	elseif result == "unknowndberror" then
+		UIErrorsFrame:AddMessage(DONO_SHOP_MSG_UNKNOWN_ERR, 1, 0.1, 0.1)
+	elseif result == "dberrorcantprocess" then
+		UIErrorsFrame:AddMessage(DONO_SHOP_MSG_CANT_PROCESS, 1, 0.1, 0.1)
+	elseif result == "notenoughtokens" then
+		UIErrorsFrame:AddMessage(DONO_SHOP_MSG_INSUFFICIENT_TOKENS, 1, 0.1, 0.1)
 	end
 
 	Send("Balance")
@@ -849,7 +860,7 @@ function ShopFrame_CycleModels(entryFrame, dir)
 			entryFrame.data.hidden = true
 			entryFrame.data = entry
 			entryFrame.model = newModel
-			ShopFrame_AddButtonOnEnterTooltipShopFrame(entryFrame, "item:"..entry.id)
+			entryFrame.itemLink = "item:"..entry.id
 			break
 		end
 	end
@@ -880,12 +891,6 @@ function ShopEntryShared_OnEnter()
 end
 
 function ShopFrameEntryButton_OnClick()
-	if DebugMode then
-		for k, v in pairs(this.data) do
-			debug("[|cffffd200" ..k.."|r] "..tostring(v))
-		end
-	end
-
 	if IsControlKeyDown() or TWS_AUTODRESS == 1 then
 		ShopDressUpItem(this)
 	end
@@ -932,22 +937,6 @@ function ShopFrame_ChangePage(dir)
 	end
 end
 
-function ShopFrame_AddButtonOnEnterTooltipShopFrame(frame, itemLink, infoText)
-	frame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(frame, "ANCHOR_RIGHT", 10, 0)
-		GameTooltip:SetHyperlink(itemLink)
-		if infoText then
-			GameTooltip:AddLine(infoText)
-		end
-		GameTooltip:Show()
-	end)
-
-	frame:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-		ResetCursor()
-	end)
-end
-
 function ShopFrame_Toggle()
 	if ShopFrame:IsVisible() then
 		ShopFrame:Hide()
@@ -958,15 +947,18 @@ function ShopFrame_Toggle()
 end
 
 function ShopFrameEntryModel_OnEnter()
-	local func = this:GetParent():GetScript("OnEnter")
-	this:GetParent():LockHighlight()
+	local entryFrame = this.entryFrame
+	if not entryFrame then return end
+	local func = entryFrame:GetScript("OnEnter")
+	entryFrame:LockHighlight()
 	if func then
 		func()
 	end
 end
 
 function ShopFrameEntryModel_OnLeave()
-	local entryFrame = this:GetParent()
+	local entryFrame = this.entryFrame
+	if not entryFrame then return end
 	if entryFrame.data.id ~= ClaimID then
 		entryFrame:UnlockHighlight()
 	end
@@ -974,7 +966,8 @@ function ShopFrameEntryModel_OnLeave()
 end
 
 function ShopFrameEntryModel_OnMouseDown()
-	local entryFrame = this:GetParent()
+	local entryFrame = this.entryFrame
+	if not entryFrame then return end
 	entryFrame:GetPushedTexture():Show()
 	entryFrame:GetHighlightTexture():SetAlpha(0)
 	if DebugMode then
@@ -1001,7 +994,8 @@ function ShopFrameEntryModel_OnMouseDown()
 end
 
 function ShopFrameEntryModel_OnMouseUp(button)
-	local entryFrame = this:GetParent()
+	local entryFrame = this.entryFrame
+	if not entryFrame then return end
 	this:SetScript("OnUpdate", nil)
 	entryFrame:GetPushedTexture():Hide()
 	entryFrame:GetHighlightTexture():SetAlpha(1)
@@ -1011,11 +1005,7 @@ function ShopFrameEntryModel_OnMouseUp(button)
 	if DebugMode then
 		local scale = UIParent:GetScale()
 		local z, x, y = this:GetPosition()
-		-- note: these are final values
-		-- in order how they appear in DB
-		-- copy as is
-		debug("[|cffffd200position|r]", format("[|cffffd200x|r] %.3f, [|cffffd200y|r] %.3f, [|cffffd200z|r] %.3f", x * scale, y * scale, z * scale))
-		debug("[|cffffd200facing|r]", format("%.3f", this:GetFacing()))
+		debugprint(format("[|cffffd200id|r] %d [|cffffd200x|r] %.3f [|cffffd200y|r] %.3f [|cffffd200z|r] %.3f [|cffffd200facing|r] %.3f",entryFrame.data.id, x * scale, y * scale, z * scale, this:GetFacing()))
 	end
 end
 
@@ -1098,6 +1088,8 @@ function ShopDressUpItem(entryFrame)
 		ShopDressUpFrameResetButton.x = x
 		ShopDressUpFrameResetButton.y = y
 		showPlayer = true
+		ShopDressUpFrameUndressButton:Hide()
+		ShopDressUpFrameResetButton:SetPoint("LEFT", ShopDressUpFrameUndressButton, "RIGHT", -34, 0)
 	elseif dress then
 		if not ShopDressUpFrame:IsShown() or showPlayer then
 			ShopDressUpFrame:Show()
@@ -1112,6 +1104,8 @@ function ShopDressUpItem(entryFrame)
 				ShopDressUpModel:TryOn(tonumber(itemID))
 			end
 			showPlayer = false
+			ShopDressUpFrameUndressButton:Show()
+			ShopDressUpFrameResetButton:SetPoint("LEFT", ShopDressUpFrameUndressButton, "RIGHT", 4, 0)
 		end
 		ShopDressUpModel:TryOn(tonumber(dress))
 	end
@@ -1122,13 +1116,7 @@ local function searchsort(a, b)
 end
 
 function ShopFrame_Search()
-	if not ShopEntries[-1] then
-		ShopEntries[-1] = {}
-	end
-	for i = getn(ShopEntries[-1]), 1, -1 do
-		tremove(ShopEntries[-1], i)
-	end
-
+	ShopEntries[-1] = wipe(ShopEntries[-1])
 	CurrentPage = 1
 
 	if IsSearching() then
@@ -1185,7 +1173,6 @@ StaticPopupDialogs["SHOP_CONFIRMATION"] = {
 	whileDead = true,
 	hideOnEscape = true,
 	preferredIndex = 3,
-	timeout = 0,
 }
 
 StaticPopupDialogs["SHOP_HIDE_CONFIRMATION"] = {
@@ -1195,13 +1182,11 @@ StaticPopupDialogs["SHOP_HIDE_CONFIRMATION"] = {
 	OnAccept = function()
 		TWS_HIDE_MINIMAP_BUTTON = 1
 		MinimapShopFrame:Hide()
-
 		print(GAME_YELLOW .. DONO_SHOP_CHAT_COMMAND)
 	end,
 	whileDead = true,
 	hideOnEscape = true,
 	preferredIndex = 3,
-	timeout = 0,
 }
 
 function ShopDressUpFrame_OnShow()

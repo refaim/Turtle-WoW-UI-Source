@@ -19,7 +19,7 @@ function PetitionFrame_Update()
 		PetitionFrameRenameButton:Hide();
 	end
 	if ( petitionType == "charter" ) then
-		PetitionFrameNpcNameText:SetText(format(TEXT(GUILD_CHARTER_TEMPLATE), title));
+		PetitionFrameNpcNameText:SetText(format(GUILD_CHARTER_TEMPLATE, title));
 		PetitionFrameCharterName:SetText(title);
 		PetitionFrameMasterName:SetText(originatorName);
 	else
@@ -28,7 +28,7 @@ function PetitionFrame_Update()
 	local memberText;
 	local numNames = GetNumPetitionNames();
 	for i=1, MAX_PETITION_SIGNATURES do
-		memberText = getglobal("PetitionFrameMemberName"..i);
+		memberText = _G["PetitionFrameMemberName"..i];
 		if ( i <= numNames ) then
 			memberText:SetText(GetPetitionNameInfo(i));
 		else

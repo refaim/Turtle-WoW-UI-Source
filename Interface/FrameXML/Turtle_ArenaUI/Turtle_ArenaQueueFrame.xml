@@ -145,7 +145,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						JoinArenaQueue(1)
+						JoinArenaQueue()
 					</OnClick>
 				</Scripts>
 			</Button>

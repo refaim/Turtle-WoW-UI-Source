@@ -4,17 +4,17 @@ COMBATFEEDBACK_HOLDTIME = 0.7;
 COMBATFEEDBACK_FADEOUTTIME = 0.3;
 
 CombatFeedbackText = { };
-CombatFeedbackText["INTERRUPT"]	= TEXT(INTERRUPT);
-CombatFeedbackText["MISS"]		= TEXT(MISS);
-CombatFeedbackText["RESIST"]	= TEXT(RESIST);
-CombatFeedbackText["DODGE"]		= TEXT(DODGE);
-CombatFeedbackText["PARRY"]		= TEXT(PARRY);
-CombatFeedbackText["BLOCK"]		= TEXT(BLOCK);
-CombatFeedbackText["EVADE"]		= TEXT(EVADE);
-CombatFeedbackText["IMMUNE"]	= TEXT(IMMUNE);
-CombatFeedbackText["DEFLECT"]	= TEXT(DEFLECT);
-CombatFeedbackText["ABSORB"]	= TEXT(ABSORB);
-CombatFeedbackText["REFLECT"]	= TEXT(REFLECT);
+CombatFeedbackText["INTERRUPT"]	= INTERRUPT;
+CombatFeedbackText["MISS"]		= MISS;
+CombatFeedbackText["RESIST"]	= RESIST;
+CombatFeedbackText["DODGE"]		= DODGE;
+CombatFeedbackText["PARRY"]		= PARRY;
+CombatFeedbackText["BLOCK"]		= BLOCK;
+CombatFeedbackText["EVADE"]		= EVADE;
+CombatFeedbackText["IMMUNE"]	= IMMUNE;
+CombatFeedbackText["DEFLECT"]	= DEFLECT;
+CombatFeedbackText["ABSORB"]	= ABSORB;
+CombatFeedbackText["REFLECT"]	= REFLECT;
 
 function CombatFeedback_Initialize(feedbackText, fontHeight)
 	this.feedbackText = feedbackText;

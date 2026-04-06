@@ -51,15 +51,15 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-						GameTooltip:AddLine(GetMinimapZoneText(), "", 1.0, 1.0, 1.0);
+						GameTooltip:AddLine(GetMinimapZoneText());
 						local pvpType, factionName, isArena = GetZonePVPInfo();
 						if ( (pvpType == "friendly") or (pvpType == "hostile") ) then
-							GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName));
 						elseif ( pvpType == "contested" ) then
-							GameTooltip:AddLine(CONTESTED_TERRITORY, "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(CONTESTED_TERRITORY);
 						end
 						if ( isArena ) then
-							GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, "", 1.0, 1.0, 1.0);
+							GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY);
 						end
 						GameTooltip:Show();
 					</OnEnter>
@@ -457,10 +457,10 @@
 							</OnDragStop>
 							<OnEnter>
 								GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-								GameTooltip:SetText(BATTLEGROUND_FINDER);
-								GameTooltip:AddLine(BATTLEGROUND_LEFT_CLICK, 1, 1, 1);
-								GameTooltip:AddLine(BATTLEGROUND_DRAG_MOVE, 1, 1, 1);
-								GameTooltip:AddLine(BATTLEGROUND_RESET_POSITION, 1, 1, 1);
+								GameTooltip:SetText(BATTLEGROUND_FINDER, 1, 1, 1);
+								GameTooltip:AddLine(BATTLEGROUND_LEFT_CLICK);
+								GameTooltip:AddLine(BATTLEGROUND_DRAG_MOVE);
+								GameTooltip:AddLine(BATTLEGROUND_RESET_POSITION);
 								GameTooltip:Show();
 							</OnEnter>
 							<OnLeave>

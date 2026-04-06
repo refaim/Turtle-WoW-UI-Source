@@ -12,12 +12,12 @@ function UIMenu_Initialize()
 	this.subMenu = "";
 	local name = this:GetName();
 	for i = 1, UIMENU_NUMBUTTONS, 1 do
-		local button = getglobal(name.."Button"..i);
+		local button = _G[name.."Button"..i];
 		button:SetWidth(UIMENU_BUTTON_WIDTH);
 		button:SetHeight(UIMENU_BUTTON_HEIGHT);
 		button:Hide();
 
-		local shortcutString = getglobal(button:GetName().."ShortcutText");
+		local shortcutString = _G[button:GetName().."ShortcutText"];
 		shortcutString:Hide();
 	end
 
@@ -39,7 +39,7 @@ function UIMenu_AddButton(text, shortcut, func, nested)
 
 	this.numButtons = id;
 
-	local button = getglobal(this:GetName().."Button"..id);
+	local button = _G[this:GetName().."Button"..id];
 	if ( text ) then
 		button:SetText(text);
 	end
@@ -48,7 +48,7 @@ function UIMenu_AddButton(text, shortcut, func, nested)
 	button:Show();
 
 	if ( shortcut ) then
-		local shortcutString = getglobal(button:GetName().."ShortcutText");
+		local shortcutString = _G[button:GetName().."ShortcutText"];
 		shortcutString:SetText(shortcut);
 		shortcutString:Show();
 	end
@@ -86,7 +86,7 @@ function UIMenu_StartCounting(menu)
 
 	local parentName = menu.parentMenu;
 	if ( parentName ) then
-		UIMenu_StartCounting(getglobal(parentName));
+		UIMenu_StartCounting(_G[parentName]);
 	end
 end
 
@@ -96,16 +96,16 @@ function UIMenu_StopCounting(menu)
 
 	local parentName = menu.parentMenu;
 	if ( parentName ) then
-		UIMenu_StopCounting(getglobal(parentName));
+		UIMenu_StopCounting(_G[parentName]);
 	end
 end
 
 function UIMenuButton_OnEnter()
 	local nested = this.nested;
 	if ( nested ) then
-		local menu = getglobal(nested);
+		local menu = _G[nested];
 		if ( not menu:IsVisible() ) then
-			local oldMenu = getglobal(this:GetParent().subMenu);
+			local oldMenu = _G[this:GetParent().subMenu];
 			if ( oldMenu ) then
 				oldMenu:Hide();
 			end
@@ -126,6 +126,6 @@ function UIMenuButton_OnLeave()
 
 	local nested = this.nested;
 	if ( nested ) then
-		UIMenu_StartCounting(getglobal(nested));
+		UIMenu_StartCounting(_G[nested]);
 	end
 end

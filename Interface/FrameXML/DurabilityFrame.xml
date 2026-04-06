@@ -176,6 +176,7 @@
 			</OnLoad>
 			<OnEvent>
 				DurabilityFrame_SetAlerts();
+				UIParent_ManageFramePositions();
 			</OnEvent>
 			<OnUpdate>
 				DurabilityFrame_OnUpdate(arg1);

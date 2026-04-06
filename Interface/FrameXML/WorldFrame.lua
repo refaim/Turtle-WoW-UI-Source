@@ -25,7 +25,7 @@ function WorldFrame_OnUpdate(elapsed)
 	-- Process dialog onUpdates if the map is up or the ui is hidden
 	local dialog;
 	for i = 1, STATICPOPUP_NUMDIALOGS, 1 do
-		dialog = getglobal("StaticPopup"..i);
+		dialog = _G["StaticPopup"..i];
 		if ( dialog and dialog:IsShown() and not dialog:IsVisible() ) then
 			StaticPopup_OnUpdate(dialog, elapsed);
 		end
@@ -34,7 +34,7 @@ function WorldFrame_OnUpdate(elapsed)
 	-- Process breathbar onUpdates if the map is up or the ui is hidden
 	local bar;
 	for i=1, MIRRORTIMER_NUMTIMERS do
-		bar = getglobal("MirrorTimer"..i);
+		bar = _G["MirrorTimer"..i];
 		if ( bar and bar:IsShown() and not bar:IsVisible() ) then
 			MirrorTimerFrame_OnUpdate(bar, arg1);
 		end
@@ -59,10 +59,10 @@ function ScreenshotStatus_OnEvent(event)
 	this.startTime = GetTime();
 	this:SetAlpha(1.0);
 	if ( event == "SCREENSHOT_SUCCEEDED" ) then
-		ScreenshotStatusText:SetText(TEXT(SCREENSHOT_SUCCESS));
+		ScreenshotStatusText:SetText(SCREENSHOT_SUCCESS);
 	end
 	if ( event == "SCREENSHOT_FAILED" ) then
-		ScreenshotStatusText:SetText(TEXT(SCREENSHOT_FAILURE));
+		ScreenshotStatusText:SetText(SCREENSHOT_FAILURE);
 	end
 	this:Show();
 end

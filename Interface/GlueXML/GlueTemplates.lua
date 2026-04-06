@@ -1,5 +1,5 @@
 function GlueScrollFrameTemplate_OnMouseWheel(value)
-	local scrollBar = getglobal(this:GetName().."ScrollBar");
+	local scrollBar = _G[this:GetName().."ScrollBar"];
 	if ( value > 0 ) then
 		scrollBar:SetValue(scrollBar:GetValue() - (scrollBar:GetHeight() / 2));
 	else
@@ -11,7 +11,7 @@ end
 function GlueScrollFrame_Update(frame, numItems, numToDisplay, valueStep, highlightFrame, smallHighlightWidth, bigHighlightWidth )
 	-- If more than one screen full of skills then show the scrollbar
 	local frameName = frame:GetName();
-	local scrollBar = getglobal( frameName.."ScrollBar" );
+	local scrollBar = _G[ frameName.."ScrollBar" ];
 	if ( numItems > numToDisplay ) then
 		frame:Show();
 	else
@@ -19,9 +19,9 @@ function GlueScrollFrame_Update(frame, numItems, numToDisplay, valueStep, highli
 		frame:Hide();
 	end
 	if ( frame:IsVisible() ) then
-		local scrollChildFrame = getglobal( frameName.."ScrollChildFrame" );
-		local scrollUpButton = getglobal( frameName.."ScrollBarScrollUpButton" );
-		local scrollDownButton = getglobal( frameName.."ScrollBarScrollDownButton" );
+		local scrollChildFrame = _G[ frameName.."ScrollChildFrame" ];
+		local scrollUpButton = _G[ frameName.."ScrollBarScrollUpButton" ];
+		local scrollDownButton = _G[ frameName.."ScrollBarScrollDownButton" ];
 		local scrollFrameHeight = 0;
 		local scrollChildHeight = 0;
 
@@ -63,7 +63,7 @@ function GlueScrollFrame_Update(frame, numItems, numToDisplay, valueStep, highli
 end
 
 function GlueScrollFrame_OnScrollRangeChanged(scrollrange)
-	local scrollbar = getglobal(this:GetName().."ScrollBar");
+	local scrollbar = _G[this:GetName().."ScrollBar"];
 	if ( not scrollrange ) then
 		scrollrange = this:GetVerticalScrollRange();
 	end
@@ -75,20 +75,20 @@ function GlueScrollFrame_OnScrollRangeChanged(scrollrange)
 	scrollbar:SetValue(value);
 	if ( floor(scrollrange) == 0 ) then
 		if (this.scrollBarHideable) then
-			getglobal(this:GetName().."ScrollBar"):Hide();
-			getglobal(scrollbar:GetName().."ScrollDownButton"):Hide();
-			getglobal(scrollbar:GetName().."ScrollUpButton"):Hide();
+			_G[this:GetName().."ScrollBar"]:Hide();
+			_G[scrollbar:GetName().."ScrollDownButton"]:Hide();
+			_G[scrollbar:GetName().."ScrollUpButton"]:Hide();
 		else
-			getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
-			getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
-			getglobal(scrollbar:GetName().."ScrollDownButton"):Show();
-			getglobal(scrollbar:GetName().."ScrollUpButton"):Show();
+			_G[scrollbar:GetName().."ScrollDownButton"]:Disable();
+			_G[scrollbar:GetName().."ScrollUpButton"]:Disable();
+			_G[scrollbar:GetName().."ScrollDownButton"]:Show();
+			_G[scrollbar:GetName().."ScrollUpButton"]:Show();
 		end
 	else
-		getglobal(scrollbar:GetName().."ScrollDownButton"):Show();
-		getglobal(scrollbar:GetName().."ScrollUpButton"):Show();
-		getglobal(this:GetName().."ScrollBar"):Show();
-		getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+		_G[scrollbar:GetName().."ScrollDownButton"]:Show();
+		_G[scrollbar:GetName().."ScrollUpButton"]:Show();
+		_G[this:GetName().."ScrollBar"]:Show();
+		_G[scrollbar:GetName().."ScrollDownButton"]:Enable();
 	end
 end
 
@@ -101,10 +101,10 @@ function GlueTemplates_TabResize(padding, tab, absoluteSize)
 		tabName = this:GetName();
 		tab = this;
 	end
-	local buttonMiddle = getglobal(tabName.."Middle");
-	local buttonMiddleDisabled = getglobal(tabName.."MiddleDisabled");
-	local sideWidths = 2 * getglobal(tabName.."Left"):GetWidth();
-	local tabText = getglobal(tab:GetName().."Text");
+	local buttonMiddle = _G[tabName.."Middle"];
+	local buttonMiddleDisabled = _G[tabName.."MiddleDisabled"];
+	local sideWidths = 2 * _G[tabName.."Left"]:GetWidth();
+	local tabText = _G[tab:GetName().."Text"];
 	local width, tabWidth;
 
 	-- If there's an absolute size specified then use it
@@ -136,7 +136,7 @@ function GlueTemplates_TabResize(padding, tab, absoluteSize)
 	end
 
 	tab:SetWidth(tabWidth);
-	local highlightTexture = getglobal(tabName.."HighlightTexture");
+	local highlightTexture = _G[tabName.."HighlightTexture"];
 	if ( highlightTexture ) then
 		highlightTexture:SetWidth(tabWidth);
 	end
@@ -155,7 +155,7 @@ function GlueTemplates_UpdateTabs(frame)
 	if ( frame.selectedTab ) then
 		local tab;
 		for i=1, frame.numTabs, 1 do
-			tab = getglobal(frame:GetName().."Tab"..i);
+			tab = _G[frame:GetName().."Tab"..i];
 			if ( tab.isDisabled ) then
 				GlueTemplates_SetDisabledTabState(tab);
 			elseif ( i == frame.selectedTab ) then
@@ -172,12 +172,12 @@ function GlueTemplates_SetNumTabs(frame, numTabs)
 end
 
 function GlueTemplates_DisableTab(frame, index)
-	getglobal(frame:GetName().."Tab"..index).isDisabled = 1;
+	_G[frame:GetName().."Tab"..index].isDisabled = 1;
 	GlueTemplates_UpdateTabs(frame);
 end
 
 function GlueTemplates_EnableTab(frame, index)
-	local tab = getglobal(frame:GetName().."Tab"..index);
+	local tab = _G[frame:GetName().."Tab"..index];
 	tab.isDisabled = nil;
 	-- Reset text color
 	tab:SetDisabledTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
@@ -186,39 +186,39 @@ end
 
 function GlueTemplates_DeselectTab(tab)
 	local name = tab:GetName();
-	getglobal(name.."Left"):Show();
-	getglobal(name.."Middle"):Show();
-	getglobal(name.."Right"):Show();
+	_G[name.."Left"]:Show();
+	_G[name.."Middle"]:Show();
+	_G[name.."Right"]:Show();
 	--tab:UnlockHighlight();
 	tab:Enable();
-	getglobal(name.."LeftDisabled"):Hide();
-	getglobal(name.."MiddleDisabled"):Hide();
-	getglobal(name.."RightDisabled"):Hide();
+	_G[name.."LeftDisabled"]:Hide();
+	_G[name.."MiddleDisabled"]:Hide();
+	_G[name.."RightDisabled"]:Hide();
 end
 
 function GlueTemplates_SelectTab(tab)
 	local name = tab:GetName();
-	getglobal(name.."Left"):Hide();
-	getglobal(name.."Middle"):Hide();
-	getglobal(name.."Right"):Hide();
+	_G[name.."Left"]:Hide();
+	_G[name.."Middle"]:Hide();
+	_G[name.."Right"]:Hide();
 	--tab:LockHighlight();
 	tab:Disable();
-	getglobal(name.."LeftDisabled"):Show();
-	getglobal(name.."MiddleDisabled"):Show();
-	getglobal(name.."RightDisabled"):Show();
+	_G[name.."LeftDisabled"]:Show();
+	_G[name.."MiddleDisabled"]:Show();
+	_G[name.."RightDisabled"]:Show();
 end
 
 function GlueTemplates_SetDisabledTabState(tab)
 	local name = tab:GetName();
-	getglobal(name.."Left"):Show();
-	getglobal(name.."Middle"):Show();
-	getglobal(name.."Right"):Show();
+	_G[name.."Left"]:Show();
+	_G[name.."Middle"]:Show();
+	_G[name.."Right"]:Show();
 	--tab:UnlockHighlight();
 	tab:Disable();
 	tab.text = tab:GetText();
 	-- Gray out text
 	tab:SetDisabledTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	getglobal(name.."LeftDisabled"):Hide();
-	getglobal(name.."MiddleDisabled"):Hide();
-	getglobal(name.."RightDisabled"):Hide();
+	_G[name.."LeftDisabled"]:Hide();
+	_G[name.."MiddleDisabled"]:Hide();
+	_G[name.."RightDisabled"]:Hide();
 end

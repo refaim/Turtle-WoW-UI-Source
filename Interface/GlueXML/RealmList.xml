@@ -218,7 +218,7 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."PVP"):SetPoint("LEFT", this:GetName().."NormalText", "RIGHT", 10, 0);
+				_G[this:GetName().."PVP"]:SetPoint("LEFT", this:GetName().."NormalText", "RIGHT", 10, 0);
 			</OnLoad>
 			<OnClick>
 				RealmSelectButton_OnClick(this:GetID());

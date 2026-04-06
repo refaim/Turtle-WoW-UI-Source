@@ -19,12 +19,12 @@ function PetPaperDollFrame_OnLoad()
 	this:RegisterEvent("UNIT_DEFENSE");
 	this:RegisterEvent("UNIT_ATTACK");
 	this:RegisterEvent("UNIT_PET_TRAINING_POINTS");
-	PetAttackFrameLabel:SetText(TEXT(ATTACK_COLON));
-	PetDamageFrameLabel:SetText(TEXT(DAMAGE_COLON));
-	PetAttackPowerFrameLabel:SetText(TEXT(ATTACK_POWER_COLON));
-	PetDefenseFrameLabel:SetText(TEXT(DEFENSE_COLON));
-	PetArmorFrameLabel:SetText(TEXT(ARMOR_COLON));
-	SetTextStatusBarTextPrefix(PetPaperDollFrameExpBar, TEXT(XP));
+	PetAttackFrameLabel:SetText(ATTACK_COLON);
+	PetDamageFrameLabel:SetText(DAMAGE_COLON);
+	PetAttackPowerFrameLabel:SetText(ATTACK_POWER_COLON);
+	PetDefenseFrameLabel:SetText(DEFENSE_COLON);
+	PetArmorFrameLabel:SetText(ARMOR_COLON);
+	SetTextStatusBarTextPrefix(PetPaperDollFrameExpBar, XP);
 	PetTab_Update();
 end
 
@@ -66,7 +66,7 @@ function PetPaperDollFrame_Update()
 	end
 	PetModelFrame:SetUnit("pet");
 	if ( UnitCreatureFamily("pet") ) then
-		PetLevelText:SetText(format(TEXT(UNIT_LEVEL_TEMPLATE),UnitLevel("pet")).." "..UnitCreatureFamily("pet"));
+		PetLevelText:SetText(format(UNIT_LEVEL_TEMPLATE,UnitLevel("pet")).." "..UnitCreatureFamily("pet"));
 	end
 	PetLoyaltyText:SetText(GetPetLoyalty());
 	PetExpBar_Update();
@@ -106,12 +106,12 @@ function PetPaperDollFrame_SetResistances()
 		if ( i == NUM_PET_RESISTANCE_TYPES ) then
 			index = 1;
 		end
-		text = getglobal("PetMagicResText"..i);
-		frame = getglobal("PetMagicResFrame"..i);
+		text = _G["PetMagicResText"..i];
+		frame = _G["PetMagicResFrame"..i];
 
 		base, resistance, positive, negative = UnitResistance("pet", frame:GetID());
 
-		frame.tooltip = TEXT(getglobal("RESISTANCE"..frame:GetID().."_NAME"));
+		frame.tooltip = _G["RESISTANCE"..frame:GetID().."_NAME"];
 
 		-- resistances can now be negative. Show Red if negative, Green if positive, white otherwise
 		if( resistance < 0 ) then
@@ -138,17 +138,17 @@ end
 
 function PetPaperDollFrame_SetStats()
 	for i=1, NUM_PET_STATS, 1 do
-		local label = getglobal("PetStatFrame"..i.."Label");
-		local text = getglobal("PetStatFrame"..i.."StatText");
-		local frame = getglobal("PetStatFrame"..i);
+		local label = _G["PetStatFrame"..i.."Label"];
+		local text = _G["PetStatFrame"..i.."StatText"];
+		local frame = _G["PetStatFrame"..i];
 		local stat;
 		local effectiveStat;
 		local posBuff;
 		local negBuff;
-		label:SetText(TEXT(getglobal("SPELL_STAT"..(i-1).."_NAME"))..":");
+		label:SetText(_G["SPELL_STAT"..(i-1).."_NAME"]..":");
 		stat, effectiveStat, posBuff, negBuff = UnitStat("pet", i);
 		-- Set the tooltip text
-		local tooltipText = HIGHLIGHT_FONT_COLOR_CODE..getglobal("SPELL_STAT"..(i-1).."_NAME").." ";
+		local tooltipText = HIGHLIGHT_FONT_COLOR_CODE.._G["SPELL_STAT"..(i-1).."_NAME"].." ";
 
 		if ( ( posBuff == 0 ) and ( negBuff == 0 ) ) then
 			text:SetText(effectiveStat);

@@ -68,7 +68,7 @@ TALENT_ARROW_TEXTURECOORDS = {
 	},
 };
 
-UIPanelWindows["TalentFrame"] = { area = "left", pushable = 0, whileDead = 1 };
+UIPanelWindows["TalentFrame"] = { area = "left", pushable = 1, whileDead = 1 };
 
 function TalentFrame_Toggle()
 	if ( TalentFrame:IsVisible() ) then
@@ -128,7 +128,7 @@ function TalentFrame_Update()
 	local tab, name, iconTexture, pointsSpent, button;
 	local numTabs = GetNumTalentTabs();
 	for i=1, MAX_TALENT_TABS do
-		tab = getglobal("TalentFrameTab"..i);
+		tab = _G["TalentFrameTab"..i];
 		if ( i <= numTabs ) then
 			name, iconTexture, pointsSpent = GetTalentTabInfo(i);
 			if ( i == PanelTemplates_GetSelectedTab(TalentFrame) ) then
@@ -171,14 +171,14 @@ function TalentFrame_Update()
 	end
 
 	TalentFrame_ResetBranches();
-	local tier, column, rank, maxRank, isExceptional, isLearnable;
+	local tier, column, rank, maxRank, isExceptional, isLearnable, meetsPrereq;
 	local forceDesaturated, tierUnlocked;
 	for i=1, MAX_NUM_TALENTS do
-		button = getglobal("TalentFrameTalent"..i);
+		button = _G["TalentFrameTalent"..i];
 		if ( i <= numTalents ) then
 			-- Set the button info
 			name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq = GetTalentInfo(PanelTemplates_GetSelectedTab(TalentFrame), i);
-			getglobal("TalentFrameTalent"..i.."Rank"):SetText(rank);
+			_G["TalentFrameTalent"..i.."Rank"]:SetText(rank);
 			SetTalentButtonLocation(button, tier, column);
 			TALENT_BRANCH_ARRAY[tier][column].id = button:GetID();
 
@@ -203,23 +203,23 @@ function TalentFrame_Update()
 
 				if ( rank < maxRank ) then
 					-- Rank is green if not maxed out
-					getglobal("TalentFrameTalent"..i.."Slot"):SetVertexColor(0.1, 1.0, 0.1);
-					getglobal("TalentFrameTalent"..i.."Rank"):SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b);
+					_G["TalentFrameTalent"..i.."Slot"]:SetVertexColor(0.1, 1.0, 0.1);
+					_G["TalentFrameTalent"..i.."Rank"]:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b);
 				else
-					getglobal("TalentFrameTalent"..i.."Slot"):SetVertexColor(1.0, 0.82, 0);
-					getglobal("TalentFrameTalent"..i.."Rank"):SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+					_G["TalentFrameTalent"..i.."Slot"]:SetVertexColor(1.0, 0.82, 0);
+					_G["TalentFrameTalent"..i.."Rank"]:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 				end
-				getglobal("TalentFrameTalent"..i.."RankBorder"):Show();
-				getglobal("TalentFrameTalent"..i.."Rank"):Show();
+				_G["TalentFrameTalent"..i.."RankBorder"]:Show();
+				_G["TalentFrameTalent"..i.."Rank"]:Show();
 			else
 				SetItemButtonDesaturated(button, 1, 0.65, 0.65, 0.65);
-				getglobal("TalentFrameTalent"..i.."Slot"):SetVertexColor(0.5, 0.5, 0.5);
+				_G["TalentFrameTalent"..i.."Slot"]:SetVertexColor(0.5, 0.5, 0.5);
 				if ( rank == 0 ) then
-					getglobal("TalentFrameTalent"..i.."RankBorder"):Hide();
-					getglobal("TalentFrameTalent"..i.."Rank"):Hide();
+					_G["TalentFrameTalent"..i.."RankBorder"]:Hide();
+					_G["TalentFrameTalent"..i.."Rank"]:Hide();
 				else
-					getglobal("TalentFrameTalent"..i.."RankBorder"):SetVertexColor(0.5, 0.5, 0.5);
-					getglobal("TalentFrameTalent"..i.."Rank"):SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+					_G["TalentFrameTalent"..i.."RankBorder"]:SetVertexColor(0.5, 0.5, 0.5);
+					_G["TalentFrameTalent"..i.."Rank"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
 				end
 			end
 
@@ -312,11 +312,11 @@ function TalentFrame_Update()
 	end
 	-- Hide any unused branch textures
 	for i=TalentFrame_GetBranchTextureCount(), MAX_NUM_BRANCH_TEXTURES do
-		getglobal("TalentFrameBranch"..i):Hide();
+		_G["TalentFrameBranch"..i]:Hide();
 	end
 	-- Hide and unused arrowl textures
 	for i=TalentFrame_GetArrowTextureCount(), MAX_NUM_ARROW_TEXTURES do
-		getglobal("TalentFrameArrow"..i):Hide();
+		_G["TalentFrameArrow"..i]:Hide();
 	end
 end
 
@@ -333,7 +333,7 @@ function TalentFrame_SetBranchTexture(tier, column, texCoords, xOffset, yOffset)
 end
 
 function TalentFrame_GetArrowTexture()
-	local arrowTexture = getglobal("TalentFrameArrow"..TalentFrame.arrowIndex);
+	local arrowTexture = _G["TalentFrameArrow"..TalentFrame.arrowIndex];
 	TalentFrame.arrowIndex = TalentFrame.arrowIndex + 1;
 	if ( not arrowTexture ) then
 		message("Not enough arrow textures");
@@ -344,7 +344,7 @@ function TalentFrame_GetArrowTexture()
 end
 
 function TalentFrame_GetBranchTexture()
-	local branchTexture = getglobal("TalentFrameBranch"..TalentFrame.textureIndex);
+	local branchTexture = _G["TalentFrameBranch"..TalentFrame.textureIndex];
 	TalentFrame.textureIndex = TalentFrame.textureIndex + 1;
 	if ( not branchTexture ) then
 		message("Not enough branch textures");
@@ -534,7 +534,7 @@ function TalentFrameTab_OnClick()
 	PanelTemplates_SetTab(TalentFrame, this:GetID());
 	TalentFrame_Update();
 	for i=1, MAX_TALENT_TABS do
-		SetButtonPulse(getglobal("TalentFrameTab"..i), 0, 0);
+		SetButtonPulse(_G["TalentFrameTab"..i], 0, 0);
 	end
 	PlaySound("igCharacterInfoTab");
 end

@@ -16,7 +16,7 @@
 			<OnLoad>
 				this:SetFrameLevel(this:GetFrameLevel() + 1);
 				this.unit = "party"..this:GetID();
-				getglobal(this:GetName().."Icon"):SetTexture("Interface\\WorldMap\\WorldMapPartyIcon");
+				_G[this:GetName().."Icon"]:SetTexture("Interface\\WorldMap\\WorldMapPartyIcon");
 			</OnLoad>
 			<OnEnter>
 				WorldMapUnit_OnEnter();
@@ -30,7 +30,7 @@
 		<Scripts>
 			<OnLoad>
 				this:SetFrameLevel(this:GetFrameLevel() + 1);
-				getglobal(this:GetName().."Icon"):SetTexture("Interface\\WorldMap\\WorldMapPartyIcon");
+				_G[this:GetName().."Icon"]:SetTexture("Interface\\WorldMap\\WorldMapPartyIcon");
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -78,7 +78,7 @@
 				else
 					WorldMapTooltip:SetOwner(this, "ANCHOR_RIGHT");
 				end
-				WorldMapTooltip:SetText(TEXT(CORPSE_RED));
+				WorldMapTooltip:SetText(CORPSE_RED);
 				WorldMapTooltip:Show();
 			</OnEnter>
 			<OnLeave>

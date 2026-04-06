@@ -20,7 +20,7 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."Highlight"):SetVertexColor(1.0, 0.82, 0);
+				_G[this:GetName().."Highlight"]:SetVertexColor(1.0, 0.82, 0);
 			</OnLoad>
 			<OnClick>
 				BattlefieldButton_OnClick(this:GetID());

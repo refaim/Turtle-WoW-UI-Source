@@ -189,16 +189,16 @@
 		<Scripts>
 			<OnEnter>
 				if (this.tooltip) then
-					getglobal(this:GetName().."FactionStanding"):SetText(this.tooltip);
+					_G[this:GetName().."FactionStanding"]:SetText(this.tooltip);
 				end
-				getglobal(this:GetName().."Highlight1"):Show();
-				getglobal(this:GetName().."Highlight2"):Show();
+				_G[this:GetName().."Highlight1"]:Show();
+				_G[this:GetName().."Highlight2"]:Show();
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName().."FactionStanding"):SetText(this.standingText);
+				_G[this:GetName().."FactionStanding"]:SetText(this.standingText);
 				if (GetSelectedFaction() ~= this.id) then
-					getglobal(this:GetName().."Highlight1"):Hide();
-					getglobal(this:GetName().."Highlight2"):Hide();
+					_G[this:GetName().."Highlight1"]:Hide();
+					_G[this:GetName().."Highlight2"]:Hide();
 				end
 			</OnLeave>
 			<OnMouseUp>
@@ -752,8 +752,8 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(AT_WAR);
-								getglobal(this:GetName().."Text"):SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+								_G[this:GetName().."Text"]:SetText(AT_WAR);
+								_G[this:GetName().."Text"]:SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
 							</OnLoad>
 							<OnClick>
 								FactionToggleAtWar(GetSelectedFaction());
@@ -805,7 +805,7 @@
 						</HitRectInsets>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(MOVE_TO_INACTIVE);
+								_G[this:GetName().."Text"]:SetText(MOVE_TO_INACTIVE);
 							</OnLoad>
 							<OnClick>
 								if ( this:GetChecked() ) then
@@ -834,7 +834,7 @@
 						</HitRectInsets>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."Text"):SetText(SHOW_FACTION_ON_MAINSCREEN);
+								_G[this:GetName().."Text"]:SetText(SHOW_FACTION_ON_MAINSCREEN);
 							</OnLoad>
 							<OnClick>
 								if ( this:GetChecked() ) then
@@ -1005,7 +1005,7 @@
 					ReputationWatchBar_Update();
 				elseif( event == "PLAYER_LEVEL_UP" ) then
 					ReputationWatchBar_Update(arg1);
-				elseif( event == "CVAR_UPDATE" and arg1 == "statusBarText" ) then
+				elseif( event == "CVAR_UPDATE" and arg1 == "STATUS_BAR_TEXT" ) then
 					if( arg2 == "1" ) then
 						ShowWatchedReputationBarText("lock");
 					else

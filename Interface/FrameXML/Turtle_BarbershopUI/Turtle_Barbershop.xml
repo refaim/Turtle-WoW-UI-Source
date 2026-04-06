@@ -1,0 +1,232 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Script file="Turtle_Barbershop.lua" />
+	<Include file="Turtle_BarbershopTemplates.xml" />
+	<Frame name="BarbershopFrame" parent="UIParent" hidden="true" frameStrata="HIGH">
+		<Size>
+			<AbsDimension x="265" y="319" />
+		</Size>
+		<Anchors>
+			<Anchor point="RIGHT" relativeTo="UIParent" relativePoint="RIGHT">
+				<Offset x="-50" y="-50" />
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture file="Interface\Barbershop\UI-Barbershop" setAllPoints="true">
+					<TexCoords left="0" right="0.517578" top="0" bottom="0.623047" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentSelector1" inherits="BarbershopSelectorTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="2" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parentSelector2" inherits="BarbershopSelectorTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentSelector1" relativePoint="BOTTOM"/>
+				</Anchors>
+			</Frame>
+			<Frame name="$parentSelector3" inherits="BarbershopSelectorTemplate" id="3">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentSelector2" relativePoint="BOTTOM"/>
+				</Anchors>
+			</Frame>
+			<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="10" y="112" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\MoneyFrame\UI-MoneyFrame-Border">
+							<Size>
+								<AbsDimension x="128" y="32" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="-8" y="-6" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						MoneyFrame_SetType("AUCTION")
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="$parentOkayButton" inherits="UIPanelButtonTemplate" text="OKAY">
+				<Size>
+					<AbsDimension x="72" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-36" y="82"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						BarbershopFrameOkayButton_OnClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentCancelButton" inherits="UIPanelButtonTemplate" text="EXIT">
+				<Size>
+					<AbsDimension x="72" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentOkayButton" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						BarbershopFrameCancelButton_OnClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+				<Size>
+					<AbsDimension x="80" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="2" y="54"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						BarbershopFrameResetButton_OnClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="BarbershopBannerFrame">
+				<Size>
+					<AbsDimension x="381" y="210" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
+						<Offset x="2" y="5" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\Barbershop\UI-Barbershop-Banner" setAllPoints="true">
+							<TexCoords left="0" right="0.744141" top="0" bottom="0.820313" />
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString inherits="GameFontNormalLarge" text="BARBERSHOP">
+							<Size>
+								<AbsDimension x="350" y="30" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativeTo="BarbershopBannerFrame" relativePoint="TOP">
+									<Offset x="0" y="-94" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow>
+						UIErrorsFrame:SetPoint("TOP", this, "BOTTOM", 0, 0)
+					</OnShow>
+					<OnHide>
+						UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -122)
+					</OnHide>
+				</Scripts>
+			</Frame>
+			<PlayerModel name="BarbershopModel" parent="UIParent" hidden="true" enableKeyboard="true" enableMouse="false">
+				<Anchors>
+					<Anchor point="CENTER"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						BarbershopModel_OnLoad()
+					</OnLoad>
+					<OnEvent>
+						BarbershopModel_OnEvent()
+					</OnEvent>
+					<OnShow>
+						BarbershopModel_OnShow()
+					</OnShow>
+					<OnHide>
+						BarbershopModel_OnHide()
+					</OnHide>
+					<OnKeyDown>
+						BarbershopModel_OnKeyDown()
+					</OnKeyDown>
+					<OnUpdateModel>
+						BarbershopModel_OnUpdateModel()
+					</OnUpdateModel>
+					<OnUpdate>
+						BarbershopModel_OnUpdate()
+					</OnUpdate>
+				</Scripts>
+			</PlayerModel>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				BarbershopFrame_OnLoad()
+			</OnLoad>
+			<OnEvent>
+				BarbershopFrame_OnEvent()
+			</OnEvent>
+			<OnShow>
+				BarbershopFrame_OnShow()
+			</OnShow>
+			<OnHide>
+				BarbershopFrame_OnHide()
+			</OnHide>
+		</Scripts>
+	</Frame>
+	<Model name="BarbershopBackground" parent="WorldFrame" hidden="true" enableMouse="true">
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture>
+					<Color r="0" g="0" b="0" a="0.85"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				local _, race = UnitRace("player")
+				if not race then race = "CharacterSelect" end
+				if race == "Troll" then race = "CharacterSelect" end
+				if race == "Gnome" then race = "Dwarf" end
+				this:SetModel("Interface\\Glues\\Models\\UI_"..race.."\\UI_"..race..".mdx")
+			</OnLoad>
+			<OnMouseDown>
+				BarbershopModel_OnMouseDown()
+			</OnMouseDown>
+			<OnMouseUp>
+				BarbershopModel_OnMouseUp()
+			</OnMouseUp>
+			<OnMouseWheel>
+				return
+			</OnMouseWheel>
+		</Scripts>
+	</Model>
+</Ui>

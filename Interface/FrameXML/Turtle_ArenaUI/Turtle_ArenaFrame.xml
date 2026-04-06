@@ -51,17 +51,6 @@
 					</Anchors>
 				</Texture>
 			</Layer>
-			<Layer level="OVERLAY">
-				<FontString name="$parentArenaPoints" inherits="GameFontNormal" text="ARENA_ARENA_POINTS">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="134" y="-84" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
 			<Layer level="ARTWORK">
 				<Texture file="Interface\BattlefieldFrame\UI-Battlefield-Bar">
 					<Size>
@@ -78,6 +67,53 @@
 			</Layer>
 		</Layers>
 		<Frames>
+			<Frame name="$parentPoints">
+				<Size>
+					<AbsDimension x="316" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="24" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="$parentTexture" file="Interface\TargetingFrame\PVP-ArenaPoints-Icon">
+							<Size>
+								<AbsDimension x="16" y="16" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="-20" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<FontString name="$parentText" inherits="GameFontNormal" justifyH="RIGHT" text="0">
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentTexture" relativePoint="RIGHT">
+									<Offset>
+										<AbsDimension x="8" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT", 8, 0)
+						GameTooltip:SetText(ARENA_CONQUEST_POINTS)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+			</Frame>
 			<Button name="$parentTab1" inherits="TabButtonTemplate" text="HONOR" id="7">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -110,7 +146,7 @@
 					<OnLoad>
 						PanelTemplates_SelectTab(this)
 						PanelTemplates_TabResize(10)
-						getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 36)
+						_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 36)
 					</OnLoad>
 				</Scripts>
 			</Button>
@@ -124,7 +160,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. "Text"):SetText("(2v2)")
+						this:SetAlpha(0.4)
+						_G[this:GetName() .. "Text"]:SetText("(2v2)")
 					</OnLoad>
 				</Scripts>
 			</Button>
@@ -138,7 +175,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. "Text"):SetText("(3v3)")
+						this:SetAlpha(0.4)
+						_G[this:GetName() .. "Text"]:SetText("(3v3)")
 					</OnLoad>
 				</Scripts>
 			</Button>
@@ -152,7 +190,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName() .. "Text"):SetText("(5v5)")
+						this:SetAlpha(0.4)
+						_G[this:GetName() .. "Text"]:SetText("(5v5)")
 					</OnLoad>
 				</Scripts>
 			</Button>
@@ -295,6 +334,9 @@
 
 				ArenaFrameDetailsFrame:Hide()
 			</OnHide>
+			<OnEvent>
+				ArenaFrame_OnEvent()
+			</OnEvent>
 		</Scripts>
 	</Frame>
 </Ui>

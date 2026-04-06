@@ -25,6 +25,11 @@ function PlayerFrame_OnLoad()
 
 	PlayerAttackBackground:SetVertexColor(0.8, 0.1, 0.1);
 	PlayerAttackBackground:SetAlpha(0.4);
+
+	PlayerFrameTextureFrame:SetFrameLevel(PlayerFrame:GetFrameLevel() + 2);
+	local frameLevel = PlayerFrameTextureFrame:GetFrameLevel();
+	PlayerFrameHealthBar:SetFrameLevel(frameLevel - 1);
+	PlayerFrameManaBar:SetFrameLevel(frameLevel - 1);
 end
 
 function PlayerFrame_Update()
@@ -34,6 +39,7 @@ function PlayerFrame_Update()
 		PlayerFrame_UpdatePvPStatus();
 		PlayerFrame_UpdateStatus();
 		PlayerFrame_UpdatePlaytime();
+		PlayerFrame_UpdateGroupIndicator();
 	end
 end
 
@@ -43,9 +49,7 @@ function PlayerFrame_UpdatePartyLeader()
 	else
 		PlayerLeaderIcon:Hide();
 	end
-	local lootMethod;
-	local lootMaster;
-	lootMethod, lootMaster = GetLootMethod();
+	local lootMethod, lootMaster = GetLootMethod();
 	if ( lootMaster == 0 and ((GetNumPartyMembers() > 0) or (GetNumRaidMembers() > 0)) ) then
 		PlayerMasterIcon:Show();
 	else
@@ -71,7 +75,7 @@ function PlayerFrame_UpdatePvPStatus()
 
 		-- Setup newbie tooltip
 		PlayerPVPIconHitArea.tooltipTitle = factionName;
-		PlayerPVPIconHitArea.tooltipText = getglobal("NEWBIE_TOOLTIP_"..strupper(factionGroup));
+		PlayerPVPIconHitArea.tooltipText = _G["NEWBIE_TOOLTIP_"..strupper(factionGroup)];
 		PlayerPVPIconHitArea:Show();
 	else
 		PlayerPVPIcon:Hide();
@@ -117,9 +121,7 @@ function PlayerFrame_OnEvent(event)
 		PlayerFrame_UpdateGroupIndicator();
 		PlayerFrame_UpdatePartyLeader();
 	elseif ( event == "PARTY_LOOT_METHOD_CHANGED" ) then
-		local lootMethod;
-		local lootMaster;
-		lootMethod, lootMaster = GetLootMethod();
+		local lootMethod, lootMaster = GetLootMethod();
 		if ( lootMaster == 0 and ((GetNumPartyMembers() > 0) or (GetNumRaidMembers() > 0)) ) then
 			PlayerMasterIcon:Show();
 		else
@@ -131,6 +133,10 @@ function PlayerFrame_OnEvent(event)
 end
 
 function PlayerFrame_OnUpdate(elapsed)
+	if this.movable then
+		SnapMoveFrame(this)
+	end
+
 	if ( PlayerStatusTexture:IsVisible() ) then
 		local alpha = 255;
 		local counter = this.statusCounter + elapsed;
@@ -214,21 +220,14 @@ end
 
 function PlayerFrame_UpdateGroupIndicator()
 	PlayerFrameGroupIndicator:Hide();
-	local name, rank, subgroup;
-	if ( GetNumRaidMembers() == 0 ) then
-		PlayerFrameGroupIndicator:Hide();
-		return;
-	end
-	local numRaidMembers = GetNumRaidMembers();
-	for i=1, MAX_RAID_MEMBERS do
-		if ( i <= numRaidMembers ) then
-			name, rank, subgroup = GetRaidRosterInfo(i);
-			-- Set the player's group number indicator
-			if ( name == UnitName("player") ) then
-				PlayerFrameGroupIndicatorText:SetText(GROUP.." "..subgroup);
-				PlayerFrameGroupIndicator:SetWidth(PlayerFrameGroupIndicatorText:GetWidth()+40);
-				PlayerFrameGroupIndicator:Show();
-			end
+	for i=1, GetNumRaidMembers() do
+		local name, rank, subgroup = GetRaidRosterInfo(i);
+		-- Set the player's group number indicator
+		if ( name == UnitName("player") ) then
+			PlayerFrameGroupIndicatorText:SetText(GROUP.." "..subgroup);
+			PlayerFrameGroupIndicator:SetWidth(PlayerFrameGroupIndicatorText:GetWidth() + 40);
+			PlayerFrameGroupIndicator:Show();
+			return;
 		end
 	end
 end

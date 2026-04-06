@@ -40,12 +40,12 @@ function BonusActionBar_OnUpdate(elapsed)
 		-- Animating
 		this.completed = nil;
 		if ( this.mode == "show" ) then
-			yPos = (this.slideTimer/this.timeToSlide) * this.yTarget;
+			yPos = (this.slideTimer/this.timeToSlide) * BONUSACTIONBAR_YPOS;
 			this:SetPoint("TOPLEFT", this:GetParent(), "BOTTOMLEFT", BONUSACTIONBAR_XPOS, yPos);
 			this.state = "showing";
 			this:Show();
 		elseif ( this.mode == "hide" ) then
-			yPos = (1 - (this.slideTimer/this.timeToSlide)) * this.yTarget;
+			yPos = (1 - (this.slideTimer/this.timeToSlide)) * BONUSACTIONBAR_YPOS;
 			this:SetPoint("TOPLEFT", this:GetParent(), "BOTTOMLEFT", BONUSACTIONBAR_XPOS, yPos);
 			this.state = "hiding";
 		end
@@ -57,9 +57,8 @@ function BonusActionBar_OnUpdate(elapsed)
 		else
 			this.completed = 1;
 		end
-		BonusActionBar_SetButtonTransitionState(nil);
 		if ( this.mode == "show" ) then
-			this:SetPoint("TOPLEFT", this:GetParent(), "BOTTOMLEFT", BONUSACTIONBAR_XPOS, this.yTarget);
+			this:SetPoint("TOPLEFT", this:GetParent(), "BOTTOMLEFT", BONUSACTIONBAR_XPOS, BONUSACTIONBAR_YPOS);
 			this.state = "top";
 			PlaySound("igBonusBarOpen");
 		elseif ( this.mode == "hide" ) then
@@ -72,26 +71,22 @@ function BonusActionBar_OnUpdate(elapsed)
 end
 
 function ShowBonusActionBar()
-	BonusActionBar_SetButtonTransitionState(nil);
 	if ( BonusActionBarFrame.mode ~= "show" and BonusActionBarFrame.state ~= "top") then
 		BonusActionBarFrame:Show();
 		if ( BonusActionBarFrame.completed ) then
 			BonusActionBarFrame.slideTimer = 0;
 		end
 		BonusActionBarFrame.timeToSlide = BONUSACTIONBAR_SLIDETIME;
-		BonusActionBarFrame.yTarget = BONUSACTIONBAR_YPOS;
 		BonusActionBarFrame.mode = "show";
 	end
 end
 
 function HideBonusActionBar()
 	if ( BonusActionBarFrame:IsShown() ) then
-		BonusActionBar_SetButtonTransitionState(1);
 		if ( BonusActionBarFrame.completed ) then
 			BonusActionBarFrame.slideTimer = 0;
 		end
 		BonusActionBarFrame.timeToSlide = BONUSACTIONBAR_SLIDETIME;
-		BonusActionBarFrame.yTarget = BONUSACTIONBAR_YPOS;
 		BonusActionBarFrame.mode = "hide";
 	end
 end
@@ -108,22 +103,6 @@ end
 
 function BonusActionButtonDown(id)
 	PetActionButtonDown(id);
-end
-
-function BonusActionBar_SetButtonTransitionState(state)
-	local button, icon;
-	for i=1, NUM_BONUS_ACTION_SLOTS, 1 do
-		button = getglobal("BonusActionButton"..i);
-		icon = getglobal("BonusActionButton"..i.."Icon");
-		button.inTransition = state;
-		if ( state ) then
-			icon:SetTexture(button.texture);
-			if ( button.texture ) then
-				icon:Show();
-				button:Show();
-			end
-		end
-	end
 end
 
 function ShapeshiftBar_OnLoad()
@@ -185,14 +164,14 @@ function ShapeshiftBar_UpdateState()
 	local start, duration, enable;
 
 	for i=1, NUM_SHAPESHIFT_SLOTS do
-		button = getglobal("ShapeshiftButton"..i);
-		icon = getglobal("ShapeshiftButton"..i.."Icon");
+		button = _G["ShapeshiftButton"..i];
+		icon = _G["ShapeshiftButton"..i.."Icon"];
 		if ( i <= numForms ) then
 			texture, name, isActive, isCastable = GetShapeshiftFormInfo(i);
 			icon:SetTexture(texture);
 
 			--Cooldown stuffs
-			cooldown = getglobal("ShapeshiftButton"..i.."Cooldown");
+			cooldown = _G["ShapeshiftButton"..i.."Cooldown"];
 			if ( texture ) then
 				cooldown:Show();
 			else
@@ -233,8 +212,8 @@ function ShapeshiftBar_UpdatePosition()
 		ShapeshiftBarRight:Hide();
 		ShapeshiftBarMiddle:Hide();
 		for i=1, GetNumShapeshiftForms() do
-			getglobal("ShapeshiftButton"..i.."NormalTexture"):SetWidth(50);
-			getglobal("ShapeshiftButton"..i.."NormalTexture"):SetHeight(50);
+			_G["ShapeshiftButton"..i.."NormalTexture"]:SetWidth(50);
+			_G["ShapeshiftButton"..i.."NormalTexture"]:SetHeight(50);
 		end
 	else
 		ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", "MainMenuBar", "TOPLEFT", 30, 0);
@@ -244,8 +223,8 @@ function ShapeshiftBar_UpdatePosition()
 		ShapeshiftBarLeft:Show();
 		ShapeshiftBarRight:Show();
 		for i=1, GetNumShapeshiftForms() do
-			getglobal("ShapeshiftButton"..i.."NormalTexture"):SetWidth(64);
-			getglobal("ShapeshiftButton"..i.."NormalTexture"):SetHeight(64);
+			_G["ShapeshiftButton"..i.."NormalTexture"]:SetWidth(64);
+			_G["ShapeshiftButton"..i.."NormalTexture"]:SetHeight(64);
 		end
 	end
 end

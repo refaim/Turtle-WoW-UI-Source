@@ -5,6 +5,8 @@ RAID_SUBGROUP_LISTS = {};
 NUM_RAID_PULLOUT_FRAMES = 0;
 RAID_PULLOUT_BUTTON_HEIGHT = 33;
 MOVING_RAID_PULLOUT = nil;
+RAID_LEADER_ICON = "Interface\\GroupFrame\\UI-Group-LeaderIcon";
+RAID_ASSISTANT_ICON = "Interface\\GroupFrame\\UI-Group-AssistantIcon";
 
 function RaidGroupFrame_OnLoad()
 	RaidFrame:RegisterEvent("UNIT_LEVEL");
@@ -47,12 +49,12 @@ function RaidGroupFrame_Update()
 	-- Update raid group labels
 	if ( GetNumRaidMembers() == 0 ) then
 		for i=1, NUM_RAID_GROUPS do
-			getglobal("RaidGroup"..i):Hide();
+			_G["RaidGroup"..i]:Hide();
 		end
 		RaidFrameReadyCheckButton:Hide();
 	else
 		for i=1, NUM_RAID_GROUPS do
-			getglobal("RaidGroup"..i):Show();
+			_G["RaidGroup"..i]:Show();
 		end
 	end
 
@@ -65,20 +67,19 @@ function RaidGroupFrame_Update()
 
 	-- Reset group index counters;
 	for i=1, NUM_RAID_GROUPS do
-		getglobal("RaidGroup"..i).nextIndex = 1;
+		_G["RaidGroup"..i].nextIndex = 1;
 	end
 	-- Clear out all the slots buttons
 	RaidGroup_ResetSlotButtons();
 
 	-- Clear out subgroup list
-	RAID_SUBGROUP_LISTS = {};
 	for i=1, NUM_RAID_GROUPS do
-		RAID_SUBGROUP_LISTS[i] = {};
+		RAID_SUBGROUP_LISTS[i] = wipe(RAID_SUBGROUP_LISTS[i]);
 	end
 
 	-- Use the class color list to clear out the class list
 	for index, value in RAID_CLASS_COLORS do
-		RAID_SUBGROUP_LISTS[index] = {};
+		RAID_SUBGROUP_LISTS[index] = wipe(RAID_SUBGROUP_LISTS[index]);
 	end
 
 	-- Fill out buttons
@@ -87,16 +88,16 @@ function RaidGroupFrame_Update()
 	local buttonName, buttonLevel, buttonClass, buttonRank;
 	local name, rank, subgroup, level, class, fileName, zone, online, isDead;
 	for i=1, MAX_RAID_MEMBERS do
-		button = getglobal("RaidGroupButton"..i);
+		local button = _G["RaidGroupButton"..i];
 		if ( i <= numRaidMembers ) then
 			name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(i);
-			raidGroup = getglobal("RaidGroup"..subgroup);
+			raidGroup = _G["RaidGroup"..subgroup];
 			-- To prevent errors when the server hiccups
 			if ( raidGroup.nextIndex <= MEMBERS_PER_RAID_GROUP ) then
-				buttonName = getglobal("RaidGroupButton"..i.."Name");
-				buttonClass = getglobal("RaidGroupButton"..i.."Class");
-				buttonLevel = getglobal("RaidGroupButton"..i.."Level");
-				buttonRank = getglobal("RaidGroupButton"..i.."Rank");
+				buttonName = _G["RaidGroupButton"..i.."Name"];
+				buttonClass = _G["RaidGroupButton"..i.."Class"];
+				buttonLevel = _G["RaidGroupButton"..i.."Level"];
+				buttonRank = _G["RaidGroupButton"..i.."RankIcon"];
 				button.id = i;
 
 				button.name = name;
@@ -152,11 +153,11 @@ function RaidGroupFrame_Update()
 				end
 
 				if ( rank == 2 ) then
-					buttonRank:SetText(RAID_LEADER_TOKEN);
+					buttonRank:SetTexture(RAID_LEADER_ICON);
 				elseif ( rank == 1 ) then
-					buttonRank:SetText(RAID_ASSISTANT_TOKEN);
+					buttonRank:SetTexture(RAID_ASSISTANT_ICON);
 				else
-					buttonRank:SetText("");
+					buttonRank:SetTexture("");
 				end
 
 				-- Anchor button to slot
@@ -169,7 +170,7 @@ function RaidGroupFrame_Update()
 				-- Save the button's subgroup too
 				button.subgroup = subgroup;
 				-- Tell the slot what button is in it
-				getglobal("RaidGroup"..subgroup.."Slot"..raidGroup.nextIndex).button = button:GetName();
+				_G["RaidGroup"..subgroup.."Slot"..raidGroup.nextIndex].button = button:GetName();
 				raidGroup.nextIndex = raidGroup.nextIndex + 1;
 				button:SetID(i);
 				button:Show();
@@ -182,7 +183,7 @@ end
 
 function RaidGroupFrame_UpdateLevel(id)
 	local unit = "raid"..id;
-	local buttonLevel = getglobal("RaidGroupButton"..id.."Level");
+	local buttonLevel = _G["RaidGroupButton"..id.."Level"];
 
 	buttonLevel:SetText(UnitLevel(unit));
 end
@@ -190,9 +191,9 @@ end
 function RaidGroupFrame_UpdateHealth(id)
 	local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(id);
 
-	local buttonName = getglobal("RaidGroupButton"..id.."Name");
-	local buttonClass = getglobal("RaidGroupButton"..id.."Class");
-	local buttonLevel = getglobal("RaidGroupButton"..id.."Level");
+	local buttonName = _G["RaidGroupButton"..id.."Name"];
+	local buttonClass = _G["RaidGroupButton"..id.."Class"];
+	local buttonLevel = _G["RaidGroupButton"..id.."Level"];
 
 	if ( online ) then
 		if ( isDead ) then
@@ -200,7 +201,7 @@ function RaidGroupFrame_UpdateHealth(id)
 			buttonClass:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
 			buttonLevel:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
 		else
-			color = RAID_CLASS_COLORS[fileName];
+			local color = RAID_CLASS_COLORS[fileName];
 			if ( color ) then
 				buttonName:SetTextColor(color.r, color.g, color.b);
 				buttonClass:SetTextColor(color.r, color.g, color.b);
@@ -220,7 +221,7 @@ function RaidGroupFrame_OnUpdate(elapsed)
 		TARGET_RAID_SLOT = nil;
 		for i=1, NUM_RAID_GROUPS do
 			for j=1, MEMBERS_PER_RAID_GROUP do
-				slot = getglobal("RaidGroup"..i.."Slot"..j);
+				slot = _G["RaidGroup"..i.."Slot"..j];
 				if ( MouseIsOver(slot) ) then
 					slot:LockHighlight();
 					TARGET_RAID_SLOT = slot;
@@ -233,7 +234,7 @@ function RaidGroupFrame_OnUpdate(elapsed)
 end
 
 function RaidGroupButton_OnDragStart()
-	if ( not IsRaidLeader() ) then
+	if ( not IsRaidLeader() and not IsRaidOfficer() ) then
 		return;
 	end
 	local cursorX, cursorY = GetCursorPosition();
@@ -245,7 +246,7 @@ function RaidGroupButton_OnDragStart()
 end
 
 function RaidGroupButton_OnDragStop(raidButton)
-	if ( not IsRaidLeader() ) then
+	if ( not IsRaidLeader() and not IsRaidOfficer() ) then
 		return;
 	end
 	if ( not raidButton ) then
@@ -256,7 +257,7 @@ function RaidGroupButton_OnDragStop(raidButton)
 	MOVING_RAID_MEMBER = nil;
 	if ( TARGET_RAID_SLOT and TARGET_RAID_SLOT:GetParent():GetID() ~= raidButton.subgroup ) then
 		if (TARGET_RAID_SLOT.button) then
-			local button = getglobal(TARGET_RAID_SLOT.button);
+			local button = _G[TARGET_RAID_SLOT.button];
 			--button:SetPoint("TOPLEFT", this, "TOPLEFT", 0, 0);
 			SwapRaidSubgroup(raidButton:GetID(), button:GetID());
 		else
@@ -315,13 +316,13 @@ function RaidGroupButton_OnEnter()
 end
 
 function RaidFrameDropDown_Initialize()
-	UnitPopup_ShowMenu(getglobal(UIDROPDOWNMENU_OPEN_MENU), "RAID", this.unit, this.name, this.id);
+	UnitPopup_ShowMenu(_G[UIDROPDOWNMENU_OPEN_MENU], "RAID", this.unit, this.name, this.id);
 end
 
 function RaidGroup_ResetSlotButtons()
 	for i=1, NUM_RAID_GROUPS do
 		for j=1, MEMBERS_PER_RAID_GROUP do
-			getglobal("RaidGroup"..i.."Slot"..j).button = nil;
+			_G["RaidGroup"..i.."Slot"..j].button = nil;
 		end
 	end
 end
@@ -350,7 +351,7 @@ function RaidPullout_GenerateGroupFrame(groupID)
 		pullOutFrame.filterID = groupID;
 		pullOutFrame.showBuffs = nil;
 		-- Set pullout name
-		getglobal(pullOutFrame:GetName().."Name"):SetText(GROUP.." "..groupID);
+		_G[pullOutFrame:GetName().."Name"]:SetText(GROUP.." "..groupID);
 		if ( RaidPullout_Update(pullOutFrame) ) then
 			return pullOutFrame;
 		end
@@ -369,7 +370,7 @@ function RaidPullout_GenerateClassFrame(class, fileName)
 		pullOutFrame.filterID = fileName;
 		pullOutFrame.showBuffs = nil;
 		-- Set pullout name
-		getglobal(pullOutFrame:GetName().."Name"):SetText(class);
+		_G[pullOutFrame:GetName().."Name"]:SetText(class);
 		if ( RaidPullout_Update(pullOutFrame) ) then
 			return pullOutFrame;
 		end
@@ -407,18 +408,18 @@ function RaidPullout_Update(pullOutFrame)
 			if ( i == 1 ) then
 				pulloutButton:SetPoint("TOP", pullOutFrame, "TOP", 1, -10);
 			else
-				relative = getglobal(pullOutFrame:GetName().."Button"..(i-1));
+				relative = _G[pullOutFrame:GetName().."Button"..(i-1)];
 				pulloutButton:SetPoint("TOP", relative, "BOTTOM", 0, -8);
 			end
 		end
 		pullOutFrame.numPulloutButtons = numPulloutEntries;
 	end
 	for i=1, pullOutFrame.numPulloutButtons do
-		pulloutButton = getglobal(pullOutFrame:GetName().."Button"..i);
+		pulloutButton = _G[pullOutFrame:GetName().."Button"..i];
 		if ( i <= numPulloutEntries ) then
-			pulloutButtonName = getglobal(pulloutButton:GetName().."Name");
-			pulloutHealthBar = getglobal(pulloutButton:GetName().."HealthBar");
-			pulloutManaBar = getglobal(pulloutButton:GetName().."ManaBar");
+			pulloutButtonName = _G[pulloutButton:GetName().."Name"];
+			pulloutHealthBar = _G[pulloutButton:GetName().."HealthBar"];
+			pulloutManaBar = _G[pulloutButton:GetName().."ManaBar"];
 			name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(pulloutList[i]);
 			-- follow same coloration rules as the raid interface
 			pulloutButtonName:SetText(name);
@@ -426,7 +427,7 @@ function RaidPullout_Update(pullOutFrame)
 			pulloutButton.unit = unit;
 
 			-- Set for tooltip support
-			getglobal(pulloutButton:GetName().."ClearButton").unit = unit;
+			_G[pulloutButton:GetName().."ClearButton"].unit = unit;
 
 			pulloutButton.raidIndex = pulloutList[i];
 			pulloutButton.manabar = pulloutManaBar;
@@ -480,7 +481,7 @@ function RaidPulloutButton_OnEvent()
 end
 
 function RaidPulloutButton_UpdateDead(button, isDead, class)
-	local pulloutButtonName = getglobal(button:GetName().."Name");
+	local pulloutButtonName = _G[button:GetName().."Name"];
 	if ( isDead ) then
 		pulloutButtonName:SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
 	else
@@ -507,7 +508,7 @@ function RaidPulloutButton_OnClick()
 			TargetUnit(unit);
 		end
 	elseif ( arg1 == "RightButton" ) then
-		ToggleDropDownMenu(1, nil, getglobal(this:GetParent():GetParent():GetName().."DropDown"));
+		ToggleDropDownMenu(1, nil, _G[this:GetParent():GetParent():GetName().."DropDown"]);
 	end
 end
 
@@ -536,14 +537,14 @@ function RaidPullout_GetFrame(filterID)
 	-- Grab an available pullout frame
 	local frame;
 	for i=1, NUM_RAID_PULLOUT_FRAMES do
-		frame = getglobal("RaidPullout"..i);
+		frame = _G["RaidPullout"..i];
 		-- if frame is visible see if its group id is already taken
 		if ( frame:IsVisible() and filterID == frame.filterID ) then
 			return nil;
 		end
 	end
 	for i=1, NUM_RAID_PULLOUT_FRAMES do
-		frame = getglobal("RaidPullout"..i);
+		frame = _G["RaidPullout"..i];
 		if ( not frame:IsVisible() ) then
 			return frame;
 		end
@@ -561,38 +562,34 @@ function RaidPulloutDropDown_OnLoad()
 end
 
 function RaidPulloutDropDown_Initialize()
-	if ( not UIDROPDOWNMENU_OPEN_MENU or not getglobal(UIDROPDOWNMENU_OPEN_MENU).raidPulloutDropDown ) then
+	if ( not UIDROPDOWNMENU_OPEN_MENU or not _G[UIDROPDOWNMENU_OPEN_MENU].raidPulloutDropDown ) then
 		return;
 	end
-	local currentPullout = getglobal(UIDROPDOWNMENU_OPEN_MENU):GetParent();
+	local currentPullout = _G[UIDROPDOWNMENU_OPEN_MENU]:GetParent();
 	local info;
 
 	-- Show buffs or debuffs they are exclusive for now
-	info = {};
+	info = UIDropDownMenu_CreateInfo();
 	info.text = SHOW_BUFFS;
 	info.func = function()
 		currentPullout.showBuffs = 1;
 		RaidPullout_Update(currentPullout);
 	end;
-	if ( currentPullout.showBuffs ) then
-		info.checked = 1;
-	end
+	info.checked = currentPullout.showBuffs;
 	UIDropDownMenu_AddButton(info);
 
-	info = {};
+	info = UIDropDownMenu_CreateInfo();
 	info.text = SHOW_DEBUFFS;
 	info.func = function()
 		currentPullout.showBuffs = nil;
 		RaidPullout_Update(currentPullout);
 	end;
-	if ( not currentPullout.showBuffs ) then
-		info.checked = 1;
-	end
+	info.checked = not currentPullout.showBuffs;
 	UIDropDownMenu_AddButton(info);
 
 	-- Hide background option
-	local backdrop = getglobal(currentPullout:GetName().."MenuBackdrop");
-	info = {};
+	local backdrop = _G[currentPullout:GetName().."MenuBackdrop"];
+	info = UIDropDownMenu_CreateInfo();
 	info.text = HIDE_PULLOUT_BG;
 	info.func = function ()
 		if ( backdrop:IsVisible() ) then
@@ -601,17 +598,16 @@ function RaidPulloutDropDown_Initialize()
 			backdrop:Show();
 		end
 	end;
-	if ( not backdrop:IsVisible() ) then
-		info.checked = 1;
-	end
+	info.checked = not backdrop:IsVisible();
 	UIDropDownMenu_AddButton(info);
 
 	-- Close option
-	info = {};
+	info = UIDropDownMenu_CreateInfo();
 	info.text = CLOSE;
 	info.func = function()
 		currentPullout:Hide();
 	end;
+	info.checked = nil;
 	UIDropDownMenu_AddButton(info);
 end
 
@@ -643,7 +639,7 @@ function ReadyCheck_OnUpdate(elapsed)
 	if ( ReadyCheckFrame.timer < 0 ) then
 		-- Timed out
 		local info = ChatTypeInfo["SYSTEM"];
-		DEFAULT_CHAT_FRAME:AddMessage(TEXT(READY_CHECK_YOU_WERE_AFK), info.r, info.g, info.b, info.id);
+		DEFAULT_CHAT_FRAME:AddMessage(READY_CHECK_YOU_WERE_AFK, info.r, info.g, info.b, info.id);
 		ReadyCheckFrame.timer = nil;
 		ReadyCheckFrame:Hide();
 	end

@@ -391,7 +391,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(GAMETYPE_PVE);
+										_G[this:GetName().."Text"]:SetText(GAMETYPE_PVE);
 									</OnLoad>
 									<OnClick>
 										if ( this:GetChecked() ) then
@@ -422,7 +422,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(GAMETYPE_PVP);
+										_G[this:GetName().."Text"]:SetText(GAMETYPE_PVP);
 									</OnLoad>
 									<OnClick>
 										if ( this:GetChecked() ) then
@@ -453,7 +453,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(GAMETYPE_RP);
+										_G[this:GetName().."Text"]:SetText(GAMETYPE_RP);
 									</OnLoad>
 									<OnClick>
 										if ( this:GetChecked() ) then
@@ -484,7 +484,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(this:GetName().."Text"):SetText(GAMETYPE_RPPVP);
+										_G[this:GetName().."Text"]:SetText(GAMETYPE_RPPVP);
 									</OnLoad>
 									<OnClick>
 										if ( this:GetChecked() ) then

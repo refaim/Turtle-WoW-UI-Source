@@ -257,10 +257,10 @@
 							GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
 							GameTooltip:SetText(this.tooltip);
 							if ( this.tooltipDamage ) then
-								GameTooltip:AddLine(this.tooltipDamage, "", 1, 1, 1);
+								GameTooltip:AddLine(this.tooltipDamage);
 							end
 							if ( this.tooltipLoyalty ) then
-								GameTooltip:AddLine(this.tooltipLoyalty, "", 1, 1, 1);
+								GameTooltip:AddLine(this.tooltipLoyalty);
 							end
 							GameTooltip:Show();
 						end

@@ -96,16 +96,15 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 
 	-- Reset tooltip
 	MiniMapBattlefieldFrame.tooltip = nil;
-	MiniMapBattlefieldFrame.waitTime = {};
 	MiniMapBattlefieldFrame.status = nil;
 
 	-- Copy current queues into previous queues
 	if ( not tooltipOnly ) then
-		PREVIOUS_BATTLEFIELD_QUEUES = {};
+		wipe(PREVIOUS_BATTLEFIELD_QUEUES);
 		for index, value in CURRENT_BATTLEFIELD_QUEUES do
 			tinsert(PREVIOUS_BATTLEFIELD_QUEUES, value);
 		end
-		CURRENT_BATTLEFIELD_QUEUES = {};
+		wipe(CURRENT_BATTLEFIELD_QUEUES);
 	end
 
 	for i=1, MAX_BATTLEFIELD_QUEUES do
@@ -132,7 +131,6 @@ function BattlefieldFrame_UpdateStatus(tooltipOnly)
 				else
 					waitTime = SecondsToTime(waitTime/1000, 1);
 				end
-				MiniMapBattlefieldFrame.waitTime[i] = waitTime;
 				tooltip = format(BATTLEFIELD_IN_QUEUE, mapName, waitTime, SecondsToTime(timeInQueue));
 
 				if ( not tooltipOnly ) then
@@ -199,7 +197,6 @@ end
 function BattlefieldFrame_Update()
 	local zoneIndex;
 	local zoneOffset = FauxScrollFrame_GetOffset(BattlefieldListScrollFrame);
-	local playerLevel = UnitLevel("player");
 	local button, buttonStatus;
 	local instanceID;
 	local mapName, mapDescription, minLevel, maxLevel, mapID, mapX, mapY, mapFull = GetBattlefieldInfo();
@@ -212,8 +209,8 @@ function BattlefieldFrame_Update()
 	local numBattlefields = GetNumBattlefields() + 1;
 	for i=1, BATTLEFIELD_ZONES_DISPLAYED, 1 do
 		zoneIndex = zoneOffset + i;
-		button = getglobal("BattlefieldZone"..i);
-		buttonStatus = getglobal("BattlefieldZone"..i.."Status");
+		button = _G["BattlefieldZone"..i];
+		buttonStatus = _G["BattlefieldZone"..i.."Status"];
 
 		if ( zoneIndex == 1 ) then
 			-- The first entry in the list is always "first available"
@@ -276,8 +273,6 @@ function BattlefieldFrame_Update()
 		BattlefieldFrameGroupJoinButton:Hide();
 	end
 
-
-
 	FauxScrollFrame_Update(BattlefieldListScrollFrame, numBattlefields, BATTLEFIELD_ZONES_DISPLAYED, BATTLEFIELD_ZONES_HEIGHT, "BattlefieldZone", 293, 315);
 end
 
@@ -328,11 +323,6 @@ function MiniMapBattlefieldDropDown_Initialize()
 				info.text = CHANGE_INSTANCE;
 				info.func = ShowBattlefieldList;
 				info.arg1 = i;
-				info.notCheckable = 1;
-				UIDropDownMenu_AddButton(info);
-				info.text = LEAVE_QUEUE;
-				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
-				info.arg1 = i;
 				info.arg2 = nil;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
@@ -344,20 +334,20 @@ function MiniMapBattlefieldDropDown_Initialize()
 				info.arg2 = 1;
 				info.notCheckable = 1;
 				UIDropDownMenu_AddButton(info);
-				info.text = LEAVE_QUEUE;
-				info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
-				info.arg1 = i;
-				info.arg2 = nil;
-				info.notCheckable = 1;
-				UIDropDownMenu_AddButton(info);
 			end
+			info.text = LEAVE_QUEUE;
+			info.func = mapName == ARENA and LeaveArenaQueue or AcceptBattlefieldPort;
+			info.arg1 = i;
+			info.arg2 = nil;
+			info.notCheckable = 1;
+			UIDropDownMenu_AddButton(info);
 		end
 	end
 end
 
 function BattlegroundShineFadeIn()
 	-- Fade in the shine and then fade it out with the ComboPointShineFadeOut function
-	local fadeInfo = {};
+	local fadeInfo = UIFrameFade_CreateInfo(BattlegroundShine);
 	fadeInfo.mode = "IN";
 	fadeInfo.timeToFade = 0.5;
 	fadeInfo.finishedFunc = BattlegroundShineFadeOut;

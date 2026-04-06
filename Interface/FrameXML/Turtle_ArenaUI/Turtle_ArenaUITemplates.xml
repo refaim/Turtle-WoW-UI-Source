@@ -18,7 +18,7 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName() .. "Highlight"):SetVertexColor(1.0, 0.82, 0)
+				_G[this:GetName() .. "Highlight"]:SetVertexColor(1.0, 0.82, 0)
 			</OnLoad>
 			<OnClick>
 				ArenaQueueButton_OnClick()
@@ -348,17 +348,14 @@
 			</Frame>
 		</Frames>
 		<Scripts>
-			<OnLoad>
-				this:SetAlpha(0.4)
-			</OnLoad>
 			<OnClick>
 				ArenaTeam_OnClick()
 			</OnClick>
 			<OnEnter>
-				getglobal(this:GetName() .. "Highlight"):Show()
+				_G[this:GetName() .. "Highlight"]:Show()
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName() .. "Highlight"):Hide()
+				_G[this:GetName() .. "Highlight"]:Hide()
 			</OnLeave>
 		</Scripts>
 	</Button>

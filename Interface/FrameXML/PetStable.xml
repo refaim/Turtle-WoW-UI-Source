@@ -32,7 +32,7 @@
 				if (this.tooltip) then
 					GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
 					GameTooltip:SetText(this.tooltip);
-					GameTooltip:AddLine(this.tooltipSubtext, "", 1.0, 1.0, 1.0);
+					GameTooltip:AddLine(this.tooltipSubtext);
 					GameTooltip:Show();
 				end
 			</OnEnter>
@@ -362,7 +362,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						BuyStableSlot();
+						StaticPopup_Show("CONFIRM_BUY_STABLE_SLOT");
 					</OnClick>
 				</Scripts>
 			</Button>

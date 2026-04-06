@@ -29,11 +29,11 @@ function TargetFrame_OnLoad()
 	this:RegisterEvent("PLAYER_FLAGS_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("RAID_TARGET_UPDATE");
-	this:RegisterEvent("CHAT_MSG_ADDON")
 
+	TargetFrameTextureFrame:SetFrameLevel(TargetFrame:GetFrameLevel() + 2);
 	local frameLevel = TargetFrameTextureFrame:GetFrameLevel();
-	TargetFrameHealthBar:SetFrameLevel(frameLevel-1);
-	TargetFrameManaBar:SetFrameLevel(frameLevel-1);
+	TargetFrameHealthBar:SetFrameLevel(frameLevel - 1);
+	TargetFrameManaBar:SetFrameLevel(frameLevel - 1);
 end
 
 function TargetFrame_Update()
@@ -101,41 +101,49 @@ function TargetFrame_OnEvent(event)
 		TargetofTarget_Update();
 	elseif ( event == "RAID_TARGET_UPDATE" ) then
 		TargetFrame_UpdateRaidTargetIcon();
-	elseif ( event == "CHAT_MSG_ADDON" ) then
-		if arg1 == "RESPONSE_PLAYER_CHALLENGES" then
-			local s = strfind(arg2, ":")
-			local player = strsub(arg2, 1, s - 1)
-			if UnitName("target") or UnitName("mouseover") == player then
-				local mask = strsub(arg2, s + 1)
-				table.insert(Turtle_ChallengesCache[GetRealmName()][player], tonumber(mask))
-			end
-			TargetFrame_UpdateChallenges(player)
-		end
 	end
 end
 
-function TargetFrame_UpdateChallenges(player)
+function TargetFrame_HandleChallenges(response)
+	local params = explode(response, ADDON_MSG_ARRAY_DELIMITER)
+	local guid = params[1]
+	local _, guid1 = UnitExists("target")
+	local _, guid2 = UnitExists("mouseover")
+	if guid1 == guid or guid2 == guid then
+		local mask = params[2]
+
+		Turtle_ChallengesCache[GetRealmName()][guid] = tonumber(mask)
+
+		TargetFrame_UpdateChallenges(guid)
+	end
+end
+
+function TargetFrame_UpdateChallenges(guid)
 	if GameTooltip.challenges then return end
 
-	local playerChallenges = Turtle_ChallengesCache[GetRealmName()][player]
-	-- Check if > 1 because table always has level stored
-	if playerChallenges and table.getn(playerChallenges) > 1 then
-		local mask = playerChallenges[2]
+	local challenges = Turtle_ChallengesCache[GetRealmName()][guid]
+	if not challenges then return end
 
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(ACTIVE_CHALLENGES)
-		for i, challenge in ipairs(Turtle_AvailableChallenges) do
-			if math.mod(math.floor(mask / 2^(i - 1)), 2) == 1 then
-				if challenge.name == LEVELING_CHALLENGE_HARDCORE and UnitIsUnit("target", "mouseover") then
-					-- Update target frame texture if hardcore
-					TargetFrameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame_HC")
-				end
-				GameTooltip:AddLine(challenge.name, 1, 1, 1, true)
+	GameTooltip:AddLine(" ")
+	GameTooltip:AddLine(ACTIVE_CHALLENGES)
+
+	local mask = 1
+	local isMouseoverTarget = UnitIsUnit("target", "mouseover")
+
+	for _, challenge in ipairs(Turtle_AvailableChallenges) do
+		if mod(challenges, (mask * 2)) >= mask then
+			if challenge == LEVELING_CHALLENGE_HARDCORE and isMouseoverTarget then
+				-- Update target frame texture if hardcore
+				TargetFrameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame_HC")
 			end
+			GameTooltip:AddLine(challenge, 1, 1, 1, true)
 		end
-		GameTooltip.challenges = true
-		GameTooltip:Show()
+
+		mask = mask * 2
 	end
+
+	GameTooltip.challenges = true
+	GameTooltip:Show()
 end
 
 function TargetFrame_OnShow()
@@ -267,10 +275,6 @@ end
 function TargetFrame_CheckDishonorableKill()
 	if ( UnitIsCivilian("target") ) then
 		-- Is a dishonorable kill
-		--[[
-		this.name:SetText(RED_FONT_COLOR_CODE..PVP_RANK_CIVILIAN..FONT_COLOR_CODE_CLOSE);
-		TargetFrameNameBackground:SetVertexColor(0.36, 0.05, 0.05);
-		]]--
 		TargetFrameNameBackground:SetVertexColor(1.0, 1.0, 1.0);
 	end
 end
@@ -281,18 +285,17 @@ function TargetFrame_CheckChallenges(unit)
 		or not UnitIsPlayer(unit)
 		or UnitIsUnit("target", "player") then return end
 
-	local realm = GetRealmName()
-	local name = UnitName(unit)
-	local level = UnitLevel(unit)
-	if name then
-		local playerChallenges = Turtle_ChallengesCache[realm][name]
-		if playerChallenges and playerChallenges[1] <= level then
-			Turtle_ChallengesCache[realm][name][1] = level
-			TargetFrame_UpdateChallenges(name)
-		else
-			Turtle_ChallengesCache[realm][name] = { level }
+	local _, guid = UnitExists(unit)
+	if guid then
+		local realm = GetRealmName()
+		if Turtle_ChallengesCache[realm][guid] then
+			if Turtle_ChallengesCache[realm][guid] == 0 then return end
 
-			SendAddonMessage("TW_UI", "REQUEST_PLAYER_CHALLENGES;" .. name, "GUILD")
+			TargetFrame_UpdateChallenges(guid)
+		else
+			Turtle_ChallengesCache[realm][guid] = 0
+
+			SendAddonMessage("TW_UI", "REQUEST_PLAYER_CHALLENGES;" .. guid, "GUILD")
 		end
 	end
 end
@@ -314,6 +317,9 @@ function TargetFrame_OnClick(button)
 end
 
 function TargetFrame_OnUpdate()
+	if this.movable then
+		SnapMoveFrame(this)
+	end
 	if ( TargetofTargetFrame:IsShown() ~= UnitExists("targettarget") ) then
 		TargetofTarget_Update();
 	end
@@ -326,9 +332,9 @@ function TargetDebuffButton_Update()
 
 	for i=1, MAX_TARGET_BUFFS do
 		buff = UnitBuff("target", i);
-		button = getglobal("TargetFrameBuff"..i);
+		button = _G["TargetFrameBuff"..i];
 		if ( buff ) then
-			getglobal("TargetFrameBuff"..i.."Icon"):SetTexture(buff);
+			_G["TargetFrameBuff"..i.."Icon"]:SetTexture(buff);
 			button:Show();
 			button.id = i;
 			numBuffs = numBuffs + 1;
@@ -342,12 +348,12 @@ function TargetDebuffButton_Update()
 	local numDebuffs = 0;
 	for i=1, MAX_TARGET_DEBUFFS do
 
-		local debuffBorder = getglobal("TargetFrameDebuff"..i.."Border");
+		local debuffBorder = _G["TargetFrameDebuff"..i.."Border"];
 		debuff, debuffStack, debuffType = UnitDebuff("target", i);
-		button = getglobal("TargetFrameDebuff"..i);
+		button = _G["TargetFrameDebuff"..i];
 		if ( debuff ) then
-			getglobal("TargetFrameDebuff"..i.."Icon"):SetTexture(debuff);
-			debuffCount = getglobal("TargetFrameDebuff"..i.."Count");
+			_G["TargetFrameDebuff"..i.."Icon"]:SetTexture(debuff);
+			debuffCount = _G["TargetFrameDebuff"..i.."Count"];
 			if ( debuffType ) then
 				color = DebuffTypeColor[debuffType];
 			else
@@ -407,7 +413,7 @@ function TargetDebuffButton_Update()
 
 	-- resize Buffs
 	for i=1, 5 do
-		button = getglobal("TargetFrameBuff"..i);
+		button = _G["TargetFrameBuff"..i];
 		if ( button ) then
 			button:SetWidth(debuffSize);
 			button:SetHeight(debuffSize);
@@ -416,8 +422,8 @@ function TargetDebuffButton_Update()
 
 	-- resize Debuffs
 	for i=1, 6 do
-		button = getglobal("TargetFrameDebuff"..i);
-		debuffFrame = getglobal("TargetFrameDebuff"..i.."Border");
+		button = _G["TargetFrameDebuff"..i];
+		debuffFrame = _G["TargetFrameDebuff"..i.."Border"];
 		if ( debuffFrame ) then
 			debuffFrame:SetWidth(debuffFrameSize);
 			debuffFrame:SetHeight(debuffFrameSize);
@@ -427,12 +433,12 @@ function TargetDebuffButton_Update()
 	end
 
 	-- Reset anchors for debuff wrapping
-	getglobal("TargetFrameDebuff"..debuffWrap):ClearAllPoints();
-	getglobal("TargetFrameDebuff"..debuffWrap):SetPoint("LEFT", getglobal("TargetFrameDebuff"..(debuffWrap - 1)), "RIGHT", 3, 0);
-	getglobal("TargetFrameDebuff"..(debuffWrap + 1)):ClearAllPoints();
-	getglobal("TargetFrameDebuff"..(debuffWrap + 1)):SetPoint("TOPLEFT", "TargetFrameDebuff1", "BOTTOMLEFT", 0, -2);
-	getglobal("TargetFrameDebuff"..(debuffWrap + 2)):ClearAllPoints();
-	getglobal("TargetFrameDebuff"..(debuffWrap + 2)):SetPoint("LEFT", getglobal("TargetFrameDebuff"..(debuffWrap + 1)), "RIGHT", 3, 0);
+	_G["TargetFrameDebuff"..debuffWrap]:ClearAllPoints();
+	_G["TargetFrameDebuff"..debuffWrap]:SetPoint("LEFT", _G["TargetFrameDebuff"..(debuffWrap - 1)], "RIGHT", 3, 0);
+	_G["TargetFrameDebuff"..(debuffWrap + 1)]:ClearAllPoints();
+	_G["TargetFrameDebuff"..(debuffWrap + 1)]:SetPoint("TOPLEFT", "TargetFrameDebuff1", "BOTTOMLEFT", 0, -2);
+	_G["TargetFrameDebuff"..(debuffWrap + 2)]:ClearAllPoints();
+	_G["TargetFrameDebuff"..(debuffWrap + 2)]:SetPoint("LEFT", _G["TargetFrameDebuff"..(debuffWrap + 1)], "RIGHT", 3, 0);
 
 	-- Set anchor for the last row if debuffWrap is 5
 	if ( debuffWrap == 5 ) then
@@ -469,8 +475,6 @@ function TargetFrame_HealthUpdate(elapsed, unit)
 	end
 end
 
-local floor = math.floor
-
 local function round(num, numDecimalPlaces)
 	local mult = 10 ^ (numDecimalPlaces or 0)
 	return floor(num * mult + 0.5) / mult
@@ -484,28 +488,29 @@ function TargetFrame_FormatHealth(n)
 end
 
 function TargetHealthCheck()
+	local unitHPMin, unitHPMax = this:GetMinMaxValues();
+	local unitCurrHP = this:GetValue();
+	local parent = this:GetParent();
+	parent.unitHPPercent = unitCurrHP / max(unitHPMax, 1);
+
 	if ( UnitIsPlayer("target") ) then
-		local unitHPMin, unitHPMax, unitCurrHP;
-		unitHPMin, unitHPMax = this:GetMinMaxValues();
-		unitCurrHP = this:GetValue();
-		this:GetParent().unitHPPercent = unitCurrHP / unitHPMax;
 		if ( UnitIsDead("target") ) then
 			TargetPortrait:SetVertexColor(0.35, 0.35, 0.35, 1.0);
 		elseif ( UnitIsGhost("target") ) then
 			TargetPortrait:SetVertexColor(0.2, 0.2, 0.75, 1.0);
-		elseif ( (this:GetParent().unitHPPercent > 0) and (this:GetParent().unitHPPercent <= 0.2) ) then
+		elseif ( (parent.unitHPPercent > 0) and (parent.unitHPPercent <= 0.2) ) then
 			TargetPortrait:SetVertexColor(1.0, 0.0, 0.0);
 		else
 			TargetPortrait:SetVertexColor(1.0, 1.0, 1.0, 1.0);
 		end
 	end
 
-	if ( (UnitHealth("target") <= 0) and UnitIsConnected("target") ) then
-		TargetHPText:Hide()
-		TargetHPPercText:Hide()
-	else
-		TargetHPText:SetText(TargetFrame_FormatHealth(UnitHealth("target")))
-		TargetHPPercText:SetText(math.floor(UnitHealth("target") / UnitHealthMax("target") * 100) .. "%")
+	if ( unitCurrHP <= 0 ) then
+		TargetHPText:Hide();
+		TargetHPPercText:Hide();
+	elseif ( unitHPMax > 0 ) then
+		TargetHPText:SetText(TargetFrame_FormatHealth(unitCurrHP));
+		TargetHPPercText:SetText(floor(parent.unitHPPercent * 100).."%");
 	end
 end
 
@@ -535,8 +540,6 @@ function TargetFrameDropDown_Initialize()
 	end
 end
 
-
-
 -- Raid target icon function
 RAID_TARGET_ICON_DIMENSION = 64;
 RAID_TARGET_TEXTURE_DIMENSION = 256;
@@ -551,7 +554,6 @@ function TargetFrame_UpdateRaidTargetIcon()
 		TargetRaidTargetIcon:Hide();
 	end
 end
-
 
 function SetRaidTargetIconTexture(texture, raidTargetIconIndex)
 	raidTargetIconIndex = raidTargetIconIndex - 1;
@@ -611,15 +613,14 @@ function TargetofTarget_Update()
 	end
 
 	if ( TargetofTargetFrame:IsShown() ) then
-		UnitFrameHealthBar_Update(this.healthbar, this.unit);
-		UnitFrameManaBar_Update(this.manabar, this.unit);
+		UnitFrameHealthBar_Update(TargetofTargetFrame.healthbar, TargetofTargetFrame.unit);
+		UnitFrameManaBar_Update(TargetofTargetFrame.manabar, TargetofTargetFrame.unit);
 		TargetofTarget_CheckDead();
 		TargetofTargetPortrait:SetAlpha(1.0);
 		TargetDebuffButton_Update();
-		RefreshBuffs(this, 0, "targettarget");
+		RefreshBuffs(TargetofTargetFrame, 0, "targettarget");
 	end
 end
-
 
 function TargetofTarget_OnClick(button)
 	if ( SpellIsTargeting() and button == "RightButton" ) then
@@ -664,5 +665,3 @@ function TargetofTargetHealthCheck()
 		end
 	end
 end
-
-

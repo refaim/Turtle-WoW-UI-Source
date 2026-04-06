@@ -31,15 +31,15 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				getglobal(this:GetName().."Highlight"):Show()
+				_G[this:GetName().."Highlight"]:Show()
 				if this.tooltip then
 					ChallengesTooltip:SetPoint("TOPRIGHT", this, "TOPLEFT", -14, 0)
-					ChallengesTooltip_Update(getglobal(this:GetName().."Name"):GetText(), this.tooltip)
+					ChallengesTooltip_Update(_G[this:GetName().."Name"]:GetText(), this.tooltip)
 					ChallengesTooltip:Show()
 				end
 			</OnEnter>
 			<OnLeave>
-				getglobal(this:GetName().."Highlight"):Hide()
+				_G[this:GetName().."Highlight"]:Hide()
 				ChallengesTooltip:Hide()
 			</OnLeave>
 			<OnMouseUp>
@@ -233,22 +233,22 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable()
-								getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable()
+								_G[this:GetName().."ScrollBarScrollDownButton"]:Disable()
+								_G[this:GetName().."ScrollBarScrollUpButton"]:Disable()
 								this.scrollBarHideable = 1
 								GlueScrollFrame_OnScrollRangeChanged()
 							</OnLoad>
 							<OnScrollRangeChanged>
 								GlueScrollFrame_OnScrollRangeChanged(arg2)
 								if this:GetVerticalScrollRange() == 0 then
-									getglobal(this:GetName().."Top"):Hide()
-									getglobal(this:GetName().."Bottom"):Hide()
-									getglobal(this:GetName().."Middle"):Hide()
+									_G[this:GetName().."Top"]:Hide()
+									_G[this:GetName().."Bottom"]:Hide()
+									_G[this:GetName().."Middle"]:Hide()
 									this:SetPoint("TOPLEFT", this:GetParent(), 28, -58)
 								else
-									getglobal(this:GetName().."Top"):Show()
-									getglobal(this:GetName().."Bottom"):Show()
-									getglobal(this:GetName().."Middle"):Show()
+									_G[this:GetName().."Top"]:Show()
+									_G[this:GetName().."Bottom"]:Show()
+									_G[this:GetName().."Middle"]:Show()
 									this:SetPoint("TOPLEFT", this:GetParent(), 20, -58)
 								end
 							</OnScrollRangeChanged>

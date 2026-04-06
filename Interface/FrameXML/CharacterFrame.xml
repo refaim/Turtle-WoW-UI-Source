@@ -87,7 +87,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-						GameTooltip:SetText(MicroButtonTooltipText(TEXT(CHARACTER_INFO), "TOGGLECHARACTER0"), 1.0,1.0,1.0 );
+						GameTooltip:SetText(MicroButtonTooltipText(CHARACTER_INFO, "TOGGLECHARACTER0"), 1.0,1.0,1.0 );
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -105,7 +105,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-						GameTooltip:SetText(MicroButtonTooltipText(TEXT(PET), "TOGGLECHARACTER3"), 1.0,1.0,1.0 );
+						GameTooltip:SetText(MicroButtonTooltipText(PET, "TOGGLECHARACTER3"), 1.0,1.0,1.0 );
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -123,7 +123,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-						GameTooltip:SetText(MicroButtonTooltipText(TEXT(REPUTATION), "TOGGLECHARACTER2"), 1.0,1.0,1.0 );
+						GameTooltip:SetText(MicroButtonTooltipText(REPUTATION, "TOGGLECHARACTER2"), 1.0,1.0,1.0 );
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -141,7 +141,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-						GameTooltip:SetText(MicroButtonTooltipText(TEXT(SKILLS), "TOGGLECHARACTER1"), 1.0,1.0,1.0 );
+						GameTooltip:SetText(MicroButtonTooltipText(SKILLS, "TOGGLECHARACTER1"), 1.0,1.0,1.0 );
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
@@ -159,7 +159,7 @@
 				<Scripts>
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-						GameTooltip:SetText(MicroButtonTooltipText(TEXT(PVP_ENABLED), "TOGGLECHARACTER4"), 1.0,1.0,1.0 );
+						GameTooltip:SetText(MicroButtonTooltipText(PVP_ENABLED, "TOGGLECHARACTER4"), 1.0,1.0,1.0 );
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();

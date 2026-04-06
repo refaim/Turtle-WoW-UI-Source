@@ -76,7 +76,7 @@
 			</OnClick>
 			<OnShow>
 				PanelTemplates_TabResize(0);
-				getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 30);
+				_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 30);
 			</OnShow>
 		</Scripts>
 		<ButtonText name="$parentText">

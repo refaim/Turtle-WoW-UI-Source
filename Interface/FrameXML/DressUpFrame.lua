@@ -24,23 +24,11 @@ function DressUpItemLink(link)
 end
 
 function DressUpTexturePath()
-	-- HACK
-	local race, fileName = UnitRace("player");
-	if ( strupper(fileName) == "GNOME" ) then
-		fileName = "Dwarf";
-	elseif ( strupper(fileName) == "TROLL" ) then
-		fileName = "Orc";
-	elseif ( strupper(fileName) == "BLOODELF" ) then
-		fileName = "Human";
-	elseif ( strupper(fileName) == "GOBLIN" ) then
-		fileName = "Orc";
+	local _, race = UnitRace("player");
+	if ( not race ) then
+		race = "Orc";
 	end
-	if ( not fileName ) then
-		fileName = "Orc";
-	end
-	-- END HACK
-
-	return "Interface\\DressUpFrame\\DressUpBackground-"..fileName;
+	return "Interface\\DressUpFrame\\DressUpBackground-"..race;
 end
 
 function SetDressUpBackground()

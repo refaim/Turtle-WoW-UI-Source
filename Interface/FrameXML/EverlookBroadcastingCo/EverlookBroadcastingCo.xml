@@ -1,105 +1,271 @@
-<Ui
-	xmlns="http://www.blizzard.com/wow/ui/"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	<Script file="EverlookBroadcastingCo.lua"/>
-	<Frame name="EBCMain" hidden="true" toplevel="true" parent="UIParent" movable="true" enableMouse="true" resizable="false">
-		<Size>
-			<AbsDimension x="1" y="1"/>
-		</Size>
+	<Button name="EBC_Minimap" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
+		<Size x="33" y="33"/>
 		<Anchors>
 			<Anchor point="TOPLEFT">
-				<Offset>
-					<AbsDimension x="0" y="-104"/>
-				</Offset>
+				<Offset x="-20" y="-36"/>
 			</Anchor>
 		</Anchors>
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\Icons\INV_Gizmo_GoblinBoomBox_01">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="6" y="-5"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size x="52" y="52"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
 		<Frames>
-			<Frame name="EBCFrame" hidden="false" toplevel="true" enableMouse="true">
-				<Size>
-					<AbsDimension x="1" y="1"/>
-				</Size>
+			<Frame name="EBCMinimapDropdown" enableMouse="true" clampedToScreen="true" hidden="true" frameStrata="DIALOG">
+				<Size x="215" y="105"/>
 				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
+					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="BOTTOMLEFT">
+						<Offset x="10" y="10"/>
 					</Anchor>
 				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize val="16"/>
+					<TileSize val="16"/>
+					<BackgroundInsets left="4" right="4" top="4" bottom="3"/>
+				</Backdrop>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentTitle" inherits="GameFontNormal" text="EBC_TITLE" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="-10"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
 				<Frames>
-					<Button name="EBC_Minimap" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
-						<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
-						<Size x="33" y="33"/>
+					<CheckButton name="$parentCheckButton1" inherits="UICheckButtonTemplate" id="1">
+						<Size x="30" y="30"/>
 						<Anchors>
 							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="-20" y="-36"/>
-								</Offset>
+								<Offset x="8" y="-24"/>
 							</Anchor>
 						</Anchors>
 						<Layers>
-							<Layer level="BACKGROUND">
-								<Texture file="Interface\Icons\INV_Gizmo_GoblinBoomBox_01">
-									<Size x="18" y="18"/>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" text="EBC_STATION1">
 									<Anchors>
-										<Anchor point="TOPLEFT">
-											<Offset x="6" y="-5"/>
+										<Anchor point="LEFT" relativePoint="RIGHT">
+											<Offset x="-2" y="0"/>
 										</Anchor>
 									</Anchors>
-								</Texture>
+								</FontString>
 							</Layer>
-							<Layer level="OVERLAY">
-								<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
-									<Size x="52" y="52"/>
+						</Layers>
+						<Scripts>
+							<OnClick>
+								GameTooltip:SetText(this:GetChecked() and EBC_TUNEOUT or EBC_TUNEIN, 1, 1, 1, 1)
+								EBCMinimapDropdownCheckButton2:SetChecked(0)
+								EBC_TuneIn()
+								PlayClickSound()
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+								GameTooltip:SetText(this:GetChecked() and EBC_TUNEOUT or EBC_TUNEIN, 1, 1, 1, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parentCheckButton2" inherits="UICheckButtonTemplate" id="2">
+						<Size x="30" y="30"/>
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parentCheckButton1" relativePoint="BOTTOM">
+								<Offset x="0" y="8"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" text="EBC_STATION2">
 									<Anchors>
-										<Anchor point="TOPLEFT"/>
+										<Anchor point="LEFT" relativePoint="RIGHT">
+											<Offset x="-2" y="0"/>
+										</Anchor>
 									</Anchors>
-								</Texture>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnClick>
+								GameTooltip:SetText(this:GetChecked() and EBC_TUNEOUT or EBC_TUNEIN, 1, 1, 1, 1)
+								EBCMinimapDropdownCheckButton1:SetChecked(0)
+								EBC_TuneIn()
+								PlayClickSound()
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+								GameTooltip:SetText(this:GetChecked() and EBC_TUNEOUT or EBC_TUNEIN, 1, 1, 1, 1)
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+						</Scripts>
+					</CheckButton>
+					<Slider name="$parentSlider" inherits="OptionsSliderTemplate" minValue="0" maxValue="100" valueStep="1">
+						<Size x="125" y="20"/>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset x="12" y="7"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentVolumeText" inherits="GameFontNormal">
+									<Anchors>
+										<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+											<Offset x="4" y="1"/>
+										</Anchor>
+									</Anchors>
+								</FontString>
 							</Layer>
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-								this:RegisterForDrag("LeftButton");
-								this:SetClampedToScreen(true);
+								this:SetValue(floor(GetCVar("MusicVolume")*100))
+								_G[this:GetName().."Low"]:SetText("")
+								_G[this:GetName().."High"]:SetText("")
+								_G[this:GetName().."Text"]:SetText("")
+								_G[this:GetName().."VolumeText"]:SetText(this:GetValue())
 							</OnLoad>
-							<OnDragStart>
-								if ( IsControlKeyDown() ) then
-								this:LockHighlight();
-								this:StartMoving();
+							<OnValueChanged>
+								SetCVar("MusicVolume", this:GetValue() / 100)
+								_G[this:GetName().."VolumeText"]:SetText(this:GetValue())
+							</OnValueChanged>
+							<OnMouseWheel>
+								local value = this:GetValue()
+								if arg1 == 1 then
+									value = value + 10
+								else
+									value = value - 10
 								end
-							</OnDragStart>
-							<OnDragStop>
-								this:UnlockHighlight();
-								this:StopMovingOrSizing();
-								this:SetParent("UIParent");
-							</OnDragStop>
+								SetCVar("MusicVolume", value / 100)
+								this:SetValue(value)
+							</OnMouseWheel>
+						</Scripts>
+					</Slider>
+					<Button name="EBCMinimapDropdownMuteButton">
+						<Size x="18" y="18"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-16" y="8"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-GuildButton-MOTD-Up"/>
+						<Scripts>
+							<OnLoad>
+								if GetCVar("EnableMusic") == "1" then
+									this:SetNormalTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
+								else
+									this:SetNormalTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Disabled")
+								end
+							</OnLoad>
+							<OnClick>
+								if GetCVar("EnableMusic") == "1" then
+									this:SetNormalTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Disabled")
+									SetCVar("EnableMusic", 0)
+									EBCMinimapDropdownCheckButton1:SetChecked(0)
+									EBCMinimapDropdownCheckButton2:SetChecked(0)
+									StopMusic()
+									GameTooltip:SetText(EBC_UNMUTE, 1, 1, 1, 1)
+								else
+									this:SetNormalTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
+									GameTooltip:SetText(EBC_MUTE, 1, 1, 1, 1)
+									SetCVar("EnableMusic", 1)
+								end
+							</OnClick>
 							<OnEnter>
-								GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-								GameTooltip:SetText(EBC_TITLE);
-								GameTooltip:AddLine(EBC_LINE1, 1, 1, 1);
-								GameTooltip:AddLine(EBC_LINE2, 1, 1, 1);
-								GameTooltip:AddLine(EBC_LINE3, 1, 1, 1);
-								GameTooltip:Show();
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+								GameTooltip:SetText(GetCVar("EnableMusic") == "1" and EBC_MUTE or EBC_UNMUTE, 1, 1, 1, 1)
 							</OnEnter>
 							<OnLeave>
-								GameTooltip:Hide();
+								GameTooltip:Hide()
 							</OnLeave>
-							<OnMouseUp>
-								if ( arg1 == "LeftButton" ) then
-									ShowEBCMinimapDropdown();
-								elseif ( arg1 == "RightButton" ) then
-									if ( IsControlKeyDown() ) then
-										this:SetUserPlaced(0);
-										this:ClearAllPoints();
-										this:SetParent("Minimap");
-										this:SetPoint("TOPLEFT", Minimap, -20, -36);
-									end
-								end
-							</OnMouseUp>
 						</Scripts>
 					</Button>
 				</Frames>
+				<Scripts>
+					<OnShow>
+						this.timer = UIDROPDOWNMENU_SHOW_TIME
+					</OnShow>
+					<OnUpdate>
+						EBCMinimapDropdown_OnUpdate(arg1)
+					</OnUpdate>
+				</Scripts>
 			</Frame>
 		</Frames>
-	</Frame>
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("PLAYER_LOGIN")
+				this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+				this:RegisterForDrag("LeftButton");
+				this:SetClampedToScreen(true);
+				RegisterForSave("EBC_SELECTED_STATION")
+			</OnLoad>
+			<OnEvent>
+				if not EBC_SELECTED_STATION then
+					StopMusic()
+				else
+					if GetCVar("EnableMusic") == "1" then
+						_G["EBCMinimapDropdownCheckButton"..EBC_SELECTED_STATION]:SetChecked(1)
+						EBC_TuneIn(EBC_SELECTED_STATION)
+					else
+						EBC_SELECTED_STATION = nil
+					end
+				end
+			</OnEvent>
+			<OnDragStart>
+				if ( IsControlKeyDown() ) then
+					this:LockHighlight();
+					this:StartMoving();
+				end
+			</OnDragStart>
+			<OnDragStop>
+				this:UnlockHighlight();
+				this:StopMovingOrSizing();
+			</OnDragStop>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_LEFT");
+				GameTooltip:SetText(EBC_TITLE, 1, 1, 1, 1, false);
+				GameTooltip:AddLine(EBC_LINE1, 1, 0.82, 0, true);
+				GameTooltip:AddLine(EBC_LINE2, 1, 0.82, 0, true);
+				GameTooltip:AddLine(EBC_LINE3, 1, 0.82, 0, true);
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<OnMouseUp>
+				if ( arg1 == "LeftButton" ) then
+					ShowEBCMinimapDropdown();
+				elseif ( arg1 == "RightButton" ) then
+					if ( IsControlKeyDown() ) then
+						this:SetUserPlaced(0);
+						this:ClearAllPoints();
+						this:SetParent("Minimap");
+						this:SetPoint("TOPLEFT", Minimap, -20, -36);
+					end
+				end
+			</OnMouseUp>
+		</Scripts>
+	</Button>
 </Ui>

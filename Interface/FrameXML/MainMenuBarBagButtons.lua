@@ -11,7 +11,7 @@ function BagSlotButton_OnClick()
 	end
 	local isVisible = 0;
 	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = getglobal("ContainerFrame"..i);
+		local frame = _G["ContainerFrame"..i];
 		if ( (frame:GetID() == translatedID) and frame:IsVisible() ) then
 			isVisible = 1;
 			break;
@@ -26,7 +26,7 @@ function BagSlotButton_OnDrag()
 	PlaySound("BAGMENUBUTTONPRESS");
 	local isVisible = 0;
 	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = getglobal("ContainerFrame"..i);
+		local frame = _G["ContainerFrame"..i];
 		if ( (frame:GetID() == translatedID) and frame:IsVisible() ) then
 			isVisible = 1;
 			break;
@@ -43,7 +43,7 @@ function BagSlotButton_OnShiftClick()
 	local isVisible = 0;
 	local frame;
 	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		frame = getglobal("ContainerFrame"..i);
+		frame = _G["ContainerFrame"..i];
 		if ( (frame:GetID() == translatedID) and frame:IsVisible() ) then
 			isVisible = 1;
 			break;
@@ -58,7 +58,7 @@ function BackpackButton_OnClick()
 	end
 	local isVisible = 0;
 	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = getglobal("ContainerFrame"..i);
+		local frame = _G["ContainerFrame"..i];
 		if ( (frame:GetID() == 0) and frame:IsVisible() ) then
 			isVisible = 1;
 			break;
@@ -91,7 +91,7 @@ function BagSlotButton_OnEnter()
 			GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..bindingKey..")"..FONT_COLOR_CODE_CLOSE);
 		end
 	else
-		GameTooltip:SetText(TEXT(EQUIP_CONTAINER), 1.0, 1.0, 1.0);
+		GameTooltip:SetText(EQUIP_CONTAINER, 1.0, 1.0, 1.0);
 	end
 end
 

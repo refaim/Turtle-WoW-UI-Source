@@ -21,7 +21,7 @@
 			if ( not tooltip ) then
 				tooltip = GlueTooltip;
 			end
-			local textString = getglobal(tooltip:GetName().."TextLeft1");
+			local textString = _G[tooltip:GetName().."TextLeft1"];
 			textString:SetText(text);
 			if ( r ) then
 				textString:SetTextColor(r, g, b);

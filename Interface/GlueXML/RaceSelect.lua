@@ -49,9 +49,9 @@ end
 
 function RaceSelectInfo_FadeIn()
 	local factionName, internalFactionName = GetFactionForRace();
-	local infoText = TEXT(getglobal("RACE_INFO_"..strupper(gsub(RaceSelect.selected, "(%.*)%s+(%.*)", "%1".."%2"))));
-	local abilityText = TEXT(getglobal("ABILITY_INFO_"..strupper(RaceSelect.selected)));
-	local factionText = TEXT(getglobal("FACTION_INFO_"..strupper(internalFactionName)));
+	local infoText = _G["RACE_INFO_"..strupper(gsub(RaceSelect.selected, "(%.*)%s+(%.*)", "%1".."%2"))];
+	local abilityText = _G["ABILITY_INFO_"..strupper(RaceSelect.selected)];
+	local factionText = _G["FACTION_INFO_"..strupper(internalFactionName)];
 	RaceSelectRaceName:SetText(RaceSelect.selected);
 	RaceSelectRaceInfo:SetText(infoText);
 	RaceSelectAbilityInfo:SetText(abilityText);
@@ -69,12 +69,12 @@ function UpdateAvailableClasses(...)
 	end
 
 	for i=1, arg.n, 1 do
-		local string = getglobal("RaceSelectClass"..i);
+		local string = _G["RaceSelectClass"..i];
 		string:SetText("- "..arg[i]);
 		string:Show();
 	end
 	for i=arg.n + 1, MAX_CLASSES_PER_RACE, 1 do
-		getglobal("RaceSelectClass"..i):Hide();
+		_G["RaceSelectClass"..i]:Hide();
 	end
 end
 

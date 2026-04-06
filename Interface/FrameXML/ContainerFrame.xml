@@ -28,7 +28,7 @@
 				ContainerFrameItemButton_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				this.updateTooltip = nil;
+				this.updateTooltip = 0;
 				GameTooltip:Hide();
 				ResetCursor();
 			</OnLeave>
@@ -193,12 +193,12 @@
 					<OnEnter>
 						GameTooltip:SetOwner(this, "ANCHOR_LEFT");
 						if ( this:GetID() == 0 ) then
-							GameTooltip:SetText(TEXT(BACKPACK_TOOLTIP), 1.0, 1.0, 1.0);
+							GameTooltip:SetText(BACKPACK_TOOLTIP, 1.0, 1.0, 1.0);
 							if (GetBindingKey("TOGGLEBACKPACK")) then
 								GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..GetBindingKey("TOGGLEBACKPACK")..")"..FONT_COLOR_CODE_CLOSE)
 							end
 						elseif ( this:GetID() == KEYRING_CONTAINER ) then
-							GameTooltip:SetText(TEXT(KEYRING), 1.0, 1.0, 1.0);
+							GameTooltip:SetText(KEYRING, 1.0, 1.0, 1.0);
 							if (GetBindingKey("TOGGLEKEYRING")) then
 								GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..GetBindingKey("TOGGLEKEYRING")..")"..FONT_COLOR_CODE_CLOSE)
 							end

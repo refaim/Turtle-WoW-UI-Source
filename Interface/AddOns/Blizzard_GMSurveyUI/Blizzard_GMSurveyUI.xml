@@ -61,7 +61,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GM_SURVEY_NOT_APPLICABLE);
+						_G[this:GetName().."Score"]:SetText(GM_SURVEY_NOT_APPLICABLE);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -75,7 +75,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GMSURVEYRATING1);
+						_G[this:GetName().."Score"]:SetText(GMSURVEYRATING1);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -89,7 +89,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GMSURVEYRATING2);
+						_G[this:GetName().."Score"]:SetText(GMSURVEYRATING2);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -103,7 +103,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GMSURVEYRATING3);
+						_G[this:GetName().."Score"]:SetText(GMSURVEYRATING3);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -117,7 +117,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GMSURVEYRATING4);
+						_G[this:GetName().."Score"]:SetText(GMSURVEYRATING4);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -131,7 +131,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Score"):SetText(GMSURVEYRATING5);
+						_G[this:GetName().."Score"]:SetText(GMSURVEYRATING5);
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -140,11 +140,11 @@
 			<OnLoad>
 				this:SetBackdropBorderColor(0.5,0.5,0.5);
 				this:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b);
-				getglobal(this:GetName().."RadioButton1"):SetPoint("LEFT", this:GetName().."RadioButton0", "RIGHT", GMSURVEY_NA_SPACING, 0);
-				getglobal(this:GetName().."RadioButton2"):SetPoint("LEFT", this:GetName().."RadioButton1", "RIGHT", GMSURVEY_RATING_SPACING, 0);
-				getglobal(this:GetName().."RadioButton3"):SetPoint("LEFT", this:GetName().."RadioButton2", "RIGHT", GMSURVEY_RATING_SPACING, 0);
-				getglobal(this:GetName().."RadioButton4"):SetPoint("LEFT", this:GetName().."RadioButton3", "RIGHT", GMSURVEY_RATING_SPACING, 0);
-				getglobal(this:GetName().."RadioButton5"):SetPoint("LEFT", this:GetName().."RadioButton4", "RIGHT", GMSURVEY_RATING_SPACING, 0);
+				_G[this:GetName().."RadioButton1"]:SetPoint("LEFT", this:GetName().."RadioButton0", "RIGHT", GMSURVEY_NA_SPACING, 0);
+				_G[this:GetName().."RadioButton2"]:SetPoint("LEFT", this:GetName().."RadioButton1", "RIGHT", GMSURVEY_RATING_SPACING, 0);
+				_G[this:GetName().."RadioButton3"]:SetPoint("LEFT", this:GetName().."RadioButton2", "RIGHT", GMSURVEY_RATING_SPACING, 0);
+				_G[this:GetName().."RadioButton4"]:SetPoint("LEFT", this:GetName().."RadioButton3", "RIGHT", GMSURVEY_RATING_SPACING, 0);
+				_G[this:GetName().."RadioButton5"]:SetPoint("LEFT", this:GetName().."RadioButton4", "RIGHT", GMSURVEY_RATING_SPACING, 0);
 			</OnLoad>
 			<OnShow>
 				GMSurveyRadioButton_OnClick(this, 0);
@@ -641,7 +641,7 @@
 														this:ClearFocus();
 													</OnEscapePressed>
 													<OnTextChanged>
-														local scrollBar = getglobal(this:GetParent():GetName().."ScrollBar")
+														local scrollBar = _G[this:GetParent():GetName().."ScrollBar"];
 														this:GetParent():UpdateScrollChildRect();
 														local min;
 														local max;

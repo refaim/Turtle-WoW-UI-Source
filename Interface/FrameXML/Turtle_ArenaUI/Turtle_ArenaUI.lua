@@ -16,6 +16,10 @@ local pendingInvite = {
 	teamID = 0,
 }
 
+local function Send(message)
+	SendAddonMessage(ADDON_PREFIX, message, ADDON_CHANNEL)
+end
+
 local function InitArenaTypeDropdown()
 	local info = UIDropDownMenu_CreateInfo()
 	for _, item in ipairs(arenas) do
@@ -27,31 +31,27 @@ local function InitArenaTypeDropdown()
 end
 
 local function HandleInvite(accepted)
-	local messageType = accepted and "C2S_ACCEPT_INVITE" or "C2S_DECLINE_INVITE"
-
-	SendAddonMessage(ADDON_PREFIX, messageType .. ADDON_MSG_FIELD_DELIMITER .. pendingInvite.teamID .. ADDON_MSG_FIELD_DELIMITER .. pendingInvite.arenaType, ADDON_CHANNEL)
+	Send(accepted and "C2S_ACCEPT_INVITE" or "C2S_DECLINE_INVITE" .. ADDON_MSG_FIELD_DELIMITER .. pendingInvite.teamID .. ADDON_MSG_FIELD_DELIMITER .. pendingInvite.arenaType)
 end
 
 local function DisbandTeam()
-	SendAddonMessage(ADDON_PREFIX, "S2C_DISBAND" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
+	Send("S2C_DISBAND" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
 end
 
 local function InvitePlayer(player)
-	SendAddonMessage(ADDON_PREFIX, "S2C_INVITE" .. ADDON_MSG_FIELD_DELIMITER .. player .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
+	Send("S2C_INVITE" .. ADDON_MSG_FIELD_DELIMITER .. player .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
 end
 
 local function KickPlayer()
-	SendAddonMessage(ADDON_PREFIX, "S2C_KICK" .. ADDON_MSG_FIELD_DELIMITER .. ArenaFrame.currentMember .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
+	Send("S2C_KICK" .. ADDON_MSG_FIELD_DELIMITER .. ArenaFrame.currentMember .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
 end
 
 local function LeaveTeam()
-	SendAddonMessage(ADDON_PREFIX, "S2C_LEAVE_TEAM" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
+	Send("S2C_LEAVE_TEAM" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
 end
 
-local function UpdateArenaPoints(data)
-	local points = data or 0
-
-	ArenaFrameArenaPoints:SetText(format(ARENA_ARENA_POINTS, points))
+local function UpdateArenaPoints(points)
+	ArenaFramePointsText:SetText(points or 0)
 end
 
 local function UpdateArenaTeams(data)
@@ -61,15 +61,15 @@ local function UpdateArenaTeams(data)
 		teams = explode(data, ADDON_MSG_SUBFIELD_DELIMITER)
 	end
 
-	for i = 1, table.getn(arenas) do
-		local teamFrame = getglobal("ArenaFrameTeam" .. i)
+	for i = 1, getn(arenas) do
+		local teamFrame = _G["ArenaFrameTeam" .. i]
 		local teamFrameName = teamFrame:GetName()
 
 		teamFrame:SetAlpha(0.4)
 		teamFrame.active = false
 
-		getglobal(teamFrameName .. "Text"):Show()
-		getglobal(teamFrameName .. "Details"):Hide()
+		_G[teamFrameName .. "Text"]:Show()
+		_G[teamFrameName .. "Details"]:Hide()
 
 		if teams then
 			explode(teams[i], ADDON_MSG_ARRAY_DELIMITER, details)
@@ -79,12 +79,12 @@ local function UpdateArenaTeams(data)
 				teamFrame:SetAlpha(1)
 				teamFrame.active = true
 
-				getglobal(teamFrameName .. "Text"):Hide()
+				_G[teamFrameName .. "Text"]:Hide()
 
-				local detailsFrame = getglobal(teamFrameName .. "Details")
+				local detailsFrame = _G[teamFrameName .. "Details"]
 				local detailsFrameName = detailsFrame:GetName()
-				local detailsDisbandButton = getglobal(detailsFrameName .. "DisbandButton")
-				local detailsTeamName = getglobal(detailsFrameName .. "Name")
+				local detailsDisbandButton = _G[detailsFrameName .. "DisbandButton"]
+				local detailsTeamName = _G[detailsFrameName .. "Name"]
 
 				local rating = tonumber(details[4]) or 0
 				local seasonRank = tonumber(details[5]) or 0
@@ -97,15 +97,15 @@ local function UpdateArenaTeams(data)
 				detailsFrame:Show()
 				detailsTeamName:SetText(details[2])
 
-				getglobal(detailsFrameName .. "Rating"):SetText(rating)
-				getglobal(detailsFrameName .. "WeekRank"):SetText(weekRank)
-				getglobal(detailsFrameName .. "WeekGames"):SetText(weekGames)
-				getglobal(detailsFrameName .. "WeekWins"):SetText(weekWins)
-				getglobal(detailsFrameName .. "WeekLoss"):SetText(weekGames - weekWins)
-				getglobal(detailsFrameName .. "SeasonRank"):SetText(seasonRank)
-				getglobal(detailsFrameName .. "SeasonGames"):SetText(seasonGames)
-				getglobal(detailsFrameName .. "SeasonWins"):SetText(seasonWins)
-				getglobal(detailsFrameName .. "SeasonLoss"):SetText(seasonGames - seasonWins)
+				_G[detailsFrameName .. "Rating"]:SetText(rating)
+				_G[detailsFrameName .. "WeekRank"]:SetText(weekRank)
+				_G[detailsFrameName .. "WeekGames"]:SetText(weekGames)
+				_G[detailsFrameName .. "WeekWins"]:SetText(weekWins)
+				_G[detailsFrameName .. "WeekLoss"]:SetText(weekGames - weekWins)
+				_G[detailsFrameName .. "SeasonRank"]:SetText(seasonRank)
+				_G[detailsFrameName .. "SeasonGames"]:SetText(seasonGames)
+				_G[detailsFrameName .. "SeasonWins"]:SetText(seasonWins)
+				_G[detailsFrameName .. "SeasonLoss"]:SetText(seasonGames - seasonWins)
 
 				if arenas[i].captain then
 					detailsDisbandButton:Show()
@@ -120,7 +120,7 @@ local function UpdateArenaTeams(data)
 end
 
 local function UpdateArenaTeamRoster(data)
-	for _, child in { ArenaFrameDetailsFrame:GetChildren() } do
+	for _, child in pairs({ ArenaFrameDetailsFrame:GetChildren() }) do
 		if child:GetFrameType() == "Frame" then
 			child:Hide()
 		end
@@ -129,19 +129,19 @@ local function UpdateArenaTeamRoster(data)
 	local details = {}
 	local isCaptain = arenas[ArenaFrame.currentTeam].captain
 	local members = explode(data, ADDON_MSG_SUBFIELD_DELIMITER)
-	for i, member in members do
-		local frame = getglobal("ArenaFrameDetailsFrameMember" .. i)
+	for i, member in pairs(members) do
+		local frame = _G["ArenaFrameDetailsFrameMember" .. i]
 		local frameName = frame:GetName()
 		frame:Show()
 
-		local kickButton = getglobal(frameName .. "KickButton")
-		local captainIcon = getglobal(frameName .. "CaptainIcon")
+		local kickButton = _G[frameName .. "KickButton"]
+		local captainIcon = _G[frameName .. "CaptainIcon"]
 
 		explode(member, ADDON_MSG_ARRAY_DELIMITER, details)
 		local name = details[1]
 		local isCaptainRole = details[2] == "Captain"
 
-		getglobal(frameName .. "Name"):SetText(name)
+		_G[frameName .. "Name"]:SetText(name)
 
 		if isCaptain and not isCaptainRole then
 			kickButton.member = name
@@ -166,142 +166,162 @@ local function UpdateArenaTeamRoster(data)
 	end
 end
 
-local listener = CreateFrame("Frame")
-listener:RegisterEvent("CHAT_MSG_ADDON")
-listener:RegisterEvent("GOSSIP_SHOW")
-listener:RegisterEvent("GOSSIP_CLOSED")
-listener:SetScript("OnEvent", function()
+function ArenaFrame_OnLoad()
+	UpdateArenaPoints(0)
+	this:RegisterEvent("CHAT_MSG_ADDON")
+	this:RegisterEvent("GOSSIP_SHOW")
+	this:RegisterEvent("GOSSIP_CLOSED")
+end
+
+function ArenaFrame_OnEvent()
 	if event == "CHAT_MSG_ADDON" then
-		if arg1 == ADDON_PREFIX then
-			local args = explode(arg2, ADDON_MSG_FIELD_DELIMITER)
-			if args[1] == "S2C_ERROR" and args[2] then
-				print(GAME_YELLOW .. args[2])
-			elseif args[1] == "S2C_CREATE_SUCCESS" then
-				ArenaRegistrarFrame:Hide()
+		if arg1 ~= ADDON_PREFIX then
+			return
+		end
 
-				if ArenaFrame:IsShown() then
-					ArenaFrame_OnShow()
-				end
+		local args = explode(arg2, ADDON_MSG_FIELD_DELIMITER)
 
-				print(GAME_YELLOW .. ARENA_TEAM_CREATED)
-			elseif args[1] == "S2C_DISBAND_SUCCESS" then
-				if ArenaFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
+		if args[1] == "S2C_ERROR" and args[2] then
+			UIErrorsFrame:AddMessage(args[2], 1.0, 0.1, 0.1, 1.0)
 
-					ArenaFrameDetailsFrame:Hide()
-				end
+		elseif args[1] == "S2C_CREATE_SUCCESS" then
+			ArenaRegistrarFrame:Hide()
 
-				print(GAME_YELLOW .. ARENA_TEAM_DISBANDED)
-			elseif args[1] == "S2C_INFO" and args[2] ~= UnitName("target") then
-				UpdateArenaTeams(args[2])
-			elseif args[1] == "S2C_INVITE_ACCEPTED" then
-				if ArenaFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
-				end
+			if ArenaFrame:IsShown() then
+				ArenaFrame_OnShow()
+			end
 
-				if ArenaFrameDetailsFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
-				end
+			print(GAME_YELLOW .. ARENA_TEAM_CREATED)
 
-				if args[4] == pendingInvite.invitee then
-					print(string.format(GAME_YELLOW .. ARENA_TEAM_JOINED, args[2]))
-				else
-					print(string.format(GAME_YELLOW .. ARENA_TEAM_MEMBER_JOINED, args[2]))
-				end
-			elseif args[1] == "S2C_INVITE_DECLINED" then
-				if args[4] ~= pendingInvite.invitee then
-					print(string.format(GAME_YELLOW .. ARENA_TEAM_INVITE_DECLINED, args[2]))
-				end
-			elseif args[1] == "S2C_INVITED" then
-				pendingInvite.arenaType = args[3]
-				pendingInvite.invitee = args[4]
-				pendingInvite.teamID = args[5]
+		elseif args[1] == "S2C_DISBAND_SUCCESS" then
+			if ArenaFrame:IsShown() then
+				Send("S2C_INFO")
+				ArenaFrameDetailsFrame:Hide()
+			end
 
-				StaticPopupDialogs["ARENA_POPUP_INVITE_OFFER"].text = string.format(TEXT(ARENA_TEAM_INVITED), args[4], args[3], args[2])
-				StaticPopup_Show("ARENA_POPUP_INVITE_OFFER")
-			elseif args[1] == "S2C_INVITE_SUCCESS" then
-				print(format(GAME_YELLOW .. ARENA_TEAM_INVITE_SENT, gsub(string.lower(args[2]), "^%l", string.upper)))
-			elseif args[1] == "S2C_KICKED" then
-				if ArenaFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
+			print(GAME_YELLOW .. ARENA_TEAM_DISBANDED)
 
-					ArenaFrameDetailsFrame:Hide()
-				end
+		elseif args[1] == "S2C_INFO" and args[2] ~= UnitName("target") then
+			UpdateArenaTeams(args[2])
 
-				print(string.format(GAME_YELLOW .. ARENA_TEAM_KICKED, args[2]))
-			elseif args[1] == "S2C_KICK_SUCCESS" then
-				if ArenaFrameDetailsFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
-				end
+		elseif args[1] == "S2C_INVITE_ACCEPTED" then
+			if ArenaFrame:IsShown() then
+				Send("S2C_INFO")
+			end
 
-				print(string.format(GAME_YELLOW .. ARENA_TEAM_MEMBER_KICKED, args[2]))
-			elseif args[1] == "S2C_LEAVE_TEAM_SUCCESS" then
-				if ArenaFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
-				end
+			if ArenaFrameDetailsFrame:IsShown() then
+				Send("S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
+			end
+
+			if args[4] == pendingInvite.invitee then
+				print(format(GAME_YELLOW .. ARENA_TEAM_JOINED, args[2]))
+			else
+				print(format(GAME_YELLOW .. ARENA_TEAM_MEMBER_JOINED, args[2]))
+			end
+
+		elseif args[1] == "S2C_INVITE_DECLINED" then
+			if args[4] ~= pendingInvite.invitee then
+				print(format(GAME_YELLOW .. ARENA_TEAM_INVITE_DECLINED, args[2]))
+			end
+
+		elseif args[1] == "S2C_INVITED" then
+			pendingInvite.arenaType = args[3]
+			pendingInvite.invitee = args[4]
+			pendingInvite.teamID = args[5]
+
+			StaticPopupDialogs["ARENA_POPUP_INVITE_OFFER"].text = format(ARENA_TEAM_INVITED, args[4], args[3], args[2])
+			StaticPopup_Show("ARENA_POPUP_INVITE_OFFER")
+
+		elseif args[1] == "S2C_INVITE_SUCCESS" then
+			print(format(GAME_YELLOW .. ARENA_TEAM_INVITE_SENT, gsub(strlower(args[2]), "^%l", strupper)))
+
+		elseif args[1] == "S2C_KICKED" then
+			if ArenaFrame:IsShown() then
+				Send("S2C_INFO")
 
 				ArenaFrameDetailsFrame:Hide()
-
-				print(string.format(GAME_YELLOW .. ARENA_TEAM_LEFT, args[3]))
-			elseif args[1] == "S2C_MEMBER_LEFT" then
-				if ArenaFrameDetailsFrame:IsShown() then
-					SendAddonMessage(ADDON_PREFIX, "S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type, ADDON_CHANNEL)
-				end
-
-				print(string.format(GAME_YELLOW .. ARENA_TEAM_MEMBER_LEFT, args[2], args[4]))
-			elseif args[1] == "S2C_ARENAPOINTS" then
-				UpdateArenaPoints(args[2])
-			elseif args[1] == "S2C_QUEUE_SUCCESS" then
-				print(string.format(GAME_YELLOW .. ARENA_QUEUE_JOINED, args[2]))
-			elseif args[1] == "S2C_ROSTER" then
-				UpdateArenaTeamRoster(args[4])
-			elseif args[1] == "S2C_SCOREBOARD" then
-				WorldStateScoreFrame.arenaData = arg2
 			end
+
+			print(format(GAME_YELLOW .. ARENA_TEAM_KICKED, args[2]))
+
+		elseif args[1] == "S2C_KICK_SUCCESS" then
+			if ArenaFrameDetailsFrame:IsShown() then
+				Send("S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
+			end
+
+			print(format(GAME_YELLOW .. ARENA_TEAM_MEMBER_KICKED, args[2]))
+
+		elseif args[1] == "S2C_LEAVE_TEAM_SUCCESS" then
+			if ArenaFrame:IsShown() then
+				Send("S2C_INFO")
+			end
+
+			ArenaFrameDetailsFrame:Hide()
+
+			print(format(GAME_YELLOW .. ARENA_TEAM_LEFT, args[3]))
+
+		elseif args[1] == "S2C_MEMBER_LEFT" then
+			if ArenaFrameDetailsFrame:IsShown() then
+				Send("S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[ArenaFrame.currentTeam].type)
+			end
+
+			print(format(GAME_YELLOW .. ARENA_TEAM_MEMBER_LEFT, args[2], args[4]))
+
+		elseif args[1] == "S2C_ARENAPOINTS" then
+			UpdateArenaPoints(args[2])
+
+		elseif args[1] == "S2C_QUEUE_SUCCESS" then
+			UIErrorsFrame:AddMessage(format(GAME_YELLOW .. ARENA_QUEUE_JOINED, args[2]))
+
+		elseif args[1] == "S2C_ROSTER" then
+			UpdateArenaTeamRoster(args[4])
+
+		elseif args[1] == "S2C_SCOREBOARD" then
+			WorldStateScoreFrame.arenaData = arg2
 		end
+
 	elseif event == "GOSSIP_SHOW" then
 		local gossip = GetGossipText()
-		if gossip == triggerQueue or gossip == triggerRegistrar then
-			GossipFrame:SetAlpha(0)
-			GossipFrame:EnableMouse(nil)
-			local centerFrame = (GetCenterFrame())
-			HideUIPanel(centerFrame)
-			ShowUIPanel(centerFrame)
-
-			if gossip == triggerQueue then
-				ArenaQueueFrame:Show()
-			else
-				ArenaRegistrarFrame:Show()
-			end
+		if not ((gossip == triggerQueue or gossip == triggerRegistrar) and UnitName("npc")) then
+			return
 		end
+
+		GossipFrame:SetAlpha(0)
+		GossipFrame:EnableMouse(nil)
+
+		if gossip == triggerQueue then
+			ArenaQueueFrame:Show()
+		else
+			ArenaRegistrarFrame:Show()
+		end
+
 	elseif event == "GOSSIP_CLOSED" then
 		GossipFrame:SetAlpha(1)
 		GossipFrame:EnableMouse(1)
 		ArenaQueueFrame:Hide()
 		ArenaRegistrarFrame:Hide()
 	end
-end)
-
-function ArenaFrame_OnLoad()
-	UpdateArenaPoints(0)
 end
 
 function ArenaFrame_OnShow()
-	SendAddonMessage(ADDON_PREFIX, "C2S_ARENAPOINTS", ADDON_CHANNEL)
-	SendAddonMessage(ADDON_PREFIX, "S2C_INFO", ADDON_CHANNEL)
+	Send("C2S_ARENAPOINTS")
+	Send("S2C_INFO")
 
 	PlaySound("igCharacterInfoOpen")
 end
 
 function ArenaTeam_OnClick()
-	if this.active and ArenaFrame.currentTeam ~= this:GetID() then
-		ArenaFrame.currentTeam = this:GetID()
-
-		ArenaFrameDetailsFrame:Show()
-
-		SendAddonMessage(ADDON_PREFIX, "S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[this:GetID()].type, ADDON_CHANNEL)
-
-		PlaySound("igCharacterInfoTab")
+	local id = this:GetID()
+	if this.active then
+		if ArenaFrame.currentTeam ~= id then
+			ArenaFrame.currentTeam = id
+			ArenaFrameDetailsFrame:Show()
+			Send("S2C_ROSTER" .. ADDON_MSG_FIELD_DELIMITER .. arenas[id].type)
+			PlaySound("igCharacterInfoTab")
+		else
+			ArenaFrame.currentTeam = nil
+			ArenaFrameDetailsFrame:Hide()
+		end
 	end
 end
 
@@ -327,8 +347,8 @@ function ArenaQueueButton_OnClick()
 
 	ArenaQueueFrame.selection = id
 
-	for i in arenas do
-		getglobal("ArenaQueueFrameButton" .. i):UnlockHighlight()
+	for i in pairs(arenas) do
+		_G["ArenaQueueFrameButton" .. i]:UnlockHighlight()
 	end
 	ArenaQueueFrameSkirmishButton:UnlockHighlight()
 
@@ -336,8 +356,8 @@ function ArenaQueueButton_OnClick()
 end
 
 function ArenaQueueFrame_OnLoad()
-	for i, arena in arenas do
-		getglobal("ArenaQueueFrameButton" .. i):SetText(ARENA_QUEUE_RATED .. " " .. arena.type)
+	for i, arena in pairs(arenas) do
+		_G["ArenaQueueFrameButton" .. i]:SetText(ARENA_QUEUE_RATED .. " " .. arena.type)
 	end
 
 	ArenaQueueFrameButton1:Click()
@@ -350,7 +370,7 @@ function ArenaRegistrarFrameDropDown_OnLoad()
 end
 
 function ArenaRegistrarFrameDropDown_OnClick()
-	local text = getglobal(this:GetName() .. "NormalText"):GetText()
+	local text = _G[this:GetName() .. "NormalText"]:GetText()
 	UIDropDownMenu_SetSelectedValue(ArenaRegistrarFrameDropDown, this:GetID())
 	UIDropDownMenu_SetText(text, ArenaRegistrarFrameDropDown)
 end
@@ -359,46 +379,47 @@ function ArenaRegistrarFrameConfirmButton_OnClick()
 	local name = ArenaRegistrarFrameEditBox:GetText()
 	local selectedValue = UIDropDownMenu_GetSelectedValue(ArenaRegistrarFrameDropDown)
 	if name ~= "" and selectedValue then
-		SendAddonMessage(ADDON_PREFIX, "S2C_CREATE" .. ADDON_MSG_FIELD_DELIMITER .. arenas[selectedValue].type .. ADDON_MSG_FIELD_DELIMITER .. name, ADDON_CHANNEL)
+		Send("S2C_CREATE" .. ADDON_MSG_FIELD_DELIMITER .. arenas[selectedValue].type .. ADDON_MSG_FIELD_DELIMITER .. name)
 	end
 end
 
-function JoinArenaQueue(asGroup)
-	local selection = ArenaQueueFrame.selection
-	if selection then
-		if selection == 0 then
-			SendAddonMessage("TW_BGQueue", "Arena", ADDON_CHANNEL)
-		else
-			SendAddonMessage(ADDON_PREFIX, "S2C_QUEUE" .. ADDON_MSG_FIELD_DELIMITER .. arenas[selection].type, ADDON_CHANNEL)
-		end
+function JoinArenaQueue(selection)
+	local selection = tonumber(selection) or ArenaQueueFrame.selection
+	if not selection then
+		return
 	end
+	if selection == 0 then
+		SendAddonMessage("TW_BGQueue", "Arena", ADDON_CHANNEL)
+	elseif arenas[selection] and arenas[selection].type then
+		Send("S2C_QUEUE" .. ADDON_MSG_FIELD_DELIMITER .. arenas[selection].type)
+	end
+	CloseDropDownMenus()
 end
 
 function LeaveArenaQueue()
-	SendAddonMessage(ADDON_PREFIX, "S2C_LEAVE_QUEUE", ADDON_CHANNEL)
+	Send("S2C_LEAVE_QUEUE")
 end
 
 function RequestArenaScoreInfo()
-	SendAddonMessage(ADDON_PREFIX, "C2S_SCOREBOARD", ADDON_CHANNEL)
+	Send("C2S_SCOREBOARD")
 end
 
 StaticPopupDialogs["ARENA_POPUP_DISBAND"] = {
-	text = TEXT(ARENA_TEAM_DISBAND_CONFIRM),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
+	text = ARENA_TEAM_DISBAND_CONFIRM,
+	button1 = YES,
+	button2 = NO,
 	OnAccept = function()
 		DisbandTeam()
 	end,
-	timeout = 0,
 	hideOnEscape = true,
 }
 
 StaticPopupDialogs["ARENA_POPUP_INVITE_PLAYER"] = {
-	text = TEXT(ARENA_TEAM_INVITE_INFO),
-	button1 = TEXT(CONFIRM),
-	button2 = TEXT(CANCEL),
+	text = ARENA_TEAM_INVITE_INFO,
+	button1 = CONFIRM,
+	button2 = CANCEL,
 	OnAccept = function()
-		local editbox = getglobal(this:GetParent():GetName() .. "EditBox")
+		local editbox = _G[this:GetParent():GetName() .. "EditBox"]
 		InvitePlayer(editbox:GetText())
 		editbox:SetText("")
 	end,
@@ -407,42 +428,39 @@ StaticPopupDialogs["ARENA_POPUP_INVITE_PLAYER"] = {
 		this:SetText("")
 		this:GetParent():Hide()
 	end,
-	timeout = 0,
 	hideOnEscape = true,
 	hasEditBox = true,
 }
 
 StaticPopupDialogs["ARENA_POPUP_INVITE_OFFER"] = {
 	text = "",
-	button1 = TEXT(ACCEPT),
-	button2 = TEXT(DECLINE),
+	button1 = ACCEPT,
+	button2 = DECLINE,
+	sound = "LEVELUPSOUND",
 	OnAccept = function()
 		HandleInvite(true)
 	end,
 	OnCancel = function()
 		HandleInvite(false)
 	end,
-	timeout = 0,
 }
 
 StaticPopupDialogs["ARENA_POPUP_KICK_CONFIRM"] = {
-	text = TEXT(ARENA_TEAM_KICK_CONFIRM),
-	button1 = TEXT(CONFIRM),
-	button2 = TEXT(CANCEL),
+	text = ARENA_TEAM_KICK_CONFIRM,
+	button1 = CONFIRM,
+	button2 = CANCEL,
 	OnAccept = function()
 		KickPlayer()
 	end,
-	timeout = 0,
 	hideOnEscape = true,
 }
 
 StaticPopupDialogs["ARENA_POPUP_LEAVE_CONFIRM"] = {
-	text = TEXT(ARENA_TEAM_LEAVE_CONFIRM),
-	button1 = TEXT(CONFIRM),
-	button2 = TEXT(CANCEL),
+	text = ARENA_TEAM_LEAVE_CONFIRM,
+	button1 = CONFIRM,
+	button2 = CANCEL,
 	OnAccept = function()
 		LeaveTeam()
 	end,
-	timeout = 0,
 	hideOnEscape = true,
 }

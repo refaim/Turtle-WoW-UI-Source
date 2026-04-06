@@ -93,10 +93,14 @@ function QuestRewardCancelButton_OnClick()
 	PlaySound("igQuestCancel");
 end
 
-function QuestRewardCompleteButton_OnClick()
+function QuestRewardCompleteButton_OnClick(confirmPopup)
 	if ( QuestFrameRewardPanel.itemChoice == 0 and GetNumQuestChoices() > 0 ) then
 		QuestChooseRewardError();
 	else
+		if (GetQuestMoneyToGet() > 0 and not confirmPopup) then
+			StaticPopup_Show("CONFIRM_QUEST_REQUIRES_MONEY")
+			return
+		end
 		GetQuestReward(QuestFrameRewardPanel.itemChoice);
 		PlaySound("igQuestListComplete");
 	end
@@ -184,24 +188,24 @@ function QuestFrameProgressItems_Update()
 			QuestProgressRequiredMoneyFrame:Show();
 
 			-- Reanchor required item
-			getglobal(questItemName..1):SetPoint("TOPLEFT", "QuestProgressRequiredMoneyText", "BOTTOMLEFT", 0, -10);
+			_G[questItemName..1]:SetPoint("TOPLEFT", "QuestProgressRequiredMoneyText", "BOTTOMLEFT", 0, -10);
 		else
 			QuestProgressRequiredMoneyText:Hide();
 			QuestProgressRequiredMoneyFrame:Hide();
 
-			getglobal(questItemName..1):SetPoint("TOPLEFT", "QuestProgressRequiredItemsText", "BOTTOMLEFT", -3, -5);
+			_G[questItemName..1]:SetPoint("TOPLEFT", "QuestProgressRequiredItemsText", "BOTTOMLEFT", -3, -5);
 		end
 
 
 
 		for i=1, numRequiredItems, 1 do
-			local requiredItem = getglobal(questItemName..i);
+			local requiredItem = _G[questItemName..i];
 			requiredItem.type = "required";
 			local name, texture, numItems = GetQuestItemInfo(requiredItem.type, i);
 			SetItemButtonCount(requiredItem, numItems);
 			SetItemButtonTexture(requiredItem, texture);
 			requiredItem:Show();
-			getglobal(questItemName..i.."Name"):SetText(name);
+			_G[questItemName..i.."Name"]:SetText(name);
 
 		end
 	else
@@ -210,7 +214,7 @@ function QuestFrameProgressItems_Update()
 		QuestProgressRequiredItemsText:Hide();
 	end
 	for i=numRequiredItems + 1, MAX_REQUIRED_ITEMS, 1 do
-		getglobal(questItemName..i):Hide();
+		_G[questItemName..i]:Hide();
 	end
 	QuestProgressScrollFrame:UpdateScrollChildRect();
 	QuestProgressScrollFrameScrollBar:SetValue(0);
@@ -240,7 +244,7 @@ function QuestFrameGreetingPanel_OnShow()
 		CurrentQuestsText:Show();
 		QuestTitleButton1:SetPoint("TOPLEFT", "CurrentQuestsText", "BOTTOMLEFT", -10, -5);
 		for i=1, numActiveQuests, 1 do
-			local questTitleButton = getglobal("QuestTitleButton"..i);
+			local questTitleButton = _G["QuestTitleButton"..i];
 			questTitleButton:SetText(GetActiveTitle(i));
 			questTitleButton:SetHeight(questTitleButton:GetTextHeight() + 2);
 			questTitleButton:SetID(i);
@@ -249,7 +253,7 @@ function QuestFrameGreetingPanel_OnShow()
 			if ( i > 1 ) then
 				questTitleButton:SetPoint("TOPLEFT", "QuestTitleButton"..(i-1),"BOTTOMLEFT", 0, 0)
 			end
-			getglobal(questTitleButton:GetName() .. "Icon"):SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
+			_G[questTitleButton:GetName() .. "Icon"]:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
 		end
 	end
 	if ( numAvailableQuests == 0 ) then
@@ -264,9 +268,9 @@ function QuestFrameGreetingPanel_OnShow()
 			AvailableQuestsText:SetPoint("TOPLEFT", "GreetingText", "BOTTOMLEFT", 0, -10);
 		end
 		AvailableQuestsText:Show();
-		getglobal("QuestTitleButton"..(numActiveQuests + 1)):SetPoint("TOPLEFT", "AvailableQuestsText", "BOTTOMLEFT", -10, -5);
+		_G["QuestTitleButton"..(numActiveQuests + 1)]:SetPoint("TOPLEFT", "AvailableQuestsText", "BOTTOMLEFT", -10, -5);
 		for i=(numActiveQuests + 1), (numActiveQuests + numAvailableQuests), 1 do
-			local questTitleButton = getglobal("QuestTitleButton"..i);
+			local questTitleButton = _G["QuestTitleButton"..i];
 			questTitleButton:SetText(GetAvailableTitle(i - numActiveQuests));
 			questTitleButton:SetHeight(questTitleButton:GetTextHeight() + 2);
 			questTitleButton:SetID(i - numActiveQuests);
@@ -275,11 +279,11 @@ function QuestFrameGreetingPanel_OnShow()
 			if ( i > numActiveQuests + 1 ) then
 				questTitleButton:SetPoint("TOPLEFT", "QuestTitleButton"..(i-1),"BOTTOMLEFT", 0, 0)
 			end
-			getglobal(questTitleButton:GetName() .. "Icon"):SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+			_G[questTitleButton:GetName() .. "Icon"]:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
 		end
 	end
 	for i=(numActiveQuests + numAvailableQuests + 1), MAX_NUM_QUESTS, 1 do
-		getglobal("QuestTitleButton"..i):Hide();
+		_G["QuestTitleButton"..i]:Hide();
 	end
 end
 
@@ -288,6 +292,7 @@ function QuestFrame_OnShow()
 end
 
 function QuestFrame_OnHide()
+	StaticPopup_Hide("CONFIRM_QUEST_REQUIRES_MONEY");
 	QuestFrameGreetingPanel:Hide();
 	QuestFrameDetailPanel:Hide();
 	QuestFrameRewardPanel:Hide();
@@ -341,25 +346,25 @@ function QuestFrameItems_Update(questState)
 	local totalRewards = numQuestRewards + numQuestChoices + numQuestSpellRewards;
 	local questItemName = questState.."Item";
 	local material = QuestFrame_GetMaterial();
-	local  questItemReceiveText = getglobal(questState.."ItemReceiveText")
+	local  questItemReceiveText = _G[questState.."ItemReceiveText"]
 	if ( totalRewards == 0 and money == 0 ) then
-		getglobal(questState.."RewardTitleText"):Hide();
+		_G[questState.."RewardTitleText"]:Hide();
 	else
-		getglobal(questState.."RewardTitleText"):Show();
-		QuestFrame_SetTitleTextColor(getglobal(questState.."RewardTitleText"), material);
-		QuestFrame_SetAsLastShown(getglobal(questState.."RewardTitleText"), spacerFrame);
+		_G[questState.."RewardTitleText"]:Show();
+		QuestFrame_SetTitleTextColor(_G[questState.."RewardTitleText"], material);
+		QuestFrame_SetAsLastShown(_G[questState.."RewardTitleText"], spacerFrame);
 	end
 	if ( money == 0 ) then
-		getglobal(questState.."MoneyFrame"):Hide();
+		_G[questState.."MoneyFrame"]:Hide();
 	else
-		getglobal(questState.."MoneyFrame"):Show();
-		QuestFrame_SetAsLastShown(getglobal(questState.."MoneyFrame"), spacerFrame);
+		_G[questState.."MoneyFrame"]:Show();
+		QuestFrame_SetAsLastShown(_G[questState.."MoneyFrame"], spacerFrame);
 		MoneyFrame_Update(questState.."MoneyFrame", money);
 	end
 
 	-- Hide unused rewards
 	for i=totalRewards + 1, MAX_NUM_ITEMS, 1 do
-		getglobal(questItemName..i):Hide();
+		_G[questItemName..i]:Hide();
 	end
 
 	local questItem, name, texture, isTradeskillSpell, quality, isUsable, numItems = 1;
@@ -367,7 +372,7 @@ function QuestFrameItems_Update(questState)
 
 	-- Setup choosable rewards
 	if ( numQuestChoices > 0 ) then
-		local itemChooseText = getglobal(questState.."ItemChooseText");
+		local itemChooseText = _G[questState.."ItemChooseText"];
 		itemChooseText:Show();
 		QuestFrame_SetTextColor(itemChooseText, material);
 		QuestFrame_SetAsLastShown(itemChooseText, spacerFrame);
@@ -376,7 +381,7 @@ function QuestFrameItems_Update(questState)
 		local baseIndex = rewardsCount;
 		for i=1, numQuestChoices, 1 do
 			index = i + baseIndex;
-			questItem = getglobal(questItemName..index);
+			questItem = _G[questItemName..index];
 			questItem.type = "choice";
 			numItems = 1;
 			if ( isQuestLog == 1 ) then
@@ -389,7 +394,7 @@ function QuestFrameItems_Update(questState)
 			-- For the tooltip
 			questItem.rewardType = "item"
 			QuestFrame_SetAsLastShown(questItem, spacerFrame);
-			getglobal(questItemName..index.."Name"):SetText(name);
+			_G[questItemName..index.."Name"]:SetText(name);
 			SetItemButtonCount(questItem, numItems);
 			SetItemButtonTexture(questItem, texture);
 			if ( isUsable ) then
@@ -411,12 +416,12 @@ function QuestFrameItems_Update(questState)
 			rewardsCount = rewardsCount + 1;
 		end
 	else
-		getglobal(questState.."ItemChooseText"):Hide();
+		_G[questState.."ItemChooseText"]:Hide();
 	end
 
 	-- Setup spell rewards
 	if ( numQuestSpellRewards > 0 ) then
-		local learnSpellText = getglobal(questState.."SpellLearnText");
+		local learnSpellText = _G[questState.."SpellLearnText"];
 		learnSpellText:Show();
 		QuestFrame_SetTextColor(learnSpellText, material);
 		QuestFrame_SetAsLastShown(learnSpellText, spacerFrame);
@@ -441,16 +446,16 @@ function QuestFrameItems_Update(questState)
 		end
 
 		rewardsCount = rewardsCount + 1;
-		questItem = getglobal(questItemName..rewardsCount);
+		questItem = _G[questItemName..rewardsCount];
 		questItem:Show();
 		-- For the tooltip
 		questItem.rewardType = "spell";
 		SetItemButtonCount(questItem, 0);
 		SetItemButtonTexture(questItem, texture);
-		getglobal(questItemName..rewardsCount.."Name"):SetText(name);
+		_G[questItemName..rewardsCount.."Name"]:SetText(name);
 		questItem:SetPoint("TOPLEFT", learnSpellText, "BOTTOMLEFT", -3, -5);
 	else
-		getglobal(questState.."SpellLearnText"):Hide();
+		_G[questState.."SpellLearnText"]:Hide();
 	end
 
 	-- Setup mandatory rewards
@@ -458,17 +463,17 @@ function QuestFrameItems_Update(questState)
 		QuestFrame_SetTextColor(questItemReceiveText, material);
 		-- Anchor the reward text differently if there are choosable rewards
 		if ( numQuestSpellRewards > 0  ) then
-			questItemReceiveText:SetText(TEXT(REWARD_ITEMS));
+			questItemReceiveText:SetText(REWARD_ITEMS);
 			questItemReceiveText:SetPoint("TOPLEFT", questItemName..rewardsCount, "BOTTOMLEFT", 3, -5);
 		elseif ( numQuestChoices > 0  ) then
-			questItemReceiveText:SetText(TEXT(REWARD_ITEMS));
+			questItemReceiveText:SetText(REWARD_ITEMS);
 			local index = numQuestChoices;
 			if ( mod(index, 2) == 0 ) then
 				index = index - 1;
 			end
 			questItemReceiveText:SetPoint("TOPLEFT", questItemName..index, "BOTTOMLEFT", 3, -5);
 		else
-			questItemReceiveText:SetText(TEXT(REWARD_ITEMS_ONLY));
+			questItemReceiveText:SetText(REWARD_ITEMS_ONLY);
 			questItemReceiveText:SetPoint("TOPLEFT", questState.."RewardTitleText", "BOTTOMLEFT", 3, -5);
 		end
 		questItemReceiveText:Show();
@@ -478,7 +483,7 @@ function QuestFrameItems_Update(questState)
 		local baseIndex = rewardsCount;
 		for i=1, numQuestRewards, 1 do
 			index = i + baseIndex;
-			questItem = getglobal(questItemName..index);
+			questItem = _G[questItemName..index];
 			questItem.type = "reward";
 			numItems = 1;
 			if ( isQuestLog == 1 ) then
@@ -491,7 +496,7 @@ function QuestFrameItems_Update(questState)
 			-- For the tooltip
 			questItem.rewardType = "item";
 			QuestFrame_SetAsLastShown(questItem, spacerFrame);
-			getglobal(questItemName..index.."Name"):SetText(name);
+			_G[questItemName..index.."Name"]:SetText(name);
 			SetItemButtonCount(questItem, numItems);
 			SetItemButtonTexture(questItem, texture);
 			if ( isUsable ) then
@@ -581,19 +586,19 @@ end
 
 function QuestFrame_SetMaterial(frame, material)
 	if ( material == "Parchment" ) then
-		getglobal(frame:GetName().."MaterialTopLeft"):Hide();
-		getglobal(frame:GetName().."MaterialTopRight"):Hide();
-		getglobal(frame:GetName().."MaterialBotLeft"):Hide();
-		getglobal(frame:GetName().."MaterialBotRight"):Hide();
+		_G[frame:GetName().."MaterialTopLeft"]:Hide();
+		_G[frame:GetName().."MaterialTopRight"]:Hide();
+		_G[frame:GetName().."MaterialBotLeft"]:Hide();
+		_G[frame:GetName().."MaterialBotRight"]:Hide();
 	else
-		getglobal(frame:GetName().."MaterialTopLeft"):Show();
-		getglobal(frame:GetName().."MaterialTopRight"):Show();
-		getglobal(frame:GetName().."MaterialBotLeft"):Show();
-		getglobal(frame:GetName().."MaterialBotRight"):Show();
-		getglobal(frame:GetName().."MaterialTopLeft"):SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-TopLeft");
-		getglobal(frame:GetName().."MaterialTopRight"):SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-TopRight");
-		getglobal(frame:GetName().."MaterialBotLeft"):SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-BotLeft");
-		getglobal(frame:GetName().."MaterialBotRight"):SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-BotRight");
+		_G[frame:GetName().."MaterialTopLeft"]:Show();
+		_G[frame:GetName().."MaterialTopRight"]:Show();
+		_G[frame:GetName().."MaterialBotLeft"]:Show();
+		_G[frame:GetName().."MaterialBotRight"]:Show();
+		_G[frame:GetName().."MaterialTopLeft"]:SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-TopLeft");
+		_G[frame:GetName().."MaterialTopRight"]:SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-TopRight");
+		_G[frame:GetName().."MaterialBotLeft"]:SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-BotLeft");
+		_G[frame:GetName().."MaterialBotRight"]:SetTexture("Interface\\ItemTextFrame\\ItemText-"..material.."-BotRight");
 	end
 end
 

@@ -120,7 +120,7 @@
 			<OnLoad>
 				this:RegisterForClicks("LeftButtonDown", "LeftButtonUp", "RightButtonUp");
 				this:RegisterForDrag("LeftButton");
-				getglobal(this:GetName().."DockRegionHighlight"):SetPoint("LEFT", this:GetName().."Right", "RIGHT", -16 , -3);
+				_G[this:GetName().."DockRegionHighlight"]:SetPoint("LEFT", this:GetName().."Right", "RIGHT", -16 , -3);
 			</OnLoad>
 			<OnClick>
 				FCF_Tab_OnClick(arg1);
@@ -133,7 +133,7 @@
 				GameTooltip:Hide();
 			</OnLeave>
 			<OnDragStart>
-				local chatFrame = getglobal("ChatFrame"..this:GetID());
+				local chatFrame = _G["ChatFrame"..this:GetID()];
 				if ( chatFrame == DEFAULT_CHAT_FRAME ) then
 					if (chatFrame.isLocked) then
 						return;
@@ -144,7 +144,7 @@
 				elseif ( chatFrame.isDocked ) then
 					FCF_UnDockFrame(chatFrame);
 					FCF_SetLocked(chatFrame, nil);
-					local chatTab = getglobal(chatFrame:GetName().."Tab");
+					local chatTab = _G[chatFrame:GetName().."Tab"];
 					local x,y = chatTab:GetCenter();
 					x = x - (chatTab:GetWidth()/2);
 					y = y - (chatTab:GetHeight()/2);
@@ -158,7 +158,7 @@
 				SELECTED_CHAT_FRAME = chatFrame;
 			</OnDragStart>
 			<OnDragStop>
-				local chatFrame = getglobal("ChatFrame"..this:GetID());
+				local chatFrame = _G["ChatFrame"..this:GetID()];
 				chatFrame:StopMovingOrSizing();
 				if ( this == DEFAULT_CHAT_FRAME ) then
 					MOVING_CHATFRAME = nil;
@@ -663,15 +663,15 @@
 				FloatingChatFrame_OnLoad();
 			</OnLoad>
 			<OnShow>
-				getglobal(this:GetName().."BottomButton"):Show();
-				getglobal(this:GetName().."DownButton"):Show();
-				getglobal(this:GetName().."UpButton"):Show();
+				_G[this:GetName().."BottomButton"]:Show();
+				_G[this:GetName().."DownButton"]:Show();
+				_G[this:GetName().."UpButton"]:Show();
 				SetChatWindowShown(this:GetID(), 1);
 			</OnShow>
 			<OnHide>
-				getglobal(this:GetName().."BottomButton"):Hide();
-				getglobal(this:GetName().."DownButton"):Hide();
-				getglobal(this:GetName().."UpButton"):Hide();
+				_G[this:GetName().."BottomButton"]:Hide();
+				_G[this:GetName().."DownButton"]:Hide();
+				_G[this:GetName().."UpButton"]:Hide();
 				SetChatWindowShown(this:GetID(), nil);
 			</OnHide>
 			<OnEvent>
@@ -697,10 +697,8 @@
 			<OnLoad>
 				ChatFrame_OnLoad();
 				SELECTED_DOCK_FRAME = ChatFrame1;
-				this:RegisterEvent("EXECUTE_CHAT_LINE");
 				this:RegisterEvent("CVAR_UPDATE");
 				this:RegisterEvent("UPDATE_CHAT_WINDOWS");
-				--ChatFrame_DisplayStartupText(this);
 			</OnLoad>
 			<OnEvent>
 				ChatFrame_OnEvent(event);

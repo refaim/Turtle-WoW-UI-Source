@@ -12,12 +12,12 @@ function AutoFollowStatus_OnEvent(event)
 		this.unit = arg1;
 		this.fadeTime = nil;
 		this:SetAlpha(1.0);
-		AutoFollowStatusText:SetText(format(TEXT(AUTOFOLLOWSTART),this.unit));
+		AutoFollowStatusText:SetText(format(AUTOFOLLOWSTART,this.unit));
 		this:Show();
 	end
 	if ( event == "AUTOFOLLOW_END" ) then
 		this.fadeTime = AUTOFOLLOW_STATUS_FADETIME;
-		AutoFollowStatusText:SetText(format(TEXT(AUTOFOLLOWSTOP),this.unit));
+		AutoFollowStatusText:SetText(format(AUTOFOLLOWSTOP,this.unit));
 		this:Show();
 	end
 	if ( event == "PLAYER_ENTERING_WORLD" ) then

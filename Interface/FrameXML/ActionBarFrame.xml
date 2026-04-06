@@ -11,18 +11,18 @@
 			</OnEvent>
 			<OnClick>
 				if ( IsShiftKeyDown() ) then
-					PickupAction(ActionButton_GetPagedID(this));
+					PickupAction(this.action);
 				else
 					if ( MacroFrame_SaveMacro ) then
 						MacroFrame_SaveMacro();
 					end
-					UseAction(ActionButton_GetPagedID(this), 1);
+					UseAction(this.action, 1);
 				end
 				ActionButton_UpdateState();
 			</OnClick>
 			<OnDragStart>
 				if ( LOCK_ACTIONBAR ~= "1" ) then
-					PickupAction(ActionButton_GetPagedID(this));
+					PickupAction(this.action);
 					ActionButton_UpdateHotkeys(this.buttonType);
 					ActionButton_UpdateState();
 					ActionButton_UpdateFlash();
@@ -30,7 +30,7 @@
 			</OnDragStart>
 			<OnReceiveDrag>
 				if ( LOCK_ACTIONBAR ~= "1" ) then
-					PlaceAction(ActionButton_GetPagedID(this));
+					PlaceAction(this.action);
 					ActionButton_UpdateHotkeys(this.buttonType);
 					ActionButton_UpdateState();
 					ActionButton_UpdateFlash();

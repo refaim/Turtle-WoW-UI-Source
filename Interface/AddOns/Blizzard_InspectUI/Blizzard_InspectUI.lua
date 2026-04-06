@@ -1,5 +1,5 @@
 
-INSPECTFRAME_SUBFRAMES = { "InspectPaperDollFrame", "InspectHonorFrame" };
+INSPECTFRAME_SUBFRAMES = { "InspectPaperDollFrame", "InspectHonorFrame", "InspectArenaFrame", "InspectTalentsFrame" };
 
 UIPanelWindows["InspectFrame"] = { area = "left", pushable = 0 };
 
@@ -20,7 +20,7 @@ function InspectFrame_OnLoad()
 	this.unit = nil;
 
 	-- Tab Handling code
-	PanelTemplates_SetNumTabs(this, 2);
+	PanelTemplates_SetNumTabs(this, 4);
 	PanelTemplates_SetTab(this, 1);
 end
 
@@ -65,7 +65,7 @@ function InspectFrame_OnUpdate()
 end
 
 function ToggleInspect(tab)
-	local subFrame = getglobal(tab);
+	local subFrame = _G[tab];
 	if ( subFrame ) then
 		PanelTemplates_SetTab(InspectFrame, subFrame:GetID());
 		if ( InspectFrame:IsVisible() ) then
@@ -85,9 +85,9 @@ end
 function InspectFrame_ShowSubFrame(frameName)
 	for index, value in INSPECTFRAME_SUBFRAMES do
 		if ( value == frameName ) then
-			getglobal(value):Show()
+			_G[value]:Show()
 		else
-			getglobal(value):Hide();
+			_G[value]:Hide();
 		end
 	end
 end
@@ -97,6 +97,10 @@ function InspectFrameTab_OnClick()
 		ToggleInspect("InspectPaperDollFrame");
 	elseif ( this:GetName() == "InspectFrameTab2" ) then
 		ToggleInspect("InspectHonorFrame");
+	elseif ( this:GetName() == "InspectFrameTab3" ) then
+		ToggleInspect("InspectArenaFrame");
+	elseif ( this:GetName() == "InspectFrameTab4" ) then
+		ToggleInspect("InspectTalentsFrame");
 	end
 	PlaySound("igCharacterInfoTab");
 end

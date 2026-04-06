@@ -166,10 +166,10 @@
 			<OnLoad>
 				local id = this:GetParent():GetID();
 				local prefix = "PartyMemberFrame"..id.."PetFrame";
-				UnitFrame_Initialize("partypet"..id,  getglobal(prefix.."Name"), getglobal(prefix.."Portrait"),
-						getglobal(prefix.."HealthBar"), getglobal(prefix.."HealthBarText"));
-				SetTextStatusBarTextZeroText(getglobal(prefix.."HealthBar"), TEXT(DEAD));
-				getglobal(prefix.."Name"):Hide();
+				UnitFrame_Initialize("partypet"..id,  _G[prefix.."Name"], _G[prefix.."Portrait"],
+						_G[prefix.."HealthBar"], _G[prefix.."HealthBarText"]);
+				SetTextStatusBarTextZeroText(_G[prefix.."HealthBar"], DEAD);
+				_G[prefix.."Name"]:Hide();
 			</OnLoad>
 			<OnShow>
 				UnitFrame_Update();
@@ -213,6 +213,90 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentTexture" file="Interface\TargetingFrame\UI-PartyFrame">
+					<Size>
+						<AbsDimension x="128" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-2"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentName" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="50" y="43"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentStatus" file="Interface\Buttons\UI-Debuff-Overlays" hidden="true">
+					<Size>
+						<AbsDimension x="36" y="36"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="$parentPortrait">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.2734375" top="0" bottom="0.5625"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentLeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentMasterIcon" file="Interface\GroupFrame\UI-Group-MasterLooter" hidden="true">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="32" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentPVPIcon" hidden="true">
+					<Size>
+						<AbsDimension x="32" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-9" y="-15"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentDisconnect" file="Interface\CharacterFrame\Disconnect-Icon" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="-7" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
 		</Layers>
 		<Frames>
 			<Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -232,99 +316,7 @@
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Frame setAllPoints="true">
-				<Frames>
-					<Frame setAllPoints="true">
-						<Layers>
-							<Layer level="BACKGROUND">
-								<Texture name="$parentTexture" file="Interface\TargetingFrame\UI-PartyFrame">
-									<Size>
-										<AbsDimension x="128" y="64"/>
-									</Size>
-									<Anchors>
-										<Anchor point="TOPLEFT">
-											<Offset>
-												<AbsDimension x="0" y="-2"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</Texture>
-								<FontString name="$parentName" inherits="GameFontNormalSmall">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT">
-											<Offset>
-												<AbsDimension x="50" y="43"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-							<Layer level="ARTWORK">
-								<Texture name="$parentStatus" file="Interface\Buttons\UI-Debuff-Overlays" hidden="true">
-									<Size>
-										<AbsDimension x="36" y="36"/>
-									</Size>
-									<Anchors>
-										<Anchor point="CENTER" relativeTo="$parentPortrait">
-											<Offset>
-												<AbsDimension x="0" y="0"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-									<TexCoords left="0" right="0.2734375" top="0" bottom="0.5625"/>
-								</Texture>
-							</Layer>
-							<Layer level="OVERLAY">
-								<Texture name="$parentLeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
-									<Size>
-										<AbsDimension x="16" y="16"/>
-									</Size>
-									<Anchors>
-										<Anchor point="TOPLEFT"/>
-									</Anchors>
-								</Texture>
-								<Texture name="$parentMasterIcon" file="Interface\GroupFrame\UI-Group-MasterLooter" hidden="true">
-									<Size>
-										<AbsDimension x="16" y="16"/>
-									</Size>
-									<Anchors>
-										<Anchor point="TOPLEFT">
-											<Offset>
-												<AbsDimension x="32" y="0"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</Texture>
-								<Texture name="$parentPVPIcon" hidden="true">
-									<Size>
-										<AbsDimension x="32" y="32"/>
-									</Size>
-									<Anchors>
-										<Anchor point="TOPLEFT">
-											<Offset>
-												<AbsDimension x="-9" y="-15"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</Texture>
-								<Texture name="$parentDisconnect" file="Interface\CharacterFrame\Disconnect-Icon" hidden="true">
-									<Size>
-										<AbsDimension x="64" y="64"/>
-									</Size>
-									<Anchors>
-										<Anchor point="LEFT">
-											<Offset>
-												<AbsDimension x="-7" y="-1"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</Texture>
-							</Layer>
-						</Layers>
-					</Frame>
-				</Frames>
-			</Frame>
-			<StatusBar name="$parentHealthBar" inherits="TextStatusBar">
+			<StatusBar name="$parentHealthBar" inherits="TextStatusBar" drawLayer="BACKGROUND">
 				<Size>
 					<AbsDimension x="70" y="8"/>
 				</Size>
@@ -336,6 +328,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnShow>
+						this:SetFrameLevel(this:GetParent():GetFrameLevel())
+					</OnShow>
 					<OnEvent>
 						UnitFrameHealthBar_Update(this, arg1);
 					</OnEvent>
@@ -349,7 +344,7 @@
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 			</StatusBar>
-			<StatusBar name="$parentManaBar" inherits="TextStatusBar">
+			<StatusBar name="$parentManaBar" inherits="TextStatusBar" drawLayer="BACKGROUND">
 				<Size>
 					<AbsDimension x="70" y="8"/>
 				</Size>
@@ -361,6 +356,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnShow>
+						this:SetFrameLevel(this:GetParent():GetFrameLevel())
+					</OnShow>
 					<OnEvent>
 						UnitFrameManaBar_Update(this, arg1);
 					</OnEvent>
@@ -415,10 +413,10 @@
 				this.debuffCountdown = 0;
 				this.numDebuffs = 0;
 				local prefix = "PartyMemberFrame"..id;
-				UnitFrame_Initialize("party"..id,  getglobal(prefix.."Name"), getglobal(prefix.."Portrait"),
-						getglobal(prefix.."HealthBar"), getglobal(prefix.."HealthBarText"),
-						getglobal(prefix.."ManaBar"), getglobal(prefix.."ManaBarText"));
-				SetTextStatusBarTextZeroText(getglobal(prefix.."HealthBar"), TEXT(DEAD));
+				UnitFrame_Initialize("party"..id,  _G[prefix.."Name"], _G[prefix.."Portrait"],
+						_G[prefix.."HealthBar"], _G[prefix.."HealthBarText"],
+						_G[prefix.."ManaBar"], _G[prefix.."ManaBarText"]);
+				SetTextStatusBarTextZeroText(_G[prefix.."HealthBar"], DEAD);
 				PartyMemberFrame_OnLoad();
 			</OnLoad>
 			<OnShow>

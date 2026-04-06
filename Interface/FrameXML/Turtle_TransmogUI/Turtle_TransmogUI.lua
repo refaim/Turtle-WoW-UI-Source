@@ -1,51 +1,25 @@
 local EquipTransmogTooltip = CreateFrame("Frame", "EquipTransmogTooltip", GameTooltip)
-local Transmog = {}
-
-local transmogDebug = false
-
-local TransmogConfig = {} -- hax
-
-local strfind = string.find
-local tonumber = tonumber
-local gsub = string.gsub
-local GetItemInfo = GetItemInfo
+local PINK = "|cfff470f4"
+Transmog = {}
 
 local function twferror(a)
-	DEFAULT_CHAT_FRAME:AddMessage(RED_FONT_COLOR_CODE .. "ERROR: " .. tostring(a) .. ".")
+	DEFAULT_CHAT_FRAME:AddMessage("ERROR: " .. tostring(a) .. ".", RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
 end
 
 local function twfprint(a)
-	DEFAULT_CHAT_FRAME:AddMessage(NORMAL_FONT_COLOR_CODE .. tostring(a) .. FONT_COLOR_CODE_CLOSE)
+	local info = ChatTypeInfo["SYSTEM"]
+	DEFAULT_CHAT_FRAME:AddMessage(tostring(a), info.r, info.g, info.b, info.id)
 end
 
-local function twfdebug(a)
-	if not transmogDebug then
-		return
-	end
-	twfprint("|cff0070de[DEBUG:" .. format("%.3f", GetTime()) .. "]|cffffffff[" .. tostring(a) .. "]")
-end
-
-local function wipe(t)
-	if type(t) ~= "table" then
-		return
-	end
-	for i = getn(t), 1, -1 do
-		table.remove(t, i)
-	end
-end
-
-local player = UnitName("player")
 local _, class = UnitClass("player")
-class = string.lower(class)
-
 local _, race = UnitRace("player")
-race = string.lower(race)
-if race == "scourge" then
-	race = "undead"
-end
-
 local sex = UnitSex("player") - 1
+class = strlower(class)
+race = strlower(race)
+race = race == "scourge" and "undead" or race
 local prefix = "TW_TRANSMOG"
+local trigger = "TRANSMOG_TRIGGER"
+local fashionCoinID = 51217
 local fashionCoins = 0
 local currentSlot = nil
 local currentSlotName = nil
@@ -56,18 +30,14 @@ local currentTab = "items"
 local currentOutfit = nil
 local AvailableTransmogItems = {}
 local ItemButtons = {}
--- local NumTransmogs = {}
 local TransmogDataFromServer = {}
 local TransmogStatusFromServer = {}
 local TransmogStatusToServer = {}
 local EquippedItems = {}
 local EquippedTransmogs = {}
--- local CurrentTransmogsData = {}
--- local AvailableSets = {}
 local Selection = {}
 local Pages = {}
 local changePage = false
-local trigger = "TRANSMOG_TRIGGER"
 
 local InventorySlots = {
 	["HeadSlot"] = 1,
@@ -181,6 +151,29 @@ local InvTypeToServerSlot = {
 	["INVTYPE_RANGED"] = { SERVER_SLOT_RANGED, "RangedSlot" },
 	["INVTYPE_THROWN"] = { SERVER_SLOT_RANGED, "RangedSlot" },
 	["INVTYPE_RANGEDRIGHT"] = { SERVER_SLOT_RANGED, "RangedSlot" },
+}
+
+local InvTypeToClientSlot = {
+	["INVTYPE_HEAD"] = 1,
+	["INVTYPE_SHOULDER"] = 3,
+	["INVTYPE_CLOAK"] = 15,
+	["INVTYPE_CHEST"] = 5,
+	["INVTYPE_ROBE"] = 5,
+	["INVTYPE_WAIST"] = 6,
+	["INVTYPE_LEGS"] = 7,
+	["INVTYPE_FEET"] = 8,
+	["INVTYPE_WRIST"] = 9,
+	["INVTYPE_HAND"] = 10,
+	["INVTYPE_BODY"] = 4,
+	["INVTYPE_TABARD"] = 19,
+	["INVTYPE_WEAPON"] = 16,
+	["INVTYPE_2HWEAPON"] = 16,
+	["INVTYPE_WEAPONMAINHAND"] = 16,
+	["INVTYPE_SHIELD"] = 17,
+	["INVTYPE_WEAPONOFFHAND"] = 17,
+	["INVTYPE_HOLDABLE"] = 17,
+	["INVTYPE_RANGED"] = 18,
+	["INVTYPE_RANGEDRIGHT"] = 18,
 }
 
 function Transmog:SlotIdToServerSlot(slotId)
@@ -334,7 +327,6 @@ Positions[17] = Positions[16]
 for _, slot in pairs(InventorySlots) do
 	AvailableTransmogItems[slot] = {}
 	TransmogDataFromServer[slot] = {}
-	-- CurrentTransmogsData[slot] = {}
 	TransmogStatusFromServer[slot] = 0
 	TransmogStatusToServer[slot] = 0
 	EquippedItems[slot] = 0
@@ -344,195 +336,150 @@ end
 
 function TransmogFrame_OnEvent()
 	if event == "GOSSIP_SHOW" then
-		if GetGossipText() == trigger then
-			if Transmog.delayedLoad:IsVisible() then
-				twfdebug("Transmog addon loading retry in 5s.")
-			else
-				GossipFrame:SetAlpha(0)
-				GossipFrame:EnableMouse(nil)
-				TransmogFrame:Show()
-				UIPanelWindows.GossipFrame.pushable = 99
-				local centerFrame = (GetCenterFrame())
-				HideUIPanel(centerFrame)
-				ShowUIPanel(centerFrame)
-			end
+		if GetGossipText() ~= trigger or not UnitExists("npc") then
+			return
 		end
 
+		-- if Transmog.delayedLoad:IsShown() then
+		-- 	HideUIPanel(GossipFrame)
+		-- 	return
+		-- end
+
+		GossipFrame:SetAlpha(0)
+		GossipFrame:EnableMouse(nil)
+		GossipFrame.pushable = UIPanelWindows.GossipFrame.pushable
+		UIPanelWindows.GossipFrame.pushable = 99
+		CloseWindows(nil, GossipFrame)
+		TransmogFrame:Show()
+
 	elseif event == "GOSSIP_CLOSED" then
+		if not TransmogFrame:IsShown() then
+			return
+		end
 		GossipFrame:SetAlpha(1)
 		GossipFrame:EnableMouse(1)
 		TransmogFrame:Hide()
-		UIPanelWindows.GossipFrame.pushable = 0
+		UIPanelWindows.GossipFrame.pushable = GossipFrame.pushable or 0
+		GossipFrame.pushable = nil
 
 	elseif event == "UNIT_INVENTORY_CHANGED" and arg1 == "player" then
-
-		twfdebug(event)
-
-		if Transmog:EquippedItemsChanged() then
-
-			twfdebug("equipped items changed")
-
-			if TransmogFrame:IsVisible() then
-				twfdebug("visible")
-				Transmog.gearChangedDelay.delay = 1
-			else
-				twfdebug("not visible")
-				Transmog.gearChangedDelay.delay = 2
-			end
-			Transmog:LockPlayerItems()
-			Transmog.gearChangedDelay:Show()
-
-		else
-			twfdebug("equipped items not changed")
+		if not Transmog:EquippedItemsChanged() then
+			return
 		end
+		Transmog.gearChangedDelay.delay = TransmogFrame:IsShown() and 0.5 or 1
+		Transmog:LockPlayerItems()
 
 	elseif event == "CHAT_MSG_ADDON" then
 		if arg1 == "TW_CHAT_MSG_WHISPER" then
 			local message = arg2
 			local from = arg4
 			if strfind(message, "INSShowTransmogs", 1, true) then
-				twfdebug(arg1)
-				twfdebug(arg2)
-				twfdebug(arg3)
-				twfdebug(arg4)
-				SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", "INSTransmogs:start", "GUILD")
-				for InventorySlotId, itemID in TransmogStatusFromServer do
-					if itemID ~= 0 then
-
-						local TransmogItemName = GetItemInfo(itemID)
-
-						if TransmogItemName then
-							-- check if we actually have an item equipped
-							if GetInventoryItemLink("player", InventorySlotId) then
-								local _, _, eqItemLink = strfind(GetInventoryItemLink("player", InventorySlotId), "(item:%d+:%d+:%d+:%d+)")
-								local eName = GetItemInfo(eqItemLink)
-								SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", "INSTransmogs:" .. eName .. ":" .. TransmogItemName, "GUILD")
-							end
+				SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", "INSTransmogs;start;0;0", "GUILD")
+				for equipID, transmogID in pairs(TransmogStatus) do
+					local _, _, _, _, _, _, _, invType = GetItemInfo(Transmog:IDFromLink(equipID) or 0)
+					local InventorySlotId = InvTypeToClientSlot[invType]
+					if InventorySlotId then
+						local id = Transmog:IDFromLink(GetInventoryItemLink("player", InventorySlotId))
+						if id and id == equipID then
+							SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", "INSTransmogs;" .. InventorySlotId .. ";" .. transmogID..";"..equipID, "GUILD")
 						end
 					end
 				end
-				SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. from .. ">", "INSTransmogs:end", "GUILD")
 			end
 
 		elseif arg1 == prefix then
-			twfdebug(arg1)
-			twfdebug(arg2)
-			twfdebug(arg3)
-			twfdebug(arg4)
 			local message = arg2
 
 			if strfind(message, "AvailableTransmogs", 1, true) then
-				--AvailableTransmogs:slot:num:id1:id2:id3
-				--AvailableTransmogs:slot:num:0
-				--AvailableTransmogs:slot:num:end
-				local ex = explode(message, ":")
+				local data = explode(message, ":")
+				local InventorySlotId = tonumber(data[2])
 
-				twfdebug("ex4: [" .. ex[4] .."]")
-
-				local InventorySlotId = tonumber(ex[2])
-
-				if strfind(ex[4], "start", 1, true) then
+				if data[4] == "start" then
 					wipe(TransmogDataFromServer[InventorySlotId])
-				elseif strfind(ex[4], "end", 1, true) then
+				elseif data[4] == "end" then
 					Transmog:ShowAvailableTransmogs(InventorySlotId, true)
 				else
-					for i, itemID in ex do
-						if i > 3 then
-							itemID = tonumber(itemID)
-							if itemID ~= 0 then
-								Transmog:CacheItem(itemID)
-								table.insert(TransmogDataFromServer[InventorySlotId], itemID)
-							end
+					for i = 4, getn(data) do
+						local itemID = tonumber(data[i])
+						if itemID and itemID ~= 0 then
+							Transmog:CacheItem(itemID)
+							table.insert(TransmogDataFromServer[InventorySlotId], itemID)
 						end
 					end
 				end
 
 			elseif strfind(message, "TransmogStatus", 1, true) then
+				local data = explode(gsub(message, "TransmogStatus:", ""), ",")
 
-				local data = gsub(message, "TransmogStatus:", "")
-				if data then
-					local TransmogStatus = explode(data, ",")
-
-					for _, InventorySlotId in InventorySlots do
-						TransmogStatusFromServer[InventorySlotId] = 0
-						TransmogStatusToServer[InventorySlotId] = 0
+				for _, InventorySlotId in pairs(InventorySlots) do
+					local equipID = Transmog:IDFromLink(GetInventoryItemLink("player", InventorySlotId)) or 0
+					TransmogStatusFromServer[InventorySlotId] = 0
+					TransmogStatusToServer[InventorySlotId] = 0
+					if equipID ~= 0 and TransmogStatus[equipID] then
+						TransmogStatus[equipID] = nil
 					end
-					for _, d in TransmogStatus do
-						local _, _, InventorySlotId, itemID = strfind(d, "(%d+):(%d+)")
-						InventorySlotId = tonumber(InventorySlotId)
-						itemID = tonumber(itemID)
-						TransmogStatusFromServer[InventorySlotId] = itemID
-						TransmogStatusToServer[InventorySlotId] = itemID
+				end
 
-						if itemID ~= 0 then
-							Transmog:CacheItem(itemID)
+				for i = 1, getn(data) do
+					local _, _, InventorySlotId, itemID = strfind(data[i] or "", "(%d+):(%d+)")
+					InventorySlotId = tonumber(InventorySlotId)
+					itemID = tonumber(itemID)
+					if InventorySlotId and itemID then
+						Transmog:CacheItem(itemID)
+						if InventorySlotId ~= 0 then
+							TransmogStatusFromServer[InventorySlotId] = itemID
+							TransmogStatusToServer[InventorySlotId] = itemID
+							local equipID = Transmog:IDFromLink(GetInventoryItemLink("player", InventorySlotId)) or 0
+							if equipID ~= 0 then
+								TransmogStatus[equipID] = itemID
+							end
 						end
 					end
-
-					Transmog:TransmogStatus()
 				end
+
+				Transmog:TransmogStatus()
 
 			elseif strfind(message, "ResetResult:", 1, true) or strfind(message, "TransmogResult:", 1, true) then
 				local _, _, action, serverSlot, InventorySlotId, result = strfind(message, "(%w+)Result:(%d+):(%d+):(%d+)")
-				if action and serverSlot and InventorySlotId and result then
-					InventorySlotId = tonumber(InventorySlotId)
-					action = "Reset" and true or false
 
-					if result == "0" then
-						Transmog:AddAnimation(InventorySlotId, action)
-					else
-						twferror("Error: " .. result .. " (" .. TransmogErrors[result] .. ")")
-						Transmog:Reset()
-					end
+				if not action then
+					return
+				end
+
+				InventorySlotId = tonumber(InventorySlotId)
+				action = "Reset" and true or false
+
+				if result == "0" then
+					Transmog:AddAnimation(InventorySlotId, action)
+				else
+					twferror(result .. " (" .. TransmogErrors[result] .. ")")
+					Transmog:Reset()
 				end
 
 			elseif strfind(message, "NewTransmog", 1, true) then
 				local _, _, id = strfind(message, "NewTransmog:(%d+)")
-				if strfind(message, "|r") then
-					twfdebug("1message: [" .. message .. "] contains r")
-				end
-				if strfind(message, "|r", 1, true) then
-					twfdebug("2message: [" .. message .. "] contains r")
-				end
-				if id and tonumber(id) then
-					twfdebug("new transmog " .. id)
-					Transmog:AddWonItem(tonumber(id))
-				else
-					twfdebug("new transmog not number :[" .. id .. "]")
-				end
+				Transmog:AddWonItem(id)
 			end
 		end
 
 	elseif event == "VARIABLES_LOADED" then
-		if not BattlefieldMinimapOptions.transmog then
-			BattlefieldMinimapOptions.transmog = {}
-		end
-
-		TransmogConfig = BattlefieldMinimapOptions.transmog -- hax
-
-		if not TransmogConfig then
-			TransmogConfig = {}
-		end
-
-		if not TransmogConfig[player] then
-			TransmogConfig[player] = {}
-		end
-
-		if not TransmogConfig[player]["Outfits"] then
-			TransmogConfig[player]["Outfits"] = {}
-		end
+		TransmogStatus = TransmogStatus or {}
+		TransmogOutfits = TransmogOutfits or {}
 		-- cache outfit items
-		for _, data in pairs(TransmogConfig[player]["Outfits"]) do
+		for _, data in pairs(TransmogOutfits) do
 			for _, itemID in pairs(data) do
 				Transmog:CacheItem(itemID)
 			end
 		end
 		UIDropDownMenu_Initialize(TransmogFrameOutfits, OutfitsDropDown_Initialize)
+
+	elseif event == "PLAYER_LOGIN" then
+		Transmog:CacheEquippedGear()
 	end
 end
 
 function Transmog:EquippedItemsChanged()
-	for _, InventorySlotId in InventorySlots do
+	for _, InventorySlotId in pairs(InventorySlots) do
 		if GetInventoryItemLink("player", InventorySlotId) then
 			local _, _, eqItemLink = strfind(GetInventoryItemLink("player", InventorySlotId), "(item:%d+:%d+:%d+:%d+)")
 			if EquippedItems[InventorySlotId] ~= Transmog:IDFromLink(eqItemLink) then
@@ -546,10 +493,9 @@ function Transmog:EquippedItemsChanged()
 end
 
 function Transmog:CacheEquippedGear()
-	for _, InventorySlotId in InventorySlots do
-		if GetInventoryItemLink("player", InventorySlotId) then
-			Transmog:CacheItem(GetInventoryItemLink("player", InventorySlotId))
-		end
+	for _, InventorySlotId in pairs(InventorySlots) do
+		local link = GetInventoryItemLink("player", InventorySlotId)
+		if link then Transmog:CacheItem(link) end
 	end
 end
 
@@ -562,25 +508,16 @@ function Transmog_OnLoad()
 	this:RegisterEvent("UNIT_INVENTORY_CHANGED")
 	this:RegisterEvent("CHAT_MSG_ADDON")
 	this:RegisterEvent("VARIABLES_LOADED")
+	this:RegisterEvent("PLAYER_LOGIN")
 
-	LoadAddOn("Blizzard_BattlefieldMinimap")
-
-	Transmog:CacheItem(51217) -- Fashion Coin
-
-	TransmogFrameInstructions:SetText(TRANSMOG_INSTRUCTIONS)
-	TransmogFrameSetBonus:SetText("")
-	TransmogFrameNoTransmogs:SetText(TRANSMOG_NO_MOGS)
+	Transmog:CacheItem(fashionCoinID)
 
 	TransmogFrameSaveOutfit:Disable()
 	TransmogFrameDeleteOutfit:Hide()
 	UIDropDownMenu_SetWidth(123, TransmogFrameOutfits)
-	UIDropDownMenu_SetText(TEXT(TRANSMOG_OUTFITS), TransmogFrameOutfits)
-
-	-- pre cache equipped items
-	Transmog:CacheEquippedGear()
+	UIDropDownMenu_SetText(TRANSMOG_OUTFITS, TransmogFrameOutfits)
 
 	Transmog.newTransmogAlert:HideAnchor()
-
 	Transmog.delayedLoad:Show()
 
 	if class == "druid" or class == "shaman" or class == "paladin" then
@@ -590,9 +527,9 @@ function Transmog_OnLoad()
 	end
 
 	local original_SetInventoryItem = GameTooltip.SetInventoryItem
-	function GameTooltip.SetInventoryItem(self, unit, slot)
+	function GameTooltip.SetInventoryItem(self, unit, slot, nameOnly)
 		GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
-		return original_SetInventoryItem(self, unit, slot)
+		return original_SetInventoryItem(self, unit, slot, nameOnly)
 	end
 
 	local original_SetBagItem = GameTooltip.SetBagItem
@@ -602,23 +539,15 @@ function Transmog_OnLoad()
 	end
 end
 
-function Transmog:LoadOnce()
-	Transmog:Send("GetTransmogStatus")
-	-- Transmog:Send("GetSetsStatus:")
-end
-
 function TransmogFrame_OnShow()
-
-	Transmog_SwitchTab("items")
-	SetPortraitTexture(TransmogFramePortrait, "target")
-
+	currentTab = "items"
+	SetPortraitTexture(TransmogFramePortrait, "npc")
 	Transmog:GetFashionCoins()
 	Transmog:Reset()
 end
 
 function Transmog_OnHide()
 	HideUIPanel(GossipFrame)
-
 	PlaySound("igCharacterInfoClose")
 	currentSlotName = nil
 	currentSlot = nil
@@ -628,16 +557,12 @@ function Transmog_OnHide()
 	UIDropDownMenu_SetText(TRANSMOG_OUTFITS, TransmogFrameOutfits)
 end
 
-function Transmog:Reset(once)
-
-	if not once then
-		Transmog:Send("GetTransmogStatus")
-	end
+function Transmog:Reset()
+	Transmog:Send("GetTransmogStatus")
 
 	TransmogFrameRaceBackground:SetTexture("Interface\\TransmogFrame\\transmogbackground" .. race)
 	TransmogFrameSplash:Show()
 	TransmogFrameInstructions:Show()
-	TransmogFrameSetBonus:Show()
 	TransmogFrameApplyButton:Disable()
 
 	currentPage = 1
@@ -652,37 +577,17 @@ function Transmog:Reset(once)
 		local _, _, tabard = strfind(tabardLink, "item:(%d+)")
 		TransmogFramePlayerModel:TryOn(tonumber(tabard))
 	end
+
 	Transmog_SwitchTab(currentTab)
-	AddButtonOnEnterTextTooltip(TransmogFrameRevert, RESET)
 
 	currentOutfit = nil
-	TransmogFrameSaveOutfit:Disable()
-	TransmogFrameDeleteOutfit:Hide()
 	UIDropDownMenu_SetText(TRANSMOG_OUTFITS, TransmogFrameOutfits)
 	Transmog:HidePlayerItemsAnimation()
+	Transmog:UpdateOutfitButtons()
 end
 
 function Transmog:Send(data)
 	SendAddonMessage(prefix, data, "GUILD")
-	twfdebug("|cff69ccf0send -> " .. data)
-end
-
-function Transmog:SetProgressBar(collected, possible)
-	if collected > possible then
-		collected = possible
-	end
-
-	TransmogFrameCollectedBarText:SetText(collected .. "/" .. possible)
-
-	local fillBarWidth = (collected / possible) * TransmogFrameCollected:GetWidth()
-	TransmogFrameCollectedBarFillBar:SetPoint("TOPRIGHT", TransmogFrameCollected, "TOPLEFT", fillBarWidth, 0)
-	TransmogFrameCollectedBarFillBar:Show()
-
-	TransmogFrameCollectedBar:SetStatusBarColor(0.0, 0.0, 0.0, 0.5)
-	TransmogFrameCollectedBarBackground:SetVertexColor(0.0, 0.0, 0.0, 0.5)
-	TransmogFrameCollectedBarFillBar:SetVertexColor(0.0, 1.0, 0.0, 0.5)
-
-	TransmogFrameCollectedBar:Show()
 end
 
 function Transmog_Search()
@@ -709,8 +614,6 @@ Transmog.availableTransmogsCacheDelay:SetScript("OnUpdate", function()
 	local gt = GetTime() * 1000
 	local st = (this.startTime + plus) * 1000
 	if gt >= st then
-
-		twfdebug("delay cache: " .. Transmog.availableTransmogsCacheDelay.InventorySlotId)
 		Transmog:ShowAvailableTransmogs(Transmog.availableTransmogsCacheDelay.InventorySlotId, true)
 		Transmog.availableTransmogsCacheDelay:Hide()
 	end
@@ -739,7 +642,7 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 
 		wipe(AvailableTransmogItems[InventorySlotId])
 
-		for i, itemID in TransmogDataFromServer[InventorySlotId] do
+		for i, itemID in ipairs(TransmogDataFromServer[InventorySlotId]) do
 			itemID = tonumber(itemID)
 
 			local name, link, quality, _, itemType, itemSubType, _, equipSlot, texture = GetItemInfo(itemID)
@@ -747,7 +650,6 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 
 			if not name then
 				Transmog:CacheItem(itemID)
-				twfdebug("caching item " .. itemID)
 				if not Transmog.availableTransmogsCacheDelay:IsShown() then
 					Transmog.availableTransmogsCacheDelay.InventorySlotId = InventorySlotId
 					Transmog.availableTransmogsCacheDelay:Show()
@@ -774,7 +676,7 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 
 	local numItems = sizeof(AvailableTransmogItems[InventorySlotId])
 	totalPages = ceil(numItems / itemsPerPage)
-	TransmogFramePageText:SetText(TEXT(GENERIC_PAGE) .. " " .. currentPage .. "/" .. totalPages)
+	TransmogFramePageText:SetText(format(MERCHANT_PAGE_NUMBER, currentPage, totalPages))
 
 	if currentPage == 1 then
 		TransmogFrameLeftArrow:Disable()
@@ -805,7 +707,6 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 		return
 	end
 
-	-- Transmog:SetProgressBar(tsize(TransmogDataFromServer[InventorySlotId]), NumTransmogs[InventorySlotId])
 	if sizeof(TransmogDataFromServer[InventorySlotId]) == 0 then
 		TransmogFrameNoTransmogs:Show()
 	end
@@ -843,6 +744,7 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 			model = _G["TransmogLook" .. itemIndex .. "ItemModel"]
 
 			button:SetID(item.id)
+			button:Show()
 			revert:Hide()
 			check:Hide()
 
@@ -852,7 +754,9 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 			end
 
 			local _, _, _, color = GetItemQualityColor(item.quality)
-			AddButtonOnEnterTextTooltip(button, color .. item.name)
+			button.tooltipText = color .. item.name
+			button.tooltipSubText = nil
+
 			if item.reset then
 				revert:Show()
 			end
@@ -869,6 +773,7 @@ function Transmog:ShowAvailableTransmogs(InventorySlotId, refresh)
 			local f = Positions[InventorySlotId][race][sex][4]
 			model:SetPosition(0, 0, 0)
 			model:SetUnit("player")
+			model:SetAlpha(1)
 			model:Undress()
 			model:SetPosition(z, x, y)
 			model:SetFacing(f)
@@ -939,17 +844,15 @@ end
 
 function Transmog:TransmogStatus()
 	-- cache data
-	for InventorySlotId, itemID in TransmogStatusFromServer do
+	for InventorySlotId, itemID in pairs(TransmogStatusFromServer) do
 		if itemID ~= 0 then
-
-			local TransmogItemName = GetItemInfo(itemID)
-
-			if TransmogItemName then
+			local transmogName = GetItemInfo(itemID)
+			if transmogName then
+				local link = GetInventoryItemLink("player", InventorySlotId)
 				-- check if we actually have an item equipped
-				if GetInventoryItemLink("player", InventorySlotId) then
-					local _, _, eqItemLink = strfind(GetInventoryItemLink("player", InventorySlotId), "(item:%d+:%d+:%d+:%d+)")
-					local eName = GetItemInfo(eqItemLink)
-					EquippedTransmogs[eName] = TransmogItemName
+				if link then
+					local _, _, equipItemLink, equipName = strfind(link, "(item:%d+:%d+:%d+:%d+)|h%[(.+)%]")
+					if equipName then EquippedTransmogs[equipName] = transmogName end
 				end
 			else
 				Transmog:CacheItem(itemID)
@@ -957,68 +860,66 @@ function Transmog:TransmogStatus()
 		end
 	end
 
-	-- add paperdoll textures
-	for slotName, InventorySlotId in InventorySlots do
+	-- update item slots
+	for slotName, InventorySlotId in pairs(InventorySlots) do
 		local frame = _G[slotName]
-		if frame then
+		if frame and frame:IsShown() then
+			-- add paperdoll textures
+			local texture = strlower(gsub(slotName, "Slot", ""))
 
-			local texture
-			local tex = gsub(slotName, "Slot", "")
-			texture = string.lower(tex)
-
-			if texture == "wrist" then
-				texture = texture .. "s"
-			end
-			if texture == "back" then
-				texture = "chest"
-			end
+			if texture == "wrist" then texture = texture .. "s" end
+			if texture == "back" then texture = "chest" end
 
 			_G[slotName .. "ItemIcon"]:SetTexture("Interface\\Paperdoll\\ui-paperdoll-slot-" .. texture)
 			_G[slotName .. "NoEquip"]:Show()
 			_G[slotName .. "BorderHi"]:Hide()
+			frame.tooltipText = NORMAL_FONT_COLOR_CODE .. InventorySlotNames[InventorySlotId] .. FONT_COLOR_CODE_CLOSE
+			frame.tooltipSubText = nil
 
-			AddButtonOnEnterTextTooltip(frame, InventorySlotNames[InventorySlotId], TEXT(TRANSMOG_NO_ITEM), true)
-		end
-	end
+			-- add item textures
+			EquippedItems[InventorySlotId] = 0
+			Selection[InventorySlotId] = 0
+			local link = GetInventoryItemLink("player", InventorySlotId)
+			if link then
+				local _, _, eqItemLink = strfind(link, "(item:%d+:%d+:%d+:%d+)")
+				local itemName, _, quality, _, _, _, _, _, tex = GetItemInfo(eqItemLink)
+				local _, _, _, color = GetItemQualityColor(quality or 1)
 
-	-- add item textures
-	for slotName, InventorySlotId in InventorySlots do
-		EquippedItems[InventorySlotId] = 0
-		Selection[InventorySlotId] = 0
-		if GetInventoryItemLink("player", InventorySlotId) then
+				EquippedItems[InventorySlotId] = Transmog:IDFromLink(eqItemLink)
 
-			local _, _, eqItemLink = strfind(GetInventoryItemLink("player", InventorySlotId), "(item:%d+:%d+:%d+:%d+)")
-			local itemName, _, _, _, _, _, _, _, tex = GetItemInfo(eqItemLink)
+				if itemName then
+					Selection[InventorySlotId] = EquippedItems[InventorySlotId]
+					frame:Enable()
+					frame:SetID(InventorySlotId)
 
-			EquippedItems[InventorySlotId] = Transmog:IDFromLink(eqItemLink)
+					_G[slotName .. "AutoCast"]:Hide()
+					_G[slotName .. "AutoCast"]:SetModel("Interface\\Buttons\\UI-AutoCastButton.mdx")
+					_G[slotName .. "AutoCast"]:SetAlpha(0.3)
+					_G[slotName .. "NoEquip"]:Hide()
+					_G[slotName .. "Revert"]:Hide()
 
-			local frame = _G[slotName]
+					if TransmogStatusFromServer[InventorySlotId] and TransmogStatusFromServer[InventorySlotId] ~= 0 then
+						Selection[InventorySlotId] = TransmogStatusFromServer[InventorySlotId]
+						_G[slotName .. "BorderHi"]:Show()
 
-			if frame and frame:IsShown() then
-				Selection[InventorySlotId] = EquippedItems[InventorySlotId]
-				frame:Enable()
-				frame:SetID(InventorySlotId)
+						frame.tooltipText = color .. itemName
+						if EquippedTransmogs[itemName] then
+							frame.tooltipSubText = PINK .. TRANSMOG_CHANGED_TO.."\n"..EquippedTransmogs[itemName].."|r\n"..TRANSMOG_REVERT
+						end
 
-				_G[slotName .. "AutoCast"]:Hide()
-				_G[slotName .. "AutoCast"]:SetModel("Interface\\Buttons\\UI-AutoCastButton.mdx")
-				_G[slotName .. "AutoCast"]:SetAlpha(0.3)
-				_G[slotName .. "NoEquip"]:Hide()
-				_G[slotName .. "Revert"]:Hide()
-
-				if TransmogStatusFromServer[InventorySlotId] and TransmogStatusFromServer[InventorySlotId] ~= 0 then
-					Selection[InventorySlotId] = TransmogStatusFromServer[InventorySlotId]
-					_G[slotName .. "BorderHi"]:Show()
-					AddButtonOnEnterTooltipFashion(frame, eqItemLink, EquippedTransmogs[itemName], true)
-
-					local _, _, _, _, _, _, _, _, TransmogTex = GetItemInfo(TransmogStatusFromServer[InventorySlotId])
-
-					_G[slotName .. "ItemIcon"]:SetTexture(TransmogTex)
-					-- _G[slotName .. "Revert"]:Show()
-				else
-					_G[slotName .. "BorderHi"]:Hide()
-					AddButtonOnEnterTooltipFashion(frame, eqItemLink)
-					_G[slotName .. "ItemIcon"]:SetTexture(tex)
+						local _, _, _, _, _, _, _, _, TransmogTex = GetItemInfo(TransmogStatusFromServer[InventorySlotId])
+						if TransmogTex then
+							_G[slotName .. "ItemIcon"]:SetTexture(TransmogTex)
+						end
+					else
+						_G[slotName .. "BorderHi"]:Hide()
+						frame.tooltipText = color .. itemName
+						_G[slotName .. "ItemIcon"]:SetTexture(tex)
+					end
 				end
+			else
+				frame.tooltipSubText = RED_FONT_COLOR_CODE .. TRANSMOG_NO_ITEM .. FONT_COLOR_CODE_CLOSE
+				_G[slotName .. "NoEquip"]:Show()
 			end
 		end
 	end
@@ -1027,26 +928,16 @@ function Transmog:TransmogStatus()
 end
 
 function Transmog_ApplyOnClick()
-
 	local actionIndex = 0
 
 	TransmogFrameApplyButton:Disable()
-
 	Transmog.applyTimer.actions = {}
 
-	for InventorySlotId, itemID in TransmogStatusToServer do
-
+	for InventorySlotId, itemID in pairs(TransmogStatusToServer) do
 		if TransmogStatusFromServer[InventorySlotId] ~= itemID then
-
 			actionIndex = actionIndex + 1
-			local action
-			if itemID == 0 then
-				action = "reset"
-			else
-				action = "do"
-			end
 			Transmog.applyTimer.actions[actionIndex] = {
-				["type"] = action,
+				["type"] = itemID == 0 and "reset" or "do",
 				["serverSlot"] = Transmog:SlotIdToServerSlot(InventorySlotId),
 				["itemId"] = itemID,
 				["InventorySlotId"] = InventorySlotId,
@@ -1058,11 +949,10 @@ function Transmog_ApplyOnClick()
 	Transmog.applyTimer:Show()
 
 	PlaySoundFile("Interface\\TransmogFrame\\ui_transmogrify_apply.ogg")
-
 end
 
 function Transmog:AddAnimation(id, reset)
-	for slotName, InventorySlotId in InventorySlots do
+	for slotName, InventorySlotId in pairs(InventorySlots) do
 		if id == InventorySlotId then
 			local frame = _G[slotName]
 			if frame then
@@ -1088,7 +978,7 @@ function Transmog:UpdateSelection()
 	if not currentSlot then
 		return
 	end
-	for i, data in ItemButtons do
+	for i, data in pairs(ItemButtons) do
 		local button = _G["TransmogLook" .. i .. "Button"]
 		button:SetNormalTexture("Interface\\TransmogFrame\\item_bg_normal")
 		if (currentTab == "items" and data.id == Selection[currentSlot]) or (currentTab == "sets" and data.name == currentOutfit) then
@@ -1099,7 +989,8 @@ end
 
 function Transmog_Try(itemId, slotName, newReset)
 	local frame = _G[slotName]
-	if newReset and _G[slotName .. "NoEquip"]:IsVisible() then
+
+	if newReset and _G[slotName .. "NoEquip"]:IsShown() then
 		return false
 	end
 
@@ -1114,7 +1005,7 @@ function Transmog_Try(itemId, slotName, newReset)
 		Transmog:GetFashionCoins()
 		Transmog:TransmogStatus()
 
-		for InventorySlotId, data in TransmogStatusFromServer do
+		for InventorySlotId, data in pairs(TransmogStatusFromServer) do
 			TransmogStatusToServer[InventorySlotId] = data
 		end
 
@@ -1130,7 +1021,8 @@ function Transmog_Try(itemId, slotName, newReset)
 		local InventorySlotId = InventorySlots[slotName]
 		local equippedItemLink = GetInventoryItemLink("player", InventorySlotId)
 		local equippedItemID = Transmog:IDFromLink(equippedItemLink)
-		local equippedItemName = (GetItemInfo(equippedItemID))
+		local equippedItemName, _, equippedItemQuality = GetItemInfo(equippedItemID)
+		local _, _, _, eqippedItemColor = GetItemQualityColor(equippedItemQuality or 1)
 		-- change back to current transmog if this is second right-click on the same slot
 		if TransmogStatusToServer[InventorySlotId] == 0 and TransmogStatusFromServer[InventorySlotId] ~= 0 then
 			local transmogItemID = TransmogStatusFromServer[InventorySlotId]
@@ -1141,14 +1033,16 @@ function Transmog_Try(itemId, slotName, newReset)
 			Selection[InventorySlotId] = transmogItemID
 			EquippedTransmogs[equippedItemName] = transmogItemName
 			TransmogFramePlayerModel:TryOn(transmogItemID)
-			AddButtonOnEnterTooltipFashion(frame, equippedItemID, transmogItemName, true)
+			frame.tooltipText = eqippedItemColor .. equippedItemName
+			frame.tooltipSubText = PINK..TRANSMOG_CHANGED_TO.."\n"..transmogItemName.."|r\n"..TRANSMOG_REVERT
 			_G[slotName .. "ItemIcon"]:SetTexture(tex)
 			_G[slotName .. "BorderHi"]:Show()
 			_G[slotName .. "AutoCast"]:Hide()
 			_G[slotName .. "Revert"]:Hide()
 			Transmog:CalculateCost()
-			Transmog:EnableOutfitSaveButton()
+			Transmog:UpdateOutfitButtons()
 			Transmog:UpdateSelection()
+			frame:GetScript("OnEnter")()
 			return
 		end
 
@@ -1172,7 +1066,8 @@ function Transmog_Try(itemId, slotName, newReset)
 
 		_G[slotName .. "ItemIcon"]:SetTexture(tex)
 
-		AddButtonOnEnterTooltipFashion(frame, equippedItemLink)
+		frame.tooltipText = eqippedItemColor .. equippedItemName
+		frame.tooltipSubText = nil
 
 		local _, _, eqItemLink = strfind(equippedItemLink, "(item:%d+:%d+:%d+:%d+)")
 		local eName = GetItemInfo(eqItemLink)
@@ -1180,7 +1075,8 @@ function Transmog_Try(itemId, slotName, newReset)
 		EquippedTransmogs[eName] = nil
 
 		Transmog:CalculateCost()
-		Transmog:EnableOutfitSaveButton()
+		Transmog:UpdateOutfitButtons()
+		frame:GetScript("OnEnter")()
 		return true
 	end
 
@@ -1215,9 +1111,7 @@ function Transmog_Try(itemId, slotName, newReset)
 	_G[currentSlotName .. "ItemIcon"]:SetTexture(tex)
 
 	Transmog:CalculateCost()
-
-	Transmog:EnableOutfitSaveButton()
-
+	Transmog:UpdateOutfitButtons()
 end
 
 function Transmog:IDFromLink(link)
@@ -1225,21 +1119,13 @@ function Transmog:IDFromLink(link)
 		return tonumber(link)
 	end
 	local _, _, id = strfind(link or "", "item:(%d+)")
-	if id then
-		return tonumber(id)
-	end
+	return tonumber(id)
 end
 
 function Transmog:GetFashionCoins()
-
-	local name, linkString, _, _, _, _, _, _, tex = GetItemInfo(51217)
+	local name = GetItemInfo(fashionCoinID)
 	if not name then
-		return
-	end
-	local _, _, itemLink = strfind(linkString, "(item:%d+:%d+:%d+:%d+)")
-
-	if not name then
-		twferror("fashion coin not cached")
+		Transmog:CacheItem(fashionCoinID)
 		return
 	end
 
@@ -1247,12 +1133,10 @@ function Transmog:GetFashionCoins()
 
 	for bag = 0, 4 do
 		for slot = 0, GetContainerNumSlots(bag) do
-
 			local item = GetContainerItemLink(bag, slot)
-
 			if item then
 				local _, itemCount = GetContainerItemInfo(bag, slot)
-				if strfind(item, "item:51217:", 1, true) then
+				if strfind(item, "item:"..fashionCoinID..":", 1, true) then
 					fashionCoins = fashionCoins + tonumber(itemCount)
 				end
 			end
@@ -1275,7 +1159,8 @@ end
 
 function Transmog:HideItems()
 	for index in pairs(ItemButtons) do
-		_G["TransmogLook" .. index]:Hide()
+		_G["TransmogLook" .. index .. "Button"]:Hide()
+		_G["TransmogLook" .. index .. "ItemModel"]:SetAlpha(0)
 	end
 end
 
@@ -1292,7 +1177,7 @@ function Transmog:CalculateCost(to)
 	local cost = 0
 	local resets = 0
 
-	for InventorySlotId, data in TransmogStatusFromServer do
+	for InventorySlotId, data in pairs(TransmogStatusFromServer) do
 		if data ~= TransmogStatusToServer[InventorySlotId] then
 			if TransmogStatusToServer[InventorySlotId] ~= 0 then
 				cost = cost + 1
@@ -1353,26 +1238,22 @@ function Transmog_SelectSlot(InventorySlotId, slotName)
 
 	if InventorySlotId == -1 then
 		Transmog:HidePlayerItemsBorders()
-		-- Transmog:HidePlayerItemsAnimation()
 		Transmog:HideItems()
 		Transmog:HideItemBorders()
 		Transmog:HidePagination()
 		TransmogFrameSplash:Show()
 		TransmogFrameInstructions:Show()
-		TransmogFrameSetBonus:Show()
-		TransmogFrameCollectedBar:Hide()
 		currentSlotName = nil
 		currentSlot = nil
 		return true
 	end
 
-	if _G[slotName .. "NoEquip"]:IsVisible() then
+	if _G[slotName .. "NoEquip"]:IsShown() then
 		return false
 	end
 
 	TransmogFrameSplash:Hide()
 	TransmogFrameInstructions:Hide()
-	TransmogFrameSetBonus:Hide()
 
 	currentPage = 1
 	currentSlotName = slotName
@@ -1439,52 +1320,10 @@ function TransmogModel_OnLoad()
 	end)
 end
 
-function AddButtonOnEnterTextTooltip(frame, text, ext, error, anchor, x, y)
-	frame:SetScript("OnEnter", function()
-		if anchor and x and y then
-			FashionTooltip:SetOwner(this, anchor, x, y)
-		else
-			FashionTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4) + 15, -(this:GetHeight() / 4) + 20)
-		end
-
-		if error then
-			FashionTooltip:AddLine(FONT_COLOR_CODE_CLOSE .. text)
-			FashionTooltip:AddLine("|cffff2020" .. ext)
-		else
-			FashionTooltip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. text)
-			if ext then
-				FashionTooltip:AddLine(FONT_COLOR_CODE_CLOSE .. ext)
-			end
-		end
-		FashionTooltip:Show()
-	end)
-	frame:SetScript("OnLeave", function()
-		FashionTooltip:Hide()
-	end)
-end
-
-function AddButtonOnEnterTooltipFashion(frame, itemLink, TransmogText, revert)
-	frame:SetScript("OnEnter", function()
-		FashionTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4) + 10, -(this:GetHeight() / 4))
-		local id = Transmog:IDFromLink(itemLink)
-		local itemName, itemString, quality = GetItemInfo(id)
-		local r, g, b = GetItemQualityColor(quality or 1)
-		FashionTooltip:SetText(itemName, r, g, b, 1, false)
-		if TransmogText then
-			FashionTooltip:AddLine(TRANSMOG_CHANGED_TO, 0.96, 0.44, 0.96, false)
-			FashionTooltip:AddLine(TransmogText, 0.96, 0.44, 0.96, false)
-			if revert then
-				FashionTooltip:AddLine(TRANSMOG_REVERT)
-			end
-		end
-		FashionTooltip:Show()
-	end)
-	frame:SetScript("OnLeave", function()
-		FashionTooltip:Hide()
-	end)
-end
-
 function Transmog_ChangePage(dir)
+	if not currentSlot then
+		return
+	end
 	if (currentPage + dir < 1) or (currentPage + dir > totalPages) then
 		return
 	end
@@ -1503,15 +1342,18 @@ function Transmog_Revert()
 end
 
 function Transmog_SwitchTab(to)
-
 	currentTab = to
+
 	if to == "items" then
+		TransmogFrameItemsButton:Disable()
 		TransmogFrameItemsButton:SetNormalTexture("Interface\\TransmogFrame\\tab_active")
 		TransmogFrameItemsButton:SetPushedTexture("Interface\\TransmogFrame\\tab_active")
+		TransmogFrameItemsButton:SetDisabledTexture("Interface\\TransmogFrame\\tab_active")
 		TransmogFrameItemsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_ITEMS)
-
+		TransmogFrameSetsButton:Enable()
 		TransmogFrameSetsButton:SetNormalTexture("Interface\\TransmogFrame\\tab_inactive")
 		TransmogFrameSetsButton:SetPushedTexture("Interface\\TransmogFrame\\tab_inactive")
+		TransmogFrameSetsButton:SetDisabledTexture("Interface\\TransmogFrame\\tab_inactive")
 		TransmogFrameSetsButtonText:SetText(TRANSMOG_OUTFITS)
 
 		if currentSlot ~= nil then
@@ -1521,20 +1363,22 @@ function Transmog_SwitchTab(to)
 		end
 
 	elseif to == "sets" then
-		-- Transmog:Send("GetSetsStatus:")
 		Transmog_SelectSlot(-1)
 
 		TransmogFrameSplash:Hide()
 		TransmogFrameInstructions:Hide()
-		TransmogFrameSetBonus:Hide()
 
-		TransmogFrameSetsButton:SetNormalTexture("Interface\\TransmogFrame\\tab_active")
-		TransmogFrameSetsButton:SetPushedTexture("Interface\\TransmogFrame\\tab_active")
-		TransmogFrameSetsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_OUTFITS)
-
+		TransmogFrameItemsButton:Enable()
 		TransmogFrameItemsButton:SetNormalTexture("Interface\\TransmogFrame\\tab_inactive")
 		TransmogFrameItemsButton:SetPushedTexture("Interface\\TransmogFrame\\tab_inactive")
+		TransmogFrameItemsButton:SetDisabledTexture("Interface\\TransmogFrame\\tab_inactive")
 		TransmogFrameItemsButtonText:SetText(TRANSMOG_ITEMS)
+		TransmogFrameSetsButton:Disable()
+		TransmogFrameSetsButton:SetNormalTexture("Interface\\TransmogFrame\\tab_active")
+		TransmogFrameSetsButton:SetPushedTexture("Interface\\TransmogFrame\\tab_active")
+		TransmogFrameSetsButton:SetDisabledTexture("Interface\\TransmogFrame\\tab_active")
+		TransmogFrameSetsButtonText:SetText(HIGHLIGHT_FONT_COLOR_CODE .. TRANSMOG_OUTFITS)
+
 		currentPage = 1
 		Transmog:ShowSets()
 	end
@@ -1554,7 +1398,7 @@ function Transmog:ShowSets()
 	local upperLimit = currentPage * itemsPerPage
 	local button, revert, check, model
 
-	for setName, data in pairs(TransmogConfig[player].Outfits) do
+	for setName, data in pairs(TransmogOutfits) do
 
 		if index >= lowerLimit and index < upperLimit then
 
@@ -1574,6 +1418,7 @@ function Transmog:ShowSets()
 			model = _G["TransmogLook" .. setIndex .. "ItemModel"]
 
 			button:SetID(setIndex)
+			button:Show()
 			revert:Hide()
 			check:Hide()
 
@@ -1585,6 +1430,7 @@ function Transmog:ShowSets()
 			model:SetPosition(0, 0, 0)
 			model:SetUnit("player")
 			model:Undress()
+			model:SetAlpha(1)
 			model:SetPosition(1.5, 0, 0)
 			model:SetFacing(0.61)
 
@@ -1606,7 +1452,8 @@ function Transmog:ShowSets()
 			model:TryOn(data[16])
 			model:TryOn(data[17])
 
-			AddButtonOnEnterTextTooltip(button, setName, setItemsText)
+			button.tooltipText = HIGHLIGHT_FONT_COLOR_CODE..setName
+			button.tooltipSubText = setItemsText
 
 			col = col + 1
 			if col == 5 then
@@ -1620,8 +1467,8 @@ function Transmog:ShowSets()
 		index = index + 1
 	end
 
-	totalPages = ceil(sizeof(TransmogConfig[player].Outfits) / itemsPerPage)
-	TransmogFramePageText:SetText(GENERIC_PAGE .. " " .. currentPage .. "/" .. totalPages)
+	totalPages = ceil(sizeof(TransmogOutfits) / itemsPerPage)
+	TransmogFramePageText:SetText(format(MERCHANT_PAGE_NUMBER, currentPage, totalPages))
 
 	if currentPage == 1 then
 		TransmogFrameLeftArrow:Disable()
@@ -1629,7 +1476,7 @@ function Transmog:ShowSets()
 		TransmogFrameLeftArrow:Enable()
 	end
 
-	if currentPage == totalPages or sizeof(TransmogConfig[player].Outfits) < itemsPerPage then
+	if currentPage == totalPages or sizeof(TransmogOutfits) < itemsPerPage then
 		TransmogFrameRightArrow:Disable()
 	else
 		TransmogFrameRightArrow:Enable()
@@ -1640,8 +1487,6 @@ function Transmog:ShowSets()
 	else
 		Transmog:HidePagination()
 	end
-
-	-- Transmog:SetProgressBar(completedSets, tsize(AvailableSets))
 end
 
 local CharacterPaperDollFrames = {
@@ -1663,39 +1508,31 @@ local CharacterPaperDollFrames = {
 
 -- self
 EquipTransmogTooltip:SetScript("OnShow", function()
-	if GameTooltip.itemLink then
+	if not (GameTooltip.itemLink and PaperDollFrame:IsShown() and TransmogStatus) then
+		return
+	end
 
-		if not PaperDollFrame:IsVisible() then
-			return
-		end
+	local itemID = Transmog:IDFromLink(GameTooltip.itemLink)
 
-		local _, _, itemLink = strfind(GameTooltip.itemLink, "(item:%d+:%d+:%d+:%d+)")
+	if not itemID then
+		return
+	end
 
-		if not itemLink then
-			return
-		end
+	local transmogName = TransmogStatus[itemID] and GetItemInfo(TransmogStatus[itemID])
 
-		for _, frame in next, CharacterPaperDollFrames do
-			if GameTooltip:IsOwned(frame) == 1 then
+	if not transmogName then
+		return
+	end
 
-				local itemName = GetItemInfo(itemLink)
-
-				if EquippedTransmogs[itemName] then
-
-					local tLabel = _G[GameTooltip:GetName() .. "TextLeft2"]
-
-					if tLabel then
-						tLabel:SetText("|cfff471f5" .. TRANSMOG_CHANGED_TO .. "\n" .. EquippedTransmogs[itemName] .. "\n|cffffffff" .. tLabel:GetText())
-					end
-
-					GameTooltip:Show()
-					break
-				end
-
+	for _, frame in pairs(CharacterPaperDollFrames) do
+		if GameTooltip:IsOwned(frame) then
+			local fontString = _G[GameTooltip:GetName() .. "TextLeft2"]
+			if fontString then
+				fontString:SetText(PINK .. TRANSMOG_CHANGED_TO .. "\n" .. transmogName .. "\n|r" .. fontString:GetText())
 			end
-
+			GameTooltip:Show()
+			break
 		end
-
 	end
 end)
 
@@ -1721,35 +1558,33 @@ Transmog.applyTimer:SetScript("OnUpdate", function()
 	local plus = 0.1
 	local gt = GetTime() * 1000
 	local st = (this.startTime + plus) * 1000
-	if gt >= st then
-
-		Transmog.applyTimer.actionIndex = Transmog.applyTimer.actionIndex + 1
-
-		local action = Transmog.applyTimer.actions[Transmog.applyTimer.actionIndex]
-
-		if action then
-			if action.type == "do" then
-				Transmog:Send("DoTransmog:" .. action.serverSlot .. ":" .. action.itemId .. ":" .. action.InventorySlotId)
-				action.sent = true
-			else
-				if action.type == "reset" then
-					Transmog:Send("ResetTransmog:" .. action.serverSlot .. ":" .. action.InventorySlotId)
-					action.sent = true
-				end
-			end
-		end
-
-		local allDone = true
-		for _, action in Transmog.applyTimer.actions do
-			if not action.sent then
-				allDone = false
-			end
-		end
-		if allDone then
-			Transmog.applyTimer:Hide()
-		end
-		this.startTime = GetTime()
+	if gt < st then
+		return
 	end
+	Transmog.applyTimer.actionIndex = Transmog.applyTimer.actionIndex + 1
+
+	local action = Transmog.applyTimer.actions[Transmog.applyTimer.actionIndex]
+
+	if action then
+		if action.type == "do" then
+			Transmog:Send("DoTransmog:" .. action.serverSlot .. ":" .. action.itemId .. ":" .. action.InventorySlotId)
+			action.sent = true
+		elseif action.type == "reset" then
+			Transmog:Send("ResetTransmog:" .. action.serverSlot .. ":" .. action.InventorySlotId)
+			action.sent = true
+		end
+	end
+
+	local allDone = true
+	for _, action in pairs(Transmog.applyTimer.actions) do
+		if not action.sent then
+			allDone = false
+		end
+	end
+	if allDone then
+		Transmog.applyTimer:Hide()
+	end
+	this.startTime = GetTime()
 end)
 
 -- DoTransmog/ResetTransmog Animation
@@ -1758,7 +1593,7 @@ Transmog.itemAnimation:Hide()
 
 Transmog.itemAnimation:SetScript("OnShow", function()
 	this.startTime = GetTime()
-	for _, frame in Transmog.itemAnimationFrames do
+	for _, frame in pairs(Transmog.itemAnimationFrames) do
 		frame.autocast:Hide()
 		if frame.reset then
 			frame.borderFull:Show()
@@ -1788,41 +1623,40 @@ Transmog.itemAnimation:SetScript("OnUpdate", function()
 	local plus = 0.01
 	local gt = GetTime() * 1000
 	local st = (this.startTime + plus) * 1000
-	if gt >= st then
-
-		for index, frame in Transmog.itemAnimationFrames do
-			if frame.reset then
-				frame.borderFull:SetAlpha(frame.borderFull:GetAlpha() - 0.05)
-				if frame.borderHi:GetWidth() > 32 then
-					frame.borderHi:SetWidth(frame.borderHi:GetWidth() - 0.5)
-					frame.borderHi:SetHeight(frame.borderHi:GetHeight() - 0.5)
-				end
-			else
-				frame.borderFull:SetAlpha(frame.borderFull:GetAlpha() + 0.05 * frame.dir)
-				if frame.borderHi:GetWidth() < 48 then
-					frame.borderHi:SetWidth(frame.borderHi:GetWidth() + 0.5)
-					frame.borderHi:SetHeight(frame.borderHi:GetHeight() + 0.5)
-				end
-			end
-			if frame.borderFull:GetAlpha() >= 1 then
-				frame.dir = -1
-			end
-			if frame.borderFull:GetAlpha() <= 0.1 then
-				frame.borderHi:Hide()
-				frame.borderHi:SetWidth(48)
-				frame.borderHi:SetHeight(48)
-
-				Transmog.itemAnimationFrames[index] = nil
-			end
-		end
-
-		if sizeof(Transmog.itemAnimationFrames) == 0 then
-			Transmog.itemAnimation:Hide()
-		end
-
-		this.startTime = GetTime()
-
+	if gt < st then
+		return
 	end
+	for index, frame in pairs(Transmog.itemAnimationFrames) do
+		if frame.reset then
+			frame.borderFull:SetAlpha(frame.borderFull:GetAlpha() - 0.05)
+			if frame.borderHi:GetWidth() > 32 then
+				frame.borderHi:SetWidth(frame.borderHi:GetWidth() - 0.5)
+				frame.borderHi:SetHeight(frame.borderHi:GetHeight() - 0.5)
+			end
+		else
+			frame.borderFull:SetAlpha(frame.borderFull:GetAlpha() + 0.05 * frame.dir)
+			if frame.borderHi:GetWidth() < 48 then
+				frame.borderHi:SetWidth(frame.borderHi:GetWidth() + 0.5)
+				frame.borderHi:SetHeight(frame.borderHi:GetHeight() + 0.5)
+			end
+		end
+		if frame.borderFull:GetAlpha() >= 1 then
+			frame.dir = -1
+		end
+		if frame.borderFull:GetAlpha() <= 0.1 then
+			frame.borderHi:Hide()
+			frame.borderHi:SetWidth(48)
+			frame.borderHi:SetHeight(48)
+
+			Transmog.itemAnimationFrames[index] = nil
+		end
+	end
+
+	if sizeof(Transmog.itemAnimationFrames) == 0 then
+		Transmog.itemAnimation:Hide()
+	end
+
+	this.startTime = GetTime()
 end)
 
 -- delayedLoad Timer - disabled for now
@@ -1830,12 +1664,10 @@ Transmog.delayedLoad = CreateFrame("Frame")
 Transmog.delayedLoad:Hide()
 
 Transmog.delayedLoad:SetScript("OnShow", function()
-	twfdebug("delayedLoad show")
 	this.startTime = GetTime()
 end)
 Transmog.delayedLoad:SetScript("OnHide", function()
-	Transmog:LoadOnce()
-	Transmog:Reset(true)
+	Transmog:Reset()
 end)
 
 Transmog.delayedLoad:SetScript("OnUpdate", function()
@@ -1876,7 +1708,7 @@ Transmog.delayAddWonItem:SetScript("OnUpdate", function()
 	if gt >= st then
 
 		local atLeastOne = false
-		for id, data in next, Transmog.delayAddWonItem.data do
+		for id, data in pairs(Transmog.delayAddWonItem.data) do
 			if Transmog.delayAddWonItem.data[id] then
 				atLeastOne = true
 				Transmog:AddWonItem(id)
@@ -1891,81 +1723,72 @@ Transmog.delayAddWonItem:SetScript("OnUpdate", function()
 end)
 
 Transmog.gearChangedDelay = CreateFrame("Frame")
-Transmog.gearChangedDelay:Hide()
-Transmog.gearChangedDelay.delay = 1
+Transmog.gearChangedDelay.delay = nil
 
-Transmog.gearChangedDelay:SetScript("OnShow", function()
-	this.startTime = GetTime()
-end)
 Transmog.gearChangedDelay:SetScript("OnUpdate", function()
-	local gt = GetTime() * 1000
-	local st = (this.startTime + Transmog.gearChangedDelay.delay) * 1000
-	if gt >= st then
-
+	if not this.delay then return end
+	this.delay = this.delay - arg1
+	if this.delay <= 0 then
+		this.delay = nil
 		Transmog_SelectSlot(-1)
 		Transmog_Revert()
-
-		Transmog.gearChangedDelay:Hide()
 	end
 end)
 
 function Transmog:AddWonItem(itemID)
-	Transmog:CacheItem(itemID)
+	itemID = tonumber(itemID)
+	if not itemID then
+		return
+	end
 
+	Transmog:CacheItem(itemID)
 	local name, linkString, quality, _, _, _, _, _, tex = GetItemInfo(itemID)
 
-	if name then
-
-		local _, _, itemLink = strfind(linkString, "(item:%d+:%d+:%d+:%d+)")
-
-		if not name or not quality then
-			Transmog.delayAddWonItem.data[itemID] = true
-			Transmog.delayAddWonItem:Show()
-			return false
-		end
-		local _, _, _, color = GetItemQualityColor(quality)
-		twfprint(color.."|H"..linkString.."|h[" .. name .. "]|h|r" .. "|cffFFFF00 " .. TRANSMOG_APPEARANCE_COLLECTED)
-
-		local newTransmogIndex = 0
-		for i = 1, sizeof(Transmog.newTransmogAlert.wonItems), 1 do
-			if not Transmog.newTransmogAlert.wonItems[i].active then
-				newTransmogIndex = i
-				break
-			end
-		end
-
-		if newTransmogIndex == 0 then
-			newTransmogIndex = sizeof(Transmog.newTransmogAlert.wonItems) + 1
-		end
-
-		if not Transmog.newTransmogAlert.wonItems[newTransmogIndex] then
-			Transmog.newTransmogAlert.wonItems[newTransmogIndex] = CreateFrame("Frame", "NewTransmogAlertFrame" .. newTransmogIndex, NewTransmogAlertFrame, "TransmogWonItemTemplate")
-		end
-
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex]:SetPoint("TOP", NewTransmogAlertFrame, "BOTTOM", 0, (20 + 100 * newTransmogIndex))
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex].active = true
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex].frameIndex = 0
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex].doAnim = true
-
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex]:SetAlpha(0)
-		Transmog.newTransmogAlert.wonItems[newTransmogIndex]:Show()
-
-		_G["NewTransmogAlertFrame" .. newTransmogIndex .. "Icon"]:SetNormalTexture(tex)
-		_G["NewTransmogAlertFrame" .. newTransmogIndex .. "Icon"]:SetPushedTexture(tex)
-		_G["NewTransmogAlertFrame" .. newTransmogIndex .. "ItemName"]:SetText(HIGHLIGHT_FONT_COLOR_CODE .. name)
-
-		_G["NewTransmogAlertFrame" .. newTransmogIndex .. "Icon"]:SetScript("OnEnter", function()
-			FashionTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, 0)
-			FashionTooltip:SetHyperlink(itemLink)
-			FashionTooltip:Show()
-		end)
-		_G["NewTransmogAlertFrame" .. newTransmogIndex .. "Icon"]:SetScript("OnLeave", function()
-			FashionTooltip:Hide()
-		end)
-
-		Transmog:StartNewTransmogAlertAnimation()
-
+	if not name then
+		return
 	end
+
+	local _, _, itemLink = strfind(linkString, "(item:%d+:%d+:%d+:%d+)")
+
+	if not name or not quality then
+		Transmog.delayAddWonItem.data[itemID] = true
+		Transmog.delayAddWonItem:Show()
+		return
+	end
+
+	local _, _, _, color = GetItemQualityColor(quality)
+	twfprint(format(TRANSMOG_APPEARANCE_COLLECTED, color.."|H"..linkString.."|h[" .. name .. "]|h|r"))
+
+	local newTransmogIndex = 0
+	for i = 1, sizeof(Transmog.newTransmogAlert.wonItems) do
+		if not Transmog.newTransmogAlert.wonItems[i].active then
+			newTransmogIndex = i
+			break
+		end
+	end
+
+	if newTransmogIndex == 0 then
+		newTransmogIndex = sizeof(Transmog.newTransmogAlert.wonItems) + 1
+	end
+
+	local frame = Transmog.newTransmogAlert.wonItems[newTransmogIndex]
+	if not frame then
+		frame = CreateFrame("Frame", "NewTransmogAlertFrame" .. newTransmogIndex, NewTransmogAlertFrame, "TransmogWonItemTemplate")
+		Transmog.newTransmogAlert.wonItems[newTransmogIndex] = frame
+	end
+
+	frame.active = true
+	frame.doAnim = true
+	frame.frameIndex = 0
+	frame.itemLink = itemLink
+	frame:SetPoint("CENTER", NewTransmogAlertFrame, "CENTER", 0, 80 * newTransmogIndex)
+	frame:SetAlpha(0)
+	frame:Show()
+
+	_G["NewTransmogAlertFrame" .. newTransmogIndex .. "Icon"]:SetNormalTexture(tex)
+	_G["NewTransmogAlertFrame" .. newTransmogIndex .. "ItemName"]:SetText(HIGHLIGHT_FONT_COLOR_CODE .. name)
+
+	Transmog:StartNewTransmogAlertAnimation()
 end
 
 function Transmog_TestNewTransmogAlert()
@@ -1976,7 +1799,7 @@ function Transmog:StartNewTransmogAlertAnimation()
 	if sizeof(Transmog.newTransmogAlert.wonItems) > 0 then
 		Transmog.newTransmogAlert.showLootWindow = true
 	end
-	if not Transmog.newTransmogAlert:IsVisible() then
+	if not Transmog.newTransmogAlert:IsShown() then
 		Transmog.newTransmogAlert:Show()
 	end
 end
@@ -1986,66 +1809,52 @@ Transmog.newTransmogAlert.showLootWindow = false
 Transmog.newTransmogAlert:SetScript("OnShow", function()
 	this.startTime = GetTime()
 end)
+
 Transmog.newTransmogAlert:SetScript("OnUpdate", function()
-	if Transmog.newTransmogAlert.showLootWindow then
-		if GetTime() >= (this.startTime + 0.03) then
+	if not Transmog.newTransmogAlert.showLootWindow then
+		return
+	end
 
-			this.startTime = GetTime()
+	if GetTime() < (this.startTime + 0.03) then
+		return
+	end
 
-			for i, d in next, Transmog.newTransmogAlert.wonItems do
+	this.startTime = GetTime()
 
-				if Transmog.newTransmogAlert.wonItems[i].active then
+	for i, item in pairs(Transmog.newTransmogAlert.wonItems) do
+		if item.active then
+			local frame = _G["NewTransmogAlertFrame" .. i]
+			local backdrop = _G["NewTransmogAlertFrame" .. i .. "Backdrop"]
+			local image = "loot_frame_xmog_"
 
-					local frame = _G["NewTransmogAlertFrame" .. i]
-					local image = "loot_frame_xmog_"
-					local icon = _G["NewTransmogAlertFrame" .. i .. "Icon"]
-					local iconTexture = _G["NewTransmogAlertFrame" .. i .. "IconNormalTexture"]
+			if item.frameIndex < 10 then
+				image = image .. "0" .. item.frameIndex
+			else
+				image = image .. item.frameIndex
+			end
 
-					icon:SetPoint("LEFT", 160, -9)
-					icon:SetWidth(36)
-					icon:SetHeight(36)
-					iconTexture:SetWidth(36)
-					iconTexture:SetHeight(36)
+			item.frameIndex = item.frameIndex + 1
 
-					if Transmog.newTransmogAlert.wonItems[i].frameIndex < 10 then
-						image = image .. "0" .. Transmog.newTransmogAlert.wonItems[i].frameIndex
-					else
-						image = image .. Transmog.newTransmogAlert.wonItems[i].frameIndex
-					end
-
-					Transmog.newTransmogAlert.wonItems[i].frameIndex = Transmog.newTransmogAlert.wonItems[i].frameIndex + 1
-
-					if Transmog.newTransmogAlert.wonItems[i].doAnim then
-
-						local backdrop = {
-							bgFile = "Interface\\TransmogFrame\\anim\\" .. image,
-							tile = false
-						}
-						if Transmog.newTransmogAlert.wonItems[i].frameIndex <= 30 then
-							frame:SetBackdrop(backdrop)
-						end
-						frame:SetAlpha(frame:GetAlpha() + 0.03)
-						icon:SetAlpha(frame:GetAlpha() + 0.03)
-					end
-
-					if Transmog.newTransmogAlert.wonItems[i].frameIndex == 35 then
-						--stop and hold last frame
-						Transmog.newTransmogAlert.wonItems[i].doAnim = false
-					end
-
-					if Transmog.newTransmogAlert.wonItems[i].frameIndex > 119 then
-						frame:SetAlpha(frame:GetAlpha() - 0.03)
-						icon:SetAlpha(frame:GetAlpha() + 0.03)
-					end
-
-					if Transmog.newTransmogAlert.wonItems[i].frameIndex == 150 then
-
-						Transmog.newTransmogAlert.wonItems[i].frameIndex = 0
-						frame:Hide()
-						Transmog.newTransmogAlert.wonItems[i].active = false
-
-					end
+			if item.doAnim then
+				if item.frameIndex <= 30 then
+					backdrop:SetTexture("Interface\\TransmogFrame\\anim\\" .. image)
 				end
+				frame:SetAlpha(frame:GetAlpha() + 0.03)
+			end
+
+			if item.frameIndex == 35 then
+				--stop and hold last frame
+				item.doAnim = false
+			end
+
+			if item.frameIndex > 119 then
+				frame:SetAlpha(frame:GetAlpha() - 0.03)
+			end
+
+			if frame:GetAlpha() <= 0 then
+				item.frameIndex = 0
+				item.active = false
+				frame:Hide()
 			end
 		end
 	end
@@ -2069,23 +1878,23 @@ end
 
 function OutfitsDropDown_Initialize()
 	local info = UIDropDownMenu_CreateInfo()
-	if sizeof(TransmogConfig[player]["Outfits"]) < UIDROPDOWNMENU_MAXBUTTONS then
+	if sizeof(TransmogOutfits) < UIDROPDOWNMENU_MAXBUTTONS then
 		local _, _, _, color = GetItemQualityColor(2)
-		info.text = color .. "+ " .. TEXT(TRANSMOG_NEW_OUTFIT)
+		info.text = color .. "+ " .. TRANSMOG_NEW_OUTFIT
 		info.value = 1
-		info.arg1 = 1
 		info.checked = false
-		info.func = Transmog_NewOutfitPopup
+		info.func = StaticPopup_Show
+		info.arg1 = "TRANSMOG_NEW_OUTFIT"
 		info.tooltipTitle = nil
 		info.tooltipText = nil
 		UIDropDownMenu_AddButton(info)
 	end
-	for name, data in TransmogConfig[player]["Outfits"] do
+	for name, data in pairs(TransmogOutfits) do
 		info.text = name
 		info.value = 1
-		info.arg1 = name
 		info.checked = currentOutfit == name
 		info.func = Transmog_LoadOutfit
+		info.arg1 = name
 		info.tooltipTitle = name
 		local descText = ""
 		for slot, slotName in ipairs(InventorySlotNames) do
@@ -2158,11 +1967,10 @@ end
 function Transmog_LoadOutfit(outfit)
 	UIDropDownMenu_SetText(outfit, TransmogFrameOutfits)
 	currentOutfit = outfit
-	Transmog:EnableOutfitSaveButton()
-	TransmogFrameDeleteOutfit:Show()
+	Transmog:UpdateOutfitButtons()
 	Transmog:HideItemBorders()
 
-	for slot, itemID in TransmogConfig[player]["Outfits"][outfit] do
+	for slot, itemID in pairs(TransmogOutfits[outfit]) do
 
 		local invType, texture
 		local hasItemEquipped = false
@@ -2192,14 +2000,11 @@ function Transmog_LoadOutfit(outfit)
 
 					if TransmogStatusToServer[slot] ~= itemID then
 						_G[frame:GetName() .. "BorderHi"]:Show()
-						-- _G[frame:GetName() .. "AutoCast"]:Show()
 					end
 
 					if itemID == 0 or itemID == eqItemID then
 						_G[frame:GetName() .. "BorderHi"]:Hide()
-						-- _G[frame:GetName() .. "AutoCast"]:Hide()
 					end
-
 				end
 				if itemID ~= eqItemID then
 					TransmogStatusToServer[slot] = itemID
@@ -2223,10 +2028,13 @@ function Transmog_LoadOutfit(outfit)
 end
 
 function Transmog_SaveOutfit()
-	TransmogConfig[player]["Outfits"][currentOutfit] = {}
+	if not currentOutfit then
+		return
+	end
+	TransmogOutfits[currentOutfit] = {}
 	for InventorySlotId, itemID in pairs(Selection) do
 		if itemID ~= 0 then
-			TransmogConfig[player]["Outfits"][currentOutfit][InventorySlotId] = itemID
+			TransmogOutfits[currentOutfit][InventorySlotId] = itemID
 		end
 	end
 	TransmogFrameSaveOutfit:Disable()
@@ -2235,25 +2043,28 @@ function Transmog_SaveOutfit()
 	end
 end
 
-function Transmog:EnableOutfitSaveButton()
+function Transmog:UpdateOutfitButtons()
 	if currentOutfit ~= nil then
 		TransmogFrameSaveOutfit:Enable()
+		TransmogFrameDeleteOutfit:Show()
+	else
+		TransmogFrameSaveOutfit:Disable()
+		TransmogFrameDeleteOutfit:Hide()
 	end
 end
 
 function Transmog_DeleteOutfit()
-	TransmogConfig[player]["Outfits"][currentOutfit] = nil
-	TransmogFrameSaveOutfit:Disable()
-	TransmogFrameDeleteOutfit:Hide()
-	currentOutfit = nil
-	UIDropDownMenu_SetText(TEXT(TRANSMOG_OUTFITS), TransmogFrameOutfits)
+	if not currentOutfit then
+		return
+	end
+	TransmogOutfits[currentOutfit] = nil
 	Transmog_Revert()
 end
 
 StaticPopupDialogs["TRANSMOG_NEW_OUTFIT"] = {
-	text = TEXT(TRANSMOG_OUTFIT_NAME) .. ":",
-	button1 = TEXT(SAVE),
-	button2 = TEXT(CANCEL),
+	text = TRANSMOG_OUTFIT_NAME,
+	button1 = SAVE,
+	button2 = CANCEL,
 	hasEditBox = 1,
 	OnShow = function()
 		_G[this:GetName() .. "EditBox"]:SetScript("OnEnterPressed", function()
@@ -2271,93 +2082,56 @@ StaticPopupDialogs["TRANSMOG_NEW_OUTFIT"] = {
 			StaticPopup_Show("TRANSMOG_OUTFIT_EMPTY_NAME")
 			return
 		end
-		if TransmogConfig[player]["Outfits"][outfitName] then
+		if TransmogOutfits[outfitName] then
 			StaticPopup_Show("TRANSMOG_OUTFIT_EXISTS")
 			return
 		end
 		UIDropDownMenu_SetText(outfitName, TransmogFrameOutfits)
 		currentOutfit = outfitName
-		Transmog:EnableOutfitSaveButton()
+		Transmog:UpdateOutfitButtons()
 		Transmog_SaveOutfit()
 		_G[this:GetParent():GetName() .. "EditBox"]:SetText("")
 	end,
-	timeout = 0,
-	whileDead = 0,
 	hideOnEscape = 1,
 }
 
 StaticPopupDialogs["TRANSMOG_OUTFIT_EXISTS"] = {
-	text = TEXT(TRANSMOG_OUTFIT_NAME_TAKEN),
-	button1 = TEXT(OKAY),
-	timeout = 0,
+	text = TRANSMOG_OUTFIT_NAME_TAKEN,
+	button1 = OKAY,
 	exclusive = 1,
 	whileDead = 1,
 	hideOnEscape = 1
 }
 
 StaticPopupDialogs["TRANSMOG_OUTFIT_EMPTY_NAME"] = {
-	text = TEXT(TRANSMOG_OUTFIT_NAME_EMPTY),
-	button1 = TEXT(OKAY),
-	timeout = 0,
+	text = TRANSMOG_OUTFIT_NAME_EMPTY,
+	button1 = OKAY,
 	exclusive = 1,
 	whileDead = 1,
 	hideOnEscape = 1
 }
 
 StaticPopupDialogs["CONFIRM_DELETE_OUTFIT"] = {
-	text = TEXT(TRANSMOG_OUTFIT_DELETE),
-	button1 = TEXT(YES),
-	button2 = TEXT(NO),
-	OnAccept = function()
-		Transmog_DeleteOutfit()
-	end,
-	timeout = 0,
+	text = TRANSMOG_OUTFIT_DELETE,
+	button1 = YES,
+	button2 = NO,
+	OnAccept = Transmog_DeleteOutfit,
 	whileDead = 1,
 	hideOnEscape = 1,
 }
 
-function Transmog_NewOutfitPopup()
-	StaticPopup_Show("TRANSMOG_NEW_OUTFIT")
-end
-
 function Transmog:CacheItem(linkOrID)
-	if not linkOrID or linkOrID == 0 then
-		twfdebug("cache item call with null " .. type(linkOrID))
-		return
-	end
-	if tonumber(linkOrID) then
-		if GetItemInfo(linkOrID) then
-			return true
-		else
-			GameTooltip:SetHyperlink("item:"..linkOrID)
-		end
-		return
-	end
-	local _, _, id = strfind(linkOrID, "(item:%d+)")
-	if id then
-		if GetItemInfo(id) then
-			return true
-		else
-			GameTooltip:SetHyperlink(id)
-		end
-	end
+	local id = self:IDFromLink(linkOrID)
+
+	if not id or id == 0 then return end
+	if GetItemInfo(id) then return true end
+
+	GameTooltip:SetHyperlink("item:"..id)
 end
 
 SLASH_TRANSMOG1 = "/transmog"
 SlashCmdList["TRANSMOG"] = function(cmd)
 	if cmd then
 		Transmog.newTransmogAlert:ShowAnchor()
-	end
-end
-SLASH_TRANSMOGDEBUG1 = "/transmogdebug"
-SlashCmdList["TRANSMOGDEBUG"] = function(cmd)
-	if cmd then
-		if transmogDebug then
-			transmogDebug = false
-			twfprint("Transmog debug off")
-		else
-			transmogDebug = true
-			twfprint("Transmog debug on")
-		end
 	end
 end

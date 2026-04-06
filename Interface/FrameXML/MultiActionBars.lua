@@ -4,47 +4,35 @@ NUM_MULTIBAR_BUTTONS = 12;
 SHOW_MULTI_ACTIONBAR_1, SHOW_MULTI_ACTIONBAR_2, SHOW_MULTI_ACTIONBAR_3, SHOW_MULTI_ACTIONBAR_4 = nil;
 STATE_MultiBar1, STATE_MultiBar2, STATE_MultiBar3, STATE_MultiBar4, STATE_AlwaysShowMultibars = nil;
 
-
 function MultiActionBarFrame_OnLoad()
 	-- Hack to get around load order dependencies
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR1_TEXT"].setFunc = Multibar_EmptyFunc;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR2_TEXT"].setFunc = Multibar_EmptyFunc;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR3_TEXT"].setFunc = Multibar_EmptyFunc;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR4_TEXT"].setFunc = Multibar_EmptyFunc;
-	UIOptionsFrameCheckButtons["ALWAYS_SHOW_MULTIBARS_TEXT"].setFunc = Multibar_EmptyFunc;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR1_TEXT"].func = MultiBar1_IsVisible;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR2_TEXT"].func = MultiBar2_IsVisible;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR3_TEXT"].func = MultiBar3_IsVisible;
-	UIOptionsFrameCheckButtons["SHOW_MULTIBAR4_TEXT"].func = MultiBar4_IsVisible;
-	UIOptionsFrameCheckButtons["ALWAYS_SHOW_MULTIBARS_TEXT"].func = MultibarGrid_IsVisible;
+
 	-- This is where i will load the actionbar states
 	--MultiActionBar_Update();
 end
 
 function MultiActionButtonDown(bar, id)
-	local button = getglobal(bar.."Button"..id);
+	local button = _G[bar.."Button"..id];
 	if ( button:GetButtonState() == "NORMAL" ) then
 		button:SetButtonState("PUSHED");
 	end
 end
 
 function MultiActionButtonUp(bar, id, onSelf)
-	local button = getglobal(bar.."Button"..id);
+	local button = _G[bar.."Button"..id];
 	if ( button:GetButtonState() == "PUSHED" ) then
 		button:SetButtonState("NORMAL");
 		if ( MacroFrame_SaveMacro ) then
 			MacroFrame_SaveMacro();
 		end
-		UseAction(ActionButton_GetPagedID(button), 0, onSelf);
-		if ( IsCurrentAction(ActionButton_GetPagedID(button)) ) then
+		UseAction(button.action, 0, onSelf);
+		if ( IsCurrentAction(button.action) ) then
 			button:SetChecked(1);
 		else
 			button:SetChecked(0);
 		end
 	end
 end
-
-
 
 function MultiActionBar_Update()
 	if ( SHOW_MULTI_ACTIONBAR_1 ) then
@@ -96,11 +84,10 @@ end
 function MultiActionBar_UpdateGrid(barName, show)
 	for i=1, NUM_MULTIBAR_BUTTONS do
 		if ( show ) then
-			ActionButton_ShowGrid(getglobal(barName.."Button"..i));
+			ActionButton_ShowGrid(_G[barName.."Button"..i]);
 		else
-			ActionButton_HideGrid(getglobal(barName.."Button"..i));
+			ActionButton_HideGrid(_G[barName.."Button"..i]);
 		end
-
 	end
 end
 
@@ -141,3 +128,34 @@ function MultiBar4_IsVisible()
 	return SHOW_MULTI_ACTIONBAR_4;
 end
 
+function MultiBar1_Update(state)
+	SHOW_MULTI_ACTIONBAR_1 = tonumber(state) == 1 and 1 or nil
+	MultiActionBar_Update();
+	UIParent_ManageFramePositions();
+
+	SetActionBarToggles(SHOW_MULTI_ACTIONBAR_1, SHOW_MULTI_ACTIONBAR_2, SHOW_MULTI_ACTIONBAR_3, SHOW_MULTI_ACTIONBAR_4, ALWAYS_SHOW_MULTIBARS);
+end
+
+function MultiBar2_Update(state)
+	SHOW_MULTI_ACTIONBAR_2 = tonumber(state) == 1 and 1 or nil
+	MultiActionBar_Update();
+	UIParent_ManageFramePositions();
+
+	SetActionBarToggles(SHOW_MULTI_ACTIONBAR_1, SHOW_MULTI_ACTIONBAR_2, SHOW_MULTI_ACTIONBAR_3, SHOW_MULTI_ACTIONBAR_4, ALWAYS_SHOW_MULTIBARS);
+end
+
+function MultiBar3_Update(state)
+	SHOW_MULTI_ACTIONBAR_3 = tonumber(state) == 1 and 1 or nil
+	MultiActionBar_Update();
+	UIParent_ManageFramePositions();
+
+	SetActionBarToggles(SHOW_MULTI_ACTIONBAR_1, SHOW_MULTI_ACTIONBAR_2, SHOW_MULTI_ACTIONBAR_3, SHOW_MULTI_ACTIONBAR_4, ALWAYS_SHOW_MULTIBARS);
+end
+
+function MultiBar4_Update(state)
+	SHOW_MULTI_ACTIONBAR_4 = tonumber(state) == 1 and 1 or nil
+	MultiActionBar_Update();
+	UIParent_ManageFramePositions();
+
+	SetActionBarToggles(SHOW_MULTI_ACTIONBAR_1, SHOW_MULTI_ACTIONBAR_2, SHOW_MULTI_ACTIONBAR_3, SHOW_MULTI_ACTIONBAR_4, ALWAYS_SHOW_MULTIBARS);
+end

@@ -166,8 +166,8 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				AddonList_SetSecurityIcon(getglobal(this:GetName().."UpdateIcon"), 4);
-				AddonList_SetSecurityIcon(getglobal(this:GetName().."UpdateIconHighlight"), 4);
+				AddonList_SetSecurityIcon(_G[this:GetName().."UpdateIcon"], 4);
+				AddonList_SetSecurityIcon(_G[this:GetName().."UpdateIconHighlight"], 4);
 			</OnLoad>
 			<OnEnter>
 				AddonTooltip:SetPoint("TOPRIGHT", this, "TOPLEFT", -14, 0);

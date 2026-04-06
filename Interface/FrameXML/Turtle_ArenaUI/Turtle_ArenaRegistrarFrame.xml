@@ -73,7 +73,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTypeLabel" inherits="GameFontNormal" text="LFT_DROPDOWN_LABEL_TEXT">
+				<FontString name="$parentTypeLabel" inherits="GameFontNormal" text="TYPE_COLON">
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentText" relativePoint="BOTTOMLEFT">
 							<Offset>
@@ -173,7 +173,7 @@
 					</OnLoad>
 				</Scripts>
 			</Button>
-			<EditBox name="$parentEditBox" letters="24" historyLines="1">
+			<EditBox name="$parentEditBox" letters="24" historyLines="1" autoFocus="false">
 				<Size>
 					<AbsDimension x="130" y="32" />
 				</Size>
@@ -216,8 +216,11 @@
 				</Layers>
 				<Scripts>
 					<OnEscapePressed>
-						ChatFrameEditBox:SetFocus()
+						this:ClearFocus()
 					</OnEscapePressed>
+					<OnShow>
+						this:SetFocus()
+					</OnShow>
 				</Scripts>
 				<FontString inherits="ChatFontNormal" />
 			</EditBox>

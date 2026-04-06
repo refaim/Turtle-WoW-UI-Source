@@ -44,6 +44,18 @@
 					</Anchors>
 				</FontString>
 			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentRankIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon">
+					<Size x="14" y="14"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativeTo="$parentName" relativePoint="LEFT">
+							<Offset>
+								<AbsDimension x="-2" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
 		</Layers>
 		<Frames>
 			<Button name="$parentClass">
@@ -87,7 +99,7 @@
 		<Scripts>
 			<OnLoad>
 				this:SetFrameLevel(this:GetFrameLevel() + 2);
-				getglobal(this:GetName().."Class"):SetFrameLevel(this:GetFrameLevel() + 2);
+				_G[this:GetName().."Class"]:SetFrameLevel(this:GetFrameLevel() + 2);
 				this:RegisterForDrag("LeftButton");
 				this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 			</OnLoad>
@@ -229,7 +241,7 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."Label"):SetText(GROUP.." "..this:GetID());
+				_G[this:GetName().."Label"]:SetText(GROUP.." "..this:GetID());
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -239,8 +251,8 @@
 		</Size>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."Border"):SetWidth(13);
-				getglobal(this:GetName().."Border"):SetHeight(13);
+				_G[this:GetName().."Border"]:SetWidth(13);
+				_G[this:GetName().."Border"]:SetHeight(13);
 			</OnLoad>
 			<OnEnter>
 				if ( this:GetCenter() > GetScreenWidth()/2 ) then
@@ -477,7 +489,7 @@
 			</OnDragStop>
 			<OnClick>
 				if (arg1 == "RightButton") then
-					ToggleDropDownMenu(1, nil, getglobal(this:GetName().."DropDown"));
+					ToggleDropDownMenu(1, nil, _G[this:GetName().."DropDown"]);
 				end
 			</OnClick>
 			<OnMouseUp>
@@ -523,7 +535,7 @@
 		</Anchors>
 		<Scripts>
 			<OnClick>
-				DoReadyCheck();
+				GroupFrame_InitiateReadyCheck()
 			</OnClick>
 		</Scripts>
 		<NormalFont inherits="GameFontNormalSmall"/>
@@ -709,6 +721,7 @@
 					<OnClick>
 						ConfirmReadyCheck(1);
 						ReadyCheckFrame:Hide();
+						SendAddonMessage("TW_RF", UnitName("player") .. ";Ready", "RAID")
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -727,6 +740,7 @@
 					<OnClick>
 						ConfirmReadyCheck();
 						ReadyCheckFrame:Hide();
+						SendAddonMessage("TW_RF", UnitName("player") .. ";NotReady", "RAID")
 					</OnClick>
 				</Scripts>
 			</Button>

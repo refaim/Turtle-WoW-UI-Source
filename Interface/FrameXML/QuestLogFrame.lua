@@ -9,16 +9,18 @@ MAX_WATCHABLE_QUESTS = 5;
 MAX_NUM_PARTY_MEMBERS = 4;
 MAX_QUEST_WATCH_TIMER = 300;
 QUEST_WATCH_NO_EXPIRE = -1;
-QUEST_WATCH_LIST = { };
+QUEST_WATCH_LIST = {};
 
-QuestDifficultyColor = { };
+QuestDifficultyColor = {};
 QuestDifficultyColor["impossible"] = { r = 1.00, g = 0.10, b = 0.10 };
 QuestDifficultyColor["verydifficult"] = { r = 1.00, g = 0.50, b = 0.25 };
 QuestDifficultyColor["difficult"] = { r = 1.00, g = 1.00, b = 0.00 };
 QuestDifficultyColor["standard"] = { r = 0.25, g = 0.75, b = 0.25 };
 QuestDifficultyColor["trivial"]	= { r = 0.50, g = 0.50, b = 0.50 };
 QuestDifficultyColor["header"]	= { r = 0.7, g = 0.7, b = 0.7 };
-
+for k, v in pairs(QuestDifficultyColor) do
+	QuestDifficultyColor[k].hex = format("|cff%02x%02x%02x", v.r * 255, v.g * 255, v.b * 255)
+end
 
 
 function ToggleQuestLog()
@@ -36,7 +38,7 @@ function QuestLogTitleButton_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
 end
 
-function QuestLogTitleButton_OnEvent(event)
+function QuestLogTitleButton_OnEvent()
 	if ( GameTooltip:IsOwned(this) ) then
 		GameTooltip:Hide();
 		QuestLog_UpdatePartyInfoTooltip();
@@ -44,9 +46,6 @@ function QuestLogTitleButton_OnEvent(event)
 end
 
 function QuestLog_OnLoad()
-
-	UIPanelWindows["QuestLogFrame"] =		{ area = "doublewide",	pushable = 0,	whileDead = 1 };
-
 	this.selectedButtonID = 2;
 	this:RegisterEvent("QUEST_LOG_UPDATE");
 	this:RegisterEvent("QUEST_WATCH_UPDATE");
@@ -73,16 +72,7 @@ function QuestLog_OnEvent(event)
 		end
 	else
 		QuestLog_Update();
-		if ( event == "PARTY_MEMBERS_CHANGED" ) then
-			-- Determine whether the selected quest is pushable or not
-			if ( GetQuestLogPushable() and GetNumPartyMembers() > 0 ) then
-				QuestFramePushQuestButton:Enable();
-			else
-				QuestFramePushQuestButton:Disable();
-			end
-		end
 	end
-
 end
 
 function QuestLog_OnShow()
@@ -101,7 +91,7 @@ function QuestLog_OnUpdate(elapsed)
 	if ( QuestLogFrame.hasTimer ) then
 		QuestLogFrame.timePassed = QuestLogFrame.timePassed + elapsed;
 		if ( QuestLogFrame.timePassed > UPDATE_DELAY ) then
-			QuestLogTimerText:SetText(TEXT(TIME_REMAINING).." "..SecondsToTime(GetQuestLogTimeLeft()));
+			QuestLogTimerText:SetText(TIME_REMAINING.." "..SecondsToTime(GetQuestLogTimeLeft()));
 			QuestLogFrame.timePassed = 0;
 		end
 	end
@@ -134,23 +124,19 @@ function QuestLog_Update()
 
 	local questIndex, questLogTitle, questTitleTag, questNumGroupMates, questNormalText, questHighlight, questCheck;
 	local questLogTitleText, level, questTag, isHeader, isCollapsed, isComplete, color;
-	local numPartyMembers, partyMembersOnQuest, tempWidth, textWidth;
+	local partyMembersOnQuest, tempWidth, textWidth;
 	for i=1, QUESTS_DISPLAYED, 1 do
 		questIndex = i + FauxScrollFrame_GetOffset(QuestLogListScrollFrame);
-		questLogTitle = getglobal("QuestLogTitle"..i);
-		questTitleTag = getglobal("QuestLogTitle"..i.."Tag");
-		questNumGroupMates = getglobal("QuestLogTitle"..i.."GroupMates");
-		questCheck = getglobal("QuestLogTitle"..i.."Check");
-		questNormalText = getglobal("QuestLogTitle"..i.."NormalText");
-		questHighlight = getglobal("QuestLogTitle"..i.."Highlight");
+		questLogTitle = _G["QuestLogTitle"..i];
+		questTitleTag = _G["QuestLogTitle"..i.."Tag"];
+		questNumGroupMates = _G["QuestLogTitle"..i.."GroupMates"];
+		questCheck = _G["QuestLogTitle"..i.."Check"];
+		questNormalText = _G["QuestLogTitle"..i.."NormalText"];
+		questHighlight = _G["QuestLogTitle"..i.."Highlight"];
 		if ( questIndex <= numEntries ) then
 			questLogTitleText, level, questTag, isHeader, isCollapsed, isComplete = GetQuestLogTitle(questIndex);
 			if ( isHeader ) then
-				if ( questLogTitleText ) then
-					questLogTitle:SetText(questLogTitleText);
-				else
-					questLogTitle:SetText("");
-				end
+				questLogTitle:SetText(questLogTitleText or "");
 
 				if ( isCollapsed ) then
 					questLogTitle:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-Up");
@@ -169,12 +155,8 @@ function QuestLog_Update()
 				questHighlight:SetTexture("");
 
 				-- If not a header see if any nearby group mates are on this quest
-				numPartyMembers = GetNumPartyMembers();
-				if ( numPartyMembers == 0 ) then
-					--return;
-				end
 				partyMembersOnQuest = 0;
-				for j=1, numPartyMembers do
+				for j=1, GetNumPartyMembers() do
 					if ( IsUnitOnQuest(questIndex, "party"..j) ) then
 						partyMembersOnQuest = partyMembersOnQuest + 1;
 					end
@@ -237,11 +219,10 @@ function QuestLog_Update()
 			end
 
 			-- Color the quest title and highlight according to the difficulty level
-			local playerLevel = UnitLevel("player");
 			if ( isHeader ) then
 				color = QuestDifficultyColor["header"];
 			else
-				color = GetDifficultyColor(level,"quest");
+				color = GetDifficultyColor(level, true);
 			end
 			questTitleTag:SetTextColor(color.r, color.g, color.b);
 			questLogTitle:SetTextColor(color.r, color.g, color.b);
@@ -271,7 +252,6 @@ function QuestLog_Update()
 	local notExpanded = 0;
 	-- Somewhat redundant loop, but cleaner than the alternatives
 	for i=1, numEntries, 1 do
-		local index = i;
 		local questLogTitleText, level, questTag, isHeader, isCollapsed = GetQuestLogTitle(i);
 		if ( questLogTitleText and isHeader ) then
 			numHeaders = numHeaders + 1;
@@ -309,18 +289,16 @@ function QuestLog_Update()
 end
 
 function QuestLog_SetSelection(questID)
-	local selectedQuest;
 	if ( questID == 0 ) then
 		QuestLogDetailScrollFrame:Hide();
 		return;
 	end
 
-	-- Get xml id
-	local id = questID - FauxScrollFrame_GetOffset(QuestLogListScrollFrame);
-
 	SelectQuestLogEntry(questID);
-	local titleButton = getglobal("QuestLogTitle"..id);
-	local titleButtonTag = getglobal("QuestLogTitle"..id.."Tag");
+
+	local id = questID - FauxScrollFrame_GetOffset(QuestLogListScrollFrame);
+	local titleButton = _G["QuestLogTitle"..id];
+	local titleButtonTag = _G["QuestLogTitle"..id.."Tag"];
 	local questLogTitleText, level, questTag, isHeader, isCollapsed = GetQuestLogTitle(questID);
 	if ( isHeader ) then
 		if ( isCollapsed ) then
@@ -350,12 +328,10 @@ end
 
 function QuestLog_UpdateQuestDetails(doNotScroll)
 	local questID = GetQuestLogSelection();
-	local questTitle = GetQuestLogTitle(questID);
-	if ( not questTitle ) then
-		questTitle = "";
-	end
+	local questTitle = GetQuestLogTitle(questID) or "";
+
 	if ( IsCurrentQuestFailed() ) then
-		questTitle = questTitle.." - ("..TEXT(FAILED)..")";
+		questTitle = questTitle.." - ("..FAILED..")";
 	end
 	QuestLogQuestTitle:SetText(questTitle);
 
@@ -369,7 +345,7 @@ function QuestLog_UpdateQuestDetails(doNotScroll)
 		QuestLogFrame.hasTimer = 1;
 		QuestLogFrame.timePassed = 0;
 		QuestLogTimerText:Show();
-		QuestLogTimerText:SetText(TEXT(TIME_REMAINING).." "..SecondsToTime(questTimer));
+		QuestLogTimerText:SetText(TIME_REMAINING.." "..SecondsToTime(questTimer));
 		QuestLogObjective1:SetPoint("TOPLEFT", "QuestLogTimerText", "BOTTOMLEFT", 0, -10);
 	else
 		QuestLogFrame.hasTimer = nil;
@@ -381,17 +357,14 @@ function QuestLog_UpdateQuestDetails(doNotScroll)
 	local numObjectives = GetNumQuestLeaderBoards();
 
 	for i=1, numObjectives, 1 do
-		local string = getglobal("QuestLogObjective"..i);
-		local text;
-		local type;
-		local finished;
-		text, type, finished = GetQuestLogLeaderBoard(i);
+		local string = _G["QuestLogObjective"..i];
+		local text, type, finished = GetQuestLogLeaderBoard(i);
 		if ( not text or strlen(text) == 0 ) then
 			text = type;
 		end
 		if ( finished ) then
 			string:SetTextColor(0.2, 0.2, 0.2);
-			text = text.." ("..TEXT(COMPLETE)..")";
+			text = text.." ("..COMPLETE..")";
 		else
 			string:SetTextColor(0, 0, 0);
 		end
@@ -401,7 +374,7 @@ function QuestLog_UpdateQuestDetails(doNotScroll)
 	end
 
 	for i=numObjectives + 1, MAX_OBJECTIVES, 1 do
-		getglobal("QuestLogObjective"..i):Hide();
+		_G["QuestLogObjective"..i]:Hide();
 	end
 	-- If there's money required then anchor and display it
 	if ( GetQuestLogRequiredMoney() > 0 ) then
@@ -463,13 +436,11 @@ end
 
 --Used to attach an empty spacer frame to the last shown object
 function QuestFrame_SetAsLastShown(frame, spacerFrame)
-	if ( not spacerFrame ) then
-		spacerFrame = QuestLogSpacerFrame;
-	end
+	spacerFrame = spacerFrame or QuestLogSpacerFrame;
 	spacerFrame:SetPoint("TOP", frame, "BOTTOM", 0, 0);
 end
 
-function QuestLogTitleButton_OnClick(button)
+function QuestLogTitleButton_OnClick()
 	local questName = this:GetText();
 	local questIndex = this:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame);
 	if ( IsShiftKeyDown() ) then
@@ -480,7 +451,7 @@ function QuestLogTitleButton_OnClick(button)
 		-- Otherwise try to track it or put it into chat
 		if ( ChatFrameEditBox:IsVisible() ) then
 			-- Trim leading whitespace
-			ChatFrameEditBox:Insert(gsub(this:GetText(), " *(.*)", "%1"));
+			ChatFrameEditBox:Insert(gsub(questName, " *(.*)", "%1"));
 		else
 			-- Shift-click toggles quest-watch on this quest.
 			if ( IsQuestWatched(questIndex) ) then
@@ -509,7 +480,7 @@ end
 
 function QuestLogTitleButton_OnEnter()
 	-- Set highlight
-	getglobal(this:GetName().."Tag"):SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+	_G[this:GetName().."Tag"]:SetTextColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 
 	-- Set group info tooltip
 	QuestLog_UpdatePartyInfoTooltip();
@@ -555,7 +526,7 @@ function QuestLogRewardItem_OnClick()
 end
 
 function QuestLogCollapseAllButton_OnClick()
-	if (this.collapsed) then
+	if ( this.collapsed ) then
 		this.collapsed = nil;
 		ExpandQuestHeader(0);
 	else
@@ -573,7 +544,7 @@ function QuestLog_GetFirstSelectableQuest()
 		index = i;
 		questLogTitleText, level, questTag, isHeader, isCollapsed = GetQuestLogTitle(i);
 		if ( questLogTitleText and not isHeader ) then
-			return index;
+			break;
 		end
 	end
 	return index;
@@ -585,19 +556,17 @@ function QuestLog_SetFirstValidSelection()
 end
 
 -- Used for quests and enemy coloration
-function GetDifficultyColor(level,quest)
+function GetDifficultyColor(level, isQuest)
 	local levelDiff = level - UnitLevel("player");
-	local QuestGreenRange = GetQuestGreenRange();
-	if quest then
-		QuestGreenRange = 25;
-	end
+	local greenRange = isQuest and 25 or GetQuestGreenRange();
+	local color;
 	if ( levelDiff >= 5 ) then
 		color = QuestDifficultyColor["impossible"];
 	elseif ( levelDiff >= 3 ) then
 		color = QuestDifficultyColor["verydifficult"];
 	elseif ( levelDiff >= -2 ) then
 		color = QuestDifficultyColor["difficult"];
-	elseif ( -levelDiff <= QuestGreenRange ) then
+	elseif ( -levelDiff <= greenRange ) then
 		color = QuestDifficultyColor["standard"];
 	else
 		color = QuestDifficultyColor["trivial"];
@@ -612,7 +581,6 @@ function QuestWatch_Update()
 	local tempWidth;
 	local watchText;
 	local text, type, finished;
-	local questTitle
 	local watchTextIndex = 1;
 	local questIndex;
 	local objectivesCompleted;
@@ -625,7 +593,7 @@ function QuestWatch_Update()
 			--If there are objectives set the title
 			if ( numObjectives > 0 ) then
 				-- Set title
-				watchText = getglobal("QuestWatchLine"..watchTextIndex);
+				watchText = _G["QuestWatchLine"..watchTextIndex];
 				watchText:SetText(GetQuestLogTitle(questIndex));
 				tempWidth = watchText:GetWidth();
 				-- Set the anchor of the title line a little lower
@@ -640,7 +608,7 @@ function QuestWatch_Update()
 				objectivesCompleted = 0;
 				for j=1, numObjectives do
 					text, type, finished = GetQuestLogLeaderBoard(j, questIndex);
-					watchText = getglobal("QuestWatchLine"..watchTextIndex);
+					watchText = _G["QuestWatchLine"..watchTextIndex];
 					-- Set Objective text
 					watchText:SetText(" - "..text);
 					-- Color the objectives
@@ -659,7 +627,7 @@ function QuestWatch_Update()
 					watchTextIndex = watchTextIndex + 1;
 				end
 				-- Brighten the quest title if all the quest objectives were met
-				watchText = getglobal("QuestWatchLine"..watchTextIndex-numObjectives-1);
+				watchText = _G["QuestWatchLine"..watchTextIndex-numObjectives-1];
 				if ( objectivesCompleted == numObjectives ) then
 					watchText:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 				else
@@ -688,7 +656,7 @@ function QuestWatch_Update()
 
 	-- Hide unused watch lines
 	for i=watchTextIndex, MAX_QUESTWATCH_LINES do
-		getglobal("QuestWatchLine"..i):Hide();
+		_G["QuestWatchLine"..i]:Hide();
 	end
 
 	UIParent_ManageFramePositions();
@@ -738,6 +706,7 @@ function AutoQuestWatch_Insert(questIndex, watchTimer)
 		end
 	end
 end
+
 function AutoQuestWatch_CheckDeleted()
 	local questLogIndex, questLogTitleText, questWatchTitleText, isInQuestLog;
 	local numEntries = GetNumQuestLogEntries();
@@ -775,8 +744,6 @@ function AutoQuestWatch_Update(questIndex)
 	end
 	AutoQuestWatch_Insert(questIndex, MAX_QUEST_WATCH_TIMER);
 end
-
-
 
 function AutoQuestWatch_OnUpdate(elapsed)
 	for index, value in QUEST_WATCH_LIST do

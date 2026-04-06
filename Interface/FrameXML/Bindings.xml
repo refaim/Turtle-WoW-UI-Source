@@ -644,16 +644,16 @@
 		Minimap_ZoomOut();
 	</Binding>
 	<Binding name="TOGGLEMUSIC">
-		SoundOptionsFrame_ToggleMusic();
+		Options_ToggleMusic();
 	</Binding>
 	<Binding name="TOGGLESOUND">
-		SoundOptionsFrame_ToggleSound();
+		Options_ToggleSound();
 	</Binding>
 	<Binding name="MASTERVOLUMEUP">
-		SoundOptionsFrame_MasterVolumeUp();
+		Options_MasterVolumeUp();
 	</Binding>
 	<Binding name="MASTERVOLUMEDOWN">
-		SoundOptionsFrame_MasterVolumeDown();
+		Options_MasterVolumeDown();
 	</Binding>
 	<Binding name="TOGGLEUI">
 		if ( UIParent:IsVisible() ) then

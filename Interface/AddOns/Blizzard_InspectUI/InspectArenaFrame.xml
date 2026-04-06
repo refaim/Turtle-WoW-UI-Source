@@ -1,0 +1,134 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Script file="InspectArenaFrame.lua"/>
+	<Frame name="InspectArenaFrame" setAllPoints="true" enableMouse="true" parent="InspectFrame" hidden="true" id="3">
+		<HitRectInsets>
+			<AbsInset left="0" right="30" top="0" bottom="75"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopLeft">
+					<Size>
+						<AbsDimension x="256" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-TopRight">
+					<Size>
+						<AbsDimension x="128" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="2" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomLeft">
+					<Size>
+						<AbsDimension x="256" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="2" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\PaperDollInfoFrame\UI-Character-General-BottomRight">
+					<Size>
+						<AbsDimension x="128" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="2" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentTeam1" inherits="ArenaTeamTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-92" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[this:GetName() .. "Text"]:SetText("(2v2)")
+						_G[this:GetName() .. "DetailsDisbandButton"]:Hide()
+						_G[this:GetName() .. "DetailsName"]:SetPoint("TOPLEFT", _G[this:GetName() .. "Details"], 18, -16)
+
+						this:SetScript("OnClick", nil)
+						this:SetScript("OnEnter", nil)
+						this:SetScript("OnLeave", nil)
+					</OnLoad>
+				</Scripts>
+			</Button>
+			<Button name="$parentTeam2" inherits="ArenaTeamTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTeam1" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[this:GetName() .. "Text"]:SetText("(3v3)")
+						_G[this:GetName() .. "DetailsDisbandButton"]:Hide()
+						_G[this:GetName() .. "DetailsName"]:SetPoint("TOPLEFT", _G[this:GetName() .. "Details"], 18, -16)
+
+						this:SetScript("OnClick", nil)
+						this:SetScript("OnEnter", nil)
+						this:SetScript("OnLeave", nil)
+					</OnLoad>
+				</Scripts>
+			</Button>
+			<Button name="$parentTeam3" inherits="ArenaTeamTemplate" id="3">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTeam2" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[this:GetName() .. "Text"]:SetText("(5v5)")
+						_G[this:GetName() .. "DetailsDisbandButton"]:Hide()
+						_G[this:GetName() .. "DetailsName"]:SetPoint("TOPLEFT", _G[this:GetName() .. "Details"], 18, -16)
+
+						this:SetScript("OnClick", nil)
+						this:SetScript("OnEnter", nil)
+						this:SetScript("OnLeave", nil)
+					</OnLoad>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				InspectArenaFrame_OnLoad()
+			</OnLoad>
+			<OnEvent>
+				InspectArenaFrame_OnEvent()
+			</OnEvent>
+			<OnShow>
+				InspectArenaFrame_OnShow()
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

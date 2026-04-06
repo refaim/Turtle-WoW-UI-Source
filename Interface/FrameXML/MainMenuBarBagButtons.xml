@@ -90,7 +90,7 @@
 			</OnReceiveDrag>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-				GameTooltip:SetText(TEXT(BACKPACK_TOOLTIP), 1.0, 1.0, 1.0);
+				GameTooltip:SetText(BACKPACK_TOOLTIP, 1.0, 1.0, 1.0);
 				local keyBinding = GetBindingKey("TOGGLEBACKPACK");
 				if ( keyBinding ) then
 					GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..keyBinding..")"..FONT_COLOR_CODE_CLOSE);

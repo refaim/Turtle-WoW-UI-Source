@@ -47,8 +47,6 @@ function UpdateMicroButtons()
 	if ( ( GameMenuFrame:IsVisible() )
 
 		or ( OptionsFrame:IsVisible())
-		or ( SoundOptionsFrame:IsVisible())
-		or ( UIOptionsFrame:IsVisible())
 		or ( KeyBindingFrame and KeyBindingFrame:IsVisible())
 		or ( MacroFrame and MacroFrame:IsVisible()) ) then
 
@@ -91,7 +89,7 @@ function CharacterMicroButton_OnLoad()
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UPDATE_BINDINGS");
 	this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-	this.tooltipText = MicroButtonTooltipText(TEXT(CHARACTER_BUTTON), "TOGGLECHARACTER0");
+	this.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0");
 	this.newbieText = NEWBIE_TOOLTIP_CHARACTER;
 end
 
@@ -102,7 +100,7 @@ function CharacterMicroButton_OnEvent()
 		end
 		return;
 	elseif ( event == "UPDATE_BINDINGS" ) then
-		this.tooltipText = MicroButtonTooltipText(TEXT(CHARACTER_BUTTON), "TOGGLECHARACTER0");
+		this.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0");
 	end
 end
 
@@ -126,7 +124,7 @@ function TalentMicroButton_OnEvent()
 	elseif ( event == "UNIT_LEVEL" or event == "PLAYER_ENTERING_WORLD" ) then
 		UpdateTalentButton();
 	elseif ( event == "UPDATE_BINDINGS" ) then
-		this.tooltipText =  MicroButtonTooltipText(TEXT(TALENTS_BUTTON), "TOGGLETALENTS");
+		this.tooltipText =  MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS");
 	end
 end
 

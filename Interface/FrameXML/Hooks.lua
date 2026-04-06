@@ -1,15 +1,34 @@
 local strfind = string.find
 local gsub = string.gsub
-local strsub = string.sub
 
 local tooltip = CreateFrame("Frame", nil, GameTooltip)
 tooltip:SetScript("OnShow", function()
-	if this.hint then
+	if tooltip.hint then
 		GameTooltip:AddLine(HELP_SHIFT_CLICK_HINT, 0.25, 0.78, 0.92)
 		GameTooltip:Show()
-
-		this.hint = false
+		tooltip.hint = false
+		return
 	end
+
+	if TOOLTIP_GUILD_NAMES ~= "1" then return end
+
+	local unit = tooltip.unit
+	if UnitExists("mouseover") then unit = "mouseover" end
+
+	if not (unit and UnitIsPlayer(unit)) then return end
+
+	local guildName = GetGuildInfo(unit)
+	if not guildName then return end
+
+	if not strfind(GameTooltipTextLeft1:GetText() or "", UnitName(unit)) then return end
+
+	GameTooltip:AddLine("<"..guildName..">", 1, 1, 1)
+	GameTooltip:Show()
+end)
+
+tooltip:SetScript("OnHide", function()
+	tooltip.unit = nil
+	tooltip.hint = false
 end)
 
 local _SetBagItem = GameTooltip.SetBagItem
@@ -24,92 +43,65 @@ function GameTooltip.SetBagItem(self, container, slot)
 	return _SetBagItem(self, container, slot)
 end
 
-local ChatFrame_OnEvent_Original = ChatFrame_OnEvent
-
-function ChatFrame_OnEvent(event)
-	if event == "CHAT_MSG_HARDCORE" then
-		-- Remove GM's coloured text from the message
-		local output, c = gsub(arg1, "^|c", "")
-		if c then
-			_, _, output = strfind(arg1, "(ª.*ª)")
-		end
-		if not output then
-			output = arg1
-		end
-
-		-- Some checks to see if the message is the spoofed AddonMessage
-		local _, c = gsub(output, "ª", "")
-		if strsub(output, 1, 2) == "ª" and strsub(output, -2) == "ª" and c == 3 then
-			--[[
-			-- This is an example of how you could convert this CHAT_MSG into a similar format to a regular CHAT_MSG_ADDON event.
-			-- I recommend using copying this entire function as is and expanding this commented section for your addons.
-
-			local tbl = {}
-			for v in string.gfind(output, "[^ª]+") do
-				tinsert(tbl, v)
-			end
-
-			local prefix = tbl[1]
-			local text = tbl[2]
-			local sender = arg2
-			local msgType = "HARDCORE"
-
-			]]           --
-			return false --Hides the "AddonMessage" from the Hardcore chat client side.
-		end
-	end
-	ChatFrame_OnEvent_Original(event)
-end
-
--- Extends SendAddonMessage() to support a "HARDCORE" type.
-local SendAddonMessage_Original = SendAddonMessage
-
-function SendAddonMessage(prefix, text, msgType, target)
-	if msgType == "HARDCORE" then
-		SendChatMessage("ª" .. prefix .. "ª" .. text .. "ª", "HARDCORE")
-		return false
-	else
-		SendAddonMessage_Original(prefix, text, msgType)
-	end
+local _SetUnit = GameTooltip.SetUnit
+function GameTooltip.SetUnit(self, unit)
+	tooltip.unit = unit
+	return _SetUnit(self, unit)
 end
 
 -- HACK FIX for set bonuses not showing if transmogrified
 local HooksScanTooltip = CreateFrame("GameTooltip", "HooksScanTooltip", nil, "GameTooltipTemplate")
 HooksScanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-
+local sameSetCache = {}
 local function SameSet(id, set)
+	local _, _, key = strfind(id, "item:(%d+)")
+	key = key.."_"..set
+	if sameSetCache[key] ~= nil then return sameSetCache[key] end
+	local result = false
 	HooksScanTooltip:ClearLines()
 	HooksScanTooltip:SetHyperlink(id)
 	for i = 1, HooksScanTooltip:NumLines() do
 		local left = _G["HooksScanTooltipTextLeft" .. i]:GetText()
 		if left and strfind(left, "^" .. set) then
-			return true
+			result = true
+			break
 		end
 	end
-	return false
+	sameSetCache[key] = result
+	return result
 end
 
-local setColon = gsub(ITEM_SET_BONUS, "%%s", "")
+-- %((%d+)%) Set: (.+)
+local setBonusGraySearch = gsub(ITEM_SET_BONUS_GRAY, "([%(%)])", "%%%1")
+setBonusGraySearch = gsub(setBonusGraySearch, "%%s", "(.+)")
+setBonusGraySearch = gsub(setBonusGraySearch, "%%d", "(%%d+)")
+
+-- (.+) %((%d+)/(%d+)%)
+local setNameSearch = gsub(ITEM_SET_NAME, "([%(%)])", "%%%1")
+setNameSearch = gsub(setNameSearch, "%%s", "(.+)")
+setNameSearch = gsub(setNameSearch, "%%d", "(%%d+)")
 
 local function FixSetInspect(tooltip, unit)
 	local tooltipName = tooltip:GetName()
 	local numLines = tooltip:NumLines()
-	local setName, numSetItems
+	local setName, numSetItems, originalLine, originalText
+	local setItemLine, setItem, link, id, name, bonus, bonusText
 	local itemsEquipped = 0
+	local index = 1
 	for i = 1, numLines do
-		local originalLine = _G[tooltipName .. "TextLeft" .. i]
-		local originalText = originalLine:GetText()
+		originalLine = _G[tooltipName .. "TextLeft" .. i]
+		originalText = originalLine:GetText()
 		if originalText then
-			_, _, setName, numSetItems = strfind(originalText, "(.+) %(%d/(%d)%)")
+			_, _, setName, _, numSetItems = strfind(originalText, setNameSearch)
 			if setName then
 				numSetItems = tonumber(numSetItems)
-				local index = 1
+				index = 1
 				repeat
-					local setItemLine = _G[tooltipName .. "TextLeft" .. (i + index)]
-					local setItem = trim(setItemLine:GetText() or "")
+					setItemLine = _G[tooltipName .. "TextLeft" .. (i + index)]
+					setItem = trim(setItemLine:GetText() or "")
 					for slot = 1, 18 do
-						local link = GetInventoryItemLink(unit, slot)
-						local _, _, id, name = strfind(link or "", "(item:%d+).+%[(.+)%]")
+						link = GetInventoryItemLink(unit, slot)
+						_, _, id, name = strfind(link or "", "(item:.+)|h%[(.+)%]")
 						if name and name == setItem and SameSet(id, setName) then
 							itemsEquipped = itemsEquipped + 1
 							setItemLine:SetTextColor(1, 1, 0.6)
@@ -117,19 +109,19 @@ local function FixSetInspect(tooltip, unit)
 					end
 					index = index + 1
 				until index > numSetItems
-				originalLine:SetText(format(setName .. " (%d/" .. numSetItems .. ")", itemsEquipped))
+				originalLine:SetText(format(ITEM_SET_NAME, setName, itemsEquipped, numSetItems))
 				break
 			end
 		end
 	end
 	for i = 1, numLines do
-		local originalLine = _G[tooltipName .. "TextLeft" .. i]
-		local originalText = originalLine:GetText()
+		originalLine = _G[tooltipName .. "TextLeft" .. i]
+		originalText = originalLine:GetText()
 		if originalText then
-			local _, _, bonus = strfind(originalText, "%((%d+)%) " .. setColon)
+			_, _, bonus, bonusText = strfind(originalText, setBonusGraySearch)
 			if bonus and tonumber(bonus) <= itemsEquipped then
-				originalLine:SetText(gsub(originalText, "%(%d+%) " .. setColon, setColon))
-				originalLine:SetTextColor(0, 1, 0)
+				originalLine:SetText(format(ITEM_SET_BONUS, bonusText))
+				originalLine:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
 			end
 		end
 	end
@@ -142,19 +134,16 @@ for _, object in pairs(tooltips) do
 	local SetInventoryItem_Original = object.SetInventoryItem
 	local SetBagItem_Original = object.SetBagItem
 
-	function object.SetInventoryItem(self, unit, slot)
-		local hasItem, hasCooldown, repairCost = SetInventoryItem_Original(self, unit, slot)
-		if GetInventoryItemLink(unit, slot) then
-			FixSetInspect(self, unit)
-		end
+	function object.SetInventoryItem(self, unit, slot, nameOnly)
+		local hasItem, hasCooldown, repairCost = SetInventoryItem_Original(self, unit, slot, nameOnly)
+		if hasItem then FixSetInspect(self, unit) end
 		return hasItem, hasCooldown, repairCost
 	end
 
 	function object.SetBagItem(self, container, slot)
 		local hasCooldown, repairCost = SetBagItem_Original(self, container, slot)
-		if GetContainerItemLink(container, slot) then
-			FixSetInspect(self, "player")
-		end
+		if repairCost then FixSetInspect(self, "player") end
 		return hasCooldown, repairCost
 	end
 end
+

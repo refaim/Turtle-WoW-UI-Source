@@ -78,9 +78,9 @@
 			</OnClick>
 			<OnEnter>
 				if (PlayerHasSpells()) then
-					this.tooltipText = MicroButtonTooltipText(TEXT(SPELLBOOK_ABILITIES_BUTTON), "TOGGLESPELLBOOK");
+					this.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK");
 				else
-					this.tooltipText = MicroButtonTooltipText(TEXT(ABILITYBOOK_BUTTON), "TOGGLEABILITYBOOK");
+					this.tooltipText = MicroButtonTooltipText(ABILITYBOOK_BUTTON, "TOGGLEABILITYBOOK");
 				end
 				GameTooltip_AddNewbieTip(this.tooltipText, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_SPELLBOOK);
 			</OnEnter>
@@ -97,7 +97,7 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("Talents");
-				this.tooltipText = MicroButtonTooltipText(TEXT(TALENTS_BUTTON), "TOGGLETALENTS");
+				this.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS");
 				this.newbieText = NEWBIE_TOOLTIP_TALENTS;
 				this:RegisterEvent("PLAYER_LEVEL_UP");
 				this:RegisterEvent("UPDATE_BINDINGS");
@@ -123,11 +123,11 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("Quest");
-				this.tooltipText = MicroButtonTooltipText(TEXT(QUESTLOG_BUTTON), "TOGGLEQUESTLOG");
+				this.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG");
 				this.newbieText = NEWBIE_TOOLTIP_QUESTLOG;
 			</OnLoad>
 			<OnEvent>
-				this.tooltipText = MicroButtonTooltipText(TEXT(QUESTLOG_BUTTON), "TOGGLEQUESTLOG");
+				this.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG");
 			</OnEvent>
 			<OnClick>
 				ToggleQuestLog();
@@ -145,11 +145,11 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("Socials");
-				this.tooltipText = MicroButtonTooltipText(TEXT(SOCIAL_BUTTON), "TOGGLESOCIAL");
+				this.tooltipText = MicroButtonTooltipText(SOCIAL_BUTTON, "TOGGLESOCIAL");
 				this.newbieText = NEWBIE_TOOLTIP_SOCIAL;
 			</OnLoad>
 			<OnEvent>
-				this.tooltipText = MicroButtonTooltipText(TEXT(SOCIAL_BUTTON), "TOGGLESOCIAL");
+				this.tooltipText = MicroButtonTooltipText(SOCIAL_BUTTON, "TOGGLESOCIAL");
 			</OnEvent>
 			<OnClick>
 				ToggleFriendsFrame();
@@ -167,10 +167,10 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("World");
-				this.tooltipText = MicroButtonTooltipText(TEXT(WORLDMAP_BUTTON), "TOGGLEWORLDMAP");
+				this.tooltipText = MicroButtonTooltipText(WORLDMAP_BUTTON, "TOGGLEWORLDMAP");
 			</OnLoad>
 			<OnEvent>
-				this.tooltipText = MicroButtonTooltipText(TEXT(WORLDMAP_BUTTON), "TOGGLEWORLDMAP");
+				this.tooltipText = MicroButtonTooltipText(WORLDMAP_BUTTON, "TOGGLEWORLDMAP");
 				this.newbieText = NEWBIE_TOOLTIP_WORLDMAP;
 			</OnEvent>
 			<OnClick>
@@ -189,11 +189,11 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("MainMenu");
-				this.tooltipText = MicroButtonTooltipText(TEXT(MAINMENU_BUTTON), "TOGGLEGAMEMENU");
+				this.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU");
 				this.newbieText = NEWBIE_TOOLTIP_MAINMENU;
 			</OnLoad>
 			<OnEvent>
-				this.tooltipText = MicroButtonTooltipText(TEXT(MAINMENU_BUTTON), "TOGGLEGAMEMENU");
+				this.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU");
 			</OnEvent>
 			<OnClick>
 				ToggleGameMenu(1);
@@ -211,7 +211,7 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures("Help");
-				this.tooltipText = TEXT(HELP_BUTTON);
+				this.tooltipText = HELP_BUTTON;
 				this.newbieText = NEWBIE_TOOLTIP_HELP;
 			</OnLoad>
 			<OnClick>

@@ -95,28 +95,28 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				getglobal(this:GetName().."ScrollBarScrollDownButton"):Disable();
-				getglobal(this:GetName().."ScrollBarScrollUpButton"):Disable();
+				_G[this:GetName().."ScrollBarScrollDownButton"]:Disable();
+				_G[this:GetName().."ScrollBarScrollUpButton"]:Disable();
 				GlueScrollFrame_OnScrollRangeChanged();
 			</OnLoad>
 			<OnScrollRangeChanged>
 				GlueScrollFrame_OnScrollRangeChanged(arg2);
 			</OnScrollRangeChanged>
 			<OnVerticalScroll>
-				local scrollbar = getglobal(this:GetName().."ScrollBar");
+				local scrollbar = _G[this:GetName().."ScrollBar"];
 				scrollbar:SetValue(arg1);
 				local min;
 				local max;
 				min, max = scrollbar:GetMinMaxValues();
 				if ( arg1 == 0 ) then
-					getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
+					_G[scrollbar:GetName().."ScrollUpButton"]:Disable();
 				else
-					getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
+					_G[scrollbar:GetName().."ScrollUpButton"]:Enable();
 				end
 				if ((scrollbar:GetValue() - max) == 0) then
-					getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
+					_G[scrollbar:GetName().."ScrollDownButton"]:Disable();
 				else
-					getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+					_G[scrollbar:GetName().."ScrollDownButton"]:Enable();
 				end
 			</OnVerticalScroll>
 			<OnMouseWheel>

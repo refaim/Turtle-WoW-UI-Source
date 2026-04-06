@@ -32,7 +32,7 @@ function RealmListUpdate()
 	RealmList_UpdateTabs(GetRealmCategories());
 
 	local numRealms = GetNumRealms(RealmList.selectedCategory);
-	local name, numCharacters, invalidRealm, currentRealm, pvp, rp, load;
+	local name, numCharacters, invalidRealm, realmDown, currentRealm, pvp, rp, load;
 	local realmIndex;
 	local pvpText, loadText, isFull;
 
@@ -40,7 +40,7 @@ function RealmListUpdate()
 	RealmListHighlight:Hide();
 	for i=1, MAX_REALMS_DISPLAYED, 1 do
 		realmIndex = RealmList.offset + i;
-		local button = getglobal("RealmListRealmButton"..i);
+		local button = _G["RealmListRealmButton"..i];
 		if ( realmIndex > numRealms ) then
 			button:Hide();
 		else
@@ -49,7 +49,7 @@ function RealmListUpdate()
 			if ( not name ) then
 				button:Hide();
 			else
-				pvpText = getglobal("RealmListRealmButton"..i.."PVP");
+				pvpText = _G["RealmListRealmButton"..i.."PVP"];
 				if ( pvp and rp ) then
 					pvpText:SetText(RPPVP_PARENTHESES);
 					pvpText:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
@@ -65,7 +65,7 @@ function RealmListUpdate()
 				end
 
 				isFull = nil;
-				loadText = getglobal("RealmListRealmButton"..i.."Load");
+				loadText = _G["RealmListRealmButton"..i.."Load"];
 
 				if ( realmDown ) then
 					loadText:SetText(REALM_DOWN);
@@ -92,7 +92,7 @@ function RealmListUpdate()
 				end
 
 				button:SetText(name);
-				players = getglobal("RealmListRealmButton"..i.."Players");
+				local players = _G["RealmListRealmButton"..i.."Players"];
 				if ( numCharacters > 0 ) then
 					players:SetText("("..numCharacters..")");
 				else
@@ -205,7 +205,7 @@ function RealmList_UpdateTabs(...)
 	end
 	local tab;
 	for i=1, MAX_REALM_CATEGORY_TABS do
-		tab = getglobal("RealmListTab"..i);
+		tab = _G["RealmListTab"..i];
 		if ( arg.n == 1 ) then
 			tab:Hide();
 		elseif ( i <= arg.n ) then
@@ -269,7 +269,7 @@ end
 
 function RealmListScrollFrame_OnVerticalScroll()
 	RealmList.refreshTime = REALM_LIST_REFRESH_TIME;
-	local scrollbar = getglobal(this:GetName().."ScrollBar");
+	local scrollbar = _G[this:GetName().."ScrollBar"];
 	scrollbar:SetValue(arg1);
 	RealmList.offset = floor((arg1 / REALM_BUTTON_HEIGHT) + 0.5);
 	RealmListUpdate();
@@ -281,7 +281,7 @@ function RealmList_OnShow()
 	if ( selectedCategory == 0 ) then
 		selectedCategory = 1;
 	end
-	local button = getglobal("RealmListTab"..selectedCategory);
+	local button = _G["RealmListTab"..selectedCategory];
 	if ( button ) then
 		RealmListTab_OnClick(button);
 		GlueTemplates_SetTab(RealmList, selectedCategory);

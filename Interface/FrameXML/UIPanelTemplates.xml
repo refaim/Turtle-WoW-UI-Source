@@ -63,14 +63,14 @@
 		</Layers>
 		<Scripts>
 			<OnMouseDown>
-				getglobal(this:GetName().."Left"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
-				getglobal(this:GetName().."Middle"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
-				getglobal(this:GetName().."Right"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
+				_G[this:GetName().."Left"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
+				_G[this:GetName().."Middle"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
+				_G[this:GetName().."Right"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Down");
 			</OnMouseDown>
 			<OnMouseUp>
-				getglobal(this:GetName().."Left"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
-				getglobal(this:GetName().."Middle"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
-				getglobal(this:GetName().."Right"):SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
+				_G[this:GetName().."Left"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
+				_G[this:GetName().."Middle"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
+				_G[this:GetName().."Right"]:SetTexture("Interface\\Buttons\\UI-Panel-Button-Up");
 			</OnMouseUp>
 		</Scripts>
 		<ButtonText name="$parentText"/>
@@ -189,20 +189,20 @@
 			</OnScrollRangeChanged>
 			<!--  The code to disable the ScrollDownButton is pretty hacked, but it works -->
 			<OnVerticalScroll>
-				local scrollbar = getglobal(this:GetName().."ScrollBar");
+				local scrollbar = _G[this:GetName().."ScrollBar"];
 				scrollbar:SetValue(arg1);
 				local min;
 				local max;
 				min, max = scrollbar:GetMinMaxValues();
 				if ( arg1 == 0 ) then
-					getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
+					_G[scrollbar:GetName().."ScrollUpButton"]:Disable();
 				else
-					getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
+					_G[scrollbar:GetName().."ScrollUpButton"]:Enable();
 				end
 				if ((scrollbar:GetValue() - max) == 0) then
-					getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
+					_G[scrollbar:GetName().."ScrollDownButton"]:Disable();
 				else
-					getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+					_G[scrollbar:GetName().."ScrollDownButton"]:Enable();
 				end
 			</OnVerticalScroll>
 			<OnMouseWheel>
@@ -369,7 +369,7 @@
 		<Scripts>
 			<OnLoad>
 				PanelTemplates_TabResize(0);
-				getglobal(this:GetName().."HighlightTexture"):SetWidth(this:GetTextWidth() + 31);
+				_G[this:GetName().."HighlightTexture"]:SetWidth(this:GetTextWidth() + 31);
 			</OnLoad>
 		</Scripts>
 		<ButtonText name="$parentText">
@@ -460,6 +460,14 @@
 					</Anchors>
 					<Color r="1.0" g="1.0" b="1.0" a="0.5"/>
 				</FontString>
+				<FontString name="$parentResultsLabel" inherits="ChatFontNormal" text="" hidden="true" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="RIGHT">
+							<Offset x="-20" y="0" />
+						</Anchor>
+					</Anchors>
+					<Color r="1.0" g="1.0" b="1.0" a="0.5"/>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
@@ -492,16 +500,19 @@
 		<Scripts>
 			<OnLoad>
 				this:SetTextColor(0.5, 0.5, 0.5, 1);
+
+				this.label = _G[this:GetName() .. "Label"]
+				this.resultsLabel = _G[this:GetName() .. "ResultsLabel"]
 			</OnLoad>
 			<OnEditFocusGained>
 				this:SetTextColor(1.0, 1.0, 1.0, 1.0);
 				this:HighlightText()
-				getglobal(this:GetName().."Label"):Hide()
+				this.label:Hide()
 			</OnEditFocusGained>
 			<OnEditFocusLost>
 				this:SetTextColor(0.5, 0.5, 0.5, 1);
 				if this:GetText() == "" then
-					getglobal(this:GetName().."Label"):Show()
+					this.label:Show()
 				end
 			</OnEditFocusLost>
 			<OnEnterPressed>

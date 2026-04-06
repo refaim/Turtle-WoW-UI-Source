@@ -67,7 +67,7 @@ function CharacterCreate_OnLoad()
 	--CharCreateModel:SetLight(1, 0, 0, -0.707, -0.707, 0.7, 1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 0.8);
 
 	for i=1, NUM_CHAR_CUSTOMIZATIONS, 1 do
-		getglobal("CharacterCustomizationButtonFrame"..i.."Text"):SetText(TEXT(getglobal("CHAR_CUSTOMIZATION"..i.."_DESC")));
+		_G["CharacterCustomizationButtonFrame"..i.."Text"]:SetText(_G["CHAR_CUSTOMIZATION"..i.."_DESC"]);
 	end
 
 	-- Color edit box backdrop
@@ -136,14 +136,14 @@ function CharacterCreateEnumerateRaces(...)
 	end
 	for i=1, arg.n, 2 do
 		coords = RACE_ICON_TCOORDS[strupper(arg[i+1].."_"..gender)];
-		getglobal("CharacterCreateRaceButton"..index.."NormalTexture"):SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-		button = getglobal("CharacterCreateRaceButton"..index);
+		_G["CharacterCreateRaceButton"..index.."NormalTexture"]:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
+		button = _G["CharacterCreateRaceButton"..index];
 		button:Show();
 		button.tooltip = arg[i];
 		index = index + 1;
 	end
 	for i=arg.n/2 + 1, MAX_RACES, 1 do
-		getglobal("CharacterCreateRaceButton"..i):Hide();
+		_G["CharacterCreateRaceButton"..i]:Hide();
 	end
 end
 
@@ -159,27 +159,27 @@ function CharacterCreateEnumerateClasses(...)
 	local button;
 	for i=1, arg.n, 2 do
 		coords = CLASS_ICON_TCOORDS[strupper(arg[i+1])];
-		getglobal("CharacterCreateClassButton"..index.."NormalTexture"):SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-		button = getglobal("CharacterCreateClassButton"..index);
+		_G["CharacterCreateClassButton"..index.."NormalTexture"]:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
+		button = _G["CharacterCreateClassButton"..index];
 		button:Show();
 		button.tooltip = arg[i];
 		index = index + 1;
 	end
 	for i=arg.n/2 + 1, MAX_CLASSES_PER_RACE, 1 do
-		getglobal("CharacterCreateClassButton"..i):Hide();
+		_G["CharacterCreateClassButton"..i]:Hide();
 	end
 end
 
 function SetCharacterRace(id)
 	CharacterCreate.selectedRace = id;
 	for i=1, CharacterCreate.numRaces, 1 do
-		local button = getglobal("CharacterCreateRaceButton"..i);
+		local button = _G["CharacterCreateRaceButton"..i];
 		if ( i == id ) then
-			getglobal("CharacterCreateRaceButton"..i.."HighlightText"):SetText(button.tooltip);
+			_G["CharacterCreateRaceButton"..i.."HighlightText"]:SetText(button.tooltip);
 			button:SetChecked(1);
 			button:LockHighlight();
 		else
-			getglobal("CharacterCreateRaceButton"..i.."HighlightText"):SetText("");
+			_G["CharacterCreateRaceButton"..i.."HighlightText"]:SetText("");
 			button:SetChecked(0);
 			button:UnlockHighlight();
 		end
@@ -194,13 +194,14 @@ function SetCharacterRace(id)
 	end
 	CharacterCreateFactionScrollFrameScrollBar:SetValue(0);
 	CharacterCreateFactionLabel:SetText(name);
-	CharacterCreateFactionText:SetText(getglobal("FACTION_INFO_"..strupper(faction)));
+	CharacterCreateFactionText:SetText(_G["FACTION_INFO_"..strupper(faction)]);
 	CharacterCreateFactionScrollFrame:UpdateScrollChildRect();
 
 	-- Set Race
 	local race, fileString = GetNameForRace();
 	CharacterCreateRaceLabel:SetText(race);
 	fileString = strupper(fileString);
+	local gender;
 	if ( GetSelectedSex() == 1 ) then
 		gender = "MALE";
 	else
@@ -208,23 +209,23 @@ function SetCharacterRace(id)
 	end
 	local coords = RACE_ICON_TCOORDS[fileString.."_"..gender];
 	CharacterCreateRaceIcon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-	local raceText = getglobal("RACE_INFO_"..fileString);
+	local raceText = _G["RACE_INFO_"..fileString];
 	local abilityIndex = 1;
-	local tempText = getglobal("ABILITY_INFO_"..fileString..abilityIndex);
-	abilityText = "";
+	local tempText = _G["ABILITY_INFO_"..fileString..abilityIndex];
+	local abilityText = "";
 	while ( tempText ) do
 		abilityText = abilityText..tempText..
 		"\n\n";
 		abilityIndex = abilityIndex + 1;
-		tempText = getglobal("ABILITY_INFO_"..fileString..abilityIndex);
+		tempText = _G["ABILITY_INFO_"..fileString..abilityIndex];
 	end
 
 	CharacterCreateRaceScrollFrameScrollBar:SetValue(0);
 	if ( abilityText and abilityText ~= "" ) then
-		CharacterCreateRaceText:SetText(getglobal("RACE_INFO_"..fileString));
+		CharacterCreateRaceText:SetText(raceText);
 		CharacterCreateRaceAbilityText:SetText(abilityText);
 	else
-		CharacterCreateRaceText:SetText(getglobal("RACE_INFO_"..fileString));
+		CharacterCreateRaceText:SetText(raceText);
 		CharacterCreateRaceAbilityText:SetText("");
 	end
 	CharacterCreateRaceScrollFrame:UpdateScrollChildRect();
@@ -233,7 +234,7 @@ function SetCharacterRace(id)
 	local backdropColor = FACTION_BACKDROP_COLOR_TABLE[faction];
 	local frame;
 	for index, value in FRAMES_TO_BACKDROP_COLOR do
-		frame = getglobal(value);
+		frame = _G[value];
 		frame:SetBackdropColor(backdropColor[4], backdropColor[5], backdropColor[6]);
 	end
 
@@ -250,13 +251,13 @@ end
 function SetCharacterClass(id)
 	CharacterCreate.selectedClass = id;
 	for i=1, CharacterCreate.numClasses, 1 do
-		local button = getglobal("CharacterCreateClassButton"..i);
+		local button = _G["CharacterCreateClassButton"..i];
 		if ( i == id ) then
-			getglobal("CharacterCreateClassButton"..i.."HighlightText"):SetText(button.tooltip);
+			_G["CharacterCreateClassButton"..i.."HighlightText"]:SetText(button.tooltip);
 			button:SetChecked(1);
 			button:LockHighlight();
 		else
-			getglobal("CharacterCreateClassButton"..i.."HighlightText"):SetText("");
+			_G["CharacterCreateClassButton"..i.."HighlightText"]:SetText("");
 			button:UnlockHighlight();
 			button:SetChecked(0);
 		end
@@ -267,7 +268,7 @@ function SetCharacterClass(id)
 	CharacterCreateClassIcon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
 	CharacterCreateClassLabel:SetText(className);
 	CharacterCreateClassScrollFrameScrollBar:SetValue(0);
-	CharacterCreateClassText:SetText(getglobal("CLASS_"..strupper(classFileName)));
+	CharacterCreateClassText:SetText(_G["CLASS_"..strupper(classFileName)]);
 	CharacterCreateClassScrollFrame:UpdateScrollChildRect();
 end
 
@@ -385,13 +386,13 @@ function CharacterCreate_UpdateFacialHairCustomization()
 		CharacterCustomizationButtonFrame5:Hide();
 		CharCreateRandomizeButton:SetPoint("TOP", "CharacterCustomizationButtonFrame5", "BOTTOM", 0, -5);
 	else
-		CharacterCustomizationButtonFrame5Text:SetText(getglobal("FACIAL_HAIR_"..GetFacialHairCustomization()));
+		CharacterCustomizationButtonFrame5Text:SetText(_G["FACIAL_HAIR_"..GetFacialHairCustomization()]);
 		CharacterCustomizationButtonFrame5:Show();
 		CharCreateRandomizeButton:SetPoint("TOP", "CharacterCustomizationButtonFrame5", "BOTTOM", 0, -5);
 	end
 end
 
 function CharacterCreate_UpdateHairCustomization()
-	CharacterCustomizationButtonFrame3Text:SetText(getglobal("HAIR_"..GetHairCustomization().."_STYLE"));
-	CharacterCustomizationButtonFrame4Text:SetText(getglobal("HAIR_"..GetHairCustomization().."_COLOR"));
+	CharacterCustomizationButtonFrame3Text:SetText(_G["HAIR_"..GetHairCustomization().."_STYLE"]);
+	CharacterCustomizationButtonFrame4Text:SetText(_G["HAIR_"..GetHairCustomization().."_COLOR"]);
 end

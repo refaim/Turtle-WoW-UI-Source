@@ -15,12 +15,12 @@ function ComboPointsFrame_OnEvent()
 		end
 
 		for i=1, MAX_COMBO_POINTS do
-			comboPointHighlight = getglobal("ComboPoint"..i.."Highlight");
-			comboPointShine = getglobal("ComboPoint"..i.."Shine");
+			comboPointHighlight = _G["ComboPoint"..i.."Highlight"];
+			local comboPointShine = _G["ComboPoint"..i.."Shine"];
 			if ( i <= comboPoints ) then
 				if ( i > COMBO_FRAME_LAST_NUM_POINTS ) then
 					-- Fade in the highlight and set a function that triggers when it is done fading
-					fadeInfo = {};
+					fadeInfo = UIFrameFade_CreateInfo(comboPointHighlight);
 					fadeInfo.mode = "IN";
 					fadeInfo.timeToFade = COMBOFRAME_HIGHLIGHT_FADE_IN;
 					fadeInfo.finishedFunc = ComboPointShineFadeIn;
@@ -42,7 +42,7 @@ end
 
 function ComboPointShineFadeIn(frame)
 	-- Fade in the shine and then fade it out with the ComboPointShineFadeOut function
-	local fadeInfo = {};
+	local fadeInfo = UIFrameFade_CreateInfo(frame);
 	fadeInfo.mode = "IN";
 	fadeInfo.timeToFade = COMBOFRAME_SHINE_FADE_IN;
 	fadeInfo.finishedFunc = ComboPointShineFadeOut;
@@ -52,5 +52,5 @@ end
 
 --hack since a frame can't have a reference to itself in it
 function ComboPointShineFadeOut(frameName)
-	UIFrameFadeOut(getglobal(frameName), COMBOFRAME_SHINE_FADE_OUT);
+	UIFrameFadeOut(_G[frameName], COMBOFRAME_SHINE_FADE_OUT);
 end

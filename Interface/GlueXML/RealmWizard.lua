@@ -18,8 +18,8 @@ function RealmWizard_UpdateCategories(...)
 	local button, buttonText;
 	local numCategoriesShown = 0;
 	for i=1, MAX_REALM_CATEGORY_TABS do
-		button = getglobal("RealmWizardLocationButton"..i);
-		buttonText = getglobal("RealmWizardLocationButton"..i.."Text");
+		button = _G["RealmWizardLocationButton"..i];
+		buttonText = _G["RealmWizardLocationButton"..i.."Text"];
 		if ( i <= arg.n ) then
 			buttonText:SetText(arg[i]);
 			if ( i == RealmWizard.selectedCategory ) then

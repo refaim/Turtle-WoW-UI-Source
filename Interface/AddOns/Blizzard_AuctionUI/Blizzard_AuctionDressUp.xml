@@ -175,10 +175,10 @@
 			SetAuctionDressUpBackground();
 		</OnLoad>
 		<OnShow>
-			PlaySound("igCharacterInfoOpen");
+			AuctionDressUpFrame_OnShow();
 		</OnShow>
 		<OnHide>
-			PlaySound("igCharacterInfoClose");
+			AuctionDressUpFrame_OnHide();
 		</OnHide>
 	</Scripts>
 </Frame>

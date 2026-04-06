@@ -44,9 +44,9 @@ function ReputationFrame_Update()
 	local gender = UnitSex("player");
 	for i=1, NUM_FACTIONS_DISPLAYED, 1 do
 		factionIndex = factionOffset + i;
-		factionBar = getglobal("ReputationBar"..i);
-		factionHeader = getglobal("ReputationHeader"..i);
-		factionCheck = getglobal("ReputationBar"..i.."Check");
+		factionBar = _G["ReputationBar"..i];
+		factionHeader = _G["ReputationHeader"..i];
+		factionCheck = _G["ReputationBar"..i.."Check"];
 		if ( factionIndex <= numFactions ) then
 			name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, isWatched = GetFactionInfo(factionIndex);
 			if ( isHeader ) then
@@ -63,12 +63,12 @@ function ReputationFrame_Update()
 				factionCheck:Hide();
 			else
 				factionStanding = GetText("FACTION_STANDING_LABEL"..standingID, gender);
-				factionName = getglobal("ReputationBar"..i.."FactionName");
+				factionName = _G["ReputationBar"..i.."FactionName"];
 				factionName:SetText(name);
-				getglobal("ReputationBar"..i.."FactionStanding"):SetText(factionStanding);
+				_G["ReputationBar"..i.."FactionStanding"]:SetText(factionStanding);
 
-				atWarIndicator = getglobal("ReputationBar"..i.."AtWarCheck");
-				rightBarTexture = getglobal("ReputationBar"..i.."ReputationBarRight");
+				atWarIndicator = _G["ReputationBar"..i.."AtWarCheck"];
+				rightBarTexture = _G["ReputationBar"..i.."ReputationBarRight"];
 
 				if ( atWarWith ) then
 					atWarIndicator:Show();
@@ -131,11 +131,11 @@ function ReputationFrame_Update()
 							ReputationDetailMainScreenCheckBox:SetChecked(nil);
 						end
 					end
-					getglobal("ReputationBar"..i.."Highlight1"):Show();
-					getglobal("ReputationBar"..i.."Highlight2"):Show();
+					_G["ReputationBar"..i.."Highlight1"]:Show();
+					_G["ReputationBar"..i.."Highlight2"]:Show();
 				else
-					getglobal("ReputationBar"..i.."Highlight1"):Hide();
-					getglobal("ReputationBar"..i.."Highlight2"):Hide();
+					_G["ReputationBar"..i.."Highlight1"]:Hide();
+					_G["ReputationBar"..i.."Highlight2"]:Hide();
 				end
 			end
 		else

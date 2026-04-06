@@ -1,6 +1,7 @@
 ## Interface: 11200
 ## Title: Turtle WoW General Addon
 ## Secure: 1
-## SavedVariables: Turtle_ChallengesCache
+## SavedVariables: Turtle_ChallengesCache, LFTPresets, ChronoboonBuffs
+## SavedVariablesPerCharacter: TransmogStatus, TransmogOutfits
 
 Turtle_General.lua

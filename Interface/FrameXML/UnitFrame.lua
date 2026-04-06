@@ -1,10 +1,10 @@
 
 ManaBarColor = {};
-ManaBarColor[0] = { r = 0.00, g = 0.00, b = 1.00, prefix = TEXT(MANA) };
-ManaBarColor[1] = { r = 1.00, g = 0.00, b = 0.00, prefix = TEXT(RAGE_POINTS) };
-ManaBarColor[2] = { r = 1.00, g = 0.50, b = 0.25, prefix = TEXT(FOCUS_POINTS) };
-ManaBarColor[3] = { r = 1.00, g = 1.00, b = 0.00, prefix = TEXT(ENERGY_POINTS) };
-ManaBarColor[4] = { r = 0.00, g = 1.00, b = 1.00, prefix = TEXT(HAPPINESS_POINTS) };
+ManaBarColor[0] = { r = 0.00, g = 0.00, b = 1.00, prefix = MANA };
+ManaBarColor[1] = { r = 1.00, g = 0.00, b = 0.00, prefix = RAGE_POINTS };
+ManaBarColor[2] = { r = 1.00, g = 0.50, b = 0.25, prefix = FOCUS_POINTS };
+ManaBarColor[3] = { r = 1.00, g = 1.00, b = 0.00, prefix = ENERGY_POINTS };
+ManaBarColor[4] = { r = 0.00, g = 1.00, b = 1.00, prefix = HAPPINESS_POINTS };
 
 local isDruid = false
 local _, class = UnitClass("player")
@@ -61,11 +61,11 @@ function UnitFrame_OnEnter()
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	-- If showing newbie tips then only show the explanation
-	if ( SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
-		if ( this:GetName() == "PlayerFrame" ) then
+	if ( SHOW_NEWBIE_TIPS == "1" ) then
+		if ( this == PlayerFrame ) then
 			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
 			return;
-		elseif ( UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
+		elseif ( this == TargetFrame and UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
 			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
 			return;
 		end
@@ -78,7 +78,7 @@ function UnitFrame_OnEnter()
 	end
 
 	this.r, this.g, this.b = GameTooltip_UnitColor(this.unit);
-	--GameTooltip:SetBackdropColor(this.r, this.g, this.b);
+	--GameTooltip:SetBackdropColor(self.r, self.g, self.b);
 	GameTooltipTextLeft1:SetTextColor(this.r, this.g, this.b);
 end
 
@@ -148,7 +148,7 @@ function UnitFrame_UpdateManaType(unitFrame)
 	-- Setup newbie tooltip
 	if ( unitFrame:GetName() == "PlayerFrame" ) then
 		unitFrame.manabar.tooltipTitle = info.prefix;
-		unitFrame.manabar.tooltipText = getglobal("NEWBIE_TOOLTIP_MANABAR"..UnitPowerType(unitFrame.unit));
+		unitFrame.manabar.tooltipText = _G["NEWBIE_TOOLTIP_MANABAR"..UnitPowerType(unitFrame.unit)];
 	else
 		unitFrame.manabar.tooltipTitle = nil;
 		unitFrame.manabar.tooltipText = nil;

@@ -601,7 +601,7 @@
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset>
-										<AbsDimension x="12" y="10"/>
+										<AbsDimension x="12" y="4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -609,7 +609,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button name="CharacterDeleteButton1" inherits="GlueDialogButtonTemplate" id="1" text="OKAY">
+					<Button name="CharacterDeleteButton1" inherits="GlueDialogButtonTemplate" id="1" text="CONFIRM">
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativeTo="CharacterDeleteBackground" relativePoint="BOTTOM">
 								<Offset>
@@ -771,7 +771,7 @@
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset>
-										<AbsDimension x="12" y="10"/>
+										<AbsDimension x="12" y="4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -779,7 +779,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button name="CharacterRenameButton1" inherits="GlueDialogButtonTemplate" id="1" text="OKAY">
+					<Button name="CharacterRenameButton1" inherits="GlueDialogButtonTemplate" id="1" text="CONFIRM">
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativeTo="CharacterRenameBackground" relativePoint="BOTTOM">
 								<Offset>

@@ -94,56 +94,56 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Button name="$parentEntryFrame1" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame1" inherits="ShopEntryFrameTemplate" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
 						<Offset x="232" y="-74" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame2" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame2" inherits="ShopEntryFrameTemplate" id="2">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame1" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame3" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame3" inherits="ShopEntryFrameTemplate" id="3">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame2" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame4" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame4" inherits="ShopEntryFrameTemplate" id="4">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame3" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame5" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame5" inherits="ShopEntryFrameTemplate" id="5">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame1" relativePoint="BOTTOMLEFT">
 						<Offset x="0" y="5" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame6" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame6" inherits="ShopEntryFrameTemplate" id="6">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame5" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame7" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame7" inherits="ShopEntryFrameTemplate" id="7">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame6" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentEntryFrame8" inherits="ShopEntryFrameTemplate">
+			<Button name="$parentEntryFrame8" inherits="ShopEntryFrameTemplate" id="8">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEntryFrame7" relativePoint="TOPRIGHT">
 						<Offset x="-4" y="0" />
@@ -320,11 +320,25 @@
 							</OnLoad>
 						</Scripts>
 						<Frames>
-							<Button name="ShopDressUpFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+							<Button name="ShopDressUpFrameUndressButton" inherits="UIPanelButtonTemplate" text="UNDRESS" hidden="true">
 								<Size x="80" y="22"/>
 								<Anchors>
 									<Anchor point="BOTTOM">
-										<Offset x="0" y="20"/>
+										<Offset x="-42" y="16"/>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										ShopDressUpModel:Undress()
+										PlaySound("gsTitleOptionOK")
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Button name="ShopDressUpFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+								<Size x="80" y="22"/>
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="ShopDressUpFrameUndressButton" relativePoint="RIGHT">
+										<Offset x="4" y="0"/>
 									</Anchor>
 								</Anchors>
 								<Scripts>
@@ -432,7 +446,7 @@
 	<Button name="MinimapShopFrame" parent="Minimap" movable="true" toplevel="true" frameStrata="LOW">
 		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
 		<Size>
-			<AbsDimension x="32" y="32" />
+			<AbsDimension x="33" y="33" />
 		</Size>
 		<Anchors>
 			<Anchor point="BOTTOM" relativeTo="Minimap">
@@ -459,7 +473,7 @@
 			<Layer level="OVERLAY">
 				<Texture name="$parentBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
 					<Size>
-						<AbsDimension x="48" y="48" />
+						<AbsDimension x="52" y="52" />
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" />
@@ -486,12 +500,11 @@
 			</OnDragStop>
 			<OnEnter>
 				GameTooltip:SetOwner(this, "ANCHOR_LEFT")
-				GameTooltip:SetText(DONO_SHOP_TOOLTIP1)
-				GameTooltip:AddLine(DONO_SHOP_TOOLTIP2, 1, 1, 1)
-				GameTooltip:AddLine(" ", 1, 1, 1)
-				GameTooltip:AddLine(DONO_SHOP_TOOLTIP3, 1, 1, 1)
-				GameTooltip:AddLine(DONO_SHOP_TOOLTIP4, 1, 1, 1)
-				GameTooltip:AddLine(DONO_SHOP_TOOLTIP5, 1, 1, 1)
+				GameTooltip:SetText(DONO_SHOP_TOOLTIP1, 1, 1, 1)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP2)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP3)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP4)
+				GameTooltip:AddLine(DONO_SHOP_TOOLTIP5)
 				GameTooltip:Show()
 			</OnEnter>
 			<OnLeave>

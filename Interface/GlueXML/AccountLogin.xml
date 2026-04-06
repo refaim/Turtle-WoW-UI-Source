@@ -468,20 +468,20 @@
 										GlueScrollFrame_OnScrollRangeChanged();
 									</OnLoad>
 									<OnVerticalScroll>
-										local scrollbar = getglobal(this:GetName().."ScrollBar");
+										local scrollbar = _G[this:GetName().."ScrollBar"];
 										scrollbar:SetValue(arg1);
 										local min;
 										local max;
 										min, max = scrollbar:GetMinMaxValues();
 										if ( arg1 == 0 ) then
-											getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
+											_G[scrollbar:GetName().."ScrollUpButton"]:Disable();
 										else
-											getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
+											_G[scrollbar:GetName().."ScrollUpButton"]:Enable();
 										end
 										if (scrollbar:GetValue() >= max - 20) then
-											getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
+											_G[scrollbar:GetName().."ScrollDownButton"]:Disable();
 										else
-											getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+											_G[scrollbar:GetName().."ScrollDownButton"]:Enable();
 										end
 									</OnVerticalScroll>
 									<OnScrollRangeChanged>
@@ -516,7 +516,7 @@
 					</Frame>
 					<Frame name="VirtualKeypadFrame" hidden="true" frameStrata="DIALOG" enableMouse="true">
 						<Size>
-							<AbsDimension x="140" y="70"/>
+							<AbsDimension x="156" y="70"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="AccountLoginAccountEdit" relativePoint="TOPRIGHT">
@@ -546,7 +546,7 @@
 								<AbsValue val="32"/>
 							</TileSize>
 							<BackgroundInsets>
-								<AbsInset left="6" right="2" top="4" bottom="5"/>
+								<AbsInset left="8" right="4" top="0" bottom="6"/>
 							</BackgroundInsets>
 						</Backdrop>
 						<Frames>
@@ -557,7 +557,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset>
-											<AbsDimension x="7" y="-26"/>
+											<AbsDimension x="8" y="-26"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -596,11 +596,11 @@
 								</TextInsets>
 							</EditBox>
 							<Button name="VirtualKeypadOkayButton" text="OKAY">
-								<Size x="40" y="24"/>
+								<Size x="52" y="24"/>
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="VirtualKeypadText" relativePoint="RIGHT">
 										<Offset>
-											<AbsDimension x="3" y="0"/>
+											<AbsDimension x="4" y="2"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -984,20 +984,20 @@
 						</Layers>
 						<Scripts>
 							<OnVerticalScroll>
-									local scrollbar = getglobal(this:GetName().."ScrollBar");
+									local scrollbar = _G[this:GetName().."ScrollBar"];
 									scrollbar:SetValue(arg1);
 									local min;
 									local max;
 									min, max = scrollbar:GetMinMaxValues();
 									if ( arg1 == 0 ) then
-										getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
+										_G[scrollbar:GetName().."ScrollUpButton"]:Disable();
 									else
-										getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
+										_G[scrollbar:GetName().."ScrollUpButton"]:Enable();
 									end
 									if (scrollbar:GetValue() >= max - 20) then
-										getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
+										_G[scrollbar:GetName().."ScrollDownButton"]:Disable();
 									else
-										getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+										_G[scrollbar:GetName().."ScrollDownButton"]:Enable();
 									end
 								</OnVerticalScroll>
 						</Scripts>

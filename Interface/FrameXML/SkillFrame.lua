@@ -24,23 +24,23 @@ end
 function SkillFrame_SetStatusBar(statusBarID, skillIndex, numSkills, adjustedSkillPoints)
 	-- Get info
 	local skillName, header, isExpanded, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType = GetSkillLineInfo(skillIndex);
-	skillRankStart = skillRank;
+	local skillRankStart = skillRank;
 	skillRank = skillRank + numTempPoints;
 
 	-- Skill bar objects
-	local statusBar = getglobal("SkillRankFrame"..statusBarID);
+	local statusBar = _G["SkillRankFrame"..statusBarID];
 	local statusBarLabel = "SkillRankFrame"..statusBarID;
-	local statusBarSkillRank = getglobal("SkillRankFrame"..statusBarID.."SkillRank");
-	local statusBarName = getglobal("SkillRankFrame"..statusBarID.."SkillName");
-	local statusBarBorder = getglobal("SkillRankFrame"..statusBarID.."Border");
-	local statusBarBackground = getglobal("SkillRankFrame"..statusBarID.."Background");
-	local statusBarFillBar = getglobal("SkillRankFrame"..statusBarID.."FillBar");
+	local statusBarSkillRank = _G["SkillRankFrame"..statusBarID.."SkillRank"];
+	local statusBarName = _G["SkillRankFrame"..statusBarID.."SkillName"];
+	local statusBarBorder = _G["SkillRankFrame"..statusBarID.."Border"];
+	local statusBarBackground = _G["SkillRankFrame"..statusBarID.."Background"];
+	local statusBarFillBar = _G["SkillRankFrame"..statusBarID.."FillBar"];
 
 	statusBarFillBar:Hide();
 
 	-- Header objects
-	local skillRankFrameBorderTexture = getglobal("SkillRankFrame"..statusBarID.."Border");
-	local skillTypeLabelText = getglobal("SkillTypeLabel"..statusBarID);
+	local skillRankFrameBorderTexture = _G["SkillRankFrame"..statusBarID.."Border"];
+	local skillTypeLabelText = _G["SkillTypeLabel"..statusBarID];
 
 	-- Frame width vars
 	local skillRankFrameWidth = 0;
@@ -59,7 +59,7 @@ function SkillFrame_SetStatusBar(statusBarID, skillIndex, numSkills, adjustedSki
 		skillTypeLabelText.skillIndex = skillIndex;
 		skillRankFrameBorderTexture:Hide();
 		statusBar:Hide();
-		local normalTexture = getglobal("SkillTypeLabel"..statusBarID.."NormalTexture");
+		local normalTexture = _G["SkillTypeLabel"..statusBarID.."NormalTexture"];
 		if ( isExpanded ) then
 			skillTypeLabelText:SetNormalTexture("Interface\\Buttons\\UI-MinusButton-Up");
 		else
@@ -132,7 +132,7 @@ function SkillFrame_SetStatusBar(statusBarID, skillIndex, numSkills, adjustedSki
 		-- If skill is too high level
 		if ( UnitLevel("player") < minLevel ) then
 			statusBar:SetValue(0);
-			statusBarSkillRank:SetText(format(TEXT(LEVEL_GAINED),skillLevel));
+			statusBarSkillRank:SetText(format(LEVEL_GAINED,skillLevel));
 			statusBarSkillRank:ClearAllPoints();
 			statusBarSkillRank:SetPoint("RIGHT", "SkillDetailStatusBar", "RIGHT",-13, 0);
 			statusBarSkillRank:SetJustifyH("RIGHT");
@@ -194,15 +194,15 @@ function SkillDetailFrame_SetStatusBar(skillIndex, adjustedSkillPoints)
 	skillRank = skillRank + numTempPoints;
 
 	-- Skill bar objects
-	local statusBar = getglobal("SkillDetailStatusBar");
-	local statusBarBackground = getglobal("SkillDetailStatusBarBackground");
-	local statusBarSkillRank = getglobal("SkillDetailStatusBarSkillRank");
-	local statusBarName = getglobal("SkillDetailStatusBarSkillName");
-	local statusBarUnlearnButton = getglobal("SkillDetailStatusBarUnlearnButton");
-	local statusBarLeftArrow = getglobal("SkillDetailStatusBarLeftArrow");
-	local statusBarRightArrow = getglobal("SkillDetailStatusBarRightArrow");
-	local statusBarLearnSkillButton = getglobal("SkillDetailStatusBarLearnSkillButton");
-	local statusBarFillBar = getglobal("SkillDetailStatusBarFillBar");
+	local statusBar = SkillDetailStatusBar;
+	local statusBarBackground = SkillDetailStatusBarBackground;
+	local statusBarSkillRank = SkillDetailStatusBarSkillRank;
+	local statusBarName = SkillDetailStatusBarSkillName;
+	local statusBarUnlearnButton = SkillDetailStatusBarUnlearnButton;
+	local statusBarLeftArrow = SkillDetailStatusBarLeftArrow;
+	local statusBarRightArrow = SkillDetailStatusBarRightArrow;
+	local statusBarLearnSkillButton = SkillDetailStatusBarLearnSkillButton;
+	local statusBarFillBar = SkillDetailStatusBarFillBar;
 
 	-- Frame width vars
 	local skillRankFrameWidth = 0;
@@ -297,7 +297,7 @@ function SkillDetailFrame_SetStatusBar(skillIndex, adjustedSkillPoints)
 		-- If skill is too high level
 		if ( UnitLevel("player") < minLevel ) then
 			statusBar:SetValue(0);
-			statusBarSkillRank:SetText(format(TEXT(LEVEL_GAINED),skillLevel));
+			statusBarSkillRank:SetText(format(LEVEL_GAINED,skillLevel));
 			statusBarSkillRank:ClearAllPoints();
 			statusBarSkillRank:SetPoint("RIGHT", "SkillDetailStatusBar", "RIGHT",-13, 0);
 			statusBarSkillRank:SetJustifyH("RIGHT");
@@ -430,8 +430,8 @@ function SkillFrame_UpdateSkills()
 
 	-- Hide unused bars
 	for i=index, SKILLS_TO_DISPLAY do
-		getglobal("SkillRankFrame"..i):Hide();
-		getglobal("SkillTypeLabel"..i):Hide();
+		_G["SkillRankFrame"..i]:Hide();
+		_G["SkillTypeLabel"..i]:Hide();
 	end
 
 	local talentPoints, currSkillPoints = UnitCharacterPoints("player");
